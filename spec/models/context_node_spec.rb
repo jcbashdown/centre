@@ -11,16 +11,29 @@ describe ContextNode do
     @group2 = FactoryGirl.create(:group, :title=> 'Aaa')
   end
 
+  shared_examples_for "a context node change correctly updating conclusions" do 
+    it "should ensure the global node has the correct conclusion status in the question" do
+      @context_node.question.concluding_nodes.should_contain @context_node.global_node if @is_question_conclusion
+    end
+    it "should ensure the global node has the correct conclusion status for the question and user" do
+      @context_node.user.concluding_nodes(@context_node.question).should_contain @context_node.global_node if @is_question_user_conclusion
+    end
+    it "should ensure the global node has the correct conclusion status in the group" do
+      #should come through users in group - no group in context
+      @context_node.group.concluding_nodes(@context_node.question).should_contain @context_node.global_node if @is_question_group_conclusion
+    end
+  end
+
   describe 'setting is conclusion' do
     context 'when the context node is created as false' do
       before do
         @conclusion_status = false
         @context_node = ContextNode.create(:user=>@user, :question=>@question, :title => 'Title', :is_conclusion => @conclusion_status)
         @context_node_one = @context_node
+	@is_question_conclusion = @conclusion_status
       end
       it 'should create the sub nodes as false' do
         @context_node.reload.is_conclusion.should == @conclusion_status
-        @context_node.question.concluding_nodes.should_contain @context_node.global_node if @conclusion_status
         @context_node.global_node.reload.is_conclusion.should == @conclusion_status
         @context_node.user_node.reload.is_conclusion.should == @conclusion_status
       end
