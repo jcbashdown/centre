@@ -27,51 +27,46 @@ describe ContextNode do
   describe 'setting is conclusion' do
     context 'when the context node is created as false' do
       before do
+	@group.users << @user
         @conclusion_status = false
         @context_node = ContextNode.create(:user=>@user, :question=>@question, :title => 'Title', :is_conclusion => @conclusion_status)
         @context_node_one = @context_node
 	@is_question_conclusion = @conclusion_status
+	@is_question_user_conclusion = @conclusion_status
+	@is_question_group_conclusion = @conclusion_status
       end
-      it 'should create the sub nodes as false' do
-        @context_node.reload.is_conclusion.should == @conclusion_status
-        @context_node.global_node.reload.is_conclusion.should == @conclusion_status
-        @context_node.user_node.reload.is_conclusion.should == @conclusion_status
-      end
+      it_should_behave_like "a context node change correctly updating conclusions"
       context 'when a new context node for the qn is created as true' do
         before do
           @user = Factory(:user)
+	  @group.users << @user
           @new_conclusion_status = true
           @context_node = ContextNode.create(:user=>@user, :question=>@question, :title => 'Title', :is_conclusion => @new_conclusion_status)
+          @is_question_conclusion = @conclusion_status
+          @is_question_group_conclusion = @conclusion_status
+          @is_question_user_conclusion = @new_conclusion_status
         end
-        it 'the sub nodes apart from user_node should still be false' do
-          @context_node.reload.is_conclusion.should == @new_conclusion_status
-          @context_node.question_node.reload.is_conclusion.should == @conclusion_status
-          @context_node.global_node.reload.is_conclusion.should == @conclusion_status
-          @context_node.user_node.reload.is_conclusion.should == @new_conclusion_status
-        end
+        it_should_behave_like "a context node change correctly updating conclusions"
         context 'when the first node is destroyed' do
           before do
             @context_node_one.destroy
+	    @is_question_conclusion = @new_conclusion_status
+	    @is_question_group_conclusion = @new_conclusion_status
+            @is_question_user_conclusion = @new_conclusion_status
           end
-          it 'the sub nodes should still be false' do
-            @context_node.reload.is_conclusion.should == @new_conclusion_status
-            @context_node.question_node.reload.is_conclusion.should == @new_conclusion_status
-            @context_node.global_node.reload.is_conclusion.should == @new_conclusion_status
-            @context_node.user_node.reload.is_conclusion.should == @new_conclusion_status
-          end
+          it_should_behave_like "a context node change correctly updating conclusions"
         end
         context 'when another new context node for the qn is created as true' do
           before do
             @user = Factory(:user)
+	    @group.users << @user
             @new_conclusion_status = true
             @context_node = ContextNode.create(:user=>@user, :question=>@question, :title => 'Title', :is_conclusion => @new_conclusion_status)
+	    @is_question_conclusion = @new_conclusion_status
+	    @is_question_group_conclusion = @new_conclusion_status
+            @is_question_user_conclusion = @new_conclusion_status
           end
-          it 'the sub nodes should be false' do
-            @context_node.reload.is_conclusion.should == @new_conclusion_status
-            @context_node.question_node.reload.is_conclusion.should == @new_conclusion_status
-            @context_node.global_node.reload.is_conclusion.should == @new_conclusion_status
-            @context_node.user_node.reload.is_conclusion.should == @new_conclusion_status
-          end
+          it_should_behave_like "a context node change correctly updating conclusions"
         end
       end
     end
