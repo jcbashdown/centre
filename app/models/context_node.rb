@@ -47,7 +47,7 @@ class ContextNode < ActiveRecord::Base
   end
 
   def context
-    HashWithIndifferentAccess.new({:question_id => self.question_id, :group_ids => self.user.groups.map(&:id), :user_id => self.user_id, :user_node => {:global_node_id => global_node_id}})
+    HashWithIndifferentAccess.new({:question_id => self.question_id, :group_ids => self.user.groups.map(&:id), :user_id => self.user_id, :global_node_id => global_node_id})
   end
 
   def in_link_sql

@@ -17,7 +17,7 @@ module Conclusion
   end
 
   def search_context
-    HashWithIndifferentAccess.new create_context.merge(:user_nodes => @context[:user_node])
+    HashWithIndifferentAccess.new create_context.merge(:user_nodes => {:global_node_id => @context[:global_node_id]}).except("global_node_id")
   end
 
   def create_context

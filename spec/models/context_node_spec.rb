@@ -197,7 +197,7 @@ describe ContextNode do
         context 'when a new context node for the qn is created as true' do
           before do
             @user = FactoryGirl.create(:user, :email => "test5@email.com")
-      @group.users << @user
+            @group.users << @user
             @new_conclusion_status = true
             @context_node = ContextNode.create(:user=>@user, :question=>@question, :title => 'Title', :is_conclusion => @new_conclusion_status)
             @is_question_conclusion = true
@@ -232,7 +232,7 @@ describe ContextNode do
         before do
           conclusion_status = true
           @params = {:user=>@user, :question=>@question, :title => 'Title', :is_conclusion => conclusion_status}
-          ContextNode.create(@params)
+          Node::UserNode.create(@params)
           @node_state_hash = {
                                :context_node => {
                                                   :number_created => 1
@@ -254,7 +254,7 @@ describe ContextNode do
         before do
           conclusion_status = true
           @params = {:user=>@user, :question=>@question, :title => 'Title', :is_conclusion => conclusion_status}
-          ContextNode.create(@params)
+          Node::UserNode.create(@params)
           @node_state_hash = {
                                :context_node => {
                                                   :number_created => 1
@@ -275,7 +275,7 @@ describe ContextNode do
         before do
           conclusion_status = false
           @params = {:user=>@user, :question=>@question, :title => 'Title', :is_conclusion => conclusion_status}
-          ContextNode.create(@params)
+          Node::UserNode.create(@params)
           new_conclusion_status = true
           @node_state_hash = {
                                :context_node => {
@@ -296,7 +296,7 @@ describe ContextNode do
           before do
             conclusion_status = true
             @params = {:user=>@user, :question=>@question, :title => 'Title', :is_conclusion => conclusion_status}
-            ContextNode.create(@params)
+            Node::UserNode.create(@params)
             new_conclusion_status = true
             @node_state_hash = {
                                  :context_node => {
@@ -318,68 +318,82 @@ describe ContextNode do
     end
     describe 'updating conclusion' do
       describe 'updating with no other context_nodes for qn' do
+        let(:cn_params) {{:user_id=>@user.id, :question_id=>@question.id, :title => 'Title', :is_conclusion => false}}
         before do
-          @context_node = ContextNode.create(:user=>@user, :question=>@question, :title => 'Title', :is_conclusion => false)
+          @un = Node::UserNode.create!(cn_params)
         end
         it "should update the is conclusion status in all locations" do
-          @context_node.question.concluding_nodes.should_not include @context_node.global_node
-          @context_node.set_conclusion! true
-          @context_node.question.concluding_nodes.reload.should include @context_node.global_node
-          @context_node.set_conclusion! ''
-          @context_node.question.concluding_nodes.reload.should_not include @context_node.global_node
+          cn = ContextNode.where(cn_params.merge({:user_node_id => @un.id}))[0]
+	  cn.question.concluding_nodes.reload.should_not include cn.global_node
+          cn.set_conclusion! true
+          cn.question.concluding_nodes.reload.should include cn.global_node
+          cn.set_conclusion! ''
+          cn.question.concluding_nodes.reload.should_not include cn.global_node
         end
       end
       describe 'updating with other context_nodes for qn' do
+        let(:cn_params) {{:user_id=>@user.id, :question_id=>@question.id, :title => 'Title', :is_conclusion => false}}
+	let(:user2) {FactoryGirl.create(:user, :email=>"another@test.com")}
+	let(:cn_params2) {{:user_id=>user2.id, :question_id=>@question.id, :title => 'Title', :is_conclusion => true}}
         before do
-          @user2 = FactoryGirl.create(:user, :email=>"another@test.com")
-          @context_node = ContextNode.create(:user=>@user, :question=>@question, :title => 'Title', :is_conclusion => false)
-          @context_node2 = ContextNode.create(:user=>@user2, :question=>@question, :title => 'Title', :is_conclusion => true)
+          @un = Node::UserNode.create(cn_params)
+          @un2 = Node::UserNode.create(cn_params2)
         end
         it "should update the is conclusion status in all locations" do
-          @context_node.question.concluding_nodes.should_not include @context_node.global_node
-          @context_node2.question.concluding_nodes.should_not include @context_node2.global_node
-          @context_node2.set_conclusion! true
-          @context_node.question.concluding_nodes.reload.should_not include @context_node.global_node
-          @context_node2.question.concluding_nodes.reload.should_not include @context_node2.global_node
-          @context_node.set_conclusion! ''
-          @context_node.question.concluding_nodes.reload.should include @context_node.global_node
-          @context_node2.question.concluding_nodes.reload.should include @context_node2.global_node
-          @context_node.set_conclusion! false
-          @context_node.question.concluding_nodes.reload.should_not include @context_node.global_node
-          @context_node2.question.concluding_nodes.reload.should_not include @context_node2.global_node
-          @context_node.set_conclusion! true
-          @context_node.question.concluding_nodes.reload.should include @context_node.global_node
-          @context_node2.question.concluding_nodes.reload.should include @context_node2.global_node
+          cn = ContextNode.where(cn_params.merge(user_node_id:@un.id))[0]
+	  cn2 = ContextNode.where(cn_params2.merge(user_node_id:@un2.id))[0]
+	  cn.question.concluding_nodes.reload.should_not include cn.global_node
+          cn2.question.concluding_nodes.reload.should_not include cn2.global_node
+          cn2.set_conclusion! true
+          cn.question.concluding_nodes.reload.should_not include cn.global_node
+          cn2.question.concluding_nodes.reload.should_not include cn2.global_node
+          cn.set_conclusion! ''
+          cn.question.concluding_nodes.reload.should include cn.global_node
+          cn2.question.concluding_nodes.reload.should include cn2.global_node
+          cn.set_conclusion! false
+          cn.question.concluding_nodes.reload.should_not include cn.global_node
+          cn2.question.concluding_nodes.reload.should_not include cn2.global_node
+          cn.set_conclusion! true
+          cn.question.concluding_nodes.reload.should include cn.global_node
+          cn2.question.concluding_nodes.reload.should include cn2.global_node
         end
       end
       describe 'updating with another context node for another qn' do
+        let(:cn_params) {{:user_id=>@user.id, :question_id=>@question.id, :title => 'Title', :is_conclusion => false}}
+	let(:cn_params2) {{:user_id=>@user.id, :question_id=>@question2.id, :title => 'Title', :is_conclusion => true}}
         before do
-          @context_node = ContextNode.create(:user=>@user, :question=>@question, :title => 'Title', :is_conclusion => false)
-          @context_node2 = ContextNode.create(:user=>@user, :question=>@question2, :title => 'Title', :is_conclusion => true)
+          @un = Node::UserNode.create(cn_params)
+          @un2 = Node::UserNode.create(cn_params2)
         end
         context 'when existing nu' do
           it "should update the is conclusion status in all locations" do
-            @context_node.question.concluding_nodes.should_not include @context_node.global_node
-            @context_node2.question.concluding_nodes.should include @context_node2.global_node
-            @context_node2.set_conclusion! true
-            @context_node.question.concluding_nodes.reload.should_not include @context_node.global_node
-            @context_node2.question.concluding_nodes.reload.should include @context_node2.global_node
-            @context_node.set_conclusion! true
-            @context_node.question.concluding_nodes.reload.should include @context_node.global_node
-            @context_node2.question.concluding_nodes.reload.should include @context_node2.global_node
+            cn = ContextNode.where(cn_params.merge(user_node_id:@un.id))[0]
+            cn2= ContextNode.where(cn_params2.merge(user_node_id:@un2.id))[0]
+            cn.question.concluding_nodes.should_not include cn.global_node
+            cn2.question.concluding_nodes.should include cn2.global_node
+            cn2.set_conclusion! true
+            cn.question.concluding_nodes.reload.should_not include cn.global_node
+            cn2.question.concluding_nodes.reload.should include cn2.global_node
+            cn.set_conclusion! true
+            cn.question.concluding_nodes.reload.should include cn.global_node
+            cn2.question.concluding_nodes.reload.should include cn2.global_node
           end
         end
         context 'when no existing nu' do
+          let(:user2) {FactoryGirl.create(:user, :email=>"another@test.com")}
+	  let(:cn_params3) {{:user_id=>user2.id, :question_id=>@question2.id, :title => 'Title', :is_conclusion => false}}
           before do
-            @user2 = FactoryGirl.create(:user, :email=>"another@test.com")
-            @context_node3 = ContextNode.create(:user=>@user2, :question=>@question2, :title => 'Title', :is_conclusion => false)
+            @un3 = Node::UserNode.create(cn_params3)
           end
           it "should update the is conclusion status in all locations" do
-            @context_node2.question.concluding_nodes.should_not include @context_node.global_node
-            @context_node3.question.concluding_nodes.should_not include @context_node2.global_node
-            @context_node3.set_conclusion! true
-            @context_node3.question.concluding_nodes.reload.should include @context_node.global_node
-            @context_node2.question.concluding_nodes.reload.should include @context_node2.global_node
+            cn = ContextNode.where(cn_params.merge(user_node_id:@un.id))[0]
+            cn2= ContextNode.where(cn_params2.merge(user_node_id:@un2.id))[0]
+            cn3= ContextNode.where(cn_params3.merge(user_node_id:@un3.id))[0]
+            cn2.question.concluding_nodes.should_not include cn.global_node
+            cn3.question.concluding_nodes.should_not include cn2.global_node
+            cn3.set_conclusion! true
+            cn3.question.concluding_nodes.reload.should include cn.global_node
+            cn2.question.concluding_nodes.reload.should include cn2.global_node
           end
         end
       end
@@ -388,7 +402,7 @@ describe ContextNode do
       context 'when there are no associated links' do
         describe 'when the question nodes question node user count is less than two (when there is only this user)' do
           before do
-            context_node = ContextNode.create(:user=>@user, :title=>'Title', :question=>@question, :is_conclusion => false)
+            context_node = Node::UserNode.create(:user=>@user, :title=>'Title', :question=>@question, :is_conclusion => false)
           end
           it 'should destroy 1 node' do
             expect {
@@ -705,11 +719,6 @@ describe ContextNode do
             @context_node3.global_node.reload.upvotes_count.should == 0
           end
         end
-      end
-    end
-    describe 'it should not delete the links for other questions - do not delete cl, delete ugl? or uql down..?' do
-      it 'should be sensible' do
-        pending
       end
     end
   end

@@ -45,7 +45,7 @@ class Node::UserNode < Node
   end
 
   def context
-    HashWithIndifferentAccess.new({:question_id => self.question_id, :user_id => self.user_id, :title=> self.title, :user_node_id => self.id})
+    HashWithIndifferentAccess.new({:question_id => self.question_id, :user_id => self.user_id, :title=> self.title, :user_node_id => self.id, :is_conclusion => self.is_conclusion})
   end
 
   def update_caches
