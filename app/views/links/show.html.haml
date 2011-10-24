@@ -1,0 +1,18 @@
+%p#notice= notice
+
+%p
+  %b Node from:
+  = @link.node_from
+%p
+  %b Value:
+  = @link.value
+%p
+  %b User:
+  = @link.user_id
+%p
+  %b Node to:
+  = @link.node_to
+
+= link_to 'Edit', edit_link_path(@link)
+\|
+= link_to 'Back', links_path

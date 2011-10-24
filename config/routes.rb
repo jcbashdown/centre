@@ -1,4 +1,8 @@
 Centre::Application.routes.draw do
+  resources :links
+
+  resources :nodes
+
   #get \"users\/show\"
 
   root :to => "home#index"
