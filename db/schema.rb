@@ -11,7 +11,23 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20111023221941) do
+ActiveRecord::Schema.define(:version => 20111024230227) do
+
+  create_table "links", :force => true do |t|
+    t.integer  "node_from"
+    t.boolean  "value"
+    t.integer  "user_id"
+    t.integer  "node_to"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "nodes", :force => true do |t|
+    t.string   "title"
+    t.text     "text"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   create_table "users", :force => true do |t|
     t.string   "email",                                 :default => "", :null => false

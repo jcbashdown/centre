@@ -25,9 +25,8 @@
       %i (we need your current password to confirm your changes)
       .input
         = f.password_field :current_password
-    %li.clearfix
-      .input
-        = f.submit "Update"
+  .actions
+    = f.submit "Submit", :class => 'btn large primary'
 
 %h3 Cancel my account
 %p

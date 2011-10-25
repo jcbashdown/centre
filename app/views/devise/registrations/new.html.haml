@@ -18,7 +18,7 @@
       = f.label :password_confirmation
       .input
         = f.password_field :password_confirmation
-    %li.clearfix
-      .input
-        = f.submit "Sign up"
+  .actions
+    = f.submit "submit", :class => 'btn large primary'
+
 = render :partial => "devise/shared/links"
