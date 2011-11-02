@@ -5,10 +5,11 @@ Centre::Application.routes.draw do
 
   #get \"users\/show\"
 
-  root :to => "home#index"
+  root :to => "nodes#index"
 
   devise_for :users
   resources :users, :only => :show
+  resources :nodes
 
 
   # The priority is based upon order of creation:
@@ -68,3 +69,4 @@ Centre::Application.routes.draw do
   # Note: This route will make all actions in every controller accessible via GET requests.
   # match ':controller(/:action(/:id(.:format)))'
 end
+

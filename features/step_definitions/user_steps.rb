@@ -57,3 +57,4 @@ Then /^I should be signed out$/ do
   And %{I should see "Login"}
   And %{I should not see "Logout"}
 end
+
