@@ -7,8 +7,8 @@ Feature: View Nodes
       When I go to the home page
       Then I should see "Organisation Name"
       And I should see "App Name"
-      And I should see "App" links "6" times
-      And I should see "More apps"
+      And I should see "App" links "5" times
+      And I should see "More Apps"
       And I should see "Explanatory text"
       And I should see "graphical view"
       And I should see "Highest priority/Strongest point/Most authoritative"

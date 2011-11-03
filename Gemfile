@@ -41,4 +41,5 @@ gem "guard-cucumber", ">= 0.6.1", :group => :development
 gem "devise", ">= 1.4.7"
 gem "frontend-helpers"
 gem 'less-rails-bootstrap'
+gem 'ruby-debug19'
 

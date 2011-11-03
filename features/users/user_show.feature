@@ -6,4 +6,6 @@ Feature: Show Users
     Scenario: Viewing users
       Given I am a user named "foo" with an email "user@test.com" and password "please"
       When I go to the homepage
+#      And I press "Users"
       Then I should see "User: foo"
+

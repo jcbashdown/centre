@@ -7,7 +7,7 @@ Then /^I should see "([^"]*)"$/ do |arg1|
 end
 
 Then /^I should see "([^"]*)" links "([^"]*)" times$/ do |arg1, arg2|
-  pending # express the regexp above with the code you wish you had
+  all(:xpath, "//a[@class='#{arg1.downcase}']").length.should == Integer(arg2)
 end
 
 Then /^I should see "([^"]*)" text "([^"]*)" times$/ do |arg1, arg2|
