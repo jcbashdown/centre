@@ -1,11 +1,13 @@
 Centre::Application.routes.draw do
+  get "homepage/index"
+
   resources :links
 
   resources :nodes
 
   #get \"users\/show\"
 
-  root :to => "nodes#index"
+  root :to => "homepage#index"
 
   devise_for :users
   resources :users, :only => :show

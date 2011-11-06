@@ -3,11 +3,7 @@ class NodesController < ApplicationController
   # GET /nodes.json
   def index
     @nodes = Node.all
-
-    respond_to do |format|
-      format.html # index.html.erb
-      format.json { render json: @nodes }
-    end
+    render :partial => 'index', :locals => {:nodes => @nodes} 
   end
 
   # GET /nodes/1
