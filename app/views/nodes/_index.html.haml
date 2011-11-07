@@ -1,21 +1,17 @@
-%h1 Listing nodes
-
-%table
-  %tr
-    %th Title
-    %th Text
-    %th
-    %th
-    %th
-
-  - nodes.each do |node|
-    %tr
-      %td= node.title
-      %td= node.text
-      %td= link_to 'Show', node
-      %td= link_to 'Edit', edit_node_path(node)
-      %td= link_to 'Destroy', node, :confirm => 'Are you sure?', :method => :delete
-
-%br
-
-= link_to 'New Node', new_node_path
+.row.show-grid{:title => "One-third and two-thirds layout"}
+  .span4
+    %table
+      - nodes.each do |node|
+        %tr
+          %td
+            %ul.unstyled
+              %li.clearfix
+                %h4
+                  =node.title
+              %li.clearfix
+                =node.text
+                =link_to 'Destroy', node, :confirm => 'Are you sure?', :method => :delete, :class => 'right'
+    = link_to 'New Node', "#", :class => 'load_new' 
+  .span12.main_content
+    %h2
+      Explantory Text

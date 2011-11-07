@@ -21,11 +21,7 @@ class NodesController < ApplicationController
   # GET /nodes/new.json
   def new
     @node = Node.new
-
-    respond_to do |format|
-      format.html # new.html.erb
-      format.json { render json: @node }
-    end
+    render :partial => 'new', :locals => {:node => @node} 
   end
 
   # GET /nodes/1/edit
@@ -72,7 +68,7 @@ class NodesController < ApplicationController
     @node.destroy
 
     respond_to do |format|
-      format.html { redirect_to nodes_url }
+      format.html { redirect_to "/" }
       format.json { head :ok }
     end
   end
