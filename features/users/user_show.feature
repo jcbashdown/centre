@@ -7,5 +7,5 @@ Feature: Show Users
       Given I am a user named "foo" with an email "user@test.com" and password "please"
       When I go to the homepage
 #      And I press "Users"
-      Then I should see "User: foo"
+      Then I should see some stuff to do with user accounts
 

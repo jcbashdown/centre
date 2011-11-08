@@ -2,8 +2,12 @@ class NodesController < ApplicationController
   # GET /nodes
   # GET /nodes.json
   def index
-    @nodes = Node.all
-    render :partial => 'index', :locals => {:nodes => @nodes} 
+    @nodes = Node.all 
+    if request.xhr?
+      render :index, :layout => false
+    else
+      # renders index view
+    end
   end
 
   # GET /nodes/1
@@ -21,12 +25,21 @@ class NodesController < ApplicationController
   # GET /nodes/new.json
   def new
     @node = Node.new
-    render :partial => 'new', :locals => {:node => @node} 
+    if request.xhr?
+      render :new, :layout => false
+    else
+      # renders new view
+    end
   end
 
   # GET /nodes/1/edit
   def edit
     @node = Node.find(params[:id])
+    if request.xhr?
+      render :edit, :layout => false
+    else
+      # renders edit view
+    end
   end
 
   # POST /nodes

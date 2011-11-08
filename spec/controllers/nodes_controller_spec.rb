@@ -150,7 +150,7 @@ describe NodesController do
     it "redirects to the nodes list" do
       node = Node.create! valid_attributes
       delete :destroy, :id => node.id
-      response.should redirect_to(nodes_url)
+      response.should redirect_to("/")
     end
   end
 

@@ -5,8 +5,8 @@
         %h3
           %a{:href => "#"} Organisation Name
         %ul.nav
-          %li.active
-            %a{:href => "#", :class => 'app'} Home
+          %li
+            %a{:href => "#", :class => 'app'} Link
           %li
             %a{:href => "#", :class => 'app'} Link
           %li
@@ -27,8 +27,8 @@
                 %a{:href => "#"} Another link
         -#%form.pull-left{:action => ""}
           -#%input{:placeholder => "Search", :type => "text"}
-        %h3
-          %a{:href => "#", :class=>"right"}App Name
+        %h3.active
+          %a{:href => "/", :class=>"right"}Centre
 
 - if user_signed_in?
   %li
