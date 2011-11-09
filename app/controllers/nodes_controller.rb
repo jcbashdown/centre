@@ -15,9 +15,10 @@ class NodesController < ApplicationController
   def show
     @node = Node.find(params[:id])
 
-    respond_to do |format|
-      format.html # show.html.erb
-      format.json { render json: @node }
+    if request.xhr?
+      render :show, :layout => false
+    else
+      # renders show view
     end
   end
 
@@ -49,7 +50,7 @@ class NodesController < ApplicationController
 
     respond_to do |format|
       if @node.save
-        format.html { redirect_to @node, notice: 'Node was successfully created.' }
+        format.html { redirect_to "/", notice: 'Node was successfully created.' }
         format.json { render json: @node, status: :created, location: @node }
       else
         format.html { render action: "new" }
@@ -65,7 +66,7 @@ class NodesController < ApplicationController
 
     respond_to do |format|
       if @node.update_attributes(params[:node])
-        format.html { redirect_to @node, notice: 'Node was successfully updated.' }
+        format.html { redirect_to "/", notice: 'Node was successfully updated.' }
         format.json { head :ok }
       else
         format.html { render action: "edit" }

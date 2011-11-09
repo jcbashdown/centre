@@ -1,7 +1,8 @@
 $(document).ready ->
 
-  $(".load_new").live 'click', (e) ->
-    $(".main_content").load "/nodes/new"
+  $(".load").live 'click', (e) ->
+    link = $(e.target).attr('href')
+    $(".main_content").load link
     return false
   return false
 

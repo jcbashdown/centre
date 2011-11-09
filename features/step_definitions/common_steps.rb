@@ -6,6 +6,19 @@ When /^I go to the nodes index$/ do
   visit('/nodes')
 end
 
+
+When /^I go to the new nodes page$/ do
+  visit('/nodes/new')
+end
+
+Given /^a node has been created$/ do
+
+end
+
+When /^I go to the edit node page for the created node$/ do 
+  visit("/nodes/#{@created_node_id}/edit")
+end
+
 Then /^I should see "([^"]*)"$/ do |arg1|
   page.should have_content(arg1)
 end

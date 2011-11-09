@@ -1,4 +1,4 @@
-.row.show-grid{:title => "One-third and two-thirds layout"}
+.row.show-grid
   .span4
     %table
       - @nodes.each do |node|
@@ -7,11 +7,11 @@
             %ul.unstyled
               %li.clearfix
                 %h4
-                  =node.title
+                  =link_to node.title, node, :class => 'load' 
               %li.clearfix
                 =node.text
                 =link_to 'Destroy', node, :confirm => 'Are you sure?', :method => :delete, :class => 'right'
-    = link_to 'New Node', "#", :class => 'load_new' 
+    = link_to 'New Node', new_node_path, :class => 'load' 
   .span12.main_content
     %h2
       Explanatory Text
