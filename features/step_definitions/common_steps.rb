@@ -12,7 +12,12 @@ When /^I go to the new nodes page$/ do
 end
 
 Given /^a node has been created$/ do
+  created_node = Factory(:node)
+  @created_node_id = created_node.id
+end
 
+When /^I go to the new node page for the created node$/ do
+  visit("/nodes/#{@created_node_id}")
 end
 
 When /^I go to the edit node page for the created node$/ do 

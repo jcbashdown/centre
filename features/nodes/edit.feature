@@ -7,5 +7,6 @@ Feature: Edit Node
       Given a node has been created
       When I go to the edit node page for the created node
       Then I should see "Title"
-      Then I should see "Text"
+      And I should see "Text"
+      And I should see "Links"
       

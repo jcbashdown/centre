@@ -74,7 +74,7 @@ describe NodesController do
 
       it "redirects to the created node" do
         post :create, :node => valid_attributes
-        response.should redirect_to(Node.last)
+        response.should redirect_to("/")
       end
     end
 
@@ -116,7 +116,7 @@ describe NodesController do
       it "redirects to the node" do
         node = Node.create! valid_attributes
         put :update, :id => node.id, :node => valid_attributes
-        response.should redirect_to(node)
+        response.should redirect_to("/")
       end
     end
 
