@@ -24,7 +24,7 @@ describe NodesController do
   # Node. As you add validations to Node, be sure to
   # update the return value of this method accordingly.
   def valid_attributes
-    {}
+    {:title => 'title'}
   end
 
   describe "GET index" do
