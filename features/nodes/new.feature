@@ -7,5 +7,7 @@ Feature: New Node
       When I go to the new nodes page 
       Then I should see "Title"
       Then I should see "Text"
-      And I should see "Links"
+      And I should see "Links In"
+      And I should see "Links To"
+      
       

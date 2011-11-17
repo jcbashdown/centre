@@ -8,5 +8,6 @@ Feature: Edit Node
       When I go to the edit node page for the created node
       Then I should see "Title"
       And I should see "Text"
-      And I should see "Links"
+      And I should see "Links In"
+      And I should see "Links To"
       

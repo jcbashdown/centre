@@ -27,6 +27,10 @@ header nav ul li {
   border: solid 1px #C66;
 }
 .right{
-  float: right !important; ;
+  float: right !important; 
+}
+.checkboxes{
+  overflow: auto;
+  border: 1px solid #ccc
 }
 
