@@ -11,16 +11,5 @@
 
     = link_to 'Edit', edit_node_path(@node), :class => "load"
   .span4
-    %ul.tabs
-      %li.active
-        %a{:href =>"#target_nodes"}
-          Links To 
-          %span
-      %li
-        %a{:href => "#source_nodes"} 
-          Links In 
-          %span
-    .pill-content
-      #target_nodes.active
-      #source_nodes
+    = render :partial => "links"
 
