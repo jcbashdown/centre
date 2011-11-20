@@ -16,7 +16,7 @@
     .actions
       = f.submit 'Save'
   .span4
-    %ul{:class => "tabs", "data-tabs"=>"tabs"}
+    %ul{:class => "tabs"}
 
       %li.active
         %a{:href =>"#target_nodes"}
@@ -27,45 +27,6 @@
           Links In
           %span
     .tab-content
-      #target_nodes.active.tab-pane.checkboxes
-        %label
-          %input{:name => "items[]", :type => "checkbox"} Best Practices
-        %label
-          %input{:name => "items[]", :type => "checkbox"} Client Relationships
-        %label
-          %input{:checked => "checked", :name => "items[]", :type => "checkbox"} Communications
-        %label
-          %input{:name => "items[]", :type => "checkbox"} Compensation
-        %label
-          %input{:name => "items[]", :type => "checkbox"} Contracts and Negotiations
-        %label
-          %input{:name => "items[]", :type => "checkbox"} Design and Construction Marketplace
-        %label
-          %input{:name => "items[]", :type => "checkbox"} Design/Build Project Delivery
-        %label
-          %input{:name => "items[]", :type => "checkbox"} Education
-        %label
-          %input{:name => "items[]", :type => "checkbox"} Financial Management and Profitability
-        %label
-          %input{:name => "items[]", :type => "checkbox"} Global Marketplace
-        %label
-          %input{:name => "items[]", :type => "checkbox"} Human Resources
-        %label
-          %input{:name => "items[]", :type => "checkbox"} Intelligent Choices
-        %label
-          %input{:name => "items[]", :type => "checkbox"} Leadership
-        %label
-          %input{:name => "items[]", :type => "checkbox"} Management
-        %label
-          %input{:name => "items[]", :type => "checkbox"} Marketing
-        %label
-          %input{:name => "items[]", :type => "checkbox"} Mergers and Acquisitions
-        %label
-          %input{:name => "items[]", :type => "checkbox"} Operations Management
-        %label
-          %input{:name => "items[]", :type => "checkbox"} Public Relations
-        %label
-          %input{:name => "items[]", :type => "checkbox"} Staff Recruitment and Retention
-        %label
-      #source_nodes.tab-panel.checkboxes
+      #target_nodes.active.checkboxes
+      #source_nodes.checkboxes
 

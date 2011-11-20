@@ -1,11 +1,8 @@
 .row.show-grid
-  .span8
-    %h1 Editing node
+  %h1 Editing node
 
-    = render 'form'
+  = render 'form'
 
-    = link_to 'Show', @node
-    = link_to 'Back', nodes_path
-  .span4
-    = render :partial => "links_form"
+  = link_to 'Show', @node
+  = link_to 'Back', nodes_path
 
