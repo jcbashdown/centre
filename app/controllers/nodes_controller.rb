@@ -2,7 +2,7 @@ class NodesController < ApplicationController
   # GET /nodes
   # GET /nodes.json
   def index
-    @nodes = Node.all 
+    @nodes = Nodes.all 
     if request.xhr?
       render :index, :layout => false
     else

@@ -1,8 +1,10 @@
 Centre::Application.routes.draw do
   get "homepage/index"
 
-  resources :links
-
+  match '/links/:node_id/links_in_show' => 'links/#links_in_show', :as => :links_in_show
+  match '/links/:node_id/links_in_edit' => 'links/#links_in_edit', :as => :links_in_edit
+  match '/links/:node_id/links_to_show' => 'links/#links_to_show', :as => :links_to_show
+  match '/links/:node_id/links_to_edit' => 'links/#links_to_edit', :as => :links_to_edit
   resources :nodes
 
   #get \"users\/show\"
