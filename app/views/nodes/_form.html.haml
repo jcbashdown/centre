@@ -16,19 +16,41 @@
     .actions
       = f.submit 'Save'
   .span4
-    %ul{:class => "tabs"}
+    %ul{:class => "tabs", 'data-tabs'=>"tabs"}
 
       %li.active
-        %a{:href =>"#target_nodes"}
+        %a{:href =>"#links_to_edit"}
           Links To
           %span
       %li
-        %a{:href => "#source_nodes"}
+        %a{:href => "#links_in_edit"}
           Links In
           %span
     .tab-content
-      #target_nodes.active.checkboxes
+      #links_to_edit.active.checkboxes
+        %table.bordered-table.zebra-striped.condensed
+          %tr
+            %th Supports
+            %th Opposes
+            %th Title
+          -@nodes.each do |node|
+            %tr
+              %td
+              %td
+              %td= node.title
+               
+           
         // so something like get the links index with a switch for form or not and whether links index or related to another node
         // load on form load through a partial  
-      #source_nodes.checkboxes
+      #links_in_edit.checkboxes
+        %table.bordered-table.zebra-striped.condensed
+          %tr
+            %th Support by
+            %th Opposed by
+            %th Title
+          -@nodes.each do |node|
+            %tr
+              %td
+              %td
+              %td= node.title
 
