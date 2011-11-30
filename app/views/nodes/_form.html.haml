@@ -33,19 +33,23 @@
             %th Supports
             %th Opposes
             %th Title
-          -@nodes.each do |node|
-            %tr
-              %td
-              %td
-              %td= node.title
-               
+          = f.fields_for :links_to do |fields|
+            -@nodes.each do |node|
+              %tr
+                %td
+                  =fields.radio_button 'value', 1
+                %td
+                  =fields.radio_button 'value', 0
+                %td= node.title
+                =fields.text_field :node_to, {:value => node.id} 
+                 
            
         // so something like get the links index with a switch for form or not and whether links index or related to another node
         // load on form load through a partial  
       #links_in_edit.checkboxes
         %table.bordered-table.zebra-striped.condensed
           %tr
-            %th Support by
+            %th Supported by
             %th Opposed by
             %th Title
           -@nodes.each do |node|
