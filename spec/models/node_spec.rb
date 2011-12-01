@@ -41,7 +41,7 @@ describe Node do
         @node.target_nodes << @node_two
       end
       it 'should create one link out' do
-        @node.links_to.count.should == 1
+        @node.link_tos.count.should == 1
       end
       it 'should create one target node' do
         @node.target_nodes.count.should == 1
@@ -50,7 +50,7 @@ describe Node do
         @node_two.source_nodes.count.should == 1
       end
       it 'should create one link in' do
-        @node_two.links_in.count.should == 1
+        @node_two.link_ins.count.should == 1
       end
     end
   end

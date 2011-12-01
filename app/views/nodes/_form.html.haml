@@ -33,16 +33,18 @@
             %th Supports
             %th Opposes
             %th Title
-          = f.fields_for :links_to do |fields|
-            -@nodes.each do |node|
-              %tr
+          -@nodes.each do |node|
+            - index = 0
+            %tr
+              = f.fields_for :link_to, :child_index => index do |link|
                 %td
-                  =fields.radio_button 'value', 1
+                  =link.radio_button :value, 1
                 %td
-                  =fields.radio_button 'value', 0
-                %td= node.title
-                =fields.text_field :node_to, {:value => node.id} 
-                 
+                  =link.radio_button :value, 0
+                %td
+                  = node.title
+                  =link.text_field :node_to, {:value => node.id} 
+            - index+=1       
            
         // so something like get the links index with a switch for form or not and whether links index or related to another node
         // load on form load through a partial  
