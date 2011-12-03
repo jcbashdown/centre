@@ -16,4 +16,17 @@ class Node < ActiveRecord::Base
     end 
   end
   
+  def all_with_link_ids
+    nodes = []
+    Node.all.each do |node|
+      unless node.id==self.id
+        link_in_id = Link.find_by_node_from_and_node_to(self.id, node.id).try(:id)
+        link_to_id = Link.find_by_node_from_and_node_to(node.id, self.id).try(:id)
+        hash = {:node=>node, :link_in=>link_in_id, :link_to=>link_to_id}
+        nodes << hash
+      end
+    end
+    nodes
+  end
+  
 end

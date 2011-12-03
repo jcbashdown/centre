@@ -6,6 +6,7 @@ Centre::Application.routes.draw do
   match '/links/:node_id/links_to_show' => 'links/#links_to_show', :as => :links_to_show
   match '/links/:node_id/links_to_edit' => 'links/#links_to_edit', :as => :links_to_edit
   resources :nodes
+  resources :links
 
   #get \"users\/show\"
 

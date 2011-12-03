@@ -26,7 +26,7 @@ class NodesController < ApplicationController
   # GET /nodes/new.json
   def new
     @node = Node.new
-    @nodes = Node.all
+    @nodes = @node.all_with_link_ids
     if request.xhr?
       render :new, :layout => false
     else
@@ -37,7 +37,7 @@ class NodesController < ApplicationController
   # GET /nodes/1/edit
   def edit
     @node = Node.find(params[:id])
-    @nodes = Node.all
+    @nodes = @node.all_with_link_ids
     if request.xhr?
       render :edit, :layout => false
     else

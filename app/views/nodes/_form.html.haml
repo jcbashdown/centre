@@ -19,24 +19,29 @@
   %ul{:class => "tabs", 'data-tabs'=>"tabs"}
 
     %li.active
-      %a{:href =>"#links_to_edit"}
+      %a{:href =>"#links_tos_edit"}
         Links To
         %span
     %li
-      %a{:href => "#links_in_edit"}
+      %a{:href => "#links_ins_edit"}
         Links In
         %span
   .tab-content
-    #links_to_edit.active.checkboxes
+    #links_tos_edit.active.checkboxes
       %table.bordered-table.zebra-striped.condensed
         %tr
+          %th None 
           %th + 
           %th = 
           %th - 
           %th Title
-        -@nodes.each do |node|
+        -@nodes_with_link_ins.each do |node|
           =form_tag '/links/link_tos_edit', :method => :post, :remote => true do |f|
             %tr
+              -if node['link'].present?
+                =number_field{:value=>node['link'], :class=>'hidden'}
+              %td
+                =radio_button_tag :_delete, 1 
               %td
                 =radio_button_tag :value, 1
               %td
@@ -44,11 +49,12 @@
               %td
                 =radio_button_tag :value, nil
               %td
+                =number_field{:value=>node['node'].id, :class=>'hidden'}
                 = node.title
          
       // so something like get the links index with a switch for form or not and whether links index or related to another node
       // load on form load through a partial  
-    #links_in_edit.checkboxes
+    #links_ins_edit.checkboxes
       %table.bordered-table.zebra-striped.condensed
         %tr
           %th Supported by

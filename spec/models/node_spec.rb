@@ -39,9 +39,19 @@ describe Node do
     context 'linking node to node_two' do
       before do
         @node.target_nodes << @node_two
+        @link_in = @node.link_tos.first
+        @hash = [{:node => @node_two, :link_in=>@link_in.id, :link_to=>nil}]
+        @link_to = @node_two.link_ins.first
+        @hash_two = [{:node => @node, :link_in=>nil, :link_to=>@link_to.id}]
       end
       it 'should create one link out' do
         @node.link_tos.count.should == 1
+      end
+      it 'should return the correct array when all_with_link_ids called on node' do
+        @node.all_with_link_ids.should == @hash
+      end
+      it 'should return the correct array when all_with_link_ids called on node two' do
+        @node_two.all_with_link_ids.should == @hash_two
       end
       it 'should create one target node' do
         @node.target_nodes.count.should == 1
