@@ -36,20 +36,19 @@
           %th - 
           %th Title
         -@nodes.each do |node|
-          =form_tag '/links/link_tos_edit', :method => :post, :remote => true do |f|
+          -link = node[:link_to].present? ? node[:link_to] : :link_to
+          =form_tag '/links/link_tos_edit', :method => :post do |f|
             %tr
-              -if node['link'].present?
-                =number_field :id, {:value=>node[:link], :class=>'hidden'}
               %td
-                =radio_button_tag :_delete, 1 
+                =radio_button link, :value, 'delete' 
               %td
-                =radio_button_tag :value, 1
+                =radio_button link, :value, 1
               %td
-                =radio_button_tag :value, 0
+                =radio_button link, :value, nil 
               %td
-                =radio_button_tag :value, nil
+                =radio_button link, :value, 0
               %td
-                =number_field :node_to, {:value=>node[:node].id, :class=>'hidden'}
+                =number_field link, :node_to, {:value=>node[:node].id, :class=>'hidden'}
                 = node[:node].title
          
       // so something like get the links index with a switch for form or not and whether links index or related to another node

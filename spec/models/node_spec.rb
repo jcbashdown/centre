@@ -40,9 +40,9 @@ describe Node do
       before do
         @node.target_nodes << @node_two
         @link_in = @node.link_tos.first
-        @hash = [{:node => @node_two, :link_in=>@link_in.id, :link_to=>nil}]
+        @hash = [{:node => @node_two, :link_in=>@link_in, :link_to=>nil}]
         @link_to = @node_two.link_ins.first
-        @hash_two = [{:node => @node, :link_in=>nil, :link_to=>@link_to.id}]
+        @hash_two = [{:node => @node, :link_in=>nil, :link_to=>@link_to}]
       end
       it 'should create one link out' do
         @node.link_tos.count.should == 1

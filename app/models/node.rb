@@ -20,9 +20,9 @@ class Node < ActiveRecord::Base
     nodes = []
     Node.all.each do |node|
       unless node.id==self.id
-        link_in_id = Link.find_by_node_from_and_node_to(self.id, node.id).try(:id)
-        link_to_id = Link.find_by_node_from_and_node_to(node.id, self.id).try(:id)
-        hash = {:node=>node, :link_in=>link_in_id, :link_to=>link_to_id}
+        link_in = Link.find_by_node_from_and_node_to(self.id, node.id)
+        link_to = Link.find_by_node_from_and_node_to(node.id, self.id)
+        hash = {:node=>node, :link_in=>link_in, :link_to=>link_to}
         nodes << hash
       end
     end

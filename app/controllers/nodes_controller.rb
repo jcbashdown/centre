@@ -38,6 +38,8 @@ class NodesController < ApplicationController
   def edit
     @node = Node.find(params[:id])
     @nodes = @node.all_with_link_ids
+    p Link.all
+    p @nodes
     if request.xhr?
       render :edit, :layout => false
     else
