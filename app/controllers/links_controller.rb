@@ -1,34 +1,34 @@
 class LinksController < ApplicationController
-  def links_in_edit 
+  def link_ins_edit 
     @links= Link.all 
     if request.xhr?
-      render :links_in_edit, :layout => false
+      render :link_ins_edit, :layout => false
     else
-      # renders links_in_edit
+      # renders link_ins_edit
     end
   end
-  def links_in_show
+  def link_ins_show
     @links= Link.all 
     if request.xhr?
-      render :links_in_show, :layout => false
+      render :link_ins_show, :layout => false
     else
-      # renders links_in_show
+      # renders link_ins_show
     end
   end
-  def links_to_edit 
+  def link_tos_edit 
     @links= Link.all 
     if request.xhr?
-      render :links_to_edit, :layout => false
+      render :link_tos_edit, :layout => false
     else
-      # renders links_to_edit
+      # renders link_tos_edit
     end
   end
-  def links_to_show
+  def link_tos_show
     @links= Link.all 
     if request.xhr?
-      render :links_to_show, :layout => false
+      render :link_tos_show, :layout => false
     else
-      # renders links_to_show
+      # renders link_tos_show
     end
   end# GET /links
   # GET /links.json

@@ -36,32 +36,34 @@
           %th - 
           %th Title
         -@nodes.each do |node|
-          -link = node[:link_to].present? ? node[:link_to] : :link_to
-          =form_tag '/links/link_tos_edit', :method => :post do |f|
-            %tr
-              %td
-                =radio_button link, :value, 'delete' 
-              %td
-                =radio_button link, :value, 1
-              %td
-                =radio_button link, :value, nil 
-              %td
-                =radio_button link, :value, 0
-              %td
-                =number_field link, :node_to, {:value=>node[:node].id, :class=>'hidden'}
-                = node[:node].title
-         
-      // so something like get the links index with a switch for form or not and whether links index or related to another node
-      // load on form load through a partial  
+          -link = node[:link_to]
+          %tr
+            - if link.present?
+              = form_tag(:url =>'/links/link_tos_edit') do
+                %td
+                  = radio_button link, :value, 'delete' 
+                %td
+                  = radio_button link, :value, 1
+                %td
+                  = radio_button link, :value, nil 
+                %td
+                  = radio_button link, :value, 0
+                %td
+                  = node[:node].title
+                  = submit_tag "Submit"
+            - else
+              = form_tag(:url =>'/links/link_tos_edit') do
+                %td
+                  = radio_button :link, :value, 'delete' 
+                %td
+                  = radio_button :link, :value, 1
+                %td
+                  = radio_button :link, :value, nil 
+                %td
+                  = radio_button :link, :value, 0
+                %td
+                  =number_field :link, :node_to, {:value=>node[:node].id, :class=>'hidden'}
+                  = node[:node].title
+                  = submit_tag "Submit2"
     #links_ins_edit.checkboxes
       %table.bordered-table.zebra-striped.condensed
-        %tr
-          %th Supported by
-          %th Opposed by
-          %th Title
-        -@nodes.each do |node|
-          %tr
-            %td
-            %td
-            %td= node[:node].title
-

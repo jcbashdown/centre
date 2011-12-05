@@ -1,10 +1,10 @@
 Centre::Application.routes.draw do
   get "homepage/index"
 
-  match '/links/:node_id/links_in_show' => 'links/#links_in_show', :as => :links_in_show
-  match '/links/:node_id/links_in_edit' => 'links/#links_in_edit', :as => :links_in_edit
-  match '/links/:node_id/links_to_show' => 'links/#links_to_show', :as => :links_to_show
-  match '/links/:node_id/links_to_edit' => 'links/#links_to_edit', :as => :links_to_edit
+  match '/links/link_ins_show' => 'links#link_ins_show', :as => :link_ins_show
+  match '/links/link_ins_edit' => 'links#link_ins_edit', :as => :link_ins_edit
+  match '/links/link_tos_show' => 'links#link_tos_show', :as => :link_tos_show
+  match '/links/link_tos_edit' => 'links#link_tos_edit', :as => :link_tos_edit
   resources :nodes
   resources :links
 
