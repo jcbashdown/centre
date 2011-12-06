@@ -1,0 +1,21 @@
+%table.bordered-table.zebra-striped.condensed
+  %tr
+    %th + 
+    %th = 
+    %th - 
+    %th Title
+  - nodes.each do |node|
+    -link = node[:link_to]
+    %tr
+      = form_for link, :child_index=>(link.new_record? ? Time.now : link.id) do |f|
+        %td
+          = f.radio_button :value, true
+        %td
+          = f.radio_button :value, nil 
+        %td
+          = f.radio_button :value, false 
+        %td
+          = f.number_field :node_from
+          = f.number_field :node_to
+          =f.submit "Submit"
+          = node[:node].title

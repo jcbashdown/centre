@@ -1,6 +1,19 @@
 class NodesController < ApplicationController
   # GET /nodes
   # GET /nodes.json
+  def test
+    @node = Node.find(params[:id])
+    @links = Array.new
+    @nodes = @node.all_with_link_ids 
+    @nodes.each do |node|
+      @links << node[:link_to]
+    end
+    if request.xhr?
+      render :test, :layout => false
+    else
+      # renders index view
+    end
+  end
   def index
     @nodes = Node.all 
     if request.xhr?
