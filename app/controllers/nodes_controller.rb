@@ -39,7 +39,11 @@ class NodesController < ApplicationController
   # GET /nodes/new.json
   def new
     @node = Node.new
-    @nodes = @node.all_with_link_ids
+    @links = Array.new
+    @nodes = @node.all_with_link_ids 
+    @nodes.each do |node|
+      @links << node[:link_to]
+    end
     if request.xhr?
       render :new, :layout => false
     else
@@ -50,8 +54,11 @@ class NodesController < ApplicationController
   # GET /nodes/1/edit
   def edit
     @node = Node.find(params[:id])
-    @nodes = @node.all_with_link_ids
-    p @nodes
+    @links = Array.new
+    @nodes = @node.all_with_link_ids 
+    @nodes.each do |node|
+      @links << node[:link_to]
+    end
     if request.xhr?
       render :edit, :layout => false
     else

@@ -1,5 +1,5 @@
-.span8
-  = form_for @node do |f|
+= form_for @node do |f|
+  .span8
     -if @node.errors.any?
       #error_explanation
         %h2= "#{pluralize(@node.errors.count, "error")} prohibited this node from being saved:"
@@ -15,18 +15,18 @@
       = f.text_area :text
     .actions
       = f.submit 'Save'
-.span4
-  %ul{:class => "tabs", 'data-tabs'=>"tabs"}
+  .span4
+    %ul{:class => "tabs", 'data-tabs'=>"tabs"}
 
-    %li.active
-      %a{:href =>"#links_tos_edit"}
-        Links To
-        %span
-    %li
-      %a{:href => "#links_ins_edit"}
-        Links In
-        %span
-  .tab-content
-    #links_tos_edit.active.checkboxes
-      =render :partial=> "/nodes/test", :locals=>{:nodes => @nodes}
-    #links_ins_edit.checkboxes
+      %li.active
+        %a{:href =>"#links_tos_edit"}
+          Links To
+          %span
+      %li
+        %a{:href => "#links_ins_edit"}
+          Links In
+          %span
+    .tab-content
+      #links_tos_edit.active.checkboxes
+        =render :partial=> "/nodes/test", :locals=>{:nodes => @nodes, :f=>f}
+      #links_ins_edit.checkboxes
