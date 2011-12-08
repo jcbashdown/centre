@@ -12,6 +12,9 @@
                 =node.text
                 =link_to 'Destroy', node, :confirm => 'Are you sure?', :method => :delete, :class => 'right'
     = link_to 'New Node', new_node_path, :class => 'load' 
-  .span12.main_content
-    %h2
-      Explanatory Text
+  .span12
+    .row.show-grid
+      .span8.main_content
+        %h2
+          Explanatory Text
+      .span4.right_content

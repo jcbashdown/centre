@@ -1,26 +1,10 @@
-.row.show-grid
-  .span8
-    %p#notice= notice
+%p#notice= notice
 
-    %p
-      %b Title:
-      = @node.title
-    %p
-      %b Text:
-      = @node.text
+%p
+  %b Title:
+  = @node.title
+%p
+  %b Text:
+  = @node.text
 
-    = link_to 'Edit', edit_node_path(@node), :class => "load"
-  .span4
-    %ul{:class => "tabs"}
-
-      %li.active
-        %a{:href =>"#target_nodes"}
-          Links To
-          %span
-      %li
-        %a{:href => "#source_nodes"}
-          Links In
-          %span
-    .tab-content
-      #target_nodes.active
-      #source_nodes
+= link_to 'Edit', edit_node_path(@node), :class => "load"

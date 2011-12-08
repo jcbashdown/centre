@@ -1,1 +1,22 @@
 {"utf8"=>"✓", "authenticity_token"=>"hPdTmINKGJpwxlbe8XAzZGEsRBomtdSpDctXWXRqNJQ=", "node"=>{"title"=>"123", "text"=>"123", "link_tos_attributes"=>{"0"=>{"value"=>"true", "node_from"=>"2", "node_to"=>"1"}, "1"=>{"value"=>"on", "node_from"=>"2", "node_to"=>"3"}, "2"=>{"value"=>"on", "node_from"=>"2", "node_to"=>"4"}, "3"=>{"value"=>"on", "node_from"=>"2", "node_to"=>"5"}}}, "commit"=>"Submit", "id"=>"2"}
+%table.bordered-table.zebra-striped.condensed
+  %tr
+    %th + 
+    %th = 
+    %th - 
+    %th Title
+  = form_for node do |f|
+    = f.fields_for :link_tos, @links do |l|
+      %tr
+        %td
+          = l.radio_button :value, true, {:class => 'submittable'}
+        %td
+          = l.radio_button :value, nil 
+        %td
+          = l.radio_button :value, false 
+        %td
+          = l.hidden_field :node_from
+          = l.hidden_field :node_to
+          = l.object.target_node.title
+        
+      =render :partial=> "/nodes/test", :locals=>{:nodes => @nodes, :node=>@node}

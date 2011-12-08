@@ -34,4 +34,8 @@ header nav ul li {
   border: 1px solid #ccc;
   max-height:600px;
 }
+.hidden {
+  display:none;
+}
+
 
