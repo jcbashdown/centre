@@ -3,8 +3,8 @@ $(document).ready ->
   $(".load").live 'click', (e) ->
     link = $(e.target).attr('href')
     id = link.match(/(\d+)/)
-#    $(".main_content").load link
     $(".right_content").load "/nodes/"+id+"/test" 
+    $(".main_content").load link
     return false
 #  $('.submittable').live "click", (event) ->
 #    target = $(event.target)

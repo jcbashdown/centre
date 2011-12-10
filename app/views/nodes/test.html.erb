@@ -1,0 +1,79 @@
+<div class="span4 right_content"><ul data-tabs="tabs" class="tabs">
+  <li class="active">
+    <a href="#links_tos_edit">
+      Links To
+      <span></span>
+    </a>
+  </li>
+  <li>
+    <a href="#links_ins_edit">
+      Links In
+      <span></span>
+    </a>
+  </li>
+</ul>
+<div class="tab-content">
+  <div id="links_tos_edit" class="active checkboxes">
+      <tbody><tr>
+        <th>+</th>
+        <th>=</th>
+        <th>-</th>
+        <th>Title</th>
+      </tr>
+      <%@nodes.each do |node|%>
+      <%link = node[:link_to]%>
+        <tr>
+          <%=form_for link do |lt|%>
+                <td>
+                  <%= lt.radio_button :value, true%>
+                </td>
+                <td>
+                  <%= lt.radio_button :value, nil%>
+                </td>
+                <td>
+                  <%= lt.radio_button :value, false%>
+                </td>
+                <td>
+                  <%= lt.hidden_field :node_from%>
+                  <%= lt.hidden_field :node_to%>
+                  <%= lt.submit "Submit"%>
+                  <%= node[:node].title%>
+                </td>
+          <%end%>
+        </tr>
+      <%end%>
+    </tbody></table>
+  </div>
+  <div id="links_ins_edit" class="checkboxes">
+      <tbody><tr>
+        <th>+</th>
+        <th>=</th>
+        <th>-</th>
+        <th>Title</th>
+      </tr>
+      <%@nodes.each do |node|%>
+      <%link = node[:link_in]%>
+        <tr>
+          <%=form_for link do |li|%>
+                <td>
+                  <%= li.radio_button :value, true%>
+                </td>
+                <td>
+                  <%= li.radio_button :value, nil%>
+                </td>
+                <td>
+                  <%= li.radio_button :value, false%>
+                </td>
+                <td>
+                  <%= li.hidden_field :node_from%>
+                  <%= li.hidden_field :node_to%>
+                  <%= li.submit "Submit"%>
+                  <%= node[:node].title%>
+                </td>
+          <%end%>
+        </tr>
+      <%end%>
+    </tbody></table>
+  </div>
+</div>
+</div>
