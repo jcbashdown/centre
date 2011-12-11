@@ -1,4 +1,4 @@
-<div class="span4 right_content"><ul data-tabs="tabs" class="tabs">
+<ul data-tabs="tabs" class="tabs">
   <li class="active">
     <a href="#links_tos_edit">
       Links To
@@ -14,16 +14,19 @@
 </ul>
 <div class="tab-content">
   <div id="links_tos_edit" class="active checkboxes">
-      <tbody><tr>
+      <table><tbody>
+      <tr>
         <th>+</th>
         <th>=</th>
         <th>-</th>
         <th>Title</th>
       </tr>
+      </table></tbody>
       <%@nodes.each do |node|%>
       <%link = node[:link_to]%>
-        <tr>
-          <%=form_for link do |lt|%>
+        <%=form_for link do |lt|%>
+          <table class="zebra-striped"><tbody>
+            <tr>
                 <td>
                   <%= lt.radio_button :value, true%>
                 </td>
@@ -39,22 +42,25 @@
                   <%= lt.submit "Submit"%>
                   <%= node[:node].title%>
                 </td>
-          <%end%>
-        </tr>
+             </tr>
+           </tbody></table>
+         <%end%>
       <%end%>
-    </tbody></table>
   </div>
   <div id="links_ins_edit" class="checkboxes">
-      <tbody><tr>
+      <table class="zebra-striped"><tbody>
+      <tr>
         <th>+</th>
         <th>=</th>
         <th>-</th>
         <th>Title</th>
       </tr>
+      </table></tbody>
       <%@nodes.each do |node|%>
       <%link = node[:link_in]%>
-        <tr>
-          <%=form_for link do |li|%>
+        <%=form_for link do |li|%>
+          <table><tbody>
+            <tr>
                 <td>
                   <%= li.radio_button :value, true%>
                 </td>
@@ -70,10 +76,10 @@
                   <%= li.submit "Submit"%>
                   <%= node[:node].title%>
                 </td>
-          <%end%>
-        </tr>
-      <%end%>
-    </tbody></table>
+            </tr>
+          </tbody></table>
+       <%end%>
+    <%end%>
   </div>
 </div>
 </div>

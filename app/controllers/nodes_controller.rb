@@ -26,7 +26,13 @@ class NodesController < ApplicationController
   # GET /nodes/1
   # GET /nodes/1.json
   def show
+    @all_nodes = Node.all 
     @node = Node.find(params[:id])
+    @links = Array.new
+    @nodes = @node.all_with_link_ids 
+    @nodes.each do |node|
+      @links << node[:link_to]
+    end
 
     if request.xhr?
       render :show, :layout => false
@@ -38,6 +44,7 @@ class NodesController < ApplicationController
   # GET /nodes/new
   # GET /nodes/new.json
   def new
+    @all_nodes = Node.all 
     @node = Node.new
     @links = Array.new
     @nodes = @node.all_with_link_ids 
@@ -53,6 +60,7 @@ class NodesController < ApplicationController
 
   # GET /nodes/1/edit
   def edit
+    @all_nodes = Node.all 
     @node = Node.find(params[:id])
     @links = Array.new
     @nodes = @node.all_with_link_ids 

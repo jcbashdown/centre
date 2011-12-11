@@ -1,6 +1,6 @@
 $(document).ready ->
-  $("#nodes").load "/nodes", ->
-    $(".tabs").tabs()
+#  $("#nodes").load "/nodes", ->
+#    $(".tabs").tabs()
 
   $(".tabs").bind 'click', (e) ->
     pattern = /#.+/g
