@@ -27,69 +27,15 @@
         .row.show-grid
           .span8.main_content
             %p#notice= notice
-            %p
-              %b Title:
-              = @node.title
-            %p
-              %b Text:
-              = @node.text
-            = link_to 'Edit text', edit_node_path(@node), :class => "load"
+            .center
+              %h2
+                = @node.title
+              %br
+              %p 
+                = @node.text
+              %br
+              %br
+              = link_to 'Edit text', edit_node_path(@node), :class => "load"
           .span4.right_content
-            %ul{:class => "tabs", 'data-tabs'=>"tabs"}
-
-              %li.active
-                %a{:href =>"#links_tos_edit"}
-                  Links To
-                  %span
-              %li
-                %a{:href => "#links_ins_edit"}
-                  Links In
-                  %span
-            .tab-content
-              #links_tos_edit.active.checkboxes
-                %table.bordered-table.zebra-striped.condensed
-                  %tr
-                    %th + 
-                    %th = 
-                    %th - 
-                    %th Title
-                - @nodes.each do |node|
-                  -link = node[:link_to]
-                  = form_for link do |lt|
-                    %table.bordered-table.zebra-striped.condensed
-                      %tr
-                        %td
-                          = lt.radio_button :value, true
-                        %td
-                          = lt.radio_button :value, nil 
-                        %td
-                          = lt.radio_button :value, false 
-                        %td
-                          = lt.hidden_field :node_from
-                          = lt.hidden_field :node_to
-                          =lt.submit "Submit"
-                          = node[:node].title
-              #links_ins_edit.checkboxes
-                %table.bordered-table.zebra-striped.condensed
-                  %tr
-                    %th + 
-                    %th = 
-                    %th - 
-                    %th Title
-                - @nodes.each do |node|
-                  -link = node[:link_in]
-                  = form_for link do |li|
-                    %table.bordered-table.zebra-striped.condensed
-                      %tr
-                        %td
-                          =li.radio_button :value, true
-                        %td
-                          =li.radio_button :value, nil 
-                        %td
-                          =li.radio_button :value, false 
-                        %td
-                          =li.hidden_field :node_from
-                          =li.hidden_field :node_to
-                          =li.submit "Submit"
-                          = node[:node].title
+            = render 'links', :nodes=>@nodes
   #visualise

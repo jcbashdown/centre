@@ -37,5 +37,8 @@ header nav ul li {
 .hidden {
   display:none;
 }
-
+.center {
+  width: 330px;
+  margin:0px auto;
+}
 
