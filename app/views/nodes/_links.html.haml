@@ -22,16 +22,16 @@
         -link_id = link.new_record? ? "#{rand(Time.now.to_i)}#{Time.now.to_i}" : link.id
         %tr{:id => "link_#{link_id}"} 
           %td
-            = radio_button link_id, :value, -1, {:checked => link.new_record? ? true : false, :class=>'submitter'}
+            = radio_button link_id, :value, -1, {:checked => link.new_record? ? true : false, :class=>"submitter link_to #{link_id}"}
           %td
-            = radio_button link_id, :value, true, {:checked => (link.value==true && link.persisted?) ? true : false, :class=>'submitter'}
+            = radio_button link_id, :value, true, {:checked => (link.value==true && link.persisted?) ? true : false, :class=>"submitter link_to #{link_id}"}
           %td
-            = radio_button link_id, :value, nil, {:checked => (link.value==nil && link.persisted?) ? true : false, :class=>'submitter'}
+            = radio_button link_id, :value, nil, {:checked => (link.value==nil && link.persisted?) ? true : false, :class=>"submitter link_to #{link_id}"}
           %td
-            = radio_button link_id, :value, false, {:checked => (link.value==false && link.persisted?) ? true : false, :class=>'submitter'}
+            = radio_button link_id, :value, false, {:checked => (link.value==false && link.persisted?) ? true : false, :class=>"submitter link_to #{link_id}"}
           %td
-            = hidden_field link_id, :node_from, {:value=>link.node_from, :class=>'submitter'} 
-            = hidden_field link_id, :node_to, {:value=>link.node_to, :class=>'submitter'}
+            = hidden_field link_id, :node_from, {:value=>link.node_from, :class=>"submitter link_to #{link_id}"}
+            = hidden_field link_id, :node_to, {:value=>link.node_to, :class=>"submitter link_to #{link_id}"}
             = node[:node].title
   #links_ins_edit.checkboxes
     %table.bordered-table.zebra-striped.condensed
@@ -46,14 +46,14 @@
         -link_id = link.new_record? ? "#{rand(Time.now.to_i)}#{Time.now.to_i}" : link.id
         %tr{:id => "link_#{link_id}"} 
           %td
-            = radio_button link_id, :value, -1, {:checked => link.new_record? ? true : false, :class=>'submitter'}
+            = radio_button link_id, :value, -1, {:checked => link.new_record? ? true : false, :class=>"submitter link_in #{link_id}"}
           %td
-            = radio_button link_id, :value, true, {:checked => (link.value==true && link.persisted?) ? true : false, :class=>'submitter'}
+            = radio_button link_id, :value, true, {:checked => (link.value==true && link.persisted?) ? true : false, :class=>"submitter link_in #{link_id}"}
           %td
-            = radio_button link_id, :value, nil, {:checked => (link.value==nil && link.persisted?) ? true : false, :class=>'submitter'}
+            = radio_button link_id, :value, nil, {:checked => (link.value==nil && link.persisted?) ? true : false, :class=>"submitter link_in #{link_id}"}
           %td
-            = radio_button link_id, :value, false, {:checked => (link.value==false && link.persisted?) ? true : false, :class=>'submitter'}
+            = radio_button link_id, :value, false, {:checked => (link.value==false && link.persisted?) ? true : false, :class=>"submitter link_in #{link_id}"}
           %td
-            = hidden_field link_id, :node_from, {:value=>link.node_from, :class=>'submitter'} 
-            = hidden_field link_id, :node_to, {:value=>link.node_to, :class=>'submitter'}
+            = hidden_field link_id, :node_from, {:value=>link.node_from, :class=>"submitter link_in #{link_id}"}
+            = hidden_field link_id, :node_to, {:value=>link.node_to, :class=>"submitter link_in #{link_id}"}
             = node[:node].title
