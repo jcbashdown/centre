@@ -3,7 +3,8 @@
 # You can use CoffeeScript in this file: http://jashkenas.github.com/coffee-script/
 $(document).ready ->
   $('input.submitter').live "click", (event) ->
-    target = $(event.target)
-    div = target.parent('div')
-    target.submit
+    target_id = $(event.target).attr('id')
+    link_id = target_id.match(/(^\d+)/)
+    inputs = $('[id|="'+link_id+'"]')
+    data = inputs.serialize
   return false
