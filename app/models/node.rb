@@ -15,6 +15,7 @@ class Node < ActiveRecord::Base
         return hash[key].blank?
       end
     end 
+    # reject if not real link ids (either)
   end
   
   def all_with_link_ids
@@ -30,6 +31,17 @@ class Node < ActiveRecord::Base
       end
     end
     nodes
+  end
+
+  def update_attibutes params
+    if params[:link_tos_attributes]
+      params[:link_tos_attributes].each do |link| 
+        if link[:value]=="nil"
+          link[:value]=nil
+        end
+      end
+    end
+    super
   end
   
 end

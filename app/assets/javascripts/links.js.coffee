@@ -16,12 +16,11 @@ $(document).ready ->
       data_hash['value']=value
       to = $('input.node_to.link_to.'+link_id).attr("value")
       data_hash['node_to']=to
-      finished_hash["link_tos_attributes"]=[data_hash]
     else if data_hash["id"] && value =='_delete'
       data_hash['_delete']=1
-      finished_hash["link_tos_attributes"]=[data_hash]
+    finished_hash={"node":{"link_tos_attributes":[data_hash]}}
     $.ajax   
-      url: from   
+      url: "/nodes/"+from   
       type: "PUT"   
       data: finished_hash   
       error: (XMLHttpRequest, textStatus, errorThrown) ->     
@@ -43,12 +42,11 @@ $(document).ready ->
       data_hash['value']=value
       from = $('input.node_from.link_in.'+link_id).attr("value")
       data_hash['node_from']=from
-      finished_hash["link_ins_attributes"]=[data_hash]
     else if data_hash["id"] && value =='_delete'
       data_hash['_delete']=1
-      finished_hash["link_ins_attributes"]=[data_hash]
+    finished_hash={"node":{"link_ins_attributes":[data_hash]}}
     $.ajax   
-      url: to   
+      url: "/nodes/"+to   
       type: "PUT"   
       data: finished_hash   
       error: (XMLHttpRequest, textStatus, errorThrown) ->     

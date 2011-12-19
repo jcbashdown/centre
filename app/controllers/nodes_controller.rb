@@ -94,7 +94,6 @@ class NodesController < ApplicationController
   # PUT /nodes/1.json
   def update
     @node = Node.find(params[:id])
-
     respond_to do |format|
       if @node.update_attributes(params[:node])
         format.html { redirect_to "/", notice: 'Node was successfully updated.' }

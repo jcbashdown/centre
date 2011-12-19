@@ -66,4 +66,15 @@ describe Node do
       end
     end
   end
+  context 'creating links through update attributes when value is nil' do
+    before do
+      @node = Factory(:node)
+      @params =  {"link_tos_attributes"=>[{"node_from"=>@node.id, "value"=>"nil", "node_to"=>5}]}
+    end
+    
+    it "should set value to nil" do
+      @node.update_attributes @params
+      @node.link_tos.first.value.should == nil
+    end
+  end
 end

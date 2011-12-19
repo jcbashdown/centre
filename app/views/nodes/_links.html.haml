@@ -26,7 +26,7 @@
           %td
             = radio_button link_id, :value, true, {:checked => (link.value==true && link.persisted?) ? true : false, :class=>"submitter link_to #{link_id}"}
           %td
-            = radio_button link_id, :value, nil, {:checked => (link.value==nil && link.persisted?) ? true : false, :class=>"submitter link_to #{link_id}"}
+            = radio_button link_id, :value, "nil", {:checked => (link.value==nil && link.persisted?) ? true : false, :class=>"submitter link_to #{link_id}"}
           %td
             = radio_button link_id, :value, false, {:checked => (link.value==false && link.persisted?) ? true : false, :class=>"submitter link_to #{link_id}"}
           %td
@@ -46,11 +46,11 @@
         -link_id = link.new_record? ? "#{rand(Time.now.to_i)}#{Time.now.to_i}" : link.id
         %tr{:id => "link_#{link_id}"} 
           %td
-            = radio_button link_id, :value, -1, {:checked => link.new_record? ? true : false, :class=>"submitter link_in #{link_id}"}
+            = radio_button link_id, :value, '_delete', {:checked => link.new_record? ? true : false, :class=>"submitter link_in #{link_id}"}
           %td
             = radio_button link_id, :value, true, {:checked => (link.value==true && link.persisted?) ? true : false, :class=>"submitter link_in #{link_id}"}
           %td
-            = radio_button link_id, :value, nil, {:checked => (link.value==nil && link.persisted?) ? true : false, :class=>"submitter link_in #{link_id}"}
+            = radio_button link_id, :value, "nil", {:checked => (link.value==nil && link.persisted?) ? true : false, :class=>"submitter link_in #{link_id}"}
           %td
             = radio_button link_id, :value, false, {:checked => (link.value==false && link.persisted?) ? true : false, :class=>"submitter link_in #{link_id}"}
           %td
