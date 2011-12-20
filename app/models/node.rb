@@ -33,15 +33,16 @@ class Node < ActiveRecord::Base
     nodes
   end
 
-  def update_attibutes params
-    if params[:link_tos_attributes]
-      params[:link_tos_attributes].each do |link| 
-        if link[:value]=="nil"
-          link[:value]=nil
+  def update_attributes(params)
+    #doesn't work because the json decoded hash is all one big hash - no array
+    if params["link_tos_attributes"]
+      params["link_tos_attributes"].each_with_index do |link, index| 
+        if link["value"]=="nil"
+          params["link_tos_attributes"][index]["value"]=nil
         end
       end
     end
-    super
+    super params
   end
   
 end
