@@ -10,14 +10,14 @@ $(document).ready ->
     if link_id.length < 19
       data_hash["id"]=link_id
     from = $('input.node_from.link_to.'+link_id).attr("value")
-    data_hash['node_from']=from
     value = $(event.target).attr("value")
-    if value !='_delete'
+    if value !='_destroy'
       data_hash['value']=value
       to = $('input.node_to.link_to.'+link_id).attr("value")
       data_hash['node_to']=to
-    else if data_hash["id"] && value =='_delete'
-      data_hash['_delete']=1
+      data_hash['node_from']=from
+    else if data_hash["id"] && value =='_destroy'
+      data_hash['_destroy']=1
     finished_hash={"node":{"link_tos_attributes":[data_hash]}}
     $.ajax   
       url: "/nodes/"+from   
@@ -36,14 +36,14 @@ $(document).ready ->
     if link_id.length < 19
       data_hash["id"]=link_id
     to = $('input.node_to.link_in.'+link_id).attr("value")
-    data_hash['node_to']=to
     value = $(event.target).attr("value")
-    if value !='_delete'
+    if value !='_destroy'
       data_hash['value']=value
       from = $('input.node_from.link_in.'+link_id).attr("value")
       data_hash['node_from']=from
-    else if data_hash["id"] && value =='_delete'
-      data_hash['_delete']=1
+      data_hash['node_to']=to
+    else if data_hash["id"] && value =='_destroy'
+      data_hash['_destroy']=1
     finished_hash={"node":{"link_ins_attributes":[data_hash]}}
     $.ajax   
       url: "/nodes/"+to   

@@ -11,11 +11,11 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20111024230227) do
+ActiveRecord::Schema.define(:version => 20111221203727) do
 
   create_table "links", :force => true do |t|
     t.integer  "node_from"
-    t.boolean  "value"
+    t.integer  "value"
     t.integer  "user_id"
     t.integer  "node_to"
     t.datetime "created_at"
