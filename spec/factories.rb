@@ -1,8 +1,8 @@
 require 'factory_girl'
 
 Factory.define :node do |n|
-  n.title 'Test User'
-  n.text 'user@test.com'
+  n.title 'Test'
+  n.text 'Test text'
 end
 
 Factory.define :user do |u|

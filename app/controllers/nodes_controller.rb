@@ -78,7 +78,7 @@ class NodesController < ApplicationController
   # POST /nodes.json
   def create
     @node = Node.new(params[:node])
-
+    # new is not currently going to work... need to submit all at once or two stage process? one end point for links?
     respond_to do |format|
       if @node.save
         format.html { redirect_to "/", notice: 'Node was successfully created.' }

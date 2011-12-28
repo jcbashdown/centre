@@ -6,6 +6,6 @@ Feature: Edit Node
     Scenario: Editing nodes
       Given a node has been created
       When I go to the new node page for the created node
-      Then I should see "Title"
-      Then I should see "Text"
+      Then I should see "Test"
+      Then I should see "Test text"
       
