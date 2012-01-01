@@ -1,0 +1,59 @@
+%ul{:class => "tabs", 'data-tabs'=>"tabs"}
+
+  %li.active
+    %a{:href =>"#links_tos_edit"}
+      Links To
+      %span
+  %li
+    %a{:href => "#links_ins_edit"}
+      Links In
+      %span
+.tab-content
+  #links_tos_edit.active.checkboxes
+    %table.bordered-table.zebra-striped.condensed
+      %tr
+        %th No Link
+        %th + 
+        %th = 
+        %th - 
+        %th Title
+      - nodes.each do |node|
+        -link = node[:link_to]
+        -link_id = link.new_record? ? "#{rand(Time.now.to_i)}#{Time.now.to_i}" : link.id
+        %tr{:id => "link_#{link_id}"} 
+          %td
+            = radio_button link_id, :value, '_destroy', {:checked => link.new_record? ? true : false, :class=>"submitter link_to #{link_id} disabled", :disabled=>1}
+          %td
+            = radio_button link_id, :value, 1, {:checked => (link.value==1 && link.persisted?) ? true : false, :class=>"submitter link_to #{link_id} disabled", :disabled=>1}
+          %td
+            = radio_button link_id, :value, 0, {:checked => (link.value==0 && link.persisted?) ? true : false, :class=>"submitter link_to #{link_id} disabled", :disabled=>1}
+          %td
+            = radio_button link_id, :value, -1, {:checked => (link.value==-1 && link.persisted?) ? true : false, :class=>"submitter link_to #{link_id} disabled", :disabled=>1}
+          %td
+            = hidden_field link_id, :node_from, {:value=>link.node_from, :class=>"node_from link_to #{link_id}"}
+            = hidden_field link_id, :node_to, {:value=>link.node_to, :class=>"node_to link_to #{link_id}"}
+            = node[:node].title
+  #links_ins_edit.checkboxes
+    %table.bordered-table.zebra-striped.condensed
+      %tr
+        %th No Link
+        %th + 
+        %th = 
+        %th - 
+        %th Title
+      - nodes.each do |node|
+        -link = node[:link_in]
+        -link_id = link.new_record? ? "#{rand(Time.now.to_i)}#{Time.now.to_i}" : link.id
+        %tr{:id => "link_#{link_id}"} 
+          %td
+            = radio_button link_id, :value, '_destroy', {:checked => link.new_record? ? true : false, :class=>"submitter link_in #{link_id} disabled", :disabled=>1}
+          %td
+            = radio_button link_id, :value, 1, {:checked => (link.value==1 && link.persisted?) ? true : false, :class=>"submitter link_in #{link_id} disabled", :disabled=>1}
+          %td
+            = radio_button link_id, :value, 0, {:checked => (link.value==0 && link.persisted?) ? true : false, :class=>"submitter link_in #{link_id} disabled", :disabled=>1}
+          %td
+            = radio_button link_id, :value, -1, {:checked => (link.value==-1 && link.persisted?) ? true : false, :class=>"submitter link_in #{link_id} disabled", :disabled=>1}
+          %td
+            = hidden_field link_id, :node_from, {:value=>link.node_from, :class=>"node_from link_in #{link_id}"}
+            = hidden_field link_id, :node_to, {:value=>link.node_to, :class=>"node_to link_in #{link_id}"}
+            = node[:node].title
