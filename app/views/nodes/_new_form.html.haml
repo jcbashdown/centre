@@ -5,12 +5,14 @@
       %ul
         - @node.errors.full_messages.each do |msg|
           %li= msg
-
-  .field
-    = f.label :title
-    = f.text_field :title
-  .field
-    = f.label :text
-    = f.text_area :text
+  %ul.unstyled
+    %li.clearfix 
+      = f.label :title
+      .input
+        = f.text_field :title
+    %li.clearfix
+      = f.label :text
+      .input
+      = f.text_area :text
   .actions
     = f.submit 'Save'
