@@ -3,7 +3,7 @@ Centre::Application.routes.draw do
 
   resources :nodes
   resources :links
-  match '/nodes/:id/test' => 'nodes#test', :as => :test
+  match '/nodes/:id/add_or_edit_link' => 'nodes#add_or_edit_link', :as => :add_or_edit_link
 
   #get \"users\/show\"
 

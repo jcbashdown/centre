@@ -18,9 +18,9 @@ $(document).ready ->
       data_hash['node_from']=from
     else if data_hash["id"] && value =='_destroy'
       data_hash['_destroy']=1
-    finished_hash={"node":{"link_tos_attributes":[data_hash]}}
+    finished_hash={"node":{"link_tos_attributes":[data_hash]}, "link_id":link_id}
     $.ajax   
-      url: "/nodes/"+from   
+      url: "/nodes/"+from+"/add_or_edit_link"  
       type: "PUT"   
       data: finished_hash   
       error: (XMLHttpRequest, textStatus, errorThrown) ->     
@@ -44,9 +44,9 @@ $(document).ready ->
       data_hash['node_to']=to
     else if data_hash["id"] && value =='_destroy'
       data_hash['_destroy']=1
-    finished_hash={"node":{"link_ins_attributes":[data_hash]}}
+    finished_hash={"node":{"link_ins_attributes":[data_hash]}, "link_id":link_id}
     $.ajax   
-      url: "/nodes/"+to   
+      url: "/nodes/"+to+"/add_or_edit_link"   
       type: "PUT"   
       data: finished_hash   
       error: (XMLHttpRequest, textStatus, errorThrown) ->     

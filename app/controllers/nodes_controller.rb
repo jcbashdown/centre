@@ -1,19 +1,24 @@
 class NodesController < ApplicationController
   # GET /nodes
   # GET /nodes.json
-  def test
+  def add_or_edit_link
+    node = params[:node]
+    link_type = node[:link_ins_attributes].present? ? :link_ins_attributes : :link_tos_attributes
     @node = Node.find(params[:id])
-    @links = Array.new
-    @nodes = @node.all_with_link_ids 
-    @nodes.each do |node|
-      @links << node[:link_to]
-    end
-    if request.xhr?
-      render :test, :layout => false
+    tr_id = params[:link_id]
+    if @node.update_attributes(node)
+      link = Link.find_by_node_from_and_node_to(node[link_type]["0"][:node_from], node[link_type]["0"][:node_to])
+      render :json => {:value => node[link_type]["0"][:value], :old_id=>tr_id, :new_id=>link.id}
     else
-      # renders index view
+      if node[link_type]["0"][:id].present?
+        value = Link.find(node[link_type]["0"][:id]).value
+        render :json => {:value => value, :old_id=>tr_id, :new_id=>tr_id}
+      else
+        render :json => {:value => nil, :old_id=>tr_id, :new_id=>tr_id}
+      end
     end
   end
+
   def index
     @nodes = Node.all 
     if request.xhr?
