@@ -1,0 +1,13 @@
+
+%td
+  = radio_button hash[:new_id], :value, '_destroy', {:checked => hash[:value]==nil ? true : false, :class=>"submitter link_to #{hash[:new_id]}"}
+%td
+  = radio_button hash[:new_id], :value, 1, {:checked => hash[:value]=1 ? true : false, :class=>"submitter link_to #{hash[:new_id]}"}
+%td
+  = radio_button hash[:new_id], :value, 0, {:checked => hash[:value]==0 ? true : false, :class=>"submitter link_to #{hash[:new_id]}"}
+%td
+  = radio_button hash[:new_id], :value, -1, {:checked => hash[:value]==-1 ? true : false, :class=>"submitter link_to #{hash[:new_id]}"}
+%td
+  = hidden_field hash[:new_id], :node_from, {:value=>hash[:link].node_from, :class=>"node_from link_to #{hash[:new_id]}"}
+  = hidden_field hash[:new_id], :node_to, {:value=>hash[:link].node_to, :class=>"node_to link_to #{hash[:new_id]}"}
+  hello!

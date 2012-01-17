@@ -18,6 +18,9 @@ $(document).ready ->
       data_hash['node_from']=from
     else if data_hash["id"] && value =='_destroy'
       data_hash['_destroy']=1
+      to = $('input.node_to.link_to.'+link_id).attr("value")
+      data_hash['node_to']=to
+      data_hash['node_from']=from
     finished_hash={"node":{"link_tos_attributes":[data_hash]}, "link_id":link_id}
     $.ajax   
       url: "/nodes/"+from+"/add_or_edit_link"  
@@ -26,7 +29,7 @@ $(document).ready ->
       error: (XMLHttpRequest, textStatus, errorThrown) ->     
         alert errorThrown    
       success: (data, textStatus, XMLHttpRequest) ->     
-        alert "Succeeded"
+        $("#link_"+link_id).empty().html(data)
     return true
   $('input.submitter.link_in').live "click", (event) ->
     target_id = $(event.target).attr('id')
@@ -44,6 +47,9 @@ $(document).ready ->
       data_hash['node_to']=to
     else if data_hash["id"] && value =='_destroy'
       data_hash['_destroy']=1
+      from = $('input.node_from.link_in.'+link_id).attr("value")
+      data_hash['node_from']=from
+      data_hash['node_to']=to
     finished_hash={"node":{"link_ins_attributes":[data_hash]}, "link_id":link_id}
     $.ajax   
       url: "/nodes/"+to+"/add_or_edit_link"   
@@ -52,6 +58,6 @@ $(document).ready ->
       error: (XMLHttpRequest, textStatus, errorThrown) ->     
         alert errorThrown    
       success: (data, textStatus, XMLHttpRequest) ->     
-        alert "Succeeded"
+        $("#link_"+link_id).empty().html(data)
     return true 
   return false

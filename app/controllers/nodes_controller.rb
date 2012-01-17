@@ -8,13 +8,14 @@ class NodesController < ApplicationController
     tr_id = params[:link_id]
     if @node.update_attributes(node)
       link = Link.find_by_node_from_and_node_to(node[link_type]["0"][:node_from], node[link_type]["0"][:node_to])
-      render :json => {:value => node[link_type]["0"][:value], :old_id=>tr_id, :new_id=>link.id}
+      render :partial => 'new_link', :locals=>{:hash=>{:value => node[link_type]["0"][:value], :old_id=>tr_id, :new_id=>link.id, :link=>link}}
     else
       if node[link_type]["0"][:id].present?
-        value = Link.find(node[link_type]["0"][:id]).value
-        render :json => {:value => value, :old_id=>tr_id, :new_id=>tr_id}
+        link = Link.find(node[link_type]["0"][:id])
+        render :partial => 'new_link', :locals=>{:hash=>{:value => link.value, :old_id=>tr_id, :new_id=>tr_id, :link=>link}}
       else
-        render :json => {:value => nil, :old_id=>tr_id, :new_id=>tr_id}
+        link = Link.new(:node_from=>node[link_type]["0"][:node_from], :node_to=>node[link_type]["0"][:node_to])
+        render :partial => 'new_link', :locals=>{:hash=>{:value => nil, :old_id=>tr_id, :new_id=>tr_id, :link=>link}}
       end
     end
   end
