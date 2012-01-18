@@ -7,7 +7,7 @@ $(document).ready ->
     link_id = target_id.match(/^\d+/)[0]
     data_hash = {}
     finished_hash = {}
-    if link_id.length < 19
+    if link_id.length < 16
       data_hash["id"]=link_id
     from = $('input.node_from.link_to.'+link_id).attr("value")
     value = $(event.target).attr("value")
@@ -29,14 +29,14 @@ $(document).ready ->
       error: (XMLHttpRequest, textStatus, errorThrown) ->     
         alert errorThrown    
       success: (data, textStatus, XMLHttpRequest) ->     
-        $("#link_"+link_id).empty().html(data)
+        $("#link_"+link_id).replaceWith(data)
     return true
   $('input.submitter.link_in').live "click", (event) ->
     target_id = $(event.target).attr('id')
     link_id = target_id.match(/^\d+/)[0]
     data_hash = {}
     finished_hash = {}
-    if link_id.length < 19
+    if link_id.length < 16
       data_hash["id"]=link_id
     to = $('input.node_to.link_in.'+link_id).attr("value")
     value = $(event.target).attr("value")
@@ -58,6 +58,6 @@ $(document).ready ->
       error: (XMLHttpRequest, textStatus, errorThrown) ->     
         alert errorThrown    
       success: (data, textStatus, XMLHttpRequest) ->     
-        $("#link_"+link_id).empty().html(data)
+        $("#link_"+link_id).replaceWith(data)
     return true 
   return false

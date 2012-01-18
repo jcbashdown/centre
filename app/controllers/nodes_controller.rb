@@ -4,18 +4,23 @@ class NodesController < ApplicationController
   def add_or_edit_link
     node = params[:node]
     link_type = node[:link_ins_attributes].present? ? :link_ins_attributes : :link_tos_attributes
+    title = node[:link_ins_attributes].present? ? Node.find(node[link_type]["0"][:node_from]).title : Node.find(node[link_type]["0"][:node_to]).title 
     @node = Node.find(params[:id])
     tr_id = params[:link_id]
-    if @node.update_attributes(node)
-      link = Link.find_by_node_from_and_node_to(node[link_type]["0"][:node_from], node[link_type]["0"][:node_to])
-      render :partial => 'new_link', :locals=>{:hash=>{:value => node[link_type]["0"][:value], :old_id=>tr_id, :new_id=>link.id, :link=>link}}
+    if @node.update_attributes!(node)
+      link = Link.find_or_initialize_by_node_from_and_node_to(node[link_type]["0"][:node_from], node[link_type]["0"][:node_to])
+      new_id = link.id.present? ? link.id : "#{rand(Time.now.to_i)}#{Time.now.to_i}"
+      value = node[link_type]["0"][:_destroy]=="1" ? nil : node[link_type]["0"][:value].to_i
+      render :partial => 'new_link', :locals=>{:value => value, :old_id=>tr_id, :new_id=>new_id, :link=>link, :title=>title}
+      hash = {:value => value, :old_id=>tr_id, :new_id=>new_id, :link=>link, :title=>title}
+      p hash
     else
       if node[link_type]["0"][:id].present?
         link = Link.find(node[link_type]["0"][:id])
-        render :partial => 'new_link', :locals=>{:hash=>{:value => link.value, :old_id=>tr_id, :new_id=>tr_id, :link=>link}}
+        render :partial => 'new_link', :locals=>{:value => link.value, :old_id=>tr_id, :new_id=>tr_id, :link=>link, :title=>title}
       else
         link = Link.new(:node_from=>node[link_type]["0"][:node_from], :node_to=>node[link_type]["0"][:node_to])
-        render :partial => 'new_link', :locals=>{:hash=>{:value => nil, :old_id=>tr_id, :new_id=>tr_id, :link=>link}}
+        render :partial => 'new_link', :locals=>{:value => nil, :old_id=>tr_id, :new_id=>tr_id, :link=>link, :title=>title}
       end
     end
   end
