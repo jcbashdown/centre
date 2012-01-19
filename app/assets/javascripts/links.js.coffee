@@ -5,6 +5,7 @@ $(document).ready ->
   $('input.submitter.link_to').live "click", (event) ->
     target_id = $(event.target).attr('id')
     link_id = target_id.match(/^\d+/)[0]
+    $('#link_'+link_id).ajaxLoader()
     data_hash = {}
     finished_hash = {}
     if link_id.length < 16
@@ -26,14 +27,17 @@ $(document).ready ->
       url: "/nodes/"+from+"/add_or_edit_link"  
       type: "PUT"   
       data: finished_hash   
-      error: (XMLHttpRequest, textStatus, errorThrown) ->     
+      error: (XMLHttpRequest, textStatus, errorThrown) ->
+        $("#link_"+link_id).ajaxLoaderRemove()
         alert errorThrown    
-      success: (data, textStatus, XMLHttpRequest) ->     
+      success: (data, textStatus, XMLHttpRequest) ->
+        $("#link_"+link_id).ajaxLoaderRemove()
         $("#link_"+link_id).replaceWith(data)
     return true
   $('input.submitter.link_in').live "click", (event) ->
     target_id = $(event.target).attr('id')
     link_id = target_id.match(/^\d+/)[0]
+    $('#link_'+link_id).ajaxLoader()
     data_hash = {}
     finished_hash = {}
     if link_id.length < 16
@@ -55,9 +59,11 @@ $(document).ready ->
       url: "/nodes/"+to+"/add_or_edit_link"   
       type: "PUT"   
       data: finished_hash   
-      error: (XMLHttpRequest, textStatus, errorThrown) ->     
+      error: (XMLHttpRequest, textStatus, errorThrown) ->
+        $("#link_"+link_id).ajaxLoaderRemove()
         alert errorThrown    
-      success: (data, textStatus, XMLHttpRequest) ->     
+      success: (data, textStatus, XMLHttpRequest) ->
+        $("#link_"+link_id).ajaxLoaderRemove()
         $("#link_"+link_id).replaceWith(data)
     return true 
   return false
