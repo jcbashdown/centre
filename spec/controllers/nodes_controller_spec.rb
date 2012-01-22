@@ -60,6 +60,10 @@ describe NodesController do
 
   describe "POST create" do
     describe "with valid params" do
+      before do
+        @user = Factory(:user)
+        @controller.stub(:current_user).and_return @user
+      end
       it "creates a new Node" do
         expect {
           post :create, :node => valid_attributes
@@ -70,6 +74,12 @@ describe NodesController do
         post :create, :node => valid_attributes
         assigns(:node).should be_a(Node)
         assigns(:node).should be_persisted
+      end
+
+      it "assigns the node to the current user" do
+        post :create, :node => valid_attributes
+        node = Node.last
+        node.user.should == @user
       end
 
       it "redirects to the created node" do

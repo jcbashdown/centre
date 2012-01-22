@@ -4,6 +4,7 @@ class Node < ActiveRecord::Base
   has_many :link_tos, :foreign_key => "node_from", :class_name => "Link"
   has_many :target_nodes, :through => :link_tos, :class_name => "Node", :foreign_key => "node_from"
   has_many :source_nodes, :through => :link_ins, :class_name => "Node", :foreign_key => "node_to"
+  belongs_to :user
   
   accepts_nested_attributes_for :link_ins, :allow_destroy => true#, :reject_if => :reject_link
   accepts_nested_attributes_for :link_tos, :allow_destroy => true#, :reject_if => :reject_link

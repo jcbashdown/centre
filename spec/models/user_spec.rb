@@ -99,5 +99,45 @@ describe User do
     end
 
   end
+  
+  describe "creating and deleting links" do
+    before do
+      @user = Factory(:user)
+      @node_one = Factory(:node)
+      @node_two = Factory(:node)
+      @node_one.target_nodes << @node_two
+      @link = Link.find_by_node_from_and_node_to(@node_one.id, @node_two.id)
+      @count = @user.user_links.count
+      @user.links << @link
+      @user.reload
+      @link.reload
+    end
+    context "when adding a link" do
+      it "should create the user link" do
+        @user.links.count.should == @count+1
+        @user.user_links.count.should == @count+1
+      end
+      it "should increment the counter cache" do
+        @link.users_count.should == @count+1
+      end
+      context "when deleting the user" do
+        before do
+           @user.destroy 
+        end
+        it "should reduce the user_links count by one" do
+          @link.user_links.count.should == @count
+        end
+        it "should reduce the user_links count by one" do
+          @link.users_count.should == @count
+        end
+        it "should get created and updated when we edit a link" do
+          pending
+        end
+        it "should limit links to one of each type for a single from/to combination" do
+          pending
+        end
+      end
+    end
+  end
 
 end

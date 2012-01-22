@@ -91,6 +91,7 @@ class NodesController < ApplicationController
     # new is not currently going to work... need to submit all at once or two stage process? one end point for links?
     respond_to do |format|
       if @node.save
+        @user.nodes << @node
         format.html { redirect_to "/", notice: 'Node was successfully created.' }
         format.json { render json: @node, status: :created, location: @node }
       else

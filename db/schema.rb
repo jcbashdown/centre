@@ -11,20 +11,28 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20111221203727) do
+ActiveRecord::Schema.define(:version => 20120122155903) do
 
   create_table "links", :force => true do |t|
     t.integer  "node_from"
     t.integer  "value"
-    t.integer  "user_id"
     t.integer  "node_to"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "users_count", :default => 0, :null => false
   end
 
   create_table "nodes", :force => true do |t|
     t.string   "title"
     t.text     "text"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.integer  "user_id"
+  end
+
+  create_table "user_links", :force => true do |t|
+    t.string   "user_id"
+    t.text     "link_id"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
