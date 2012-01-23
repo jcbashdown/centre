@@ -123,18 +123,13 @@ describe User do
       context "when deleting the user" do
         before do
            @user.destroy 
+           @link.reload
         end
         it "should reduce the user_links count by one" do
           @link.user_links.count.should == @count
         end
         it "should reduce the user_links count by one" do
           @link.users_count.should == @count
-        end
-        it "should get created and updated when we edit a link" do
-          pending
-        end
-        it "should limit links to one of each type for a single from/to combination" do
-          pending
         end
       end
     end

@@ -10,6 +10,9 @@ class NodesController < ApplicationController
     tr_id = params[:link_id]
     if @node.update_attributes!(node)
       link = Link.find_or_initialize_by_node_from_and_node_to(node[link_type]["0"][:node_from], node[link_type]["0"][:node_to])
+      if link.persisted?
+        @user.link << link
+      end
       new_id = link.id.present? ? link.id : "#{rand(Time.now.to_i)}#{Time.now.to_i}"
       value = node[link_type]["0"][:_destroy]=="1" ? nil : node[link_type]["0"][:value].to_i
       render :partial => 'new_link', :locals=>{:value => value, :old_id=>tr_id, :new_id=>new_id, :link=>link, :title=>title, :short_link_type=>short_link_type}
