@@ -7,46 +7,84 @@ describe Link do
     end  
   end
   describe "on creation" do
+    before do
+      @node_one = Factory(:node)
+      @node_two = Factory(:node)
+      @node_two.source_nodes << @node_one
+      @link = Link.find_by_node_from_and_node_to(@node_one.id, @node_two.id)
+    end
     context "when the link is positive" do
       before do
-        @link = Factory(:link, :value=>1)
+        @link.update_attributes!(:value=>-1)
+        @node_two.reload
+        @count = @node_two.upvotes_count
+        @link.update_attributes!(:value=>1)
+        @node_two.reload
       end
       it "should increment the upvote counter cache on the node" do
-        pending 
+        @node_two.upvotes_count.should == @count+1
       end
     end
     context "when the link is negative" do
       before do
-        
+        @link.update_attributes!(:value=>1)
+        @node_two.reload
+        @count = @node_two.downvotes_count
+        @link.update_attributes!(:value=>-1)
+        @node_two.reload
       end
       it "should increment the downvote counter cache on the node" do
-        pending
+        @node_two.downvotes_count.should == @count+1
       end
     end
     context "when the link is equality" do
       before do
-        
+        @link.update_attributes!(:value=>-1)
+        @node_two.reload
+        @count = @node_two.equivalents_count
+        @link.update_attributes!(:value=>0)
+        @node_two.reload
       end
       it "should increment the equality counter cache on the node" do
-        pending 
+        @node_two.equivalents_count.should == @count+1
       end
     end
-  end
-  describe "on deletion" do
-    context "when the link is positive" do
-      before do
-        
+    describe "on deletion" do
+      context "when the link is positive" do
+        before do
+          @link.update_attributes!(:value=>1)
+          @node_two.reload
+          @count = @node_two.upvotes_count
+        end
+        it "should decrement the upvote counter cache on the node" do
+          @link.destroy
+          @node_two.reload
+          @node_two.upvotes_count.should == @count-1
+        end
       end
-      it "should increment the upvote counter cache on the node" do
-        pending 
+      context "when the link is negative" do
+        before do
+          @link.update_attributes!(:value=>-1)
+          @node_two.reload
+          @count = @node_two.downvotes_count
+        end
+        it "should decrement the downvote counter cache on the node" do
+          @link.destroy
+          @node_two.reload
+          @node_two.downvotes_count.should == @count-1
+        end
       end
-    end
-    context "when the link is negative" do
-      before do
-        
-      end
-      it "should increment the downvote counter cache on the node" do
-        pending 
+      context "when the link is equal" do
+        before do
+          @link.update_attributes!(:value=>0)
+          @node_two.reload
+          @count = @node_two.equivalents_count
+        end
+        it "should decrement the downvote counter cache on the node" do
+          @link.destroy
+          @node_two.reload
+          @node_two.equivalents_count.should == @count-1
+        end
       end
     end
   end

@@ -7,5 +7,36 @@ class Link < ActiveRecord::Base
   #spec this
   validates :node_from, :presence => true
   validates :node_to, :presence => true
+
+  after_save :increment_counter_cache
+
+  after_destroy :decrement_counter_cache
+
+  def increment_counter_cache
+    vote = self.value
+    node = target_node
+    if vote == 1
+      node.upvotes_count+=1
+    elsif vote == -1
+      node.downvotes_count+=1
+    else
+      node.equivalents_count+=1 
+    end
+    node.save!
+  end
+  
+  def decrement_counter_cache
+    vote = self.value
+    node = target_node
+    if vote == 1
+      node.upvotes_count-=1
+    elsif vote == -1
+      node.downvotes_count-=1
+    else
+      node.equivalents_count-=1 
+    end
+    node.save!
+    
+  end
   
 end

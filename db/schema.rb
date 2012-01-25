@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120122155903) do
+ActiveRecord::Schema.define(:version => 20120124231256) do
 
   create_table "links", :force => true do |t|
     t.integer  "node_from"
@@ -28,6 +28,9 @@ ActiveRecord::Schema.define(:version => 20120122155903) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "user_id"
+    t.integer  "upvotes_count",     :default => 0, :null => false
+    t.integer  "downvotes_count",   :default => 0, :null => false
+    t.integer  "equivalents_count", :default => 0, :null => false
   end
 
   create_table "user_links", :force => true do |t|
