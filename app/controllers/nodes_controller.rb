@@ -11,7 +11,7 @@ class NodesController < ApplicationController
     if @node.update_attributes!(node)
       link = Link.find_or_initialize_by_node_from_and_node_to(node[link_type]["0"][:node_from], node[link_type]["0"][:node_to])
       if link.persisted?
-        @user.link << link
+        @user.links << link
       end
       new_id = link.id.present? ? link.id : "#{rand(Time.now.to_i)}#{Time.now.to_i}"
       value = node[link_type]["0"][:_destroy]=="1" ? nil : node[link_type]["0"][:value].to_i
@@ -95,7 +95,7 @@ class NodesController < ApplicationController
     respond_to do |format|
       if @node.save
         @user.nodes << @node
-        format.html { redirect_to "/", notice: 'Node was successfully created.' }
+        format.html { redirect_to @node, notice: 'Node was successfully created.' }
         format.json { render json: @node, status: :created, location: @node }
       else
         format.html { render action: "new" }
@@ -111,7 +111,7 @@ class NodesController < ApplicationController
     #symbolise keys
     respond_to do |format|
       if @node.update_attributes(params[:node])
-        format.html { redirect_to "/", notice: 'Node was successfully updated.' }
+        format.html { redirect_to @node, notice: 'Node was successfully updated.' }
         format.json { head :ok }
       else
         format.html { render action: "edit" }
