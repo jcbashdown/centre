@@ -1,4 +1,7 @@
 class ApplicationController < ActionController::Base
+  #todo - no create, update or add/edit links if no current user, no new and edit actions too
+  #no links to edit and new, all link boxes disabled
+
   protect_from_forgery
   include FrontendHelpers::Html5Helper
 
