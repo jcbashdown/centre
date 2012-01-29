@@ -1,4 +1,6 @@
 class LinksController < ApplicationController
+  before_filter :signed_in_user, :except => [:show, :index]
+
   def link_ins_edit 
     @links= Link.all 
     if request.xhr?

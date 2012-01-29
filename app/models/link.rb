@@ -16,11 +16,11 @@ class Link < ActiveRecord::Base
     vote = self.value
     node = target_node
     if vote == 1
-      node.upvotes_count+=1
+      node.upvotes_count = users_count
     elsif vote == -1
-      node.downvotes_count+=1
+      node.downvotes_count = users_count
     else
-      node.equivalents_count+=1 
+      node.equivalents_count = users_count
     end
     node.save!
   end

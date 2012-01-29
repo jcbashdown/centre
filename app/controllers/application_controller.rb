@@ -10,5 +10,12 @@ class ApplicationController < ActionController::Base
   def set_current_user
     @user = current_user
   end
+
+  def signed_in_user
+    unless @user 
+      flash[:notice] = "You must be a signed in user to view this page"
+      redirect_to "/"
+    end
+  end
   
 end

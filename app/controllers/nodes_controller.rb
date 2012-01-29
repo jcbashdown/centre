@@ -1,4 +1,5 @@
 class NodesController < ApplicationController
+  before_filter :signed_in_user, :except => [:show, :index]
   # GET /nodes
   # GET /nodes.json
   def add_or_edit_link
@@ -131,4 +132,5 @@ class NodesController < ApplicationController
       format.json { head :ok }
     end
   end
+  
 end
