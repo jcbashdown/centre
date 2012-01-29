@@ -12,6 +12,8 @@ describe Link do
       @node_two = Factory(:node)
       @node_two.source_nodes << @node_one
       @link = Link.find_by_node_from_and_node_to(@node_one.id, @node_two.id)
+      @user = Factory(:user)
+      @link.users <<  @user
     end
     context "when the link is positive" do
       before do
