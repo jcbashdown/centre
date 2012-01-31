@@ -33,6 +33,7 @@ header nav ul li {
   overflow: auto;
   border: 1px solid #ccc;
   max-height:600px;
+  max-width:340px;
 }
 .hidden {
   display:none;

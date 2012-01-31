@@ -17,17 +17,16 @@
               %td
                 %ul.unstyled
                   %li.clearfix
-                    %h4
+                    %strong
                       =link_to node.title, node, :class => 'load' 
                   %li.clearfix
-                    =node.text
                     - if @user
                       =link_to 'Destroy', node, :confirm => 'Are you sure?', :method => :delete, :class => 'right'
         -if @user
           = link_to 'New Node', new_node_path, :class => 'load' 
       .span12
         .row.show-grid
-          .span8.main_content
+          .span6.main_content
             %p#notice= notice
             .center
               %h2
@@ -39,6 +38,6 @@
               %br
               - if @user
                 = link_to 'Edit text', edit_node_path(@node), :class => "load"
-          .span4.right_content
+          .span6.right_content
             = render 'links', :nodes=>@nodes
   #visualise

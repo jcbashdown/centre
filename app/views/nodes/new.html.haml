@@ -17,19 +17,18 @@
               %td
                 %ul.unstyled
                   %li.clearfix
-                    %h4
+                    %strong
                       =link_to node.title, node, :class => 'load' 
                   %li.clearfix
-                    =node.text
                     =link_to 'Destroy', node, :confirm => 'Are you sure?', :method => :delete, :class => 'right'
         = link_to 'New Node', new_node_path, :class => 'load' 
       .span12
         .row.show-grid
-          .span8.main_content
+          .span6.main_content
             %h1 New Node
             = render 'new_form'
             = link_to 'Back', nodes_path
-          .span4.right_content
+          .span6.right_content
             = render 'new_links', :nodes=>@nodes
   #visualise
 
