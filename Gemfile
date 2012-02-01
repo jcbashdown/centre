@@ -42,4 +42,6 @@ gem "devise", ">= 1.4.7"
 gem "frontend-helpers"
 gem 'less-rails-bootstrap'
 gem 'ruby-debug19'
+gem "rails-backbone"
+
 

@@ -15,7 +15,10 @@
       = link_to 'New Node', new_node_path, :class => 'load' 
   .span12
     .row.show-grid
-      .span6.main_content
+      .span6.main_contentt
+  $(function() {     window.router = new Blog.Routers.PostsRouter({posts: <%= @posts.to_json.html_safe -%>});     Backbone.history.start();   });
+
+        #nodes
         %h2
           Explanatory Text
       .span6.right_content

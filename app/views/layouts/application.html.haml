@@ -16,5 +16,14 @@
         - flash.each do |name, msg|
           = content_tag :div, msg, :id => "flash_#{name}" if msg.is_a?(String)
       #main{:role => "main"}
+        %ul.tabs
+          %li.active
+            %a{:href =>"/nodes"}
+              Nodes
+              %span
+          %li
+            %a{:href => "/visualise"} 
+              Visualise
+              %span
         =yield 
       %footer
