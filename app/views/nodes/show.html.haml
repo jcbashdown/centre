@@ -3,6 +3,9 @@
     .row.show-grid
       .span4
         %table
+          %tr
+            -if @user
+              = link_to 'New Node', new_node_path, :class => 'load' 
           - @all_nodes.each do |node|
             %tr
               %td
@@ -13,7 +16,8 @@
                   %li.clearfix
                     - if @user
                       =link_to 'Destroy', node, :confirm => 'Are you sure?', :method => :delete, :class => 'right'
-        -if @user
+                      = link_to 'Edit text', edit_node_path(node), :class => "load"
+        - if @user
           = link_to 'New Node', new_node_path, :class => 'load' 
       .span12
         .row.show-grid

@@ -7,12 +7,12 @@
           %li= msg
   %ul.unstyled
     %li.clearfix 
-      = f.label :title
-      .input
+      = f.label :title, {:class=>"width_80"}
+      .margin_100
         = f.text_field :title
     %li.clearfix
-      = f.label :text
-      .input
-        = f.text_area :text
+      = f.label :text, {:class=>"width_80"}
+      .margin_100
+        = f.text_area :text, {:class=>"height_300"}
   .actions
     = f.submit 'Save'

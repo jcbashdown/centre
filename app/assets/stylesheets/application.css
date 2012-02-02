@@ -42,4 +42,14 @@ header nav ul li {
   width: 330px;
   margin:0px auto;
 }
+.width_80{
+  width:80;
+}
+.margin_100{
+  margin-left: 100px;
+}
+.height_300{
+  height:300px;
+}
+
 
