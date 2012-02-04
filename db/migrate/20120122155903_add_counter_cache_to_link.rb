@@ -1,8 +1,5 @@
 class AddCounterCacheToLink < ActiveRecord::Migration
-  def up
+  def change 
     add_column :links, :users_count, :integer, :default=>0, :null => false
-  end
-  def down
-    remove_column :links, :users_count
   end
 end

@@ -4,12 +4,21 @@ class Node < ActiveRecord::Base
   has_many :link_tos, :foreign_key => "node_from", :class_name => "Link"
   has_many :target_nodes, :through => :link_tos, :class_name => "Node", :foreign_key => "node_from"
   has_many :source_nodes, :through => :link_ins, :class_name => "Node", :foreign_key => "node_to"
+  has_many :nodes_globals
+  has_many :globals, :through=>:nodes_globals
   belongs_to :user
   
   accepts_nested_attributes_for :link_ins, :allow_destroy => true#, :reject_if => :reject_link
   accepts_nested_attributes_for :link_tos, :allow_destroy => true#, :reject_if => :reject_link
-  #has_many :related_nodes, :through => :links
-  #spec this - has many so this is wrong approach?
+  after_create :set_all
+  
+  def set_all
+    # do this with global setting
+    all = Global.find_by_name("All")
+    all.nodes << self
+    all.save!
+  end  
+
   def reject_link(hash)
     p hash
     hash.each do |key|
@@ -34,17 +43,5 @@ class Node < ActiveRecord::Base
     end
     nodes
   end
-
-  #def update_attributes(params)
-    #doesn't work because the json decoded hash is all one big hash - no array
-    #if params["link_tos_attributes"]
-    #  params["link_tos_attributes"].each_with_index do |link, index| 
-    #    if link["value"]=="nil"
-    #      params["link_tos_attributes"][index]["value"]=nil
-    #    end
-    #  end
-    #end
-    #super params
-  #end
   
 end
