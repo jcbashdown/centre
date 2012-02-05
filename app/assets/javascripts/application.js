@@ -5,6 +5,7 @@
 // the compiled file.
 //
 //= require jquery
+//= require jquery.ajaxLoader
 //= require jquery_ujs
 //= require links
 //= require twitter/bootstrap
