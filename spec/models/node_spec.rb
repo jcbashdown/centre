@@ -39,6 +39,7 @@ describe Node do
     context 'linking node to node_two' do
       before do
         @node.target_nodes << @node_two
+        @node.reload
         @link_to = @node.link_tos.first
         link_in = Link.new(:node_from=>@node_two.id, :node_to=>@node.id)
         @hash = [{:node => @node_two, :link_in=>link_in, :link_to=>@link_to}]
@@ -77,4 +78,41 @@ describe Node do
   #    @node.link_tos.first.value.should == nil
   #  end
   #end
+  describe "when askes has_links?" do
+    before do
+      @node = Factory(:node)
+    end
+    context "when node has upvotes but no downvotes" do
+      before do
+        @node.update_attributes(:upvotes_count=>3)
+      end
+      it "should response to has_links? with true" do
+        @node.has_links?.should == true
+      end
+    end
+    context "when node has downvotes but no upvotes" do
+      before do
+        @node.update_attributes(:downvotes_count=>3)
+      end
+      it "should response to has_links? with true" do
+        @node.has_links?.should == true
+      end
+
+    end
+    context "when node has upvotes and downvotes" do
+      before do
+        @node.update_attributes(:upvotes_count=>3, :downvotes_count=>1)
+      end
+      it "should response to has_links? with true" do
+        @node.has_links?.should == true
+      end
+
+    end
+    context "when node has not upvotes or downvotes" do
+      it "should response to has_links? with false" do
+        @node.has_links?.should == false
+      end
+
+    end
+  end
 end

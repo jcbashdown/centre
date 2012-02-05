@@ -9,10 +9,26 @@ class Link < ActiveRecord::Base
   validates :node_from, :presence => true
   validates :node_to, :presence => true
 
-  after_save :increment_counter_cache
-  after_destroy :decrement_counter_cache
+  after_save :increment_counter_cache, :turn_off_node_ignore
+  after_destroy :decrement_counter_cache, :turn_on_node_ignore
   after_create :set_all
   
+  def turn_off_node_ignore
+    unless value == 0 || value.blank?
+      target_node.update_attributes(:ignore=>false)
+      source_node.update_attributes(:ignore=>false)
+    end
+  end  
+  def turn_on_node_ignore
+    unless value == 0 || value.blank?
+      if !target_node.has_links?
+        target_node.update_attributes(:ignore=>true)
+      elsif !source_node.has_links?
+        source_node.update_attributes(:ignore=>true)
+      end
+    end
+  end  
+
   def set_all
     # do this with global setting
     all = Global.find_by_name("All")

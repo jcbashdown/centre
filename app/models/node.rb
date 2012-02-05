@@ -20,7 +20,6 @@ class Node < ActiveRecord::Base
   end  
 
   def reject_link(hash)
-    p hash
     hash.each do |key|
       unless key=='user_id'
         return hash[key].blank?
@@ -42,6 +41,42 @@ class Node < ActiveRecord::Base
       end
     end
     nodes
+  end
+
+  def build_link_array
+    #link value is positive links is proportion pos links = for 3 positive 2 negative 3/5
+    #so if node one links to node two 5 times upvotes (node_one.link_tos == 5). and 3 of the five are positive #Link.find.where(node_to = node_two.id AND value = 1).count
+    array = []
+    Node.all.each do |node|
+      unless node.ignore
+        to_id = node.id
+        from_id = self.id
+        fraction_of_link = 0.0
+        unless to_id == from_id
+          down = 0.0
+          up = 0.0
+          if link = Link.where("node_from = #{from_id} AND node_to = #{to_id} AND value = -1")[0]
+            down = Float(link.users_count)
+          end
+          if link = Link.where("node_from = #{from_id} AND node_to = #{to_id} AND value = 1")[0]
+            up = Float(link.users_count)
+          end
+          unless up == 0.0
+            fraction_of_link = up/(up+down)
+          end
+        end
+        array << fraction_of_link
+      end
+    end
+    array
+  end
+
+  def has_links?
+    if ((self.upvotes_count+self.downvotes_count) > 0)
+      true
+    else
+      false
+    end
   end
   
 end

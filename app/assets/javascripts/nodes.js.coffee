@@ -1,18 +1,3 @@
-$(document).ready ->
-
-#  $(".load").live 'click', (e) ->
-#    link = $(e.target).attr('href')
-#    id = link.match(/(\d+)/)
-#    $(".right_content").load "/nodes/"+id+"/test" 
-#    $(".main_content").load link
-#    return false
-#  $('.submittable').live "click", (event) ->
-#    target = $(event.target)
-#    inputs
-#    hash = {}
-#    inputs.each (index) ->
-#      value = index.attr('value')
-#      alert(value)
-#    return
-#  return false
-
+# Place all the behaviors and hooks related to the matching controller here.
+# All this logic will automatically be available in application.js.
+# You can use CoffeeScript in this file: http://jashkenas.github.com/coffee-script/
