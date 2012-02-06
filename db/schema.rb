@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120205155043) do
+ActiveRecord::Schema.define(:version => 20120205231635) do
 
   create_table "globals", :force => true do |t|
     t.integer  "nodes_count"
@@ -49,6 +49,7 @@ ActiveRecord::Schema.define(:version => 20120205155043) do
     t.integer  "downvotes_count",   :default => 0,    :null => false
     t.integer  "equivalents_count", :default => 0,    :null => false
     t.boolean  "ignore",            :default => true
+    t.float    "page_rank",         :default => 0.0
   end
 
   create_table "nodes_globals", :id => false, :force => true do |t|

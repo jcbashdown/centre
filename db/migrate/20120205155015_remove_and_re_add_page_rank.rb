@@ -4,6 +4,6 @@ class RemoveAndReAddPageRank < ActiveRecord::Migration
   end
 
   def down
-    add_column :nodes, :page_rank, :float, :default=>0
+    add_column :nodes, :page_rank, :float
   end
 end

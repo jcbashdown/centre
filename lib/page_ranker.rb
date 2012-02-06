@@ -20,7 +20,13 @@ class PageRanker
     #matrix = PageRanker.normalize(PageRanker.eigenvector(PageRanker.row_stochastic(matrix).transpose))
     index = 1
     matrix.each do |e|
-      Node.find(index).update_attributes!(:page_rank=>e)
+      node = Node.find(index)
+      while node.ignore
+        index+=1
+        node = Node.find(index)
+      end
+      p node
+      node.update_attributes!(:page_rank=>e)
       index+=1
     end
   end
