@@ -18,12 +18,44 @@
       #main{:role => "main"}
         %ul.tabs
           %li.active
-            %a{:href =>"/nodes"}
+            %a{:href =>nodes_path(:order=>@order)}
               Nodes
               %span
           %li
             %a{:href => "/visualise"} 
               Visualise
               %span
-        =yield 
+        .row.show-grid
+          .span4
+            %table
+              %tr
+                %ul.tabs
+                  %li.dropdown{"data-dropdown" => "dropdown"}
+                    %a.dropdown-toggle{:href => "#"} Order By 
+                    %ul.dropdown-menu
+                      %li
+                        %a{:href => nodes_path(:order => "strongest")} Strongest
+                      %li
+                        %a{:href => nodes_path(:order => "weakest")} Weakest
+                      %li.divider
+                      %li
+                        %a{:href => nodes_path(:order => "newest")} Newest
+                      %li
+                        %a{:href => nodes_path(:order => "oldest")} Oldest
+                -if @user
+                  = link_to 'New Node', new_node_path(:order=>@order), :class => 'load' 
+              - @nodes.each do |node|
+                %tr
+                  %td
+                    %ul.unstyled
+                      %li.clearfix
+                        %strong
+                          =link_to node.title, node_path(node, {:order=>@order}), :class => 'load' 
+                      %li.clearfix
+                        - if @user
+                          = link_to 'Destroy', node, :confirm => 'Are you sure?', :method => :delete, :class => 'right'
+                          = link_to 'Edit text', edit_node_path(node, {:order=>@order}), :class => "load"
+            - if @user
+              = link_to 'New Node', new_node_path(:order=>@order), :class => 'load' 
+          =yield 
       %footer

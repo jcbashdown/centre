@@ -1,38 +1,16 @@
-.pill-content
-  #nodes.active
-    .row.show-grid
-      .span4
-        %table
-          %tr
-            -if @user
-              = link_to 'New Node', new_node_path, :class => 'load' 
-          - @all_nodes.each do |node|
-            %tr
-              %td
-                %ul.unstyled
-                  %li.clearfix
-                    %strong
-                      =link_to node.title, node, :class => 'load' 
-                  %li.clearfix
-                    - if @user
-                      =link_to 'Destroy', node, :confirm => 'Are you sure?', :method => :delete, :class => 'right'
-                      = link_to 'Edit text', edit_node_path(node), :class => "load"
+.span12
+  .row.show-grid
+    .span6.main_content
+      %p#notice= notice
+      .center
+        %h2
+          = @node.title
+        %br
+        %p 
+          = @node.text
+        %br
+        %br
         - if @user
-          = link_to 'New Node', new_node_path, :class => 'load' 
-      .span12
-        .row.show-grid
-          .span6.main_content
-            %p#notice= notice
-            .center
-              %h2
-                = @node.title
-              %br
-              %p 
-                = @node.text
-              %br
-              %br
-              - if @user
-                = link_to 'Edit text', edit_node_path(@node), :class => "load"
-          .span6.right_content
-            = render 'links', :nodes=>@nodes
-  #visualise
+          = link_to 'Edit text', edit_node_path(@node, {:order=>@order}), :class => "load"
+    .span6.right_content
+      = render 'links', :nodes=>@nodes_with_links

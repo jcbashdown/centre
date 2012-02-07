@@ -16,7 +16,7 @@
               %li
                 %a{:href => "#"} Another link
         %h3.active
-          %a{:href => "/", :class=>'right no_margin_left'}Centre
+          %a{:href => nodes_path(:order=>@order), :class=>'right no_margin_left'}Centre
         - if user_signed_in?
           %ul.nav.right
             = link_to('Logout', destroy_user_session_path, :method=>'delete')

@@ -1,7 +1,23 @@
 class NodesController < ApplicationController
   before_filter :signed_in_user, :except => [:show, :index]
+  before_filter :find_node_order, :except => [:create, :update, :destroy, :add_or_edit_link]
   # GET /nodes
   # GET /nodes.json
+  def find_node_order
+    @order = params[:order]
+    if @order == "strongest"
+      @order_query = "page_rank desc"
+    elsif @order == "weakest"
+      @order_query = "page_rank asc"
+    elsif @order == "newest"
+      @order_query = "created_at desc"
+    elsif @order == "older"
+      @order_query = "created_at asc"
+    else
+      @order_query = "id asc"
+    end
+  end
+
   def add_or_edit_link
     node = params[:node]
     link_type = node[:link_ins_attributes].present? ? :link_ins_attributes : :link_tos_attributes
@@ -29,19 +45,7 @@ class NodesController < ApplicationController
   end
 
   def index
-    order = params[:order]
-    if order == "strongest"
-      order_query = "page_rank desc"
-    elsif order == "weakest"
-      order_query = "page_rank asc"
-    elsif order == "newest"
-      order_query = "created_at desc"
-    elsif order == "older"
-      order_query = "created_at asc"
-    else
-      order_query = "id asc"
-    end
-    @nodes = Node.find(:all, :order => order_query, :limit => 10) 
+    @nodes = Node.find(:all, :order => @order_query) 
     if request.xhr?
       render :index, :layout => false
     else
@@ -52,11 +56,11 @@ class NodesController < ApplicationController
   # GET /nodes/1
   # GET /nodes/1.json
   def show
-    @all_nodes = Node.all 
+    @nodes = Node.find(:all, :order => @order_query)
     @node = Node.find(params[:id])
     @links = Array.new
-    @nodes = @node.all_with_link_ids 
-    @nodes.each do |node|
+    @nodes_with_links = @node.all_with_link_ids 
+    @nodes_with_links.each do |node|
       @links << node[:link_to]
     end
 
@@ -70,11 +74,11 @@ class NodesController < ApplicationController
   # GET /nodes/new
   # GET /nodes/new.json
   def new
-    @all_nodes = Node.all 
+    @nodes = Node.find(:all, :order => @order_query)
     @node = Node.new
     @links = Array.new
-    @nodes = @node.all_with_link_ids 
-    @nodes.each do |node|
+    @nodes_with_links = @node.all_with_link_ids 
+    @nodes_with_links.each do |node|
       @links << node[:link_to]
     end
     if request.xhr?
@@ -86,11 +90,11 @@ class NodesController < ApplicationController
 
   # GET /nodes/1/edit
   def edit
-    @all_nodes = Node.all 
+    @nodes = Node.find(:all, :order => @order_query)
     @node = Node.find(params[:id])
     @links = Array.new
-    @nodes = @node.all_with_link_ids 
-    @nodes.each do |node|
+    @nodes_with_links = @node.all_with_link_ids 
+    @nodes_with_links.each do |node|
       @links << node[:link_to]
     end
     if request.xhr?
