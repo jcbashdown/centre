@@ -45,7 +45,7 @@ class NodesController < ApplicationController
   end
 
   def index
-    @nodes = Node.find(:all, :order => @order_query) 
+    @nodes = Node.paginate(:page => params[:page], :per_page=>5).order(@order_query)
     if request.xhr?
       render :index, :layout => false
     else
@@ -56,7 +56,7 @@ class NodesController < ApplicationController
   # GET /nodes/1
   # GET /nodes/1.json
   def show
-    @nodes = Node.find(:all, :order => @order_query)
+    @nodes = Node.paginate(:page => params[:page], :per_page=>5).order(@order_query)
     @node = Node.find(params[:id])
     @links = Array.new
     @nodes_with_links = @node.all_with_link_ids 
@@ -74,7 +74,7 @@ class NodesController < ApplicationController
   # GET /nodes/new
   # GET /nodes/new.json
   def new
-    @nodes = Node.find(:all, :order => @order_query)
+    @nodes = Node.paginate(:page => params[:page], :per_page=>5).order(@order_query)
     @node = Node.new
     @links = Array.new
     @nodes_with_links = @node.all_with_link_ids 
@@ -90,7 +90,7 @@ class NodesController < ApplicationController
 
   # GET /nodes/1/edit
   def edit
-    @nodes = Node.find(:all, :order => @order_query)
+    @nodes = Node.paginate(:page => params[:page], :per_page=>5).order(@order_query)
     @node = Node.find(params[:id])
     @links = Array.new
     @nodes_with_links = @node.all_with_link_ids 

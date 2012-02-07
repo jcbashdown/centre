@@ -3,6 +3,7 @@ HOST_OS = RbConfig::CONFIG['host_os']
 source 'http://rubygems.org'
 gem 'rails', '3.1.1'
 gem 'mysql2'
+gem 'will_paginate'
 group :assets do
   gem 'less'
   gem 'coffee-rails', '~> 3.1.1'

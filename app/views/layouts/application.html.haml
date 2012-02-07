@@ -55,6 +55,7 @@
                         - if @user
                           = link_to 'Destroy', node, :confirm => 'Are you sure?', :method => :delete, :class => 'right'
                           = link_to 'Edit text', edit_node_path(node, {:order=>@order}), :class => "load"
+            = will_paginate @nodes
             - if @user
               = link_to 'New Node', new_node_path(:order=>@order), :class => 'load' 
           =yield 
