@@ -29,7 +29,19 @@ class NodesController < ApplicationController
   end
 
   def index
-    @nodes = Node.all 
+    order = params[:order]
+    if order == "strongest"
+      order_query = "page_rank desc"
+    elsif order == "weakest"
+      order_query = "page_rank asc"
+    elsif order == "newest"
+      order_query = "created_at desc"
+    elsif order == "older"
+      order_query = "created_at asc"
+    else
+      order_query = "id asc"
+    end
+    @nodes = Node.find(:all, :order => order_query, :limit => 10) 
     if request.xhr?
       render :index, :layout => false
     else
