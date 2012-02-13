@@ -6,9 +6,14 @@ class ApplicationController < ActionController::Base
   include FrontendHelpers::Html5Helper
 
   before_filter :set_current_user
+  before_filter :set_questions
 
   def set_current_user
     @user = current_user
+  end
+
+  def set_questions
+    @questions = Global.all
   end
 
   def signed_in_user

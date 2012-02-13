@@ -2,19 +2,15 @@
   .topbar{"data-dropdown" => "dropdown"}
     .topbar-inner
       .container
-        %h3
-          %a{:href => "#"} Organisation Name
         %ul.nav
           %li.dropdown
-            %a.dropdown-toggle{:href => "#"} More Apps
+            %a.dropdown-toggle{:href => "#"} Questions
             %ul.dropdown-menu
               %li
-                %a{:href => "#"} Secondary link
-              %li
-                %a{:href => "#"} Something else here
-              %li.divider
-              %li
-                %a{:href => "#"} Another link
+                %a{:href => "#new"} New
+              - @questions.each do |q|
+                %li
+                  %a{:href => "##{q.id}"}= q.name
         %h3.active
           %a{:href => nodes_path(:order=>@order), :class=>'right no_margin_left'}Centre
         - if user_signed_in?
