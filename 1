@@ -1,0 +1,6 @@
+%ul.nav
+  =form_tag nodes_path, :method=>'get' do
+    = select_tag(:question, options_from_collection_for_select(Global.all, :id, :name))
+    = select_tag(:order, options_for_select([['Strongest Nodes', 'strongest'],['Weakest Nodes', 'weakest'],['Oldest Nodes', 'older'],['Newest Nodes', 'newer']]))
+
+  

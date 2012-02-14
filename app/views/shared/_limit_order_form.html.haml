@@ -1,0 +1,6 @@
+%ul.nav
+  =form_tag nodes_path, :method=>'get', :id=>'limit_order' do
+    = select_tag(:question, options_for_select(@questions, :selected=>@question), {:class=>"span2", :id=>"question"})
+    = select_tag(:order, options_for_select([['Oldest Nodes', 'older'],['Newest Nodes', 'newer'],['Strongest Nodes', 'strongest'],['Weakest Nodes', 'weakest']], :selected=>@order), {:class=>"span2", :id=>"order"})
+
+  

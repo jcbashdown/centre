@@ -13,7 +13,8 @@ class ApplicationController < ActionController::Base
   end
 
   def set_questions
-    @questions = Global.all
+    @questions = Global.all.map { |question| [question.name, question.id] }
+    @questions << ['New Question', '#new']
   end
 
   def signed_in_user

@@ -1,15 +1,16 @@
 class NodesController < ApplicationController
   before_filter :signed_in_user, :except => [:show, :index]
-  before_filter :find_node_order, :except => [:create, :update, :destroy, :add_or_edit_link]
+  before_filter :find_limit_order, :except => [:create, :update, :destroy, :add_or_edit_link]
   # GET /nodes
   # GET /nodes.json
-  def find_node_order
+  def find_limit_order
     @order = params[:order]
+    @question = params[:question]
     if @order == "strongest"
       @order_query = "page_rank desc"
     elsif @order == "weakest"
       @order_query = "page_rank asc"
-    elsif @order == "newest"
+    elsif @order == "newer"
       @order_query = "created_at desc"
     elsif @order == "older"
       @order_query = "created_at asc"
@@ -45,7 +46,7 @@ class NodesController < ApplicationController
   end
 
   def index
-    @nodes = Node.paginate(:page => params[:page], :per_page=>5).order(@order_query)
+    @nodes = Global.find(@question).nodes.paginate(:page => params[:page], :per_page=>5).order(@order_query)
     if request.xhr?
       render :index, :layout => false
     else
