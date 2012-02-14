@@ -4,19 +4,27 @@ class NodesController < ApplicationController
   # GET /nodes
   # GET /nodes.json
   def find_limit_order
-    @order = params[:order]
-    @question = params[:question]
-    if @order == "strongest"
+    order = params[:order]
+    question_id = params[:question]
+    unless question_id
+      question_id = 1
+    end
+    unless order
+      order = 'older'
+    end
+    if order == "strongest"
       @order_query = "page_rank desc"
-    elsif @order == "weakest"
+    elsif order == "weakest"
       @order_query = "page_rank asc"
-    elsif @order == "newer"
+    elsif order == "newer"
       @order_query = "created_at desc"
-    elsif @order == "older"
+    elsif order == "older"
       @order_query = "created_at asc"
     else
       @order_query = "id asc"
     end
+    @question = Global.find(question_id)
+    @limit_order = {:question => question_id, :order => order}
   end
 
   def add_or_edit_link
@@ -46,7 +54,7 @@ class NodesController < ApplicationController
   end
 
   def index
-    @nodes = Global.find(@question).nodes.paginate(:page => params[:page], :per_page=>5).order(@order_query)
+    @nodes = @question.nodes.paginate(:page => params[:page], :per_page=>5).order(@order_query)
     if request.xhr?
       render :index, :layout => false
     else
@@ -57,7 +65,7 @@ class NodesController < ApplicationController
   # GET /nodes/1
   # GET /nodes/1.json
   def show
-    @nodes = Node.paginate(:page => params[:page], :per_page=>5).order(@order_query)
+    @nodes = @question.nodes.paginate(:page => params[:page], :per_page=>5).order(@order_query)
     @node = Node.find(params[:id])
     @links = Array.new
     @nodes_with_links = @node.all_with_link_ids 
@@ -75,7 +83,7 @@ class NodesController < ApplicationController
   # GET /nodes/new
   # GET /nodes/new.json
   def new
-    @nodes = Node.paginate(:page => params[:page], :per_page=>5).order(@order_query)
+    @nodes = @question.nodes.paginate(:page => params[:page], :per_page=>5).order(@order_query)
     @node = Node.new
     @links = Array.new
     @nodes_with_links = @node.all_with_link_ids 
@@ -91,7 +99,7 @@ class NodesController < ApplicationController
 
   # GET /nodes/1/edit
   def edit
-    @nodes = Node.paginate(:page => params[:page], :per_page=>5).order(@order_query)
+    @nodes = @question.nodes.paginate(:page => params[:page], :per_page=>5).order(@order_query)
     @node = Node.find(params[:id])
     @links = Array.new
     @nodes_with_links = @node.all_with_link_ids 

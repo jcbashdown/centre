@@ -11,6 +11,6 @@
         %br
         %br
         - if @user
-          = link_to 'Edit text', edit_node_path(@node, @order), :class => "load"
+          = link_to 'Edit text', edit_node_path(@node, @limit_order), :class => "load"
     .span6.right_content
       = render 'links', :nodes=>@nodes_with_links

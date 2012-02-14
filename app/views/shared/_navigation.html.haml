@@ -5,7 +5,7 @@
         %ul.nav
           = render 'shared/limit_order_form'
         %h3.active
-          %a{:href => nodes_path(:order=>@order), :class=>'right no_margin_left'}Centre
+          %a{:href => nodes_path(@limit_order), :class=>'right no_margin_left'}Centre
         - if user_signed_in?
           %ul.nav.right
             = link_to('Logout', destroy_user_session_path, :method=>'delete')

@@ -6,10 +6,10 @@ class GlobalsController < ApplicationController
 
   def create
     @global = Global.new(params[:global])
-    if @global.save!
+    if @global.save
       flash[:notice]=@global.name+" created"
     else
-      flash[:alert] = "could not be created"
+      flash[:alert] = "Cannot create a blank question"
     end
     redirect_to nodes_path(:question=>@global.id)
   end
