@@ -3,29 +3,6 @@ class NodesController < ApplicationController
   before_filter :find_limit_order, :except => [:create, :update, :destroy, :add_or_edit_link]
   # GET /nodes
   # GET /nodes.json
-  def find_limit_order
-    order = params[:order]
-    question_id = params[:question]
-    unless question_id
-      question_id = 1
-    end
-    unless order
-      order = 'older'
-    end
-    if order == "strongest"
-      @order_query = "page_rank desc"
-    elsif order == "weakest"
-      @order_query = "page_rank asc"
-    elsif order == "newer"
-      @order_query = "created_at desc"
-    elsif order == "older"
-      @order_query = "created_at asc"
-    else
-      @order_query = "id asc"
-    end
-    @question = Global.find(question_id)
-    @limit_order = {:question => question_id, :order => order}
-  end
 
   def add_or_edit_link
     node = params[:node]

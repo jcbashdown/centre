@@ -1,0 +1,17 @@
+.topbar-wrapper{:style => "z-index: 5;"}
+  .topbar{"data-dropdown" => "dropdown"}
+    .topbar-inner
+      .container
+        %h3.active
+          %a{:href => nodes_path, :class=>'right no_margin_left'}Centre
+        - if user_signed_in?
+          %ul.nav.right
+            = link_to('Logout', destroy_user_session_path, :method=>'delete')
+        - else
+          %ul.nav.right
+            = link_to('Sign Up', new_user_registration_path)
+          = form_tag user_session_path do
+            = email_field :user, :email, {:value=>nil, :placeholder=>"Email", :class=>"span3"}
+            = password_field :user, :password, {:value=>nil, :placeholder=>"Password", :class=>"span3"}
+            = hidden_field :user, :remember_me, {:value=>0}
+            = submit_tag "Submit"

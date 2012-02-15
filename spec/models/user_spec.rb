@@ -104,7 +104,7 @@ describe User do
     before do
       @user = Factory(:user)
       @node_one = Factory(:node)
-      @node_two = Factory(:node)
+      @node_two = Factory(:node, :title=>'title_two')
       @node_one.target_nodes << @node_two
       @link = Link.find_by_node_from_and_node_to(@node_one.id, @node_two.id)
       @count = @user.user_links.count

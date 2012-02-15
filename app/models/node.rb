@@ -1,5 +1,5 @@
 class Node < ActiveRecord::Base
-  validates :title, :presence => true
+  validates :title, :presence => true, :uniqueness => true
   has_many :link_ins, :foreign_key => "node_to", :class_name => "Link"
   has_many :link_tos, :foreign_key => "node_from", :class_name => "Link"
   has_many :target_nodes, :through => :link_tos, :class_name => "Node", :foreign_key => "node_from"
