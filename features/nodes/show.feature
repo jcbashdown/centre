@@ -5,7 +5,7 @@ Feature: Edit Node
     
     Scenario: Editing nodes
       Given a node has been created
-      When I go to the new node page for the created node
+      When I visit the new node page for the created node
       Then I should see "Test"
       Then I should see "Test text"
       

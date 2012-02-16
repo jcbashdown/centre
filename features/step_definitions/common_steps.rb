@@ -1,31 +1,45 @@
-When /^I go to the home page$/ do
-  visit('/')
-end
-
-When /^I go to the nodes index$/ do
-  visit('/nodes')
-end
-
-
-When /^I go to the new nodes page$/ do
-  visit('/nodes/new')
-end
 
 Given /^a node has been created$/ do
   created_node = Factory(:node)
   @created_node_id = created_node.id
 end
 
-When /^I go to the new node page for the created node$/ do
+When /^I visit the new node page for the created node$/ do
   visit("/nodes/#{@created_node_id}")
 end
 
-When /^I go to the edit node page for the created node$/ do 
+Then /^(?:|I )should not see "([^"]*)"$/ do |text|
+  if page.respond_to? :should
+    page.should have_no_content(text)
+  else
+    assert page.has_no_content?(text)
+  end
+end
+
+When /^I visit the edit node page for the created node$/ do 
   visit("/nodes/#{@created_node_id}/edit")
+end
+
+When /^(?:|I )fill in "([^"]*)" with "([^"]*)"$/ do |field, value|
+  fill_in(field, :with => value)
+end
+
+When /^(?:|I )press "([^"]*)"$/ do |button|
+  click_button(button)
+end
+
+When /^(?:|I )follow "([^"]*)"$/ do |link|
+  click_link(link)
 end
 
 Then /^I should see "([^"]*)"$/ do |arg1|
   page.should have_content(arg1)
+end
+
+When /^(?:|I )fill in the following:$/ do |fields|
+  fields.rows_hash.each do |name, value|
+    step %{I fill in "#{name}" with "#{value}"}
+  end
 end
 
 Then /^I should see "([^"]*)" links "([^"]*)" times$/ do |arg1, arg2|
@@ -36,33 +50,8 @@ Then /^I should see "([^"]*)" text "([^"]*)" times$/ do |arg1, arg2|
   pending # express the regexp above with the code you wish you had
 end
 
-When /^I go to the sign in page$/ do
-  pending # express the regexp above with the code you wish you had
-end
-
-Given /^I go to the sign up page$/ do
-  pending # express the regexp above with the code you wish you had
-end
-
-Given /^I fill in the following:$/ do |table|
-  # table is a Cucumber::Ast::Table
-  pending # express the regexp above with the code you wish you had
-end
-
-Given /^I press "([^"]*)"$/ do |arg1|
-  pending # express the regexp above with the code you wish you had
-end
-
-When /^I follow "([^"]*)"$/ do |arg1|
-  pending # express the regexp above with the code you wish you had
-end
-
-When /^I fill in "([^"]*)" with "([^"]*)"$/ do |arg1, arg2|
-  pending # express the regexp above with the code you wish you had
-end
-
-When /^I go to the homepage$/ do
-  visit('/')
+When /^(?:|I )go to (.+)$/ do |page_name|
+  visit path_to(page_name)
 end
 
 Given /^I am on the home page$/ do

@@ -17,6 +17,12 @@ module NavigationHelpers
     when /the sign in page/
       '/users/sign_in'
 
+    when /the nodes index page/
+      '/nodes'
+
+    when /the new nodes page/
+      '/nodes/new'
+
     # Add more mappings here.
     # Here is an example that pulls values out of the Regexp:
     #

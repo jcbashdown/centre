@@ -14,7 +14,7 @@ Feature: Sign up
         | Email                 | user@test.com   |
         | Password              | please          |
         | Password confirmation | please          |
-      And I press "Sign up"
+      And I press "Submit"
       Then I should see "Welcome! You have signed up successfully." 
       
     Scenario: User signs up with invalid email
@@ -23,8 +23,8 @@ Feature: Sign up
         | Email                 | invalidemail    |
         | Password              | please          |
         | Password confirmation | please          |
-      And I press "Sign up"
-      Then I should see "Email is invalid"
+      And I press "Submit"
+      Then I should see "Invalid email or password"
 
     Scenario: User signs up without password
       And I fill in the following:
@@ -32,7 +32,7 @@ Feature: Sign up
         | Email                 | user@test.com   |
         | Password              |                 |
         | Password confirmation | please          |
-      And I press "Sign up"
+      And I press "Submit"
       Then I should see "Password can't be blank"
 
     Scenario: User signs up without password confirmation
@@ -41,7 +41,7 @@ Feature: Sign up
         | Email                 | user@test.com   |
         | Password              | please          |
         | Password confirmation |                 |
-      And I press "Sign up"
+      And I press "Submit"
       Then I should see "Password doesn't match confirmation"
 
     Scenario: User signs up with mismatched password and confirmation
@@ -50,6 +50,6 @@ Feature: Sign up
         | Email                 | user@test.com   |
         | Password              | please          |
         | Password confirmation | please1         |
-      And I press "Sign up"
+      And I press "Submit"
       Then I should see "Password doesn't match confirmation"
 

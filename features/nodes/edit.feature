@@ -5,7 +5,9 @@ Feature: Edit Node
     
     Scenario: Editing nodes
       Given a node has been created
-      When I go to the edit node page for the created node
+      And I am a user named "User" with an email "test@email.com" and password "TestPass1"
+      And I sign in as "test@email.com/TestPass1"
+      When I visit the edit node page for the created node
       Then I should see "Title"
       And I should see "Text"
       And I should see "Links In"
