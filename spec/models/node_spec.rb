@@ -38,14 +38,34 @@ describe Node do
     end
     context 'linking node to node_two' do
       before do
+        @user = Factory(:user)
         @node.target_nodes << @node_two
-        @node.reload
         @link_to = @node.link_tos.first
+        @link_to.value = 1
+        @link_to.users << @user
+        @link_to.save!
+        @link_to.reload
+        @node.reload
+        @node_two.reload
+        # only count votes if user?
+        # require value for link
+        # count ignore only when value
+        # count ignore on save
+        # increment caches on save
         link_in = Link.new(:node_from=>@node_two.id, :node_to=>@node.id)
         @hash = [{:node => @node_two, :link_in=>link_in, :link_to=>@link_to}]
         @link_in = @node_two.link_ins.first
         link_to = Link.new(:node_from=>@node_two.id, :node_to=>@node.id)
         @hash_two = [{:node => @node, :link_in=>@link_in, :link_to=>link_to}]
+        @link_to.should == @link_in
+      end
+      context 'sum votes for upvotes' do
+        before do
+          @vote_type = 1
+        end
+        it 'should return 1 for node two' do
+          @node_two.sum_votes(@vote_type).should == 1
+        end
       end
       it 'should create one link out' do
         @node.link_tos.count.should == 1
@@ -65,54 +85,15 @@ describe Node do
       it 'should create one link in' do
         @node_two.link_ins.count.should == 1
       end
-    end
-  end
-  #context 'creating links through update attributes when value is nil' do
-  #  before do
-  #    @node = Factory(:node)
-  #    @params =  {"link_tos_attributes"=>[{"node_from"=>@node.id, "value"=>"nil", "node_to"=>5}]}
-  #  end
-    
-  #  it "should set value to nil" do
-  #    @node.update_attributes @params
-  #    @node.link_tos.first.value.should == nil
-  #  end
-  #end
-  describe "when askes has_links?" do
-    before do
-      @node = Factory(:node)
-    end
-    context "when node has upvotes but no downvotes" do
-      before do
-        @node.update_attributes(:upvotes_count=>3)
+      it "should increment upvotes for node two" do
+        @node_two.upvotes_count.should == 1
       end
-      it "should response to has_links? with true" do
+      it 'should not be ignored' do
+        @node.ignore.should == false
+        @node_two.ignore.should == false
         @node.has_links?.should == true
+        @node_two.has_links?.should == true
       end
-    end
-    context "when node has downvotes but no upvotes" do
-      before do
-        @node.update_attributes(:downvotes_count=>3)
-      end
-      it "should response to has_links? with true" do
-        @node.has_links?.should == true
-      end
-
-    end
-    context "when node has upvotes and downvotes" do
-      before do
-        @node.update_attributes(:upvotes_count=>3, :downvotes_count=>1)
-      end
-      it "should response to has_links? with true" do
-        @node.has_links?.should == true
-      end
-
-    end
-    context "when node has not upvotes or downvotes" do
-      it "should response to has_links? with false" do
-        @node.has_links?.should == false
-      end
-
     end
   end
 end

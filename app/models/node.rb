@@ -72,11 +72,22 @@ class Node < ActiveRecord::Base
   end
 
   def has_links?
-    if ((self.upvotes_count+self.downvotes_count) > 0)
+    if self.link_tos.count > 0 || self.link_ins.count > 0
       true
     else
       false
     end
+  end
+
+  def sum_votes(vote_type)
+    links = Link.where('value = ? AND node_to = ?', vote_type, self.id)
+    sum = 0
+    if !links.empty?
+      links.each do |link|
+        sum = sum+link.users_count
+      end
+    end
+    sum
   end
   
 end

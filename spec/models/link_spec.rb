@@ -14,6 +14,8 @@ describe Link do
       @link = Link.find_by_node_from_and_node_to(@node_one.id, @node_two.id)
       @user = Factory(:user)
       @link.users <<  @user
+      @node_two.upvotes_count.should == 0
+      @link.users_count.should == 1
     end
     context "when the link is positive" do
       before do

@@ -5,7 +5,7 @@ class User < ActiveRecord::Base
   has_many :user_links, :dependent => :destroy
   has_many :links, :through => :user_links
   has_and_belongs_to_many :globals
-  
+
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :trackable, :validatable
 
@@ -19,4 +19,5 @@ class User < ActiveRecord::Base
     all.users << self
     all.save!
   end  
+
 end

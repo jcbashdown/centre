@@ -108,7 +108,8 @@ describe User do
       @node_one.target_nodes << @node_two
       @link = Link.find_by_node_from_and_node_to(@node_one.id, @node_two.id)
       @count = @user.user_links.count
-      @user.links << @link
+      @link.users << @user
+      @link.save!
       @user.reload
       @link.reload
     end
@@ -122,6 +123,10 @@ describe User do
       end
       context "when deleting the user" do
         before do
+           @user.user_links.count.should == 1
+           @user.links.count.should == 1
+           @link.user_links.count.should == 1
+           @link.users.count.should == 1
            @user.destroy 
            @link.reload
         end

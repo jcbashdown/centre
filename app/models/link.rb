@@ -9,7 +9,7 @@ class Link < ActiveRecord::Base
   validates :node_from, :presence => true
   validates :node_to, :presence => true
 
-  after_save :increment_counter_cache, :turn_off_node_ignore
+  after_save :change_counter_cache, :turn_off_node_ignore
   after_destroy :decrement_counter_cache, :turn_on_node_ignore
   after_create :set_all
   
@@ -36,16 +36,11 @@ class Link < ActiveRecord::Base
     all.save!
   end  
 
-  def increment_counter_cache
-    vote = self.value
+  def change_counter_cache
     node = target_node
-    if vote == 1
-      node.upvotes_count = users_count
-    elsif vote == -1
-      node.downvotes_count = users_count
-    else
-      node.equivalents_count = users_count
-    end
+    node.upvotes_count = node.sum_votes(1)
+    node.downvotes_count = node.sum_votes(-1)
+    node.equivalents_count = node.sum_votes(0)
     node.save!
   end
   
@@ -53,14 +48,14 @@ class Link < ActiveRecord::Base
     vote = self.value
     node = target_node
     if vote == 1
-      node.upvotes_count-=1
+      node.upvotes_count-=users_count
     elsif vote == -1
-      node.downvotes_count-=1
+      node.downvotes_count-=users_count
     else
-      node.equivalents_count-=1 
+      node.equivalents_count-=users_count
     end
     node.save!
-    
   end
+
   
 end
