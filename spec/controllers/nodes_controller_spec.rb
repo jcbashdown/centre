@@ -12,6 +12,91 @@ describe NodesController do
     {:title => 'title'}
   end
 
+  describe 'set_user_links' do
+    context 'when there is a user' do
+      before do
+        @user_two = Factory(:user, :email=>'test@user.com', :password=>'123456AA')
+        @node_one = Factory(:node, :title=>'aone1')
+        @node_two = Factory(:node, :title=>'ctwo2')
+        @node_three = Factory(:node, :title=>'bthree3')
+        @link1=Link.create(:node_from=> @node_one.id, :value=>1, :node_to=>@node_two.id)
+        @link1u2=Link.new(:node_from=> @node_one.id, :node_to=>@node_two.id)
+        @link1.users << @user
+        #node two activity is one
+        @link2=Link.create(:node_from=> @node_one.id, :value=>1, :node_to=>@node_three.id)
+        @link2.users << @user
+        @link2.users << @user_two 
+        #node three activity is two
+        @link3=Link.create(:node_from=> @node_two.id, :value=>1, :node_to=>@node_one.id)
+        @link3u2=Link.new(:node_from=> @node_two.id, :node_to=>@node_one.id)
+        @link3.users << @user
+        #node one activity is one
+        @link4=Link.new(:node_from=> @node_two.id, :node_to=>@node_three.id)
+        @link5=Link.new(:node_from=> @node_three.id, :node_to=>@node_one.id)
+        @link6=Link.create(:node_from=> @node_three.id, :value=>-1, :node_to=>@node_two.id)
+        @link6.users << @user
+        @link6.users << @user_two 
+        #node two activity is three
+        #for user = @user
+        @user_links_out_alph_up_for_node_one = [@link2,
+                                                @link1]
+        @user_links_out_alph_down_for_node_one = [@link1,
+                                                  @link2]
+        #all votes count for node count
+        @user_links_out_active_for_node_one = [@link1,
+                                               @link2]
+        @user_links_out_inactive_for_node_one = [@link2,
+                                                 @link1]
+        @user_links_out_alph_up_for_node_two = [@link3,
+                                                @link4]
+        @user_links_out_alph_down_for_node_two = [@link4,
+                                                  @link3]
+        #all votes count for node count
+        @user_links_out_active_for_node_two = [@link4,
+                                               @link3]
+        @user_links_out_inactive_for_node_two = [@link3,
+                                                 @link4]
+        #for user = @user_two
+        @user2_links_out_alph_up_for_node_one = [@link2,
+                                                 @link1u2]
+        @user2_links_out_alph_down_for_node_one = [@link1u2,
+                                                   @link2]
+        #all votes count for node count
+        @user2_links_out_active_for_node_one = [@link1u2,
+                                                @link2]
+        @user2_links_out_inactive_for_node_one = [@link2,
+                                                  @link1u2]
+        @user2_links_out_alph_up_for_node_two = [@link3u2,
+                                                 @link4]
+        @user2_links_out_alph_down_for_node_two = [@link4,
+                                                   @link3u2]
+        #all votes count for node count
+        @user2_links_out_active_for_node_two = [@link4,
+                                                @link3u2]
+        @user2_links_out_inactive_for_node_two = [@link3u2,
+                                                  @link4]
+      end
+      it 'should return the user links for @user from @node and construct those not present in alphabet order as default' do
+        @user.user_from_node_links(@node).should == @user_links_out_alph_up_for_node_one
+      end
+      it 'should return the user links for @user_two from @node and construct those not present in alphabet order as default' do
+        @user_two.user_from_node_links(@node).should == @user2_links_out_alph_up_for_node_one
+      end
+      it 'should return the user links for @user from @node and construct those not present in alphabet order as default' do
+        @user.user_from_node_links(@node_two).should == @user_links_out_alph_up_for_node_one
+      end
+      it 'should return the user links for @user_two from @node and construct those not present in alphabet order as default' do
+        @user_two.user_from_node_links(@node_two).should == @user2_links_out_alph_up_for_node_one
+      end
+    end
+    context 'when there is no user' do
+      before do
+        controller.stub(:current_user).and_return nil
+      end
+
+    end
+  end
+
   describe "GET index" do
     it "assigns all nodes as @nodes" do
       node = Node.create! valid_attributes

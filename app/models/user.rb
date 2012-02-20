@@ -19,5 +19,14 @@ class User < ActiveRecord::Base
     all.users << self
     all.save!
   end  
+  
+  def user_from_node_links(from_node, order="")
+    links = []
+    Node.all.each do |node|
+      unless node == from_node
+        links << Link.find_or_initialize_by_node_from_and_node_to(self.id,from_node.id,node.id)
+      end
+    end 
+  end
 
 end
