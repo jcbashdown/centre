@@ -21,12 +21,23 @@ class User < ActiveRecord::Base
   end  
   
   def user_from_node_links(from_node, order="")
-    links = []
+    constructed_links = []
+    persisted_links = []
     Node.all.each do |node|
       unless node == from_node
-        links << Link.find_or_initialize_by_node_from_and_node_to(self.id,from_node.id,node.id)
+        this_link = self.links.where('links.node_from = ? AND links.node_to = ?', from_node.id, node.id)
+        #first level of sorted - peristed from unpersisted
+        unless this_link.empty?
+          persisted_links << this_link[0]
+        else
+          constructed_links << Link.new(:node_from=>from_node.id, :node_to=>node.id)
+        end
       end
-    end 
+    end
+    all_links = constructed_links.concat(persisted_links)
+    #second level of sorting - title, id etc may need reverse?
+    all_links.sort!{ |a, b|  a.target_node.title <=> b.target_node.title }
+    all_links
   end
 
 end

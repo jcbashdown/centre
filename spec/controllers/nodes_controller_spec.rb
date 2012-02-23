@@ -11,7 +11,6 @@ describe NodesController do
   def valid_attributes
     {:title => 'title'}
   end
-
   describe 'set_user_links' do
     context 'when there is a user' do
       before do
@@ -76,17 +75,21 @@ describe NodesController do
         @user2_links_out_inactive_for_node_two = [@link3u2,
                                                   @link4]
       end
-      it 'should return the user links for @user from @node and construct those not present in alphabet order as default' do
-        @user.user_from_node_links(@node).should == @user_links_out_alph_up_for_node_one
+      it 'should set user links' do
+        #set user links can happen here but method it calls - specs should be moved to user
+        pending
       end
-      it 'should return the user links for @user_two from @node and construct those not present in alphabet order as default' do
-        @user_two.user_from_node_links(@node).should == @user2_links_out_alph_up_for_node_one
+      it 'should return the user links for @user from @node_one and construct those not present in alphabet order as default' do
+        @user.user_from_node_links(@node_one).inspect.should == @user_links_out_alph_up_for_node_one.inspect
       end
-      it 'should return the user links for @user from @node and construct those not present in alphabet order as default' do
-        @user.user_from_node_links(@node_two).should == @user_links_out_alph_up_for_node_one
+      it 'should return the user links for @user_two from @node_one and construct those not present in alphabet order as default' do
+        @user_two.user_from_node_links(@node_one).inspect.should == @user2_links_out_alph_up_for_node_one.inspect
       end
-      it 'should return the user links for @user_two from @node and construct those not present in alphabet order as default' do
-        @user_two.user_from_node_links(@node_two).should == @user2_links_out_alph_up_for_node_one
+      it 'should return the user links for @user from @node_two and construct those not present in alphabet order as default' do
+        @user.user_from_node_links(@node_two).inspect.should == @user_links_out_alph_up_for_node_two.inspect
+      end
+      it 'should return the user links for @user_two from @node_two and construct those not present in alphabet order as default' do
+        @user_two.user_from_node_links(@node_two).inspect.should == @user2_links_out_alph_up_for_node_two.inspect
       end
     end
     context 'when there is no user' do

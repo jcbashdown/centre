@@ -13,6 +13,7 @@ describe LinksController do
     context 'when ajax request' do
       #get all node for page ordered by link params, if exists for user get otherwise new, get votes count separately - make sure onlythree of each node then user counts
       #deal with current user and update if new - don't create for each user
+      # what we are speccing here us the returned partial
     end
 
   end
