@@ -1,6 +1,27 @@
 require 'spec_helper'
 
 describe Node do
+  describe 'construct from node links' do
+    before do
+      @node = Factory(:node, :title=>'c title')
+      @node_two = Factory(:node, :title=>'x title')
+      @node_three = Factory(:node, :title=>'b title')
+      @link1 = Link.new(:node_from=>@node.id, :node_to=>@node_two.id)
+      @link2 = Link.new(:node_from=>@node.id, :node_to=>@node_three.id)
+      @link3 = Link.new(:node_from=>@node.id, :node_to=>@node_two.id)
+      @link4 = Link.new(:node_from=>@node_three.id, :node_to=>@node_two.id)
+      @from_node_links = [@link2,
+                          @link1]
+      @to_node_two_links = [@link4,
+                            @link3]
+    end
+    it 'should return the correct links array in alphabetical order' do
+      @node.construct_from_node_links.inspect.should == @from_node_links.inspect
+    end
+    it 'should return the correct links array in alphabetical order' do
+      @node_two.construct_to_node_links.inspect.should == @to_node_two_links.inspect
+    end
+  end
   before do
     @node = Node.new
   end

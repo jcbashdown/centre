@@ -11,7 +11,30 @@ class Node < ActiveRecord::Base
   accepts_nested_attributes_for :link_ins, :allow_destroy => true#, :reject_if => :reject_link
   accepts_nested_attributes_for :link_tos, :allow_destroy => true#, :reject_if => :reject_link
   after_create :set_all
-  
+
+  def construct_to_node_links
+    links = []
+    Node.all.each do |node|
+      unless node == self
+        # could use build for things like this?
+        links << Link.new(:node_from=>node.id, :node_to=>self.id)
+      end
+    end
+    links.sort!{ |a, b|  a.source_node.title <=> b.source_node.title }
+    links
+  end
+  def construct_from_node_links
+    links = []
+    Node.all.each do |node|
+      unless node == self
+        # could use build for things like this?
+        links << Link.new(:node_from=>self.id, :node_to=>node.id)
+      end
+    end
+    links.sort!{ |a, b|  a.target_node.title <=> b.target_node.title }
+    links
+  end
+
   def set_all
     # do this with global setting
     all = Global.find_by_name("All")

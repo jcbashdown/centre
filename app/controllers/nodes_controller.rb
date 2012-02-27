@@ -1,8 +1,27 @@
 class NodesController < ApplicationController
   before_filter :signed_in_user, :except => [:show, :index]
   before_filter :find_limit_order, :except => [:create, :update, :destroy, :add_or_edit_link]
-  # GET /nodes
-  # GET /nodes.json
+  #before filters apply to non action methods as well?
+  before_filter :set_node, :only => [:show, :edit, :new]
+  before_filter :set_links, :only => [:show, :edit]
+
+  def set_node
+    unless params[:id]
+      @node = Node.new
+    else
+      @node = Node.find(params[:id])
+    end
+  end
+  #how to test this - preset node? stub @node as method?
+  def set_links
+    if @user
+      @links_to = @user.user_from_node_links(@node)
+      @links_in = @user.user_to_node_links(@node)
+    else
+      @links_to = @node.construct_from_node_links
+      @links_in = @node.construct_to_node_links
+    end
+  end
 
   def add_or_edit_link
     node = params[:node]
@@ -43,12 +62,11 @@ class NodesController < ApplicationController
   # GET /nodes/1.json
   def show
     @nodes = @question.nodes.paginate(:page => params[:page], :per_page=>5).order(@order_query)
-    @node = Node.find(params[:id])
-    @links = Array.new
-    @nodes_with_links = @node.all_with_link_ids 
-    @nodes_with_links.each do |node|
-      @links << node[:link_to]
-    end
+    #@links = Array.new
+    #@nodes_with_links = @node.all_with_link_ids 
+    #@nodes_with_links.each do |node|
+    #  @links << node[:link_to]
+    #end
 
     if request.xhr?
       render :show, :layout => false
@@ -62,11 +80,6 @@ class NodesController < ApplicationController
   def new
     @nodes = @question.nodes.paginate(:page => params[:page], :per_page=>5).order(@order_query)
     @node = Node.new
-    @links = Array.new
-    @nodes_with_links = @node.all_with_link_ids 
-    @nodes_with_links.each do |node|
-      @links << node[:link_to]
-    end
     if request.xhr?
       render :new, :layout => false
     else
@@ -77,12 +90,11 @@ class NodesController < ApplicationController
   # GET /nodes/1/edit
   def edit
     @nodes = @question.nodes.paginate(:page => params[:page], :per_page=>5).order(@order_query)
-    @node = Node.find(params[:id])
-    @links = Array.new
-    @nodes_with_links = @node.all_with_link_ids 
-    @nodes_with_links.each do |node|
-      @links << node[:link_to]
-    end
+    #@links = Array.new
+    #@nodes_with_links = @node.all_with_link_ids 
+    #@nodes_with_links.each do |node|
+    #  @links << node[:link_to]
+    #end
     if request.xhr?
       render :edit, :layout => false
     else

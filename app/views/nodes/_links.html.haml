@@ -17,8 +17,7 @@
         %th = 
         %th - 
         %th Title
-      - nodes.each do |node|
-        -link = node[:link_to]
+      - @links_to.each do |link|
         -link_id = link.new_record? ? "#{rand(Time.now.to_i)}#{Time.now.to_i}" : link.id
         %tr{:id => "link_#{link_id}"} 
           %td
@@ -32,7 +31,7 @@
           %td
             = hidden_field link_id, :node_from, {:value=>link.node_from, :class=>"node_from link_to #{link_id}"}
             = hidden_field link_id, :node_to, {:value=>link.node_to, :class=>"node_to link_to #{link_id}"}
-            = node[:node].title
+            = Node.find(link.node_to).title
   #links_ins_edit.checkboxes
     %table.bordered-table.zebra-striped.condensed
       %tr
@@ -41,8 +40,7 @@
         %th = 
         %th - 
         %th Title
-      - nodes.each do |node|
-        -link = node[:link_in]
+      - @links_in.each do |link|
         -link_id = link.new_record? ? "#{rand(Time.now.to_i)}#{Time.now.to_i}" : link.id
         %tr{:id => "link_#{link_id}"} 
           %td
@@ -56,4 +54,4 @@
           %td
             = hidden_field link_id, :node_from, {:value=>link.node_from, :class=>"node_from link_in #{link_id}"}
             = hidden_field link_id, :node_to, {:value=>link.node_to, :class=>"node_to link_in #{link_id}"}
-            = node[:node].title
+            = Node.find(link.node_from).title
