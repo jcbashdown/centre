@@ -6,8 +6,8 @@ class Link < ActiveRecord::Base
   has_and_belongs_to_many :globals
   # do we definitely want to limit to having a support or oppose relation? What about undecided or related?
   #spec this
-  validates :node_from, :presence => true
-  validates :node_to, :presence => true
+  validates :source_node, :presence => true
+  validates :target_node, :presence => true
 
   after_save :change_counter_cache, :turn_off_node_ignore
   after_destroy :decrement_counter_cache, :turn_on_node_ignore

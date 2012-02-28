@@ -90,14 +90,21 @@ class LinksController < ApplicationController
   # PUT /links/1.json
   def update
     @link = Link.find(params[:id])
-
-    respond_to do |format|
+    unless request.xhr?
+      respond_to do |format|
+        if @link.update_attributes(params[:link])
+          format.html { redirect_to @link, notice: 'Link was successfully updated.' }
+          format.json { head :ok }
+        else
+          format.html { render action: "edit" }
+          format.json { render json: @link.errors, status: :unprocessable_entity }
+        end
+      end
+    else    
       if @link.update_attributes(params[:link])
-        format.html { redirect_to @link, notice: 'Link was successfully updated.' }
-        format.json { head :ok }
+        render :partial => 'a_link', :locals=>{:link=>@link}
       else
-        format.html { render action: "edit" }
-        format.json { render json: @link.errors, status: :unprocessable_entity }
+        
       end
     end
   end
