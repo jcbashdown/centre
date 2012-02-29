@@ -18,21 +18,21 @@ describe NodesController do
         @node_one = Factory(:node, :title=>'aone1')
         @node_two = Factory(:node, :title=>'ctwo2')
         @node_three = Factory(:node, :title=>'bthree3')
-        @link1=Link.create(:node_from=> @node_one.id, :value=>1, :node_to=>@node_two.id)
-        @link1u2=Link.new(:node_from=> @node_one.id, :node_to=>@node_two.id)
+        @link1=Link.create(:node_from=> @node_one, :value=>1, :node_to=>@node_two)
+        @link1u2=Link.new(:node_from=> @node_one, :node_to=>@node_two)
         @link1.users << @user
         #node two activity is one
-        @link2=Link.create(:node_from=> @node_one.id, :value=>1, :node_to=>@node_three.id)
+        @link2=Link.create(:node_from=> @node_one, :value=>1, :node_to=>@node_three)
         @link2.users << @user
         @link2.users << @user_two 
         #node three activity is two
-        @link3=Link.create(:node_from=> @node_two.id, :value=>1, :node_to=>@node_one.id)
-        @link3u2=Link.new(:node_from=> @node_two.id, :node_to=>@node_one.id)
+        @link3=Link.create(:node_from=> @node_two, :value=>1, :node_to=>@node_one)
+        @link3u2=Link.new(:node_from=> @node_two, :node_to=>@node_one)
         @link3.users << @user
         #node one activity is one
-        @link4=Link.new(:node_from=> @node_two.id, :node_to=>@node_three.id)
-        @link5=Link.new(:node_from=> @node_three.id, :node_to=>@node_one.id)
-        @link6=Link.create(:node_from=> @node_three.id, :value=>-1, :node_to=>@node_two.id)
+        @link4=Link.new(:node_from=> @node_two, :node_to=>@node_three)
+        @link5=Link.new(:node_from=> @node_three, :node_to=>@node_one)
+        @link6=Link.create(:node_from=> @node_three, :value=>-1, :node_to=>@node_two)
         @link6.users << @user
         @link6.users << @user_two 
         #node two activity is three
@@ -95,21 +95,21 @@ describe NodesController do
         @node_one = Factory(:node, :title=>'aone1')
         @node_two = Factory(:node, :title=>'ctwo2')
         @node_three = Factory(:node, :title=>'bthree3')
-        @link1=Link.create(:node_from=> @node_one.id, :value=>1, :node_to=>@node_two.id)
-        @link1u2=Link.new(:node_from=> @node_one.id, :node_to=>@node_two.id)
+        @link1=Link.create(:node_from=> @node_one, :value=>1, :node_to=>@node_two)
+        @link1u2=Link.new(:node_from=> @node_one, :node_to=>@node_two)
         @link1.users << @user
         #node two activity is one
-        @link2=Link.create(:node_from=> @node_one.id, :value=>1, :node_to=>@node_three.id)
+        @link2=Link.create(:node_from=> @node_one, :value=>1, :node_to=>@node_three)
         @link2.users << @user
         @link2.users << @user_two 
         #node three activity is two
-        @link3=Link.create(:node_from=> @node_two.id, :value=>1, :node_to=>@node_one.id)
-        @link3u2=Link.new(:node_from=> @node_two.id, :node_to=>@node_one.id)
+        @link3=Link.create(:node_from=> @node_two, :value=>1, :node_to=>@node_one)
+        @link3u2=Link.new(:node_from=> @node_two, :node_to=>@node_one)
         @link3.users << @user
         #node one activity is one
-        @link4=Link.new(:node_from=> @node_two.id, :node_to=>@node_three.id)
-        @link5=Link.new(:node_from=> @node_three.id, :node_to=>@node_one.id)
-        @link6=Link.create(:node_from=> @node_three.id, :value=>-1, :node_to=>@node_two.id)
+        @link4=Link.new(:node_from=> @node_two, :node_to=>@node_three)
+        @link5=Link.new(:node_from=> @node_three, :node_to=>@node_one)
+        @link6=Link.create(:node_from=> @node_three, :value=>-1, :node_to=>@node_two)
         @link6.users << @user
         @link6.users << @user_two 
         #node two activity is three

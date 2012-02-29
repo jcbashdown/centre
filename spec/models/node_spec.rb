@@ -6,10 +6,10 @@ describe Node do
       @node = Factory(:node, :title=>'c title')
       @node_two = Factory(:node, :title=>'x title')
       @node_three = Factory(:node, :title=>'b title')
-      @link1 = Link.new(:node_from=>@node.id, :node_to=>@node_two.id)
-      @link2 = Link.new(:node_from=>@node.id, :node_to=>@node_three.id)
-      @link3 = Link.new(:node_from=>@node.id, :node_to=>@node_two.id)
-      @link4 = Link.new(:node_from=>@node_three.id, :node_to=>@node_two.id)
+      @link1 = Link.new(:node_from=>@node, :node_to=>@node_two)
+      @link2 = Link.new(:node_from=>@node, :node_to=>@node_three)
+      @link3 = Link.new(:node_from=>@node, :node_to=>@node_two)
+      @link4 = Link.new(:node_from=>@node_three, :node_to=>@node_two)
       @from_node_links = [@link2,
                           @link1]
       @to_node_two_links = [@link4,
@@ -60,7 +60,7 @@ describe Node do
     context 'linking node to node_two' do
       before do
         @user = Factory(:user)
-        @node.target_nodes << @node_two
+        @node.node_tos << @node_two
         @link_to = @node.link_tos.first
         @link_to.value = 1
         @link_to.users << @user
@@ -73,10 +73,10 @@ describe Node do
         # count ignore only when value
         # count ignore on save
         # increment caches on save
-        link_in = Link.new(:node_from=>@node_two.id, :node_to=>@node.id)
+        link_in = Link.new(:node_from=>@node_two, :node_to=>@node)
         @hash = [{:node => @node_two, :link_in=>link_in, :link_to=>@link_to}]
         @link_in = @node_two.link_ins.first
-        link_to = Link.new(:node_from=>@node_two.id, :node_to=>@node.id)
+        link_to = Link.new(:node_from=>@node_two, :node_to=>@node)
         @hash_two = [{:node => @node, :link_in=>@link_in, :link_to=>link_to}]
         @link_to.should == @link_in
       end
@@ -98,10 +98,10 @@ describe Node do
         @node_two.all_with_link_ids.to_s.should == @hash_two.to_s
       end
       it 'should create one target node' do
-        @node.target_nodes.count.should == 1
+        @node.node_tos.count.should == 1
       end
       it 'should create one source node' do
-        @node_two.source_nodes.count.should == 1
+        @node_two.node_froms.count.should == 1
       end
       it 'should create one link in' do
         @node_two.link_ins.count.should == 1

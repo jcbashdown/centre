@@ -1,9 +1,9 @@
 class Node < ActiveRecord::Base
   validates :title, :presence => true, :uniqueness => true
-  has_many :link_ins, :foreign_key => "node_to", :class_name => "Link"
-  has_many :link_tos, :foreign_key => "node_from", :class_name => "Link"
-  has_many :target_nodes, :through => :link_tos, :class_name => "Node", :foreign_key => "node_from"
-  has_many :source_nodes, :through => :link_ins, :class_name => "Node", :foreign_key => "node_to"
+  has_many :link_ins, :foreign_key => "node_to_id", :class_name => "Link"
+  has_many :link_tos, :foreign_key => "node_from_id", :class_name => "Link"
+  has_many :node_tos, :through => :link_tos, :class_name => "Node", :foreign_key => "node_from_id"
+  has_many :node_froms, :through => :link_ins, :class_name => "Node", :foreign_key => "node_to_id"
   has_many :nodes_globals
   has_many :globals, :through=>:nodes_globals
   belongs_to :user
@@ -17,10 +17,10 @@ class Node < ActiveRecord::Base
     Node.all.each do |node|
       unless node == self
         # could use build for things like this?
-        links << Link.new(:node_from=>node.id, :node_to=>self.id)
+        links << Link.new(:node_from=>node, :node_to=>self)
       end
     end
-    links.sort!{ |a, b|  a.source_node.title <=> b.source_node.title }
+    links.sort!{ |a, b|  a.node_from.title <=> b.node_from.title }
     links
   end
   def construct_from_node_links
@@ -28,10 +28,10 @@ class Node < ActiveRecord::Base
     Node.all.each do |node|
       unless node == self
         # could use build for things like this?
-        links << Link.new(:node_from=>self.id, :node_to=>node.id)
+        links << Link.new(:node_from=>self, :node_to=>node)
       end
     end
-    links.sort!{ |a, b|  a.target_node.title <=> b.target_node.title }
+    links.sort!{ |a, b|  a.node_to.title <=> b.node_to.title }
     links
   end
 
@@ -55,10 +55,10 @@ class Node < ActiveRecord::Base
     nodes = []
     Node.all.each do |node|
       unless node.id==self.id
-        link_to = Link.find_by_node_from_and_node_to(self.id, node.id)
-        link_in = Link.find_by_node_from_and_node_to(node.id, self.id)
-        link_to = link_to ? link_to : Link.new(:node_from => self.id, :node_to=>node.id)
-        link_in = link_in ? link_in : Link.new(:node_from => node.id, :node_to=>self.id)
+        link_to = Link.find_by_node_from_id_and_node_to_id(self.id, node.id)
+        link_in = Link.find_by_node_from_id_and_node_to_id(node.id, self.id)
+        link_to = link_to ? link_to : Link.new(:node_from => self, :node_to=>node)
+        link_in = link_in ? link_in : Link.new(:node_from => node, :node_to=>self)
         hash = {:node=>node, :link_in=>link_in, :link_to=>link_to}
         nodes << hash
       end
@@ -78,10 +78,10 @@ class Node < ActiveRecord::Base
         unless to_id == from_id
           down = 0.0
           up = 0.0
-          if link = Link.where("node_from = #{from_id} AND node_to = #{to_id} AND value = -1")[0]
+          if link = Link.where("node_from_id = #{from_id} AND node_to_id = #{to_id} AND value = -1")[0]
             down = Float(link.users_count)
           end
-          if link = Link.where("node_from = #{from_id} AND node_to = #{to_id} AND value = 1")[0]
+          if link = Link.where("node_from_id = #{from_id} AND node_to_id = #{to_id} AND value = 1")[0]
             up = Float(link.users_count)
           end
           unless up == 0.0
@@ -103,7 +103,7 @@ class Node < ActiveRecord::Base
   end
 
   def sum_votes(vote_type)
-    links = Link.where('value = ? AND node_to = ?', vote_type, self.id)
+    links = Link.where('value = ? AND node_to_id = ?', vote_type, self.id)
     sum = 0
     if !links.empty?
       links.each do |link|

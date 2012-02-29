@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120205231635) do
+ActiveRecord::Schema.define(:version => 20120229001210) do
 
   create_table "globals", :force => true do |t|
     t.integer  "nodes_count"
@@ -31,12 +31,12 @@ ActiveRecord::Schema.define(:version => 20120205231635) do
   end
 
   create_table "links", :force => true do |t|
-    t.integer  "node_from"
+    t.integer  "node_from_id"
     t.integer  "value"
-    t.integer  "node_to"
+    t.integer  "node_to_id"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "users_count", :default => 0, :null => false
+    t.integer  "users_count",  :default => 0, :null => false
   end
 
   create_table "nodes", :force => true do |t|

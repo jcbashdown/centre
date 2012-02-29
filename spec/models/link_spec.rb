@@ -10,8 +10,8 @@ describe Link do
     before do
       @node_one = Factory(:node)
       @node_two = Factory(:node, :title=>'title two')
-      @node_two.source_nodes << @node_one
-      @link = Link.find_by_node_from_and_node_to(@node_one.id, @node_two.id)
+      @node_two.node_froms << @node_one
+      @link = Link.find_by_node_from_id_and_node_to_id(@node_one.id, @node_two.id)
       @user = Factory(:user)
       @link.users <<  @user
       @node_two.upvotes_count.should == 0

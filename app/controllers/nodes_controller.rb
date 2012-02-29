@@ -31,7 +31,7 @@ class NodesController < ApplicationController
     @node = Node.find(params[:id])
     tr_id = params[:link_id]
     if @node.update_attributes!(node)
-      link = Link.find_or_initialize_by_node_from_and_node_to(node[link_type]["0"][:node_from], node[link_type]["0"][:node_to])
+      link = Link.find_or_initialize_by_node_from_id_and_node_to_id(node[link_type]["0"][:node_from], node[link_type]["0"][:node_to])
       if link.persisted?
         @user.links << link
       end
@@ -43,7 +43,7 @@ class NodesController < ApplicationController
         link = Link.find(node[link_type]["0"][:id])
         render :partial => 'new_link', :locals=>{:value => link.value, :old_id=>tr_id, :new_id=>tr_id, :link=>link, :title=>title, :short_link_type=>short_link_type}
       else
-        link = Link.new(:node_from=>node[link_type]["0"][:node_from], :node_to=>node[link_type]["0"][:node_to])
+        link = Link.new(:node_from_id=>node[link_type]["0"][:node_from], :node_to_id=>node[link_type]["0"][:node_to])
         render :partial => 'new_link', :locals=>{:value => nil, :old_id=>tr_id, :new_id=>tr_id, :link=>link, :title=>title, :short_link_type=>short_link_type}
       end
     end

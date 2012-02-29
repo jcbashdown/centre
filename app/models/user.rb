@@ -25,18 +25,18 @@ class User < ActiveRecord::Base
     persisted_links = []
     Node.all.each do |node|
       unless node == from_node
-        this_link = self.links.where('links.node_from = ? AND links.node_to = ?', from_node.id, node.id)
+        this_link = self.links.where('links.node_from_id = ? AND links.node_to_id = ?', from_node.id, node.id)
         #first level of sorted - peristed from unpersisted
         unless this_link.empty?
           persisted_links << this_link[0]
         else
-          constructed_links << Link.new(:node_from=>from_node.id, :node_to=>node.id)
+          constructed_links << Link.new(:node_from_id=>from_node.id, :node_to_id=>node.id)
         end
       end
     end
     all_links = constructed_links.concat(persisted_links)
     #second level of sorting - title, id etc may need reverse?
-    all_links.sort!{ |a, b|  a.target_node.title <=> b.target_node.title }
+    all_links.sort!{ |a, b|  a.node_to.title <=> b.node_to.title }
     all_links
   end
   def user_to_node_links(to_node, order="")
@@ -44,18 +44,18 @@ class User < ActiveRecord::Base
     persisted_links = []
     Node.all.each do |node|
       unless node == to_node
-        this_link = self.links.where('links.node_from = ? AND links.node_to = ?', node.id, to_node.id)
+        this_link = self.links.where('links.node_from_id = ? AND links.node_to_id = ?', node.id, to_node.id)
         #first level of sorted - peristed from unpersisted
         unless this_link.empty?
           persisted_links << this_link[0]
         else
-          constructed_links << Link.new(:node_from=>node.id, :node_to=>to_node.id)
+          constructed_links << Link.new(:node_from_id=>node.id, :node_to_id=>to_node.id)
         end
       end
     end
     all_links = constructed_links.concat(persisted_links)
     #second level of sorting - title, id etc may need reverse?
-    all_links.sort!{ |a, b|  a.source_node.title <=> b.source_node.title }
+    all_links.sort!{ |a, b|  a.node_from.title <=> b.node_from.title }
     all_links
   end
 
