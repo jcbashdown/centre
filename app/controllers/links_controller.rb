@@ -90,7 +90,6 @@ class LinksController < ApplicationController
   # PUT /links/1.json
   def update
     @previous_link = Link.find(params[:id])
-    @link = Link.find_or_initialise_by_node_from_and_node_to_and_value(params[:link][:node_from], params[:link][:node_to], params[:link][:value])
     unless request.xhr?
       respond_to do |format|
         if @link.update_attributes(params[:link])

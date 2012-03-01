@@ -11,6 +11,89 @@ describe User do
     }
   end
   
+  describe 'update_association' do
+    before do
+      @user = Factory(:user)
+    end
+    context 'when the user is already associated with the first link' do
+      before do
+        @node_one = Factory(:node)
+        @node_two = Factory(:node, :title=>'title')
+        @link_one = Link.create(:node_from=>@node_one,:value=>1,:node_to=>@node_two)
+        @link_one.users << @user
+        #TODO - again, shouldn't have to do this save here
+        @link_one.save!
+        @link_one.reload
+        @node_two.reload
+        @node_two.upvotes_count.should == 1
+        @link_two_params = {:node_from_id=>@node_one.id,:value=>-1,:node_to_id=>@node_two.id}
+      end
+      context 'when the second unnassociated link already exists' do
+        before do
+          @link_two = Link.create(@link_two_params)
+          @node_two.reload
+          @node_two.upvotes_count.should == 1
+          @node_two.downvotes_count.should == 0
+          @link_two.users.should be_empty
+          @link_two.users_count.should == 0
+          @link_one.users_count.should == 1
+        end
+        it 'should remove the first association and create the second association' do
+          @link_one.users.should include(@user)
+          @user.update_association(@link_one, @link_two_params)
+          @link_one.reload
+          @link_two.reload
+          @link_one.users.should_not include(@user)
+          @link_two.users.should include(@user)
+        end
+        it 'should decrement the upvotes for node two and increment the downvotes' do
+          upvotes_count = @node_two.upvotes_count 
+          downvotes_count = @node_two.downvotes_count
+          users_count = @link_one.users_count
+          @user.update_association(@link_one, @link_two_params)
+          @node_two.reload
+          @link_one.reload
+          @link_one.users_count.should == users_count - 1
+          @node_two.downvotes_count.should == downvotes_count + 1
+          @node_two.upvotes_count.should == upvotes_count - 1
+        end
+      end
+      context 'when the second unnassociated link does not exist' do
+        before do
+          Link.find_by_node_from_id_and_value_and_node_to_id(@node_one.id,-1,@node_two.id).should be_nil
+          @link_two = Link.new(@link_two_params)
+          @node_two.upvotes_count.should == 1
+          @node_two.downvotes_count.should == 0
+          @link_one.users_count.should == 1
+        end
+        it 'should remove the first association and create the second association' do
+          @link_one.users.should include(@user)
+          @user.update_association(@link_one, @link_two_params)
+          @link_one.reload
+          @link_two = Link.find_by_node_from_id_and_value_and_node_to_id(@node_one.id,-1,@node_two.id)
+          @link_one.users.should_not include(@user)
+          @link_two.users.should include(@user)
+        end
+        it 'should decrement the upvotes for node two and increment the downvotes' do
+          upvotes_count = @node_two.upvotes_count 
+          downvotes_count = @node_two.downvotes_count
+          users_count = @link_one.users_count
+          @user.update_association(@link_one, @link_two_params)
+          @node_two.reload
+          @link_one.reload
+          @link_one.users_count.should == users_count - 1
+          @node_two.downvotes_count.should == downvotes_count + 1
+          @node_two.upvotes_count.should == upvotes_count - 1
+        end
+        it 'should create the link' do
+          @user.update_association(@link_one, @link_two_params)
+          @link_two = Link.find_by_node_from_id_and_value_and_node_to_id(@node_one.id,-1,@node_two.id)
+          @link_two.should be_persisted
+        end
+      end
+    end
+  end
+  
   it "should create a new instance given a valid attribute" do
     User.create!(@attr)
   end

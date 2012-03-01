@@ -21,7 +21,7 @@ describe LinksController do
         before do
           @user_two = Factory(:user, :email=>'test@user.com', :password=>'123456AA')
           controller.stub(:current_user).and_return @user_two
-          @params = {"id"=>@link.id, "link"=>{"node_from"=>@node_one.id.to_s, "value"=>-1.to_s, "node_to"=>@node_two.id.to_s}}
+          @params = {"id"=>@link.id, "link"=>{"node_from_id"=>@node_one.id.to_s, "value"=>-1.to_s, "node_to_id"=>@node_two.id.to_s}}
         end
         #should change or create the user link - only 4 links with votes
         it 'should update the link' do
