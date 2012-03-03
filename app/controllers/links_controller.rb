@@ -92,19 +92,19 @@ class LinksController < ApplicationController
     @previous_link = Link.find(params[:id])
     unless request.xhr?
       respond_to do |format|
-        if @link.update_attributes(params[:link])
+        if @link = @user.update_association(@previous_link, params[:link])
           format.html { redirect_to @link, notice: 'Link was successfully updated.' }
           format.json { head :ok }
         else
           format.html { render action: "edit" }
-          format.json { render json: @link.errors, status: :unprocessable_entity }
+          format.json { render json: @previous_link.errors, status: :unprocessable_entity }
         end
       end
     else    
-      if @link.update_attributes(params[:link])
+      if @link = @user.update_association(@previous_link, params[:link])
         render :partial => 'a_link', :locals=>{:link=>@link}
       else
-        
+        render :partial => 'a_link', :locals=>{:link=>@previous_link}
       end
     end
   end

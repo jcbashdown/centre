@@ -43,13 +43,16 @@ class User < ActiveRecord::Base
   def update_association(old_link, new_link_attributes)
     new_link, removed, created = nil
     transaction do
-      removed = UserLink.where(:user_id=>self.id, :link_id=>old_link.id)[0].destroy 
+      removed = UserLink.where(:user_id=>self.id, :link_id=>old_link.id)[0].try(:destroy) 
       new_link = Link.where(new_link_attributes).first || Link.create(new_link_attributes)
       new_link.users << self
-      # should really do this after create for user link - to trigger increment...
+      # should really do this after create for user link - to trigger increment... this isn't tested but fuck it.
+      if removed
+        removed.save!
+      end
       new_link.save!
     end 
-    return (new_link.present? && (removed.present? && !removed.persisted?)) ? true : false 
+    return (new_link.present? && (removed.present? && !removed.persisted?)) ? new_link : nil 
   end
 
   def user_to_node_links(to_node, order="")

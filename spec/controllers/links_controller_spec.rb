@@ -20,28 +20,30 @@ describe LinksController do
       context 'with valid params' do
         before do
           @user_two = Factory(:user, :email=>'test@user.com', :password=>'123456AA')
-          controller.stub(:current_user).and_return @user_two
+          controller.stub(:current_user).and_return @user
           @params = {"id"=>@link.id, "link"=>{"node_from_id"=>@node_one.id.to_s, "value"=>-1.to_s, "node_to_id"=>@node_two.id.to_s}}
         end
-        #should change or create the user link - only 4 links with votes
-        it 'should update the link' do
-          pending
+        it 'should update the link association' do
           Link.stub(:find).and_return @link
-          @link.should_receive(:update_attributes).with(@params["link"]).and_return true
-          #xhr :put, :update, @params
+          @user.should_receive(:update_association).with(@link, @params["link"]).and_return true
+          xhr :put, :update, @params
         end
         it 'should change the value and increment the caches' do
-          pending
-          @link.value.should == 1
-          #xhr :put, :update, @params
+          @link.users_count.should == 1
+          xhr :put, :update, @params
           @link.reload
-          @link.value.should == -1
+          @link.users_count.should == 0
         end
-        it 'should render the links template for the updated link (into the same place on the page - untested)' do
-          pending
-          #xhr :put, :update, @params
-          @link.reload
+        it 'should render the link partial for the newly associated link (not tested)' do
+          xhr :put, :update, @params
           response.should render_template(:partial => "_a_link")
+        end
+        #doing this here as otherwise difficult to test returned by update assoc link:
+        #can't test in partial
+        it 'should assign the correct link' do
+          put :update, @params
+          new_link = Link.where(@params["link"]).first
+          assigns(:link).should == new_link
         end
       end
       #get all node for page ordered by link params, if exists for user get otherwise new, get votes count separately - make sure onlythree of each node then user counts

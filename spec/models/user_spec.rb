@@ -26,7 +26,7 @@ describe User do
         @link_one.reload
         @node_two.reload
         @node_two.upvotes_count.should == 1
-        @link_two_params = {:node_from_id=>@node_one.id,:value=>-1,:node_to_id=>@node_two.id}
+        @link_two_params = {"node_from_id"=>@node_one.id,"value"=>-1,"node_to_id"=>@node_two.id}
       end
       context 'when the second unnassociated link already exists' do
         before do
@@ -56,6 +56,16 @@ describe User do
           @link_one.users_count.should == users_count - 1
           @node_two.downvotes_count.should == downvotes_count + 1
           @node_two.upvotes_count.should == upvotes_count - 1
+        end
+        it 'should return the newly associated link' do
+          @user.update_association(@link_one, @link_two_params).attributes.to_s.should == @link_two.attributes.merge({"users_count"=>1}).to_s
+        end
+        #to make sure all updates of caches are correct
+        it 'save the removed link' do
+
+        end
+        it 'save the newly associated link' do
+
         end
       end
       context 'when the second unnassociated link does not exist' do
@@ -89,6 +99,10 @@ describe User do
           @user.update_association(@link_one, @link_two_params)
           @link_two = Link.find_by_node_from_id_and_value_and_node_to_id(@node_one.id,-1,@node_two.id)
           @link_two.should be_persisted
+        end
+        it 'should return the newly associated link' do
+          returned = @user.update_association(@link_one, @link_two_params)
+          returned.attributes.merge(@link_two_params).should == returned.attributes
         end
       end
     end
