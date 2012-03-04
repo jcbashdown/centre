@@ -112,12 +112,19 @@ class LinksController < ApplicationController
   # DELETE /links/1
   # DELETE /links/1.json
   def destroy
-    @link = Link.find(params[:id])
-    @link.destroy
-
-    respond_to do |format|
-      format.html { redirect_to links_url }
-      format.json { head :ok }
+    old_link = Link.find(params[:id])
+    removed = UserLink.where(:user_id=>@user.id, :link_id=>old_link.id)[0].try(:destroy) 
+    old_link.save!
+    unless request.xhr?
+      respond_to do |format|
+        format.html { redirect_to links_url }
+        format.json { head :ok }
+      end
+    else
+      link_params = params[:link]
+      link_params.delete(:value)
+      blank_link = Link.new(link_params)
+      render :partial => 'a_link', :locals=>{:link=>blank_link}
     end
   end
 end

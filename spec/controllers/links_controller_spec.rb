@@ -8,7 +8,8 @@ describe LinksController do
   def valid_attributes
     {}
   end
-
+  
+  #This should really be userlinks controller
   describe 'update' do
     before do
       @node_one = Factory(:node)
@@ -46,27 +47,47 @@ describe LinksController do
           assigns(:link).should == new_link
         end
       end
-      #get all node for page ordered by link params, if exists for user get otherwise new, get votes count separately - make sure onlythree of each node then user counts
-      #deal with current user and update if new - don't create for each user
-      # what we are speccing here us the returned partial
+      #also get votes counts
+      # what we are not speccing here is the returned partial
     end
-
   end
   describe 'create' do
-    context 'when ajax request' do
-      before do
-        controller.stub(:xhr?).and_return true
-      end
-
-    end
-
+    #we will always use update - creates link if needed.
   end
   describe 'destroy' do
+    before do
+      @node_one = Factory(:node)
+      @node_two = Factory(:node, :title=>'title')
+      @user = Factory(:user)
+      @link = Link.create(:node_from=> @node_one, :value=>1, :node_to=>@node_two, :users=>[@user])
+    end
     context 'when ajax request' do
-      before do
-        controller.stub(:xhr?).and_return true
+      context 'with valid params' do
+        before do
+          @user_two = Factory(:user, :email=>'test@user.com', :password=>'123456AA')
+          controller.stub(:current_user).and_return @user
+          @params = {:id=>@link.id, :link=>{:node_from_id=>@node_one.id, :value=>1, :node_to_id=>@node_two.id}}
+          @user_link = UserLink.where(:user_id=>@user.id, :link_id=>@link)
+        end
+        it 'should delete the link association' do
+          UserLink.stub(:where).and_return [@user_link]
+          @user_link.should_receive(:try).with(:destroy)
+          xhr :post, :destroy, @params
+        end
+        it 'should save the old link' do
+          Link.stub(:find).and_return @link
+          @link.should_receive(:save!)
+          xhr :post, :destroy, @params
+        end
+        it 'initialise a new link with the correct parameters' do
+          Link.should_receive(:new).with({"node_from_id"=>@node_one.id.to_s, "node_to_id"=>@node_two.id.to_s})
+          xhr :post, :destroy, @params
+        end
+        it 'should render the link template' do
+          xhr :post, :destroy, @params
+          response.should render_template(:partial => "_a_link")
+        end
       end
-
     end
   end
 end
