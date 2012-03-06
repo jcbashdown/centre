@@ -11,6 +11,58 @@ describe User do
     }
   end
   
+  describe 'create association' do
+    before do
+      @user = Factory(:user)
+    end
+    context 'when the link already exists' do
+      before do
+        @node_one = Factory(:node)
+        @node_two = Factory(:node, :title=>'title')
+        @link_one = Link.create(:node_from=>@node_one,:value=>1,:node_to=>@node_two)
+        @link_one.reload
+        @link_one_params = {"node_from_id"=>@node_one.id.to_s,"value"=>"1","node_to_id"=>@node_two.id.to_s}
+      end
+      context 'when successful' do
+        it 'should associate the user' do
+          new_link = @user.create_association(@link_one_params)
+          @link_one.users.should include(@user)
+        end
+        it 'should save the newly associated link to update caches' do
+          @link_one.should_receive(:save!)
+          Link.stub(:where).and_return [@link_one]
+          @user.create_association(@link_one_params)
+        end
+        it 'should return the newly associated link' do
+          new_link = @user.create_association(@link_one_params)
+          new_link.should == @link_one
+        end
+      end
+    end
+    context 'when the link does not exist' do
+      before do
+        @node_one = Factory(:node)
+        @node_two = Factory(:node, :title=>'title')
+        @link_one_params = {"node_from_id"=>@node_one.id,"value"=>1,"node_to_id"=>@node_two.id}
+      end
+      context 'when successful' do
+        it 'should create the link' do
+          Link.where(@link_one_params).should be_empty
+          @user.create_association(@link_one_params)
+          Link.where(@link_one_params)[0].should_not be_nil
+        end
+        it 'should associate the user' do
+          new_link = @user.create_association(@link_one_params)
+          new_link.users.should include(@user)
+        end
+        it 'should return the newly associated link' do
+          new_link = @user.create_association(@link_one_params)
+          new_link.should be_a(Link) 
+        end
+      end
+    end
+  end
+ 
   describe 'update_association' do
     before do
       @user = Factory(:user)

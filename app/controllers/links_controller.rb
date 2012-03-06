@@ -73,15 +73,25 @@ class LinksController < ApplicationController
   # POST /links
   # POST /links.json
   def create
-    @link = Link.new(params[:link])
-
-    respond_to do |format|
-      if @link.save
-        format.html { redirect_to @link, notice: 'Link was successfully created.' }
-        format.json { render json: @link, status: :created, location: @link }
+    p params[:type]
+    unless request.xhr?
+      respond_to do |format|
+        if @link = @user.create_association(params[:link])
+          format.html { redirect_to @link, notice: 'Link was successfully created.' }
+          format.json { render json: @link, status: :created, location: @link }
+        else
+          format.html { render action: "new" }
+          format.json { render json: @link.errors, status: :unprocessable_entity }
+        end
+      end
+    else
+      if @link = @user.create_association(params[:link])
+        render :partial => 'a_link', :locals=>{:link=>@link, :type=>params[:type]}
       else
-        format.html { render action: "new" }
-        format.json { render json: @link.errors, status: :unprocessable_entity }
+        link_params = params[:link]
+        link_params.delete(:value)
+        blank_link = Link.new(link_params)
+        render :partial => 'a_link', :locals=>{:link=>blank_link, :type=>params[:type]}
       end
     end
   end
@@ -89,6 +99,7 @@ class LinksController < ApplicationController
   # PUT /links/1
   # PUT /links/1.json
   def update
+    p params[:type]
     @previous_link = Link.find(params[:id])
     unless request.xhr?
       respond_to do |format|
@@ -100,11 +111,11 @@ class LinksController < ApplicationController
           format.json { render json: @previous_link.errors, status: :unprocessable_entity }
         end
       end
-    else    
+    else
       if @link = @user.update_association(@previous_link, params[:link])
-        render :partial => 'a_link', :locals=>{:link=>@link}
+        render :partial => 'a_link', :locals=>{:link=>@link, :type=>params[:type]}
       else
-        render :partial => 'a_link', :locals=>{:link=>@previous_link}
+        render :partial => 'a_link', :locals=>{:link=>@previous_link, :type=>params[:type]}
       end
     end
   end
@@ -112,8 +123,10 @@ class LinksController < ApplicationController
   # DELETE /links/1
   # DELETE /links/1.json
   def destroy
+    p params[:type]
     old_link = Link.find(params[:id])
     removed = UserLink.where(:user_id=>@user.id, :link_id=>old_link.id)[0].try(:destroy) 
+    #trigger cache updates
     old_link.save!
     unless request.xhr?
       respond_to do |format|
@@ -124,7 +137,7 @@ class LinksController < ApplicationController
       link_params = params[:link]
       link_params.delete(:value)
       blank_link = Link.new(link_params)
-      render :partial => 'a_link', :locals=>{:link=>blank_link}
+      render :partial => 'a_link', :locals=>{:link=>blank_link, :type=>params[:type]}
     end
   end
 end
