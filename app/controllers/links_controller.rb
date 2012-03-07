@@ -1,38 +1,6 @@
 class LinksController < ApplicationController
   before_filter :signed_in_user, :except => [:show, :index]
 
-  def link_ins_edit 
-    @links= Link.all 
-    if request.xhr?
-      render :link_ins_edit, :layout => false
-    else
-      # renders link_ins_edit
-    end
-  end
-  def link_ins_show
-    @links= Link.all 
-    if request.xhr?
-      render :link_ins_show, :layout => false
-    else
-      # renders link_ins_show
-    end
-  end
-  def link_tos_edit 
-    @links= Link.all 
-    if request.xhr?
-      render :link_tos_edit, :layout => false
-    else
-      # renders link_tos_edit
-    end
-  end
-  def link_tos_show
-    @links= Link.all 
-    if request.xhr?
-      render :link_tos_show, :layout => false
-    else
-      # renders link_tos_show
-    end
-  end# GET /links
   # GET /links.json
   def index
     @links = Link.all
@@ -73,7 +41,6 @@ class LinksController < ApplicationController
   # POST /links
   # POST /links.json
   def create
-    p params[:type]
     unless request.xhr?
       respond_to do |format|
         if @link = @user.create_association(params[:link])
@@ -99,7 +66,6 @@ class LinksController < ApplicationController
   # PUT /links/1
   # PUT /links/1.json
   def update
-    p params[:type]
     @previous_link = Link.find(params[:id])
     unless request.xhr?
       respond_to do |format|
@@ -123,7 +89,6 @@ class LinksController < ApplicationController
   # DELETE /links/1
   # DELETE /links/1.json
   def destroy
-    p params[:type]
     old_link = Link.find(params[:id])
     removed = UserLink.where(:user_id=>@user.id, :link_id=>old_link.id)[0].try(:destroy) 
     #trigger cache updates

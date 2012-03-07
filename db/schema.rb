@@ -11,13 +11,13 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120229001210) do
+ActiveRecord::Schema.define(:version => 20120306235757) do
 
   create_table "globals", :force => true do |t|
-    t.integer  "nodes_count"
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "name"
+    t.integer  "nodes_count", :default => 0
   end
 
   create_table "globals_links", :id => false, :force => true do |t|

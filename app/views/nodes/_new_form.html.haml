@@ -14,6 +14,7 @@
       = f.label :text, {:class=>"width_80"}
       .margin_100
         = f.text_area :text, {:class=>"height_300"}
-        = f.hidden_field "global_ids", {:value=>@question.id}
+        - unless @question.name == "All"
+          = f.hidden_field "global_ids", {:value=>@question.id}
   .actions
     = f.submit 'Save'

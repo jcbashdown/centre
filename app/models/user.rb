@@ -50,6 +50,7 @@ class User < ActiveRecord::Base
       if removed
         removed.save!
       end
+      new_link.reload
       new_link.save!
     end 
     return (new_link.present? && (removed.present? && !removed.persisted?)) ? new_link : nil 
@@ -59,11 +60,13 @@ class User < ActiveRecord::Base
     new_link, created = nil
     transaction do
       new_link = Link.where(new_link_attributes)[0] || Link.create(new_link_attributes)
-      created = UserLink.where(:user_id=>self.id, :link_id=>new_link.id)[0] || UserLink.create(:user_id=>self.id, :link_id=>new_link.id)
+      new_link.users << self
+      #created = UserLink.where(:user_id=>self.id, :link_id=>new_link.id)[0] || UserLink.create(:user_id=>self.id, :link_id=>new_link.id)
       # should really do this after create for user link - to trigger increment... this isn't tested but fuck it.
+      new_link.reload
       new_link.save!
     end 
-    return (new_link.present? && (created.present? && created.persisted?)) ? new_link : nil 
+    return (new_link.present? && new_link.persisted?) ? new_link : nil 
   end
   #no longer used
   def user_to_node_links(to_node, order="")
