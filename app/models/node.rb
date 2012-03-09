@@ -112,5 +112,5 @@ class Node < ActiveRecord::Base
     end
     sum
   end
-  
+
 end

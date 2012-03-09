@@ -56,6 +56,85 @@ class Link < ActiveRecord::Base
     end
     node.save!
   end
-
   
+  def add_text_to_global(global)
+    #strip non word chars/make safe, strip white space
+    unless global.name == "All"
+      text = global.full_text
+      node_from_text = node_from.title
+      node_to_text = node_to.title
+      if value == 1
+        descriptor = "+"
+        match = text.match(/#{Regexp.quote(node_to_text)}\n\s{2}#{Regexp.quote(descriptor)}/)
+        unless match
+          #start the first plus of minus
+          match = text.match(/#{Regexp.quote(node_to_text)}\n\s{2}/)
+        end
+        # for each match
+        match_index = match.end(0)
+        text.insert(match_index, descriptor+node_text)
+      elsif value == -1
+        descriptor = "-"
+        match = text.match(/#{Regexp.quote(node_to_text)}\n\s{2}#{Regexp.quote(descriptor)}/)
+        unless match
+          #start the first plus of minus
+          match = text.match(/#{Regexp.quote(node_to_text)}\n\s{2}/)
+        end
+        # for each match
+        match_index = match.end(0)
+        text.insert(match_index, descriptor+node_text)
+      end
+    end
+  end
+#First input? Must define base nodes, then it's fine if these link to others. If other nodes already defined then we must do initial calcs? or we need to set the toos as base? or block all links except to those already drawn in text? or we need to do this on a node by node basis and construct on demand/cron job? can't start and then later not have all levels of support when we do main conclusions
+
+#e.g. start with
+#This node
+  #+Supported by this
+  #-Opposed by this
+#Then realise
+
+#Another node
+  #+This node
+
+#but fail to build correct and end up with
+
+
+#This node
+  #+Supported by this
+  #-Opposed by this
+
+#Another node
+  #+This node
+
+#Because then we're repeating alot.
+
+#Need base but this just builds after the fact based on what we store on node. We need base so we don't get args running into each other - ridiculous nesting...
+---
+#Here is another thing
+# +This is a thing
+# -
+#   +What what?
+#     +
+#     -
+#   -
+#This is a thing
+#  +This supports it
+#    +This supports that
+#      +
+#      -
+#    +This is a thing
+#      +
+#      -
+#    -
+#  -
+#Another thing
+#  +Supported by
+#    +
+#    - 
+#  - 
+#  -Opposed by
+#    +Support
+#    -
+#  
 end

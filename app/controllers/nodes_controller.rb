@@ -25,8 +25,6 @@ class NodesController < ApplicationController
 
   def index
     @nodes = @question.nodes.paginate(:page => params[:page], :per_page=>5).order(@order_query)
-    p @question.nodes
-    p @nodes
     if request.xhr?
       render :index, :layout => false
     else
