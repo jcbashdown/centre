@@ -11,23 +11,28 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120306235757) do
+ActiveRecord::Schema.define(:version => 20120310012418) do
 
   create_table "globals", :force => true do |t|
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "name"
     t.integer  "nodes_count", :default => 0
+    t.text     "full_text"
   end
 
-  create_table "globals_links", :id => false, :force => true do |t|
-    t.integer "link_id"
-    t.integer "global_id"
+  create_table "globals_links", :force => true do |t|
+    t.integer  "link_id"
+    t.integer  "global_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
-  create_table "globals_users", :id => false, :force => true do |t|
-    t.integer "user_id"
-    t.integer "global_id"
+  create_table "globals_users", :force => true do |t|
+    t.integer  "user_id"
+    t.integer  "global_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   create_table "links", :force => true do |t|
@@ -45,16 +50,20 @@ ActiveRecord::Schema.define(:version => 20120306235757) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "user_id"
-    t.integer  "upvotes_count",     :default => 0,    :null => false
-    t.integer  "downvotes_count",   :default => 0,    :null => false
-    t.integer  "equivalents_count", :default => 0,    :null => false
+    t.integer  "upvotes_count",     :default => 0,     :null => false
+    t.integer  "downvotes_count",   :default => 0,     :null => false
+    t.integer  "equivalents_count", :default => 0,     :null => false
     t.boolean  "ignore",            :default => true
     t.float    "page_rank",         :default => 0.0
+    t.boolean  "is_conclusion",     :default => false
   end
 
-  create_table "nodes_globals", :id => false, :force => true do |t|
-    t.integer "node_id"
-    t.integer "global_id"
+  create_table "nodes_globals", :force => true do |t|
+    t.integer  "node_id"
+    t.integer  "global_id"
+    t.text     "votes_xml"
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   create_table "user_links", :force => true do |t|

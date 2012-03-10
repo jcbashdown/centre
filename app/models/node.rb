@@ -1,9 +1,12 @@
 class Node < ActiveRecord::Base
   validates :title, :presence => true, :uniqueness => true
+
   has_many :link_ins, :foreign_key => "node_to_id", :class_name => "Link"
   has_many :link_tos, :foreign_key => "node_from_id", :class_name => "Link"
-  has_many :node_tos, :through => :link_tos, :class_name => "Node", :foreign_key => "node_from_id"
-  has_many :node_froms, :through => :link_ins, :class_name => "Node", :foreign_key => "node_to_id"
+
+  has_many :node_tos, :through => :link_tos, :class_name => "Node", :foreign_key => "node_to_id", :source=>:node_to
+  has_many :node_froms, :through => :link_ins, :class_name => "Node", :foreign_key => "node_from_id", :source=>:node_from
+
   has_many :nodes_globals
   has_many :globals, :through=>:nodes_globals
   belongs_to :user

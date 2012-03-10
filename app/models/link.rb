@@ -1,9 +1,11 @@
 class Link < ActiveRecord::Base
-  belongs_to :node_from, :foreign_key=>'node_from_id', :class_name => "Node"
-  belongs_to :node_to, :foreign_key=>'node_to_id', :class_name => "Node"
+  belongs_to :node_from, :class_name => "Node", :foreign_key=>'node_from_id'
+  belongs_to :node_to, :class_name => "Node", :foreign_key=>'node_to_id'
+
   has_many :user_links, :dependent => :destroy
   has_many :users, :through => :user_links
-  has_and_belongs_to_many :globals
+  has_many :globals_links
+  has_many :globals, :through => :globals_links
   # do we definitely want to limit to having a support or oppose relation? What about undecided or related?
   #spec this
   validates :node_from, :presence => true
@@ -86,55 +88,4 @@ class Link < ActiveRecord::Base
       end
     end
   end
-#First input? Must define base nodes, then it's fine if these link to others. If other nodes already defined then we must do initial calcs? or we need to set the toos as base? or block all links except to those already drawn in text? or we need to do this on a node by node basis and construct on demand/cron job? can't start and then later not have all levels of support when we do main conclusions
-
-#e.g. start with
-#This node
-  #+Supported by this
-  #-Opposed by this
-#Then realise
-
-#Another node
-  #+This node
-
-#but fail to build correct and end up with
-
-
-#This node
-  #+Supported by this
-  #-Opposed by this
-
-#Another node
-  #+This node
-
-#Because then we're repeating alot.
-
-#Need base but this just builds after the fact based on what we store on node. We need base so we don't get args running into each other - ridiculous nesting...
----
-#Here is another thing
-# +This is a thing
-# -
-#   +What what?
-#     +
-#     -
-#   -
-#This is a thing
-#  +This supports it
-#    +This supports that
-#      +
-#      -
-#    +This is a thing
-#      +
-#      -
-#    -
-#  -
-#Another thing
-#  +Supported by
-#    +
-#    - 
-#  - 
-#  -Opposed by
-#    +Support
-#    -
-#  
 end
