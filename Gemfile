@@ -44,5 +44,5 @@ gem "frontend-helpers"
 gem 'less-rails-bootstrap'
 gem 'ruby-debug19'
 gem "rails-backbone"
-
+gem "nokogiri"
 

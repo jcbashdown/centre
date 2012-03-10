@@ -6,25 +6,29 @@ class GlobalsLink < ActiveRecord::Base
 #store on the nodes global. votes on nodes global
   def update_node_to_xml
     node = link.node_to
+    nodes_global = node.nodes_globals.where(:global_id=>global.id).first
     votes_xml = "<node_froms type='array'>"
     node.node_froms.reload.each do |from|
-      p 123
-      p from
-      p from.nodes_globals
-      p global.id
-      p 123
       #unless they're in the global ignore?
-      votes_xml+=from.nodes_globals.where(:global_id=>global.id).first.votes_xml
+      vote_xml = from.nodes_globals.where(:global_id=>global.id).first.try(:votes_xml)
+      if vote_xml
+        votes_xml+= vote_xml
+      end
     end
     votes_xml = votes_xml+"</node_froms>"
-    nodes_global = node.nodes_globals.where(:global_id=>global.id).first
-    p nodes_global
-    nodes_global.votes_xml = votes_xml
+    froms_doc = Nokogiri::XML(votes_xml) do |config|
+      config.default_xml.noblanks
+    end
+    node_xml = node.to_xml
+    to_doc = Nokogiri::XML(node_xml) do |config|
+      config.default_xml.noblanks
+    end
+    from_nodes = froms_doc.xpath('/node_froms').first
+    to_node = to_doc.xpath('/node').first
+    from_nodes.parent = to_node
+    nodes_global.votes_xml = to_doc.to_xml(:indent=>2).gsub(%Q|<?xml version="1.0" encoding="UTF-8"?>\n|, "")
     nodes_global.save!
-    #node xmls
-    #node to id
-    
-    
+    #do up until conclusions
   end
 
   def update_global_xml

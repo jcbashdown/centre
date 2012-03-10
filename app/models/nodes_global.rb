@@ -10,6 +10,6 @@ class NodesGlobal < ActiveRecord::Base
   end 
 
   def set_default_xml
-    self.votes_xml ||= ""
+    self.votes_xml ||= node.to_xml
   end
 end
