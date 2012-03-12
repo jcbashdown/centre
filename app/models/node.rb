@@ -11,8 +11,8 @@ class Node < ActiveRecord::Base
   has_many :globals, :through=>:nodes_globals
   belongs_to :user
   
-  accepts_nested_attributes_for :link_ins, :allow_destroy => true#, :reject_if => :reject_link
-  accepts_nested_attributes_for :link_tos, :allow_destroy => true#, :reject_if => :reject_link
+  accepts_nested_attributes_for :link_ins, :allow_destroy => true
+  accepts_nested_attributes_for :link_tos, :allow_destroy => true
   after_create :set_all
 
   def construct_to_node_links
@@ -45,15 +45,6 @@ class Node < ActiveRecord::Base
     all.save!
   end  
 
-  def reject_link(hash)
-    hash.each do |key|
-      unless key=='user_id'
-        return hash[key].blank?
-      end
-    end 
-    # reject if not real link ids (either)
-  end
-  
   def all_with_link_ids
     nodes = []
     Node.all.each do |node|
@@ -69,6 +60,26 @@ class Node < ActiveRecord::Base
     nodes
   end
 
+  def has_links?
+    if self.link_tos.count > 0 || self.link_ins.count > 0
+      true
+    else
+      false
+    end
+  end
+
+  def sum_votes(vote_type)
+    links = Link.where('value = ? AND node_to_id = ?', vote_type, self.id)
+    sum = 0
+    if !links.empty?
+      links.each do |link|
+        sum = sum+link.users_count
+      end
+    end
+    sum
+  end
+
+  #This is for page rank
   def build_link_array
     #link value is positive links is proportion pos links = for 3 positive 2 negative 3/5
     #so if node one links to node two 5 times upvotes (node_one.link_tos == 5). and 3 of the five are positive #Link.find.where(node_to = node_two.id AND value = 1).count
@@ -95,25 +106,6 @@ class Node < ActiveRecord::Base
       end
     end
     array
-  end
-
-  def has_links?
-    if self.link_tos.count > 0 || self.link_ins.count > 0
-      true
-    else
-      false
-    end
-  end
-
-  def sum_votes(vote_type)
-    links = Link.where('value = ? AND node_to_id = ?', vote_type, self.id)
-    sum = 0
-    if !links.empty?
-      links.each do |link|
-        sum = sum+link.users_count
-      end
-    end
-    sum
   end
 
 end

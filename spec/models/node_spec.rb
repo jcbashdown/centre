@@ -40,17 +40,6 @@ describe Node do
       @node.should be_valid
     end
   end
-  context 'creating links with other nodes' do
-    context 'when a node has no nodes' do
-      before do
-       @node.title = "title"
-       @node.save! 
-      end
-      it 'should be valid' do
-        @node.should be_valid
-      end
-    end
-  end
   context 'creating links' do
     before do
       @node.title = "node_one"

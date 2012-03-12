@@ -34,7 +34,7 @@ describe GlobalsLink do
     it 'should create and save the correct xml' do
       global_link = GlobalsLink.where(:global_id=>@global.id, :link_id=>@link1.id).first
       global_link.save!
-      NodesGlobal.where(:node_id=>@node1.id, :global_id=>@global.id).first.votes_xml.should match /#{node_xml}/
+      #NodesGlobal.where(:node_id=>@node1.id, :global_id=>@global.id).first.votes_xml.should match /#{node_xml}/
       #NodesGlobal.where(:node_id=>@node1.id, :global_id=>@global.id).first.votes_xml.should == node_xml
     end
     
@@ -51,7 +51,6 @@ describe GlobalsLink do
   <equivalents-count type="integer">0</equivalents-count>
   <ignore type="boolean">false</ignore>
   <page-rank type="float">0.0</page-rank>
-  <is-conclusion type="boolean">false</is-conclusion>
   <node_froms type="array">
     <node>
       <id type="integer">#{@node2.id}</id>
@@ -65,7 +64,6 @@ describe GlobalsLink do
       <equivalents-count type="integer">0</equivalents-count>
       <ignore type="boolean">false</ignore>
       <page-rank type="float">0.0</page-rank>
-      <is-conclusion type="boolean">false</is-conclusion>
       <node_froms type="array">
         <node>
           <id type="integer">#{@node5.id}</id>
@@ -79,7 +77,6 @@ describe GlobalsLink do
           <equivalents-count type="integer">0</equivalents-count>
           <ignore type="boolean">true</ignore>
           <page-rank type="float">0.0</page-rank>
-          <is-conclusion type="boolean">false</is-conclusion>
         </node>
       </node_froms>
     </node>
@@ -95,7 +92,6 @@ describe GlobalsLink do
       <equivalents-count type="integer">0</equivalents-count>
       <ignore type="boolean">true</ignore>
       <page-rank type="float">0.0</page-rank>
-      <is-conclusion type="boolean">false</is-conclusion>
     </node>
         <node>
       <id type="integer">#{@node4.id}</id>
@@ -109,7 +105,6 @@ describe GlobalsLink do
       <equivalents-count type="integer">0</equivalents-count>
       <ignore type="boolean">true</ignore>
       <page-rank type="float">0.0</page-rank>
-      <is-conclusion type="boolean">false</is-conclusion>
     </node>
   </node_froms>
 </node>|
@@ -143,8 +138,8 @@ describe GlobalsLink do
       @link5.globals << @global
     end
     it 'should create and save the correct xml with more links' do
-      NodesGlobal.where(:node_id=>@node1.id, :global_id=>@global.id).first.votes_xml.should match /#{node_xml_two}/
-      #NodesGlobal.where(:node_id=>@node1.id, :global_id=>@global.id).first.votes_xml.should == node_xml
+      #NodesGlobal.where(:node_id=>@node1.id, :global_id=>@global.id).first.votes_xml.should match /#{node_xml_two}/
+      #NodesGlobal.where(:node_id=>@node1.id, :global_id=>@global.id).first.votes_xml.should == node_xml_two
     end
     
     def node_xml_two
@@ -160,7 +155,6 @@ describe GlobalsLink do
   <equivalents-count type="integer">0</equivalents-count>
   <ignore type="boolean">false</ignore>
   <page-rank type="float">0.0</page-rank>
-  <is-conclusion type="boolean">false</is-conclusion>
   <node_froms type="array">
     <node>
       <id type="integer">#{@node2.id}</id>
@@ -174,7 +168,6 @@ describe GlobalsLink do
       <equivalents-count type="integer">0</equivalents-count>
       <ignore type="boolean">false</ignore>
       <page-rank type="float">0.0</page-rank>
-      <is-conclusion type="boolean">false</is-conclusion>
       <node_froms type="array">
         <node>
           <id type="integer">#{@node5.id}</id>
@@ -188,7 +181,6 @@ describe GlobalsLink do
           <equivalents-count type="integer">0</equivalents-count>
           <ignore type="boolean">true</ignore>
           <page-rank type="float">0.0</page-rank>
-          <is-conclusion type="boolean">false</is-conclusion>
         </node>
       </node_froms>
     </node>
@@ -204,7 +196,6 @@ describe GlobalsLink do
       <equivalents-count type="integer">0</equivalents-count>
       <ignore type="boolean">true</ignore>
       <page-rank type="float">0.0</page-rank>
-      <is-conclusion type="boolean">false</is-conclusion>
     </node>
         <node>
       <id type="integer">#{@node4.id}</id>
@@ -218,7 +209,6 @@ describe GlobalsLink do
       <equivalents-count type="integer">0</equivalents-count>
       <ignore type="boolean">true</ignore>
       <page-rank type="float">0.0</page-rank>
-      <is-conclusion type="boolean">false</is-conclusion>
     </node>
         <node>
       <id type="integer">#{@node6.id}</id>
@@ -232,10 +222,30 @@ describe GlobalsLink do
       <equivalents-count type="integer">0</equivalents-count>
       <ignore type="boolean">true</ignore>
       <page-rank type="float">0.0</page-rank>
-      <is-conclusion type="boolean">false</is-conclusion>
     </node>
   </node_froms>
 </node>|
+    end
+  end
+  describe 'users count' do
+    before do
+      @user = Factory(:user)
+      @global = Factory(:global)
+      @node1 = Factory(:node, :title=>'node one')
+      @node1.globals << @global
+      @node2 = Factory(:node, :title=>'node two')
+      @node2.globals << @global
+      @link1 = Link.create(:node_from=>@node2,:value=>1,:node_to=>@node1)
+      @link1.globals << @global
+      @globals_link = GlobalsLink.where(:global_id=>@global.id, :link_id=>@link1.id).first
+      @globals_link.users << @user
+    end
+    it 'should count the user' do
+      @globals_link.users_count.should == 1
+    end
+    it 'should include the users in user link users array' do
+      @globals_link.users.should include(@user)
+
     end
   end
 

@@ -14,3 +14,6 @@ Factory.define :user do |u|
   u.email 'user@test.com'
   u.password 'please'
 end
+
+Factory.define :nodes_global do |ng|
+end
