@@ -18,8 +18,6 @@ class GlobalsLink < ActiveRecord::Base
     end
   end  
   def turn_on_node_ignore
-    p nodes_global_to = link.nodes_global_to
-    p nodes_global_from = link.nodes_global_from
     unless link.value == 0 || link.value.blank?
       if !nodes_global_to.has_links?
         nodes_global_to.update_attributes(:ignore=>true)
