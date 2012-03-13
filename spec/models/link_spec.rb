@@ -8,13 +8,15 @@ describe Link do
   end
   describe "on creation" do
     before do
+      @global = Factory(:global)
       @node_one = Factory(:node)
       @node_two = Factory(:node, :title=>'title two')
-      @node_two.node_froms << @node_one
-      @link = Link.find_by_node_from_id_and_node_to_id(@node_one.id, @node_two.id)
+      @nodes_global1 = Factory(:nodes_global, :node=>@node_one, :global=>@global)
+      @nodes_global2 = Factory(:nodes_global, :node=>@node_two, :global=>@global)
+      @link = Link.create(:node_from => @node_one, :nodes_global_from=>@nodes_global1, :node_to=> @node_two, :nodes_global_to=>@nodes_global2)
       @user = Factory(:user)
       @link.users <<  @user
-      @node_two.upvotes_count.should == 0
+      @nodes_global2.upvotes_count.should == 0
       @link.users_count.should == 1
     end
     context "when the link is positive" do
@@ -26,6 +28,7 @@ describe Link do
         @node_two.reload
       end
       it "should increment the upvote counter cache on the node" do
+        @nodes_global2.upvotes_count.should == @count+1
         @node_two.upvotes_count.should == @count+1
       end
     end
@@ -39,6 +42,7 @@ describe Link do
       end
       it "should increment the downvote counter cache on the node" do
         @node_two.downvotes_count.should == @count+1
+        @nodes_global2.downvotes_count.should == @count+1
       end
     end
     context "when the link is equality" do
@@ -51,6 +55,7 @@ describe Link do
       end
       it "should increment the equality counter cache on the node" do
         @node_two.equivalents_count.should == @count+1
+        @nodes_global2.equivalents_count.should == @count+1
       end
     end
     describe "on deletion" do
@@ -64,6 +69,7 @@ describe Link do
           @link.destroy
           @node_two.reload
           @node_two.upvotes_count.should == @count-1
+          @nodes_global2.upvotes_count.should == @count-1
         end
       end
       context "when the link is negative" do
@@ -76,6 +82,7 @@ describe Link do
           @link.destroy
           @node_two.reload
           @node_two.downvotes_count.should == @count-1
+          @nodes_global2.downvotes_count.should == @count-1
         end
       end
       context "when the link is equal" do
@@ -88,6 +95,7 @@ describe Link do
           @link.destroy
           @node_two.reload
           @node_two.equivalents_count.should == @count-1
+          @nodes_global2.equivalents_count.should == @count-1
         end
       end
     end

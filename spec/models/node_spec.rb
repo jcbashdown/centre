@@ -3,23 +3,27 @@ require 'spec_helper'
 describe Node do
   describe 'construct from node links' do
     before do
+      @global = Factory(:global)
       @node = Factory(:node, :title=>'c title')
       @node_two = Factory(:node, :title=>'x title')
       @node_three = Factory(:node, :title=>'b title')
-      @link1 = Link.new(:node_from=>@node, :node_to=>@node_two)
-      @link2 = Link.new(:node_from=>@node, :node_to=>@node_three)
-      @link3 = Link.new(:node_from=>@node, :node_to=>@node_two)
-      @link4 = Link.new(:node_from=>@node_three, :node_to=>@node_two)
+      @nodes_global1 = Factory(:nodes_global, :node=>@node, :global=>@global)
+      @nodes_global2 = Factory(:nodes_global, :node=>@node_two, :global=>@global)
+      @nodes_global3 = Factory(:nodes_global, :node=>@node_three, :global=>@global)
+      @link1 = Link.new(:nodes_global_from=>@nodes_global1, :nodes_global_to=> @nodes_global2, :node_from=>@node, :node_to=>@node_two)
+      @link2 = Link.new(:nodes_global_from=>@nodes_global1, :nodes_global_to=> @nodes_global3, :node_from=>@node, :node_to=>@node_three)
+      @link3 = Link.new(:nodes_global_from=>@nodes_global1, :nodes_global_to=> @nodes_global2, :node_from=>@node, :node_to=>@node_two)
+      @link4 = Link.new(:nodes_global_from=>@nodes_global3, :nodes_global_to=> @nodes_global2, :node_from=>@node_three, :node_to=>@node_two)
       @from_node_links = [@link2,
                           @link1]
       @to_node_two_links = [@link4,
                             @link3]
     end
     it 'should return the correct links array in alphabetical order' do
-      @node.construct_from_node_links.inspect.should == @from_node_links.inspect
+      @nodes_global1.construct_from_node_links.inspect.should == @from_node_links.inspect
     end
     it 'should return the correct links array in alphabetical order' do
-      @node_two.construct_to_node_links.inspect.should == @to_node_two_links.inspect
+      @nodes_global2.construct_to_node_links.inspect.should == @to_node_two_links.inspect
     end
   end
   before do
@@ -48,26 +52,20 @@ describe Node do
     end
     context 'linking node to node_two' do
       before do
+        @global = Factory(:global)
         @user = Factory(:user)
-        @node.node_tos << @node_two
-        @link_to = @node.link_tos.first
-        @link_to.value = 1
+        @node = Factory(:node, :title=>'c title')
+        @node_two = Factory(:node, :title=>'x title')
+        @node_three = Factory(:node, :title=>'b title')
+        @nodes_global1 = Factory(:nodes_global, :node=>@node, :global=>@global)
+        @nodes_global2 = Factory(:nodes_global, :node=>@node_two, :global=>@global)
+        @nodes_global3 = Factory(:nodes_global, :node=>@node_three, :global=>@global)
+        @link_to = Link.new(:value=>1,:nodes_global_from=>@nodes_global1, :nodes_global_to=> @nodes_global2, :node_from=>@node, :node_to=>@node_two)
         @link_to.users << @user
         @link_to.save!
         @link_to.reload
         @node.reload
         @node_two.reload
-        # only count votes if user?
-        # require value for link
-        # count ignore only when value
-        # count ignore on save
-        # increment caches on save
-        link_in = Link.new(:node_from=>@node_two, :node_to=>@node)
-        @hash = [{:node => @node_two, :link_in=>link_in, :link_to=>@link_to}]
-        @link_in = @node_two.link_ins.first
-        link_to = Link.new(:node_from=>@node_two, :node_to=>@node)
-        @hash_two = [{:node => @node, :link_in=>@link_in, :link_to=>link_to}]
-        @link_to.should == @link_in
       end
       context 'sum votes for upvotes' do
         before do
@@ -79,12 +77,6 @@ describe Node do
       end
       it 'should create one link out' do
         @node.link_tos.count.should == 1
-      end
-      it 'should return the correct array when all_with_link_ids called on node' do
-        @node.all_with_link_ids.to_s.should == @hash.to_s
-      end
-      it 'should return the correct array when all_with_link_ids called on node two' do
-        @node_two.all_with_link_ids.to_s.should == @hash_two.to_s
       end
       it 'should create one target node' do
         @node.node_tos.count.should == 1

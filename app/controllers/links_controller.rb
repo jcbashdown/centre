@@ -1,5 +1,6 @@
 class LinksController < ApplicationController
   before_filter :signed_in_user, :except => [:show, :index]
+  before_filter :find_limit_order, :except => [:show, :index, :edit, :new]
 
   # GET /links.json
   def index
@@ -41,9 +42,14 @@ class LinksController < ApplicationController
   # POST /links
   # POST /links.json
   def create
+    node_from = params[:link][:node_from_id]
+    nodes_global_from = NodesGlobal.where(:global_id=>@question.id, :node_id=>node_from)[0] || NodesGlobal.create(:global=>@question, :node_id=>node_from)
+    node_to = params[:link][:node_to_id]
+    nodes_global_to = NodesGlobal.where(:global_id=>@question.id, :node_id=>node_to)[0] || NodesGlobal.create(:global=>@question, :node_id=>node_to)
+    link_params = params[:link].merge(:nodes_global_from_id=>nodes_global_from.id,:nodes_global_to_id=>nodes_global_to.id)
     unless request.xhr?
       respond_to do |format|
-        if @link = @user.create_association(params[:link])
+        if @link = @user.create_association(link_params)
           format.html { redirect_to @link, notice: 'Link was successfully created.' }
           format.json { render json: @link, status: :created, location: @link }
         else
@@ -52,7 +58,7 @@ class LinksController < ApplicationController
         end
       end
     else
-      if @link = @user.create_association(params[:link])
+      if @link = @user.create_association(link_params)
         render :partial => 'a_link', :locals=>{:link=>@link, :type=>params[:type]}
       else
         link_params = params[:link]
@@ -66,10 +72,15 @@ class LinksController < ApplicationController
   # PUT /links/1
   # PUT /links/1.json
   def update
+    node_from = params[:link][:node_from_id]
+    nodes_global_from = NodesGlobal.where(:global_id=>@question.id, :node_id=>node_from)[0] || NodesGlobal.create(:global=>@question, :node_id=>node_from)
+    node_to = params[:link][:node_to_id]
+    nodes_global_to = NodesGlobal.where(:global_id=>@question.id, :node_id=>node_to)[0] || NodesGlobal.create(:global=>@question, :node_id=>node_to)
+    link_params = params[:link].merge(:nodes_global_from_id=>nodes_global_from.id,:nodes_global_to_id=>nodes_global_to.id)
     @previous_link = Link.find(params[:id])
     unless request.xhr?
       respond_to do |format|
-        if @link = @user.update_association(@previous_link, params[:link])
+        if @link = @user.update_association(@previous_link, link_params)
           format.html { redirect_to @link, notice: 'Link was successfully updated.' }
           format.json { head :ok }
         else
@@ -78,7 +89,7 @@ class LinksController < ApplicationController
         end
       end
     else
-      if @link = @user.update_association(@previous_link, params[:link])
+      if @link = @user.update_association(@previous_link, link_params)
         render :partial => 'a_link', :locals=>{:link=>@link, :type=>params[:type]}
       else
         render :partial => 'a_link', :locals=>{:link=>@previous_link, :type=>params[:type]}

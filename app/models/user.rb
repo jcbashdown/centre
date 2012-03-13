@@ -16,14 +16,6 @@ class User < ActiveRecord::Base
 
   # Setup accessible (or protected) attributes for your model
   attr_accessible :name, :email, :password, :password_confirmation, :remember_me
-  after_create :set_all
-  
-  def set_all
-    # do this with global setting
-    all = Global.find_by_name("All")
-    all.users << self
-    all.save!
-  end  
   
   def update_association(old_link, new_link_attributes)
     new_link, removed = nil

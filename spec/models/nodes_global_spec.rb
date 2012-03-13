@@ -12,19 +12,9 @@ describe NodesGlobal do
     context 'linking node to node_two' do
       before do
         @user = Factory(:user)
-        @nodes_global1.nodes_global_tos << @nodes_global2
-        @link_to = @nodes_global1.link_tos.first
-        @link_to.globals << @global
-        @link_to.value = 1
+        @link_to = Link.create(:node_from=>@node_one, :nodes_global_from=>@nodes_global1,:value=>1,:nodes_global_to=>@nodes_global2, :node_to=>@node_two)
         @link_to.users << @user
         @link_to.save!
-        @globals_link = GlobalsLink.where(:global_id=>@global.id, :link_id=>@link_to.id).first
-        #why is the following not incrementing counter cache and therefore saving - creation of user globals link should do this. is a alphabet thing? 
-        count = UserGlobalsLink.count
-        @globals_link.users << @user
-        UserGlobalsLink.count.should == count+1
-        #still not working without this even with after create save call back on user global link
-        #@globals_link.save!
         @link_to.reload
         @nodes_global1.reload
         @nodes_global2.reload
@@ -38,7 +28,7 @@ describe NodesGlobal do
         end
       end
       it 'should increment the users count' do
-        @globals_link.users_count.should == 1
+        @link_to.users_count.should == 1
       end
       it 'should create one link out' do
         @nodes_global1.link_tos.count.should == 1

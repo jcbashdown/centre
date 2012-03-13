@@ -13,7 +13,6 @@ class Node < ActiveRecord::Base
   
   accepts_nested_attributes_for :link_ins, :allow_destroy => true
   accepts_nested_attributes_for :link_tos, :allow_destroy => true
-  after_create :set_all
 
   def construct_to_node_links
     links = []
@@ -37,13 +36,6 @@ class Node < ActiveRecord::Base
     links.sort!{ |a, b|  a.node_to.title <=> b.node_to.title }
     links
   end
-
-  def set_all
-    # do this with global setting
-    all = Global.find_by_name("All")
-    all.nodes << self
-    all.save!
-  end  
 
   def all_with_link_ids
     nodes = []

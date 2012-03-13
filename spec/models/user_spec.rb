@@ -14,14 +14,17 @@ describe User do
   describe 'create association' do
     before do
       @user = Factory(:user)
+      @global = Factory(:global)
     end
     context 'when the link already exists' do
       before do
         @node_one = Factory(:node)
         @node_two = Factory(:node, :title=>'title')
-        @link_one = Link.create(:node_from=>@node_one,:value=>1,:node_to=>@node_two)
+        @nodes_global1 = Factory(:nodes_global, :node=>@node_one, :global=>@global)
+        @nodes_global2 = Factory(:nodes_global, :node=>@node_two, :global=>@global)
+        @link_one = Link.create(:nodes_global_from=>@nodes_global1,:node_from=>@node_one,:value=>1,:nodes_global_to=>@nodes_global2,:node_to=>@node_two)
         @link_one.reload
-        @link_one_params = {"node_from_id"=>@node_one.id.to_s,"value"=>"1","node_to_id"=>@node_two.id.to_s}
+        @link_one_params = {"nodes_global_from_id"=>@nodes_global1.id.to_s, "node_from_id"=>@node_one.id.to_s,"value"=>"1","node_to_id"=>@node_two.id.to_s, "nodes_global_to_id"=>@nodes_global2.id.to_s}
       end
       context 'when successful' do
         it 'should associate the user' do
@@ -43,7 +46,9 @@ describe User do
       before do
         @node_one = Factory(:node)
         @node_two = Factory(:node, :title=>'title')
-        @link_one_params = {"node_from_id"=>@node_one.id,"value"=>1,"node_to_id"=>@node_two.id}
+        @nodes_global1 = Factory(:nodes_global, :node=>@node_one, :global=>@global)
+        @nodes_global2 = Factory(:nodes_global, :node=>@node_two, :global=>@global)
+        @link_one_params = {"nodes_global_from_id"=>@nodes_global1.id.to_s, "node_from_id"=>@node_one.id.to_s,"value"=>"1","node_to_id"=>@node_two.id.to_s, "nodes_global_to_id"=>@nodes_global2.id.to_s}
       end
       context 'when successful' do
         it 'should create the link' do
@@ -71,14 +76,16 @@ describe User do
       before do
         @node_one = Factory(:node)
         @node_two = Factory(:node, :title=>'title')
-        @link_one = Link.create(:node_from=>@node_one,:value=>1,:node_to=>@node_two)
+        @nodes_global1 = Factory(:nodes_global, :node=>@node_one, :global=>@global)
+        @nodes_global2 = Factory(:nodes_global, :node=>@node_two, :global=>@global)
+        @link_one = Link.create(:nodes_global_from=>@nodes_global1,:node_from=>@node_one,:value=>1,:nodes_global_to=>@nodes_global2,:node_to=>@node_two)
         @link_one.users << @user
         #TODO - again, shouldn't have to do this save here
         @link_one.save!
         @link_one.reload
         @node_two.reload
         @node_two.upvotes_count.should == 1
-        @link_two_params = {"node_from_id"=>@node_one.id,"value"=>-1,"node_to_id"=>@node_two.id}
+        @link_two_params = {"nodes_global_from_id"=>@nodes_global1.id, "node_from_id"=>@node_one.id,"value"=>-1,"node_to_id"=>@node_two.id, "nodes_global_to_id"=>@nodes_global2.id}
       end
       context 'when the second unnassociated link already exists' do
         before do
@@ -254,8 +261,9 @@ describe User do
       @user = Factory(:user)
       @node_one = Factory(:node)
       @node_two = Factory(:node, :title=>'title_two')
-      @node_one.node_tos<< @node_two
-      @link = Link.find_by_node_from_id_and_node_to_id(@node_one.id, @node_two.id)
+      @nodes_global1 = Factory(:nodes_global, :node=>@node_one, :global=>@global)
+      @nodes_global2 = Factory(:nodes_global, :node=>@node_two, :global=>@global)
+      @link = Link.create(:nodes_global_from=>@nodes_global1,:node_from=>@node_one,:value=>1,:nodes_global_to=>@nodes_global2,:node_to=>@node_two)
       @count = @user.user_links.count
       @link.users << @user
       @link.save!

@@ -12,6 +12,30 @@ class NodesGlobal < ActiveRecord::Base
   before_save :set_default_xml
 
   after_destroy :decrement_global_counter_cache
+
+  def construct_to_node_links
+    links = []
+    NodesGlobal.all.each do |node|
+      unless node == self
+        # could use build for things like this?
+        links << Link.new(:nodes_global_from=>node, :node_from=>node.node, :nodes_global_to=>self, :node_to=>self.node)
+      end
+    end
+    links.sort!{ |a, b|  a.node_from.title <=> b.node_from.title }
+    links
+  end
+  def construct_from_node_links
+    links = []
+    NodesGlobal.all.each do |node|
+      unless node == self
+        # could use build for things like this?
+        links << Link.new(:nodes_global_from=>self, :node_from=>self.node, :nodes_global_to=>node, :node_to=>node.node)
+      end
+    end
+    links.sort!{ |a, b|  a.node_to.title <=> b.node_to.title }
+    links
+  end
+
   def decrement_global_counter_cache
     Global.decrement_counter( 'nodes_count', node.id )
   end 
@@ -25,8 +49,7 @@ class NodesGlobal < ActiveRecord::Base
     sum = 0
     if !links.empty?
       links.each do |link|
-        global_link = GlobalsLink.where('link_id = ? AND global_id = ?', link.id, global.id).first
-        sum = sum+global_link.users_count
+        sum = sum+link.users_count
       end
     end
     sum

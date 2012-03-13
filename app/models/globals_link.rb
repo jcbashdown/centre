@@ -6,8 +6,8 @@ class GlobalsLink < ActiveRecord::Base
   has_many :users, :through=>:user_globals_link
 
   after_save :update_node_to_xml, :update_global_xml
-  after_save :change_counter_cache, :turn_off_node_ignore
-  after_destroy :decrement_counter_cache, :turn_on_node_ignore
+  #after_save :change_counter_cache, :turn_off_node_ignore
+  #after_destroy :decrement_counter_cache, :turn_on_node_ignore
   
   def turn_off_node_ignore
     nodes_global_to = link.nodes_global_to

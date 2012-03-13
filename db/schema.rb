@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120311180545) do
+ActiveRecord::Schema.define(:version => 20120312211903) do
 
   create_table "globals", :force => true do |t|
     t.datetime "created_at"
@@ -46,6 +46,7 @@ ActiveRecord::Schema.define(:version => 20120311180545) do
     t.integer  "users_count",          :default => 0, :null => false
     t.integer  "nodes_global_from_id"
     t.integer  "nodes_global_to_id"
+    t.integer  "global_id"
   end
 
   create_table "nodes", :force => true do |t|
