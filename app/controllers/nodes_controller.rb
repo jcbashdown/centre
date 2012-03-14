@@ -1,7 +1,6 @@
 class NodesController < ApplicationController
   before_filter :signed_in_user, :except => [:show, :index]
   before_filter :find_limit_order, :except => [:create, :update, :destroy, :add_or_edit_link]
-  #before filters apply to non action methods as well?
   before_filter :set_node, :only => [:show, :edit, :new]
   before_filter :set_links, :only => [:show, :edit]
 
@@ -12,7 +11,7 @@ class NodesController < ApplicationController
       @node = Node.find(params[:id])
     end
   end
-  #how to test this - preset node? stub @node as method?
+
   def set_links
     if @user
       @links_to = @user.user_from_node_links(@node)
@@ -32,16 +31,8 @@ class NodesController < ApplicationController
     end
   end
 
-  # GET /nodes/1
-  # GET /nodes/1.json
   def show
     @nodes = @question.nodes.paginate(:page => params[:page], :per_page=>5).order(@order_query)
-    #@links = Array.new
-    #@nodes_with_links = @node.all_with_link_ids 
-    #@nodes_with_links.each do |node|
-    #  @links << node[:link_to]
-    #end
-
     if request.xhr?
       render :show, :layout => false
     else
@@ -49,8 +40,6 @@ class NodesController < ApplicationController
     end
   end
 
-  # GET /nodes/new
-  # GET /nodes/new.json
   def new
     @nodes = @question.nodes.paginate(:page => params[:page], :per_page=>5).order(@order_query)
     @node = Node.new
@@ -64,11 +53,6 @@ class NodesController < ApplicationController
   # GET /nodes/1/edit
   def edit
     @nodes = @question.nodes.paginate(:page => params[:page], :per_page=>5).order(@order_query)
-    #@links = Array.new
-    #@nodes_with_links = @node.all_with_link_ids 
-    #@nodes_with_links.each do |node|
-    #  @links << node[:link_to]
-    #end
     if request.xhr?
       render :edit, :layout => false
     else
@@ -76,13 +60,11 @@ class NodesController < ApplicationController
     end
   end
 
-  # POST /nodes
-  # POST /nodes.json
   def create
     @node = Node.new(params[:node])
-    # new is not currently going to work... need to submit all at once or two stage process? one end point for links?
     respond_to do |format|
       if @node.save
+        GlobalsNodesUsers.create(:user=>@user, :node=>@node, :global=>@question)
         @user.nodes << @node
         format.html { redirect_to @node, notice: 'Node was successfully created.' }
         format.json { render json: @node, status: :created, location: @node }
@@ -93,13 +75,11 @@ class NodesController < ApplicationController
     end
   end
 
-  # PUT /nodes/1
-  # PUT /nodes/1.json
   def update
     @node = Node.find(params[:id])
-    #symbolise keys
     respond_to do |format|
       if @node.update_attributes(params[:node])
+        @gnu = GlobalsNodesUsers.where(:user=>@user, :node=>@node, :global=>@question)[0] || GlobalsNodesUsers.create(:user=>@user, :node=>@node, :global=>@question)
         format.html { redirect_to @node, notice: 'Node was successfully updated.' }
         format.json { head :ok }
       else
@@ -109,12 +89,11 @@ class NodesController < ApplicationController
     end
   end
 
-  # DELETE /nodes/1
-  # DELETE /nodes/1.json
   def destroy
     @node = Node.find(params[:id])
     @node.destroy
-
+    @gnu = GlobalsNodesUsers.where(:user=>@user, :node=>@node, :global=>@question)[0]
+    @gnu.destroy
     respond_to do |format|
       format.html { redirect_to "/" }
       format.json { head :ok }

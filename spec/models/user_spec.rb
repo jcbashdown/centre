@@ -1,6 +1,140 @@
 require 'spec_helper'
 
 describe User do
+  describe 'set_user_links' do
+    context 'when there is a user' do
+      before do
+        @user_two = Factory(:user, :email=>'test@user.com', :password=>'123456AA')
+        @node_one = Factory(:node, :title=>'aone1')
+        @node_two = Factory(:node, :title=>'ctwo2')
+        @node_three = Factory(:node, :title=>'bthree3')
+        @link1=Link.create(:node_from=> @node_one, :value=>1, :node_to=>@node_two)
+        @link1u2=Link.new(:node_from=> @node_one, :node_to=>@node_two)
+        @link1.users << @user
+        #node two activity is one
+        @link2=Link.create(:node_from=> @node_one, :value=>1, :node_to=>@node_three)
+        @link2.users << @user
+        @link2.users << @user_two 
+        #node three activity is two
+        @link3=Link.create(:node_from=> @node_two, :value=>1, :node_to=>@node_one)
+        @link3u2=Link.new(:node_from=> @node_two, :node_to=>@node_one)
+        @link3.users << @user
+        #node one activity is one
+        @link4=Link.new(:node_from=> @node_two, :node_to=>@node_three)
+        @link5=Link.new(:node_from=> @node_three, :node_to=>@node_one)
+        @link6=Link.create(:node_from=> @node_three, :value=>-1, :node_to=>@node_two)
+        @link6.users << @user
+        @link6.users << @user_two 
+        #node two activity is three
+        #for user = @user
+        @user_links_out_alph_up_for_node_one = [@link2,
+                                                @link1]
+        @user_links_out_alph_down_for_node_one = [@link1,
+                                                  @link2]
+        #all votes count for node count
+        @user_links_out_active_for_node_one = [@link1,
+                                               @link2]
+        @user_links_out_inactive_for_node_one = [@link2,
+                                                 @link1]
+        @user_links_out_alph_up_for_node_two = [@link3,
+                                                @link4]
+        @user_links_out_alph_down_for_node_two = [@link4,
+                                                  @link3]
+        #all votes count for node count
+        @user_links_out_active_for_node_two = [@link4,
+                                               @link3]
+        @user_links_out_inactive_for_node_two = [@link3,
+                                                 @link4]
+        #for user = @user_two
+        @user2_links_out_alph_up_for_node_one = [@link2,
+                                                 @link1u2]
+        @user2_links_out_alph_down_for_node_one = [@link1u2,
+                                                   @link2]
+        #all votes count for node count
+        @user2_links_out_active_for_node_one = [@link1u2,
+                                                @link2]
+        @user2_links_out_inactive_for_node_one = [@link2,
+                                                  @link1u2]
+        @user2_links_out_alph_up_for_node_two = [@link3u2,
+                                                 @link4]
+        @user2_links_out_alph_down_for_node_two = [@link4,
+                                                   @link3u2]
+        #all votes count for node count
+        @user2_links_out_active_for_node_two = [@link4,
+                                                @link3u2]
+        @user2_links_out_inactive_for_node_two = [@link3u2,
+                                                  @link4]
+      end
+      #set user links can happen here but method it calls - specs should be moved to user
+      it 'should return the user links for @user from @node_one and construct those not present in alphabet order as default' do
+        @user.user_from_node_links(@node_one).inspect.should == @user_links_out_alph_up_for_node_one.inspect
+      end
+      it 'should return the user links for @user_two from @node_one and construct those not present in alphabet order as default' do
+        @user_two.user_from_node_links(@node_one).inspect.should == @user2_links_out_alph_up_for_node_one.inspect
+      end
+      it 'should return the user links for @user from @node_two and construct those not present in alphabet order as default' do
+        @user.user_from_node_links(@node_two).inspect.should == @user_links_out_alph_up_for_node_two.inspect
+      end
+      it 'should return the user links for @user_two from @node_two and construct those not present in alphabet order as default' do
+        @user_two.user_from_node_links(@node_two).inspect.should == @user2_links_out_alph_up_for_node_two.inspect
+      end
+    end
+    context 'links in for node' do
+      before do
+        @user_two = Factory(:user, :email=>'test@user.com', :password=>'123456AA')
+        @node_one = Factory(:node, :title=>'aone1')
+        @node_two = Factory(:node, :title=>'ctwo2')
+        @node_three = Factory(:node, :title=>'bthree3')
+        @link1=Link.create(:node_from=> @node_one, :value=>1, :node_to=>@node_two)
+        @link1u2=Link.new(:node_from=> @node_one, :node_to=>@node_two)
+        @link1.users << @user
+        #node two activity is one
+        @link2=Link.create(:node_from=> @node_one, :value=>1, :node_to=>@node_three)
+        @link2.users << @user
+        @link2.users << @user_two 
+        #node three activity is two
+        @link3=Link.create(:node_from=> @node_two, :value=>1, :node_to=>@node_one)
+        @link3u2=Link.new(:node_from=> @node_two, :node_to=>@node_one)
+        @link3.users << @user
+        #node one activity is one
+        @link4=Link.new(:node_from=> @node_two, :node_to=>@node_three)
+        @link5=Link.new(:node_from=> @node_three, :node_to=>@node_one)
+        @link6=Link.create(:node_from=> @node_three, :value=>-1, :node_to=>@node_two)
+        @link6.users << @user
+        @link6.users << @user_two 
+        #node two activity is three
+        #for user = @user
+        @user_links_in_alph_up_for_node_one = [@link5,
+                                                @link3]
+        @user_links_in_alph_down_for_node_one = [@link3,
+                                                  @link5]
+        @user_links_in_alph_up_for_node_two = [@link1,
+                                                @link6]
+        @user_links_in_alph_down_for_node_two = [@link6,
+                                                  @link1]
+        @user2_links_in_alph_up_for_node_one = [@link5,
+                                                @link3u2]
+        @user2_links_in_alph_down_for_node_one = [@link5,
+                                                  @link3u2]
+        @user2_links_in_alph_up_for_node_two = [@link1u2,
+                                                @link6]
+        @user2_links_in_alph_down_for_node_two = [@link6u2,
+                                                  @link1]
+      end
+      it 'should return the user links for @user from @node_one and construct those not present in alphabet order as default' do
+        @user.user_to_node_links(@node_one).inspect.should == @user_links_in_alph_up_for_node_one.inspect
+      end
+      it 'should return the user links for @user_two from @node_one and construct those not present in alphabet order as default' do
+        @user_two.user_to_node_links(@node_one).inspect.should == @user2_links_in_alph_up_for_node_one.inspect
+      end
+      it 'should return the user links for @user from @node_two and construct those not present in alphabet order as default' do
+        @user.user_to_node_links(@node_two).inspect.should == @user_links_in_alph_up_for_node_two.inspect
+      end
+      it 'should return the user links for @user_two from @node_two and construct those not present in alphabet order as default' do
+        @user_two.user_to_node_links(@node_two).inspect.should == @user2_links_in_alph_up_for_node_two.inspect
+      end
+    end
+  end
   
   before(:each) do
     @attr = { 
@@ -9,162 +143,6 @@ describe User do
       :password => "foobar",
       :password_confirmation => "foobar"
     }
-  end
-  
-  describe 'create association' do
-    before do
-      @user = Factory(:user)
-      @global = Factory(:global)
-    end
-    context 'when the link already exists' do
-      before do
-        @node_one = Factory(:node)
-        @node_two = Factory(:node, :title=>'title')
-        @nodes_global1 = Factory(:nodes_global, :node=>@node_one, :global=>@global)
-        @nodes_global2 = Factory(:nodes_global, :node=>@node_two, :global=>@global)
-        @link_one = Link.create(:nodes_global_from=>@nodes_global1,:node_from=>@node_one,:value=>1,:nodes_global_to=>@nodes_global2,:node_to=>@node_two)
-        @link_one.reload
-        @link_one_params = {"nodes_global_from_id"=>@nodes_global1.id.to_s, "node_from_id"=>@node_one.id.to_s,"value"=>"1","node_to_id"=>@node_two.id.to_s, "nodes_global_to_id"=>@nodes_global2.id.to_s}
-      end
-      context 'when successful' do
-        it 'should associate the user' do
-          new_link = @user.create_association(@link_one_params)
-          @link_one.users.should include(@user)
-        end
-        it 'should save the newly associated link to update caches' do
-          @link_one.should_receive(:save!)
-          Link.stub(:where).and_return [@link_one]
-          @user.create_association(@link_one_params)
-        end
-        it 'should return the newly associated link' do
-          new_link = @user.create_association(@link_one_params)
-          new_link.should == @link_one
-        end
-      end
-    end
-    context 'when the link does not exist' do
-      before do
-        @node_one = Factory(:node)
-        @node_two = Factory(:node, :title=>'title')
-        @nodes_global1 = Factory(:nodes_global, :node=>@node_one, :global=>@global)
-        @nodes_global2 = Factory(:nodes_global, :node=>@node_two, :global=>@global)
-        @link_one_params = {"nodes_global_from_id"=>@nodes_global1.id.to_s, "node_from_id"=>@node_one.id.to_s,"value"=>"1","node_to_id"=>@node_two.id.to_s, "nodes_global_to_id"=>@nodes_global2.id.to_s}
-      end
-      context 'when successful' do
-        it 'should create the link' do
-          Link.where(@link_one_params).should be_empty
-          @user.create_association(@link_one_params)
-          Link.where(@link_one_params)[0].should_not be_nil
-        end
-        it 'should associate the user' do
-          new_link = @user.create_association(@link_one_params)
-          new_link.users.should include(@user)
-        end
-        it 'should return the newly associated link' do
-          new_link = @user.create_association(@link_one_params)
-          new_link.should be_a(Link) 
-        end
-      end
-    end
-  end
- 
-  describe 'update_association' do
-    before do
-      @user = Factory(:user)
-    end
-    context 'when the user is already associated with the first link' do
-      before do
-        @node_one = Factory(:node)
-        @node_two = Factory(:node, :title=>'title')
-        @nodes_global1 = Factory(:nodes_global, :node=>@node_one, :global=>@global)
-        @nodes_global2 = Factory(:nodes_global, :node=>@node_two, :global=>@global)
-        @link_one = Link.create(:nodes_global_from=>@nodes_global1,:node_from=>@node_one,:value=>1,:nodes_global_to=>@nodes_global2,:node_to=>@node_two)
-        @link_one.users << @user
-        #TODO - again, shouldn't have to do this save here
-        @link_one.save!
-        @link_one.reload
-        @node_two.reload
-        @node_two.upvotes_count.should == 1
-        @link_two_params = {"nodes_global_from_id"=>@nodes_global1.id, "node_from_id"=>@node_one.id,"value"=>-1,"node_to_id"=>@node_two.id, "nodes_global_to_id"=>@nodes_global2.id}
-      end
-      context 'when the second unnassociated link already exists' do
-        before do
-          @link_two = Link.create(@link_two_params)
-          @node_two.reload
-          @node_two.upvotes_count.should == 1
-          @node_two.downvotes_count.should == 0
-          @link_two.users.should be_empty
-          @link_two.users_count.should == 0
-          @link_one.users_count.should == 1
-        end
-        it 'should remove the first association and create the second association' do
-          @link_one.users.should include(@user)
-          @user.update_association(@link_one, @link_two_params)
-          @link_one.reload
-          @link_two.reload
-          @link_one.users.should_not include(@user)
-          @link_two.users.should include(@user)
-        end
-        it 'should decrement the upvotes for node two and increment the downvotes' do
-          upvotes_count = @node_two.upvotes_count 
-          downvotes_count = @node_two.downvotes_count
-          users_count = @link_one.users_count
-          @user.update_association(@link_one, @link_two_params)
-          @node_two.reload
-          @link_one.reload
-          @link_one.users_count.should == users_count - 1
-          @node_two.downvotes_count.should == downvotes_count + 1
-          @node_two.upvotes_count.should == upvotes_count - 1
-        end
-        it 'should return the newly associated link' do
-          @user.update_association(@link_one, @link_two_params).attributes.to_s.should == @link_two.attributes.merge({"users_count"=>1}).to_s
-        end
-        #to make sure all updates of caches are correct
-        it 'save the removed link' do
-
-        end
-        it 'save the newly associated link' do
-
-        end
-      end
-      context 'when the second unnassociated link does not exist' do
-        before do
-          Link.find_by_node_from_id_and_value_and_node_to_id(@node_one.id,-1,@node_two.id).should be_nil
-          @link_two = Link.new(@link_two_params)
-          @node_two.upvotes_count.should == 1
-          @node_two.downvotes_count.should == 0
-          @link_one.users_count.should == 1
-        end
-        it 'should remove the first association and create the second association' do
-          @link_one.users.should include(@user)
-          @user.update_association(@link_one, @link_two_params)
-          @link_one.reload
-          @link_two = Link.find_by_node_from_id_and_value_and_node_to_id(@node_one.id,-1,@node_two.id)
-          @link_one.users.should_not include(@user)
-          @link_two.users.should include(@user)
-        end
-        it 'should decrement the upvotes for node two and increment the downvotes' do
-          upvotes_count = @node_two.upvotes_count 
-          downvotes_count = @node_two.downvotes_count
-          users_count = @link_one.users_count
-          @user.update_association(@link_one, @link_two_params)
-          @node_two.reload
-          @link_one.reload
-          @link_one.users_count.should == users_count - 1
-          @node_two.downvotes_count.should == downvotes_count + 1
-          @node_two.upvotes_count.should == upvotes_count - 1
-        end
-        it 'should create the link' do
-          @user.update_association(@link_one, @link_two_params)
-          @link_two = Link.find_by_node_from_id_and_value_and_node_to_id(@node_one.id,-1,@node_two.id)
-          @link_two.should be_persisted
-        end
-        it 'should return the newly associated link' do
-          returned = @user.update_association(@link_one, @link_two_params)
-          returned.attributes.merge(@link_two_params).should == returned.attributes
-        end
-      end
-    end
   end
   
   it "should create a new instance given a valid attribute" do
@@ -256,45 +234,4 @@ describe User do
 
   end
   
-  describe "creating and deleting links" do
-    before do
-      @user = Factory(:user)
-      @node_one = Factory(:node)
-      @node_two = Factory(:node, :title=>'title_two')
-      @nodes_global1 = Factory(:nodes_global, :node=>@node_one, :global=>@global)
-      @nodes_global2 = Factory(:nodes_global, :node=>@node_two, :global=>@global)
-      @link = Link.create(:nodes_global_from=>@nodes_global1,:node_from=>@node_one,:value=>1,:nodes_global_to=>@nodes_global2,:node_to=>@node_two)
-      @count = @user.user_links.count
-      @link.users << @user
-      @link.save!
-      @user.reload
-      @link.reload
-    end
-    context "when adding a link" do
-      it "should create the user link" do
-        @user.links.count.should == @count+1
-        @user.user_links.count.should == @count+1
-      end
-      it "should increment the counter cache" do
-        @link.users_count.should == @count+1
-      end
-      context "when deleting the user" do
-        before do
-           @user.user_links.count.should == 1
-           @user.links.count.should == 1
-           @link.user_links.count.should == 1
-           @link.users.count.should == 1
-           @user.destroy 
-           @link.reload
-        end
-        it "should reduce the user_links count by one" do
-          @link.user_links.count.should == @count
-        end
-        it "should reduce the user_links count by one" do
-          @link.users_count.should == @count
-        end
-      end
-    end
-  end
-
 end

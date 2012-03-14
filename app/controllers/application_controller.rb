@@ -12,7 +12,7 @@ class ApplicationController < ActionController::Base
     order = params[:order]
     question_id = params[:question]
     unless question_id
-      question_id = 1
+      question_id = Global.find_by_name('All').id
     end
     unless order
       order = 'older'
