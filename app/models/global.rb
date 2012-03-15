@@ -1,6 +1,7 @@
 class Global < ActiveRecord::Base
-  has_many :globals_nodes, :class_name=>'GlobalsNodes'
-  has_many :nodes, :through => :globals_nodes
-  has_many :globals_users
-  has_many :users, :through => :globals_users
+  has_many :global_nodes, :class_name=>'GlobalNode'
+  has_many :nodes, :through => :global_nodes
+  has_many :global_users
+  has_many :users, :through => :global_users
+  has_many :global_node_users
 end

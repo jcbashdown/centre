@@ -13,22 +13,7 @@
 
 ActiveRecord::Schema.define(:version => 20120313210044) do
 
-  create_table "globals", :force => true do |t|
-    t.string   "name"
-    t.text     "nodes_xml"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
-  create_table "globals_links", :force => true do |t|
-    t.integer  "global_id"
-    t.integer  "link_id"
-    t.integer  "users_count"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
-  create_table "globals_links_users", :force => true do |t|
+  create_table "global_link_users", :force => true do |t|
     t.integer  "global_id"
     t.integer  "user_id"
     t.integer  "link_id"
@@ -36,7 +21,24 @@ ActiveRecord::Schema.define(:version => 20120313210044) do
     t.datetime "updated_at"
   end
 
-  create_table "globals_nodes", :force => true do |t|
+  create_table "global_links", :force => true do |t|
+    t.integer  "global_id"
+    t.integer  "link_id"
+    t.integer  "users_count"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "global_node_users", :force => true do |t|
+    t.text     "node_xml"
+    t.integer  "user_id"
+    t.integer  "global_id"
+    t.integer  "node_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "global_nodes", :force => true do |t|
     t.text     "node_xml"
     t.integer  "global_id"
     t.integer  "node_id"
@@ -50,19 +52,17 @@ ActiveRecord::Schema.define(:version => 20120313210044) do
     t.datetime "updated_at"
   end
 
-  create_table "globals_nodes_users", :force => true do |t|
-    t.text     "node_xml"
-    t.integer  "user_id"
-    t.integer  "global_id"
-    t.integer  "node_id"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
-  create_table "globals_users", :id => false, :force => true do |t|
+  create_table "global_users", :id => false, :force => true do |t|
     t.integer "global_id"
     t.integer "user_id"
     t.text    "nodes_xml"
+  end
+
+  create_table "globals", :force => true do |t|
+    t.string   "name"
+    t.text     "nodes_xml"
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   create_table "links", :force => true do |t|

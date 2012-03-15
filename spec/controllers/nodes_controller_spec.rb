@@ -15,6 +15,7 @@ describe NodesController do
   describe "GET index" do
     it "assigns all nodes as @nodes" do
       node = Node.create! valid_attributes
+      node.globals << Global.find_by_name('All')
       get :index
       assigns(:nodes).should eq([node])
     end
@@ -99,16 +100,16 @@ describe NodesController do
         }.to change(Node, :count).by(1)
       end
 
+      it "creates a new GlobalNodeUser" do
+        expect {
+          post :create, :node => valid_attributes
+        }.to change(GlobalNodeUser, :count).by(1)
+      end
+
       it "assigns a newly created node as @node" do
         post :create, :node => valid_attributes
         assigns(:node).should be_a(Node)
         assigns(:node).should be_persisted
-      end
-
-      it "assigns the node to the current user" do
-        post :create, :node => valid_attributes
-        node = Node.last
-        node.user.should == @user
       end
 
       it "redirects to the created node" do
@@ -136,7 +137,38 @@ describe NodesController do
   end
 
   describe "PUT update" do
-    describe "with valid params" do
+    describe "with valid params for an existing node global user combination" do
+      before do
+        @gnu = GlobalsNodesUsers.create(:user=>@user, :node=>@node, :global=>Global.find_by_name('All'))
+      end
+      it "updates the requested node" do
+        node = Node.create! valid_attributes
+        # Assuming there are no other nodes in the database, this
+        # specifies that the Node created on the previous line
+        # receives the :update_attributes message with whatever params are
+        # submitted in the request.
+        Node.any_instance.should_receive(:update_attributes).with({'these' => 'params'})
+        put :update, :id => node.id, :node => {'these' => 'params'}
+      end
+
+      it "assigns the requested node as @node" do
+        node = Node.create! valid_attributes
+        put :update, :id => node.id, :node => valid_attributes
+        assigns(:node).should eq(node)
+      end
+
+      it "assigns the requested gnu as @gnu" do
+        put :update, :id => node.id, :node => valid_attributes
+        assigns(:node).should eq(@gnu)
+      end
+
+      it "redirects to the node" do
+        node = Node.create! valid_attributes
+        put :update, :id => node.id, :node => valid_attributes
+        response.should redirect_to node
+      end
+    end
+    describe "with valid params for a new node global user combination" do
       it "updates the requested node" do
         node = Node.create! valid_attributes
         # Assuming there are no other nodes in the database, this

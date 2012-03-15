@@ -1,4 +1,4 @@
-class GlobalsNodes < ActiveRecord::Base
+class GlobalNode < ActiveRecord::Base
   belongs_to :global
   belongs_to :node
 

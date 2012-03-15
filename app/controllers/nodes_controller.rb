@@ -1,6 +1,6 @@
 class NodesController < ApplicationController
   before_filter :signed_in_user, :except => [:show, :index]
-  before_filter :find_limit_order, :except => [:create, :update, :destroy, :add_or_edit_link]
+  before_filter :find_limit_order
   before_filter :set_node, :only => [:show, :edit, :new]
   before_filter :set_links, :only => [:show, :edit]
 
@@ -64,8 +64,6 @@ class NodesController < ApplicationController
     @node = Node.new(params[:node])
     respond_to do |format|
       if @node.save
-        GlobalsNodesUsers.create(:user=>@user, :node=>@node, :global=>@question)
-        @user.nodes << @node
         format.html { redirect_to @node, notice: 'Node was successfully created.' }
         format.json { render json: @node, status: :created, location: @node }
       else
@@ -78,8 +76,7 @@ class NodesController < ApplicationController
   def update
     @node = Node.find(params[:id])
     respond_to do |format|
-      if @node.update_attributes(params[:node])
-        @gnu = GlobalsNodesUsers.where(:user=>@user, :node=>@node, :global=>@question)[0] || GlobalsNodesUsers.create(:user=>@user, :node=>@node, :global=>@question)
+      if @node.update_attributes({:text=>params[:node][:text]})
         format.html { redirect_to @node, notice: 'Node was successfully updated.' }
         format.json { head :ok }
       else
@@ -91,12 +88,17 @@ class NodesController < ApplicationController
 
   def destroy
     @node = Node.find(params[:id])
-    @node.destroy
-    @gnu = GlobalsNodesUsers.where(:user=>@user, :node=>@node, :global=>@question)[0]
-    @gnu.destroy
-    respond_to do |format|
-      format.html { redirect_to "/" }
-      format.json { head :ok }
+    if @node.link_tos.empty? && @node.link_froms.empty?
+      @node.destroy
+      respond_to do |format|
+        format.html { redirect_to "/" }
+        format.json { head :ok }
+      end
+    else
+      respond_to do |format|
+        format.html { redirect_to "/" }
+        format.json { head :ok }
+      end
     end
   end
   
