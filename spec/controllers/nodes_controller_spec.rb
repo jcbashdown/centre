@@ -103,7 +103,17 @@ describe NodesController do
       it "creates a new GlobalNodeUser" do
         expect {
           post :create, :node => valid_attributes
-        }.to change(GlobalNodeUser, :count).by(1)
+        }.to change(GlobalNodeUser, :count).by(2)
+      end
+
+      it "creates a new GlobalNode" do
+        expect {
+          post :create, :node => valid_attributes
+        }.to change(GlobalNode, :count).by(2)
+      end
+
+      it 'should have called create on global node user' do
+        GlobalNodeUser.should_receive(:create)
       end
 
       it "assigns a newly created node as @node" do
@@ -137,29 +147,54 @@ describe NodesController do
   end
 
   describe "PUT update" do
-    describe "with valid params for an existing node global user combination" do
+    describe "with valid params and an existing node global user combination for all and global node for all" do
       before do
+        @node = Node.create! valid_attributes
         @gnu = GlobalsNodesUsers.create(:user=>@user, :node=>@node, :global=>Global.find_by_name('All'))
+        Node.stub(:find).and_return @node
+        Global.stub(:find).and_return Factory(:global)
       end
+
       it "updates the requested node" do
-        node = Node.create! valid_attributes
-        # Assuming there are no other nodes in the database, this
-        # specifies that the Node created on the previous line
-        # receives the :update_attributes message with whatever params are
-        # submitted in the request.
-        Node.any_instance.should_receive(:update_attributes).with({'these' => 'params'})
-        put :update, :id => node.id, :node => {'these' => 'params'}
+        @node.should_receive(:update_attributes).with({'text' => 'some text'})
+        put :update, :id => @node.id, :node => {'text' => 'some text', 'these' => 'params'}
+      end
+
+      it 'should create a gnu for the current combination' do
+        pending
+      end
+
+      it 'should create a gn for the current combination' do
+        pending
+      end
+
+      it 'should increase gnu count by one' do
+        pending
+      end
+
+      it 'should increase gn count by one' do
+        pending
+      end
+
+      it 'should update is conclusion and xml for current gnu combination' do
+        pending
+      end
+
+      it 'should update is conclusion and xml for current gn combination' do
+        pending
       end
 
       it "assigns the requested node as @node" do
-        node = Node.create! valid_attributes
-        put :update, :id => node.id, :node => valid_attributes
-        assigns(:node).should eq(node)
+        put :update, :id => @node.id, :node => valid_attributes
+        assigns(:node).should eq(@node)
       end
 
-      it "assigns the requested gnu as @gnu" do
-        put :update, :id => node.id, :node => valid_attributes
-        assigns(:node).should eq(@gnu)
+      it 'should assign the current gnu as gnu' do
+        pending
+      end
+
+      it 'should assign the current gn as gn' do
+        pending
       end
 
       it "redirects to the node" do
@@ -168,7 +203,8 @@ describe NodesController do
         response.should redirect_to node
       end
     end
-    describe "with valid params for a new node global user combination" do
+
+    describe "with valid params for a new node global user combination and an existing node global" do
       it "updates the requested node" do
         node = Node.create! valid_attributes
         # Assuming there are no other nodes in the database, this
@@ -177,6 +213,38 @@ describe NodesController do
         # submitted in the request.
         Node.any_instance.should_receive(:update_attributes).with({'these' => 'params'})
         put :update, :id => node.id, :node => {'these' => 'params'}
+      end
+
+      it 'should create a gnu for the current combination' do
+        pending
+      end
+
+      it 'should not create a gn for the current combination' do
+        pending
+      end
+
+      it 'should increase gnu count by one' do
+        pending
+      end
+
+      it 'should not increase gn count' do
+        pending
+      end
+
+      it 'should update is conclusion and xml for current gnu combination' do
+        pending
+      end
+
+      it 'should update is conclusion and xml for current gn combination' do
+        pending
+      end
+
+      it 'should assign the current gnu as gnu' do
+        pending
+      end
+
+      it 'should assign the current gn as gn' do
+        pending
       end
 
       it "assigns the requested node as @node" do
@@ -190,6 +258,66 @@ describe NodesController do
         put :update, :id => node.id, :node => valid_attributes
         response.should redirect_to node
       end
+    end
+
+    describe "with valid params for an existing node global user combination and node global" do
+      it "updates the requested node" do
+        node = Node.create! valid_attributes
+        # Assuming there are no other nodes in the database, this
+        # specifies that the Node created on the previous line
+        # receives the :update_attributes message with whatever params are
+        # submitted in the request.
+        Node.any_instance.should_receive(:update_attributes).with({'these' => 'params'})
+        put :update, :id => node.id, :node => {'these' => 'params'}
+      end
+
+      it 'should not increase gnu count' do
+        pending
+      end
+
+      it 'should not increase gn count' do
+        pending
+      end
+
+      it 'should not create a gn for the current combination' do
+        pending
+      end
+
+      it 'should not create a gnu for the current combination' do
+        pending
+      end
+
+      it 'should update is conclusion and xml for current gnu combination' do
+        pending
+      end
+
+      it 'should update is conclusion and xml for current gn combination' do
+        pending
+      end
+
+      it 'should assign the current gnu as gnu' do
+        pending
+      end
+
+      it 'should assign the current gn as gn' do
+        pending
+
+      it "assigns the requested node as @node" do
+        node = Node.create! valid_attributes
+        put :update, :id => node.id, :node => valid_attributes
+        assigns(:node).should eq(node)
+      end
+
+      it "redirects to the node" do
+        node = Node.create! valid_attributes
+        put :update, :id => node.id, :node => valid_attributes
+        response.should redirect_to node
+      end
+    end
+
+
+    describe 'with an existing global node user but no global node' do
+      #THIS SHOULD NEVER HAPPEN
     end
 
     describe "with invalid params" do
@@ -212,11 +340,27 @@ describe NodesController do
   end
 
   describe "DELETE destroy" do
-    it "destroys the requested node" do
-      node = Node.create! valid_attributes
-      expect {
-        delete :destroy, :id => node.id
-      }.to change(Node, :count).by(-1)
+    context 'when no other users but current gnu/gn' do
+
+      it "destroys the requested node" do
+        node = Node.create! valid_attributes
+        expect {
+          delete :destroy, :id => node.id
+        }.to change(Node, :count).by(-1)
+      end
+
+      it 'should destroy the gn' do
+        pending
+      end
+
+      it 'should destroy the gnu' do
+        pending
+      end
+
+      it 'should destroy the links scoped to this global and node and user (the links for the user - can not have inconsist links)' do
+        pending
+      end
+
     end
 
     it "redirects to the nodes list" do
