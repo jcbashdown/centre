@@ -357,10 +357,31 @@ describe NodesController do
         pending
       end
 
-      it 'should destroy the links scoped to this global and node and user (the links for the user - can not have inconsist links)' do
+      it 'should destroy the links scoped to this global and node and user (the links for the user - can not have inconsist links) (uglfs uglts lts lfs)' do
         pending
       end
 
+    end
+
+    context 'when other gns but only this user in this gn' do
+      it 'should destroy the gn' do
+        pending
+      end
+
+      it 'should destroy the gnu' do
+        pending
+      end
+
+      it 'should destroy the links scoped to this global and node and user (the links for the user - can not have inconsist links) and to this global node (uglfs uglts)' do
+        pending
+      end
+
+    end
+    
+    context 'when other gns, gnus is other gns and gnus in this gn' do
+      it 'should only destroy whats scoped to the user - gnus uglfs and uglts' do
+
+      end
     end
 
     it "redirects to the nodes list" do
@@ -369,5 +390,6 @@ describe NodesController do
       response.should redirect_to("/")
     end
   end
+
 
 end

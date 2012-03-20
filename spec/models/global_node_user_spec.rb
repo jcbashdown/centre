@@ -55,4 +55,8 @@ describe GlobalNodeUser do
       GlobalNodeUser.where(:node_id=>@node.id, :global_id=>Global.find_by_name('All').id)[0].should be_nil
     end
   end
+
+  describe 'update' do
+
+  end
 end
