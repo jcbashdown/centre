@@ -9,12 +9,14 @@ class GlobalNodeUser < ActiveRecord::Base
   
   protected
   def create_globals_node
-    self.global.nodes << self.node
+    unless self.global.nodes.include? self.node
+      self.global.nodes << self.node
+    end
   end
 
   def set_all
     unless self.global.name == 'All'
-      GlobalNodeUser.create(:user=>self.user, :node=>self.node, :global=>Global.find_by_name('All'))
+      GlobalNodeUser.where(:user_id=>self.user.id, :node_id=>self.node.id, :global_id=>Global.find_by_name('All').id)[0] || GlobalNodeUser.create(:user=>self.user, :node=>self.node, :global=>Global.find_by_name('All'))
     end
   end
 

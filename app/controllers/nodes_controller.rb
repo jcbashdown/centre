@@ -64,6 +64,7 @@ class NodesController < ApplicationController
     @node = Node.new(params[:node])
     respond_to do |format|
       if @node.save
+        @gnu = GlobalNodeUser.create(:user=>@user, :node=>@node, :global=>@question)
         format.html { redirect_to @node, notice: 'Node was successfully created.' }
         format.json { render json: @node, status: :created, location: @node }
       else
@@ -75,8 +76,11 @@ class NodesController < ApplicationController
 
   def update
     @node = Node.find(params[:id])
+    text = params[:node][:text] ? params[:node][:text] : ""
     respond_to do |format|
-      if @node.update_attributes({:text=>params[:node][:text]})
+      if @node.update_attributes({:text=>text})
+        @gnu = GlobalNodeUser.where(:user_id=>@user.id, :node_id=>@node.id, :global_id=>@question.id)[0] || GlobalNodeUser.create(:user=>@user, :node=>@node, :global=>@question)
+        @gn = GlobalNode.where(:node_id=>@node.id, :global_id=>@question.id)[0]
         format.html { redirect_to @node, notice: 'Node was successfully updated.' }
         format.json { head :ok }
       else
