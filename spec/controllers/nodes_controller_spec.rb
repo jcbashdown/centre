@@ -150,18 +150,20 @@ describe NodesController do
   end
 
   describe "PUT update" do
-    it "updates the requested node" do
+    before do
       @node = Node.create! valid_attributes
       @gnu = GlobalNodeUser.create(:user=>@user, :node=>@node, :global=>Global.find_by_name('All'))
       Node.stub(:find).and_return @node
+    end
+    it 'should receive the correct parameters' do
       @node.should_receive(:update_attributes).with({:text => 'some text'})
+      Node.stub(:find).and_return @node
       put :update, :id => @node.id, :node => {'text' => 'some text', 'these' => 'params'}
     end
-    describe "with valid params and an existing node global user combination for all and global node for all" do
+    ### integration tests for two cases###
+    describe "with valid params and an existing node global user combination for all and global node for all when outside of all" do
       before do
-        @node = Node.create! valid_attributes
         @gnu = GlobalNodeUser.create(:user=>@user, :node=>@node, :global=>Global.find_by_name('All'))
-        Node.stub(:find).and_return @node
       end
 
       it 'should create a gnu for the current combination' do
@@ -222,11 +224,11 @@ describe NodesController do
       end
     end
 
-    describe "with valid params for a new node global user combination and an existing node global for all" do
+    describe "with valid params for a new node global user combination and an existing node global for all outside of all" do
       before do
-        @node = Node.create! valid_attributes
+        @user = Factory(:user, :email=>"user@email.com")
+        @controller.stub(:current_user).and_return @user
         @gn = GlobalNode.create(:node=>@node, :global=>Global.find_by_name('All'))
-        Node.stub(:find).and_return @node
       end
       it 'should create a gnu for the current combination' do
         put :update, :id => @node.id, :node => {'text' => 'some text', 'these' => 'params'}
@@ -283,99 +285,10 @@ describe NodesController do
         response.should redirect_to node
       end
     end
+    ### integration tests for two cases end###
 
     describe "with valid params for a new node global user combination and an existing node global other than all" do
-      it 'should create a gnu for the current combination' do
-        pending
-      end
-
-      it 'should not create a gn for the current combination' do
-        pending
-      end
-
-      it 'should increase gnu count by one' do
-        pending
-      end
-
-      it 'should not increase gn count' do
-        pending
-      end
-
-      it 'should update is conclusion and xml for current gnu combination' do
-        pending
-      end
-
-      it 'should update is conclusion and xml for current gn combination' do
-        pending
-      end
-
-      it 'should assign the current gnu as gnu' do
-        pending
-      end
-
-      it 'should assign the current gn as gn' do
-        pending
-      end
-
-      it "assigns the requested node as @node" do
-        node = Node.create! valid_attributes
-        put :update, :id => node.id, :node => valid_attributes
-        assigns(:node).should eq(node)
-      end
-
-      it "redirects to the node" do
-        node = Node.create! valid_attributes
-        put :update, :id => node.id, :node => valid_attributes
-        response.should redirect_to node
-      end
-    end
-
-    #also all these for when in all already and things pre created
-
-    describe "with valid params for an existing node global user combination and node global" do
-      it 'should not increase gnu count' do
-        pending
-      end
-
-      it 'should not increase gn count' do
-        pending
-      end
-
-      it 'should not create a gn for the current combination' do
-        pending
-      end
-
-      it 'should not create a gnu for the current combination' do
-        pending
-      end
-
-      it 'should update is conclusion and xml for current gnu combination' do
-        pending
-      end
-
-      it 'should update is conclusion and xml for current gn combination' do
-        pending
-      end
-
-      it 'should assign the current gnu as gnu' do
-        pending
-      end
-
-      it 'should assign the current gn as gn' do
-        pending
-      end
-
-      it "assigns the requested node as @node" do
-        node = Node.create! valid_attributes
-        put :update, :id => node.id, :node => valid_attributes
-        assigns(:node).should eq(node)
-      end
-
-      it "redirects to the node" do
-        node = Node.create! valid_attributes
-        put :update, :id => node.id, :node => valid_attributes
-        response.should redirect_to node
-      end
+      #just stub and test calls - no more integration tests - done 2 examples, don't need all in gnu spec
     end
 
     describe 'with an existing global node user but no global node' do
