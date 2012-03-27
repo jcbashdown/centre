@@ -91,9 +91,9 @@ class NodesController < ApplicationController
   end
 
   def destroy
-    @node = Node.find(params[:id])
-    if @node.link_tos.empty? && @node.link_froms.empty?
-      @node.destroy
+    node = Node.find(params[:id])
+    gnu = GlobalNodeUser.where(:user_id=>@user.id, :node_id=>node.id, :global_id=>@question.id)[0]
+    if gnu.destroy
       respond_to do |format|
         format.html { redirect_to "/" }
         format.json { head :ok }

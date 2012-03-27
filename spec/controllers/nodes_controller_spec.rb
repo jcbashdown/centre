@@ -11,7 +11,7 @@ describe NodesController do
   # Node. As you add validations to Node, be sure to
   # update the return value of this method accordingly.
   def valid_attributes
-    {:title => 'title'}
+    {:title => 'title', :text => ''}
   end
 
   describe "GET index" do
@@ -289,6 +289,12 @@ describe NodesController do
 
     describe "with valid params for a new node global user combination and an existing node global other than all" do
       #just stub and test calls - no more integration tests - done 2 examples, don't need all in gnu spec
+      #call find
+      #assign node
+      #update with text
+      #assign gnu
+      #assign gn
+      #render node
     end
 
     describe 'with an existing global node user but no global node' do
@@ -296,10 +302,15 @@ describe NodesController do
     end
 
     describe "with invalid params" do
+      #call find
+      #assign node
+      #update with text
+      #render node edit
       it "assigns the node as @node" do
         node = Node.create! valid_attributes
         # Trigger the behavior that occurs when invalid params are submitted
-        Node.any_instance.stub(:save).and_return(false)
+        Node.stub(:find).and_return node
+        Node.stub(:update_attributes).and_return false
         put :update, :id => node.id, :node => {}
         assigns(:node).should eq(node)
       end
@@ -307,7 +318,8 @@ describe NodesController do
       it "re-renders the 'edit' template" do
         node = Node.create! valid_attributes
         # Trigger the behavior that occurs when invalid params are submitted
-        Node.any_instance.stub(:save).and_return(false)
+        node.stub(:update_attributes).and_return false
+        Node.stub(:find).and_return node
         put :update, :id => node.id, :node => {}
         response.should render_template("edit")
       end
@@ -315,56 +327,23 @@ describe NodesController do
   end
 
   describe "DELETE destroy" do
-    context 'when no other users but current gnu/gn' do
-
-      it "destroys the requested node" do
-        node = Node.create! valid_attributes
-        expect {
-          delete :destroy, :id => node.id
-        }.to change(Node, :count).by(-1)
-      end
-
-      it 'should destroy the gn' do
-        pending
-      end
-
-      it 'should destroy the gnu' do
-        pending
-      end
-
-      it 'should destroy the links scoped to this global and node and user (the links for the user - can not have inconsist links) (uglfs uglts lts lfs)' do
-        pending
-      end
-
+    before do
+      @node = Node.create! valid_attributes
+      @gnu = GlobalNodeUser.create(:user=>@user, :node=>@node, :global=>@global)
+      GlobalNodeUser.stub(:where).and_return [@gnu]
+      Node.stub(:find).and_return @node
     end
 
-    context 'when other gns but only this user in this gn' do
-      it 'should destroy the gn' do
-        pending
-      end
-
-      it 'should destroy the gnu' do
-        pending
-      end
-
-      it 'should destroy the links scoped to this global and node and user (the links for the user - can not have inconsist links) and to this global node (uglfs uglts)' do
-        pending
-      end
-
-    end
-    
-    context 'when other gns, gnus is other gns and gnus in this gn' do
-      it 'should only destroy whats scoped to the user - gnus uglfs and uglts' do
-
-      end
+    it 'should call destroy on the current gnu' do
+      @gnu.should_receive(:destroy)
+      delete :destroy, :id => @node.id
     end
 
     it "redirects to the nodes list" do
-      node = Node.create! valid_attributes
-      delete :destroy, :id => node.id
+      @gnu.stub(:destroy)
+      delete :destroy, :id => @node.id
       response.should redirect_to("/")
     end
   end
-
 
 end
