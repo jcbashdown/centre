@@ -6,6 +6,8 @@ class GlobalNodeUser < ActiveRecord::Base
   before_save :update_xml, :update_globals_user_xml
   after_create :create_globals_node, :set_all
   after_destroy :update_xml, :delete_globals_node, :delete_all
+
+  validates_uniqueness_of :node_id, :scope => [:global_id, :user_id]
   
   protected
   def create_globals_node

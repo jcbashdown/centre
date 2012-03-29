@@ -1,8 +1,9 @@
 class CreateLinkUsers < ActiveRecord::Migration
   def change
     create_table :link_users do |t|
-      t.relation :link_id
-      t.relation :user_id
+      t.references :link
+      t.references :user
+      t.integer :global_link_users_count
 
       t.timestamps
     end

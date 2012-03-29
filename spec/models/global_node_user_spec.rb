@@ -18,10 +18,25 @@ describe GlobalNodeUser do
           GlobalNodeUser.create(:user=>@user, :node=>@node, :global=>@global)
         }.to change(GlobalNodeUser, :count).by(2)
       end
+      it 'should create 2 global_node_users' do
+        expect {
+          GlobalNodeUser.create(:user=>@user, :node=>@node, :global=>@global)
+        }.to change(NodeUser, :count).by(1)
+      end
       it 'should create a globals_node for the global and node and all and node' do
         GlobalNodeUser.create(:user=>@user, :node=>@node, :global=>@global)
-        GlobalNode.where(:node_id=>@node.id, :global_id=>@global.id)[0].should_not be_nil
-        GlobalNode.where(:node_id=>@node.id, :global_id=>Global.find_by_name('All').id)[0].should_not be_nil
+        gn = GlobalNode.where(:node_id=>@node.id, :global_id=>@global.id)[0]
+        gn.should_not be_nil
+        gn.global_node_users_count.should == 1
+        gn_all = GlobalNode.where(:node_id=>@node.id, :global_id=>Global.find_by_name('All').id)[0]
+        gn_all.should_not be_nil
+        gn_all.global_node_users_count.should == 1
+      end
+      it 'should create a globals_node for the global and node and all and node' do
+        GlobalNodeUser.create(:user=>@user, :node=>@node, :global=>@global)
+        gl = GlobalLink.where(:node_id=>@node.id, :global_id=>@global.id)[0]
+        gl.should_not be_nil
+        gl.global_node_users_count.should == 2
       end
       it 'should create a globals_node_user for the global and node and all and node' do
         GlobalNodeUser.create(:user=>@user, :node=>@node, :global=>@global)
@@ -204,11 +219,11 @@ describe GlobalNodeUser do
     end
   end
   describe 'deletion' do
-    it 'should destroy the current user links for this node'
+    it 'should destroy the current user links for this node' do
 
     end
 
-    it 'should destroy the current gnu'
+    it 'should destroy the current gnu' do
 
     end
 

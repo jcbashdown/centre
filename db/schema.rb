@@ -11,12 +11,14 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120313210044) do
+ActiveRecord::Schema.define(:version => 20120327210137) do
 
   create_table "global_link_users", :force => true do |t|
     t.integer  "global_id"
     t.integer  "user_id"
     t.integer  "link_id"
+    t.integer  "link_user_id"
+    t.integer  "global_link_id"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -25,6 +27,7 @@ ActiveRecord::Schema.define(:version => 20120313210044) do
     t.integer  "global_id"
     t.integer  "link_id"
     t.integer  "users_count"
+    t.integer  "global_link_users_count"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -34,6 +37,8 @@ ActiveRecord::Schema.define(:version => 20120313210044) do
     t.integer  "user_id"
     t.integer  "global_id"
     t.integer  "node_id"
+    t.integer  "node_user_id"
+    t.integer  "global_node_id"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -48,6 +53,7 @@ ActiveRecord::Schema.define(:version => 20120313210044) do
     t.boolean  "ignore"
     t.boolean  "is_conclusion"
     t.float    "page_rank"
+    t.integer  "global_node_users_count"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -65,11 +71,27 @@ ActiveRecord::Schema.define(:version => 20120313210044) do
     t.datetime "updated_at"
   end
 
+  create_table "link_users", :force => true do |t|
+    t.integer  "link_id"
+    t.integer  "user_id"
+    t.integer  "global_link_users_count"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "links", :force => true do |t|
     t.integer  "node_from_id"
     t.integer  "node_to_id"
     t.integer  "users_count"
     t.integer  "value"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "node_users", :force => true do |t|
+    t.integer  "node_id"
+    t.integer  "user_id"
+    t.integer  "global_node_users_count"
     t.datetime "created_at"
     t.datetime "updated_at"
   end

@@ -4,6 +4,7 @@ class CreateGlobalLinks < ActiveRecord::Migration
       t.references :global
       t.references :link
       t.integer :users_count
+      t.integer :global_link_users_count
 
       t.timestamps
     end

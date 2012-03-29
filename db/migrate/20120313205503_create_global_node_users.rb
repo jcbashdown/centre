@@ -5,6 +5,8 @@ class CreateGlobalNodeUsers < ActiveRecord::Migration
       t.references :user
       t.references :global
       t.references :node
+      t.references :node_user
+      t.references :global_node
 
       t.timestamps
     end
