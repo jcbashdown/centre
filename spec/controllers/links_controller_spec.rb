@@ -13,6 +13,15 @@ describe LinksController do
     {}
   end
   
+  describe 'permission to interact' do
+    context 'when the user does not have permission to interact with this link' do
+
+    end
+    context 'when user has permission to interact with this link' do
+
+    end
+  end
+  
   #This should really be userlinks controller
   describe 'update' do
     before do
@@ -71,27 +80,36 @@ describe LinksController do
   end
   describe 'create' do
     before do
+      @user = Factory(:user)
+      controller.stub(:current_user).and_return @user
       @node_one = Factory(:node)
       @node_two = Factory(:node, :title=>'title')
-      @nodes_global1 = Factory(:nodes_global, :node=>@node_one, :global=>@global)
-      @nodes_global2 = Factory(:nodes_global, :node=>@node_two, :global=>@global)
-      @user = Factory(:user)
+      @ugn1 = GlobalNodeUser.create(:user=>@user, :node=>@node_one, :global=>@global)
+      @ugn2 = GlobalNodeUser.create(:user=>@user, :node=>@node_two, :global=>@global)
     end
     context 'when ajax request' do
       context 'with valid params' do
         before do
-          controller.stub(:current_user).and_return @user
           @params = {"link"=>{"node_from_id"=>@node_one.id.to_s, "value"=>-1.to_s, "node_to_id"=>@node_two.id.to_s}}
-          @with_node_globals= {"link"=>{"node_from_id"=>@node_one.id.to_s, "value"=>-1.to_s, "node_to_id"=>@node_two.id.to_s,"nodes_global_from_id"=>@nodes_global1.id,"nodes_global_to_id"=>@nodes_global2.id}}
+          @unsaved_link = Link.new(@params["link"])
         end
-        it 'should create the link association' do
-          @user.should_receive(:create_association).with(@with_node_globals["link"])
+        it 'should save the link' do
+          Link.stub(:new).and_return @unsaved_link
+          @unsaved_link.should_receive(:save)
+          xhr :post, :create, @params
+        end
+        it 'should should save the the glu' do
+          @saved_link = @unsaved_link
+          @saved_link.save
+          @glu_params = {:global => @global, :link_id => @saved_link.id, :user => @user, :node_from_id => @node_one.id, :node_to_id => @node_two.id}
+          Link.stub(:new).and_return @saved_link
+          GlobalLinkUser.should_receive(:create).with(@glu_params)
           xhr :post, :create, @params
         end
         it 'increment the caches' do
-          Link.where(@with_node_globals["link"]).first.should be_nil
+          Link.where(@params["link"]).first.should be_nil
           xhr :post, :create, @params
-          link = Link.where(@with_node_globals["link"]).first
+          link = Link.where(@params["link"]).first
           link.users_count.should == 1
         end
         it 'should render the link partial for the newly associated link (not tested)' do
@@ -102,25 +120,25 @@ describe LinksController do
         #can't test in partial
         it 'should assign the correct link' do
           post :create, @params
-          new_link = Link.where(@with_node_globals["link"]).first
+          new_link = Link.where(@params["link"]).first
           assigns(:link).should == new_link
         end
-        context 'when create association returns false' do
-          before do
-            @user.stub(:create_association).and_return false
-          end
-          it 'initialise a new link with the correct parameters' do
-            Link.should_receive(:new).with({"node_from_id"=>@node_one.id.to_s, "node_to_id"=>@node_two.id.to_s})
-            xhr :post, :create, @params
-          end
-          it 'should render the link template' do
-            xhr :post, :create, @params
-            response.should render_template(:partial => "_a_link")
-          end
+      end
+      context 'when save returns false for glu or link' do
+        before do
+          @params = {"link"=>{"node_from_id"=>@node_one.id.to_s, "node_to_id"=>@node_two.id.to_s}}
+          @unsaved_link = Link.new(@params["link"])
+          @unsaved_link.stub(:save).and_return false
+        end
+        it 'initialise a new link with the correct parameters' do
+          Link.should_receive(:new).twice.with(@params["link"]).and_return @unsaved_link
+          xhr :post, :create, @params
+        end
+        it 'should render the link template' do
+          xhr :post, :create, @params
+          response.should render_template(:partial => "_a_link")
         end
       end
-      #also get votes counts
-      # what we are not speccing here is the returned partial
     end
   end
   describe 'destroy' do

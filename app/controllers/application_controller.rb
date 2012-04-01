@@ -3,7 +3,6 @@ class ApplicationController < ActionController::Base
   #no links to edit and new, all link boxes disabled
 
   protect_from_forgery
-  include FrontendHelpers::Html5Helper
 
   before_filter :set_current_user
   before_filter :set_questions

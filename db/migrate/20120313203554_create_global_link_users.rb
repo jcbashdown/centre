@@ -6,6 +6,8 @@ class CreateGlobalLinkUsers < ActiveRecord::Migration
       t.references :link
       t.references :link_user
       t.references :global_link
+      t.integer :node_from_id
+      t.integer :node_to_id
 
       t.timestamps
     end

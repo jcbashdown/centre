@@ -1,14 +1,14 @@
 require 'rbconfig'
 HOST_OS = RbConfig::CONFIG['host_os']
 source 'http://rubygems.org'
-gem 'rails'
-gem 'mysql2'
-gem 'will_paginate'
+gem 'rails', '>= 3.2.0'
 group :assets do
-  gem 'less'
-  gem 'coffee-rails', '~> 3.1.1'
+  gem 'sass-rails', "  ~> 3.2.3"
+  gem 'coffee-rails', "~> 3.2.1"
   gem 'uglifier', '>= 1.0.3'
 end
+gem 'will_paginate'
+gem 'mysql2'
 gem 'jquery-rails'
 if HOST_OS =~ /linux/i
   gem 'therubyracer', '>= 0.8.2'
@@ -40,7 +40,6 @@ gem "guard-livereload", ">= 0.3.0", :group => :development
 gem "guard-rspec", ">= 0.4.3", :group => :development
 gem "guard-cucumber", ">= 0.6.1", :group => :development
 gem "devise", ">= 1.4.7"
-gem "frontend-helpers"
 gem 'less-rails-bootstrap'
 gem 'ruby-debug19'
 gem "rails-backbone"

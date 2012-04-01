@@ -4,13 +4,13 @@ class CreateGlobalNodes < ActiveRecord::Migration
       t.text :node_xml
       t.references :global
       t.references :node
-      t.integer :equivalents_count
-      t.integer :upvotes_count
-      t.integer :downvotes_count
-      t.boolean :ignore
-      t.boolean :is_conclusion
+      t.integer :equivalents_count, :default=>0, :null => false
+      t.integer :upvotes_count, :default=>0, :null => false
+      t.integer :downvotes_count, :default=>0, :null => false
+      t.boolean :ignore, :boolean, :default=>true
+      t.boolean :is_conclusion, :boolean, :default=>false
       t.float :page_rank
-      t.integer :global_node_users_count
+      t.integer :global_node_users_count, :default=>0, :null => false
 
       t.timestamps
     end

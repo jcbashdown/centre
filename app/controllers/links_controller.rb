@@ -42,29 +42,19 @@ class LinksController < ApplicationController
   # POST /links
   # POST /links.json
   def create
-    node_from = params[:link][:node_from_id]
-    nodes_global_from = NodesGlobal.where(:global_id=>@question.id, :node_id=>node_from)[0] || NodesGlobal.create(:global=>@question, :node_id=>node_from)
-    node_to = params[:link][:node_to_id]
-    nodes_global_to = NodesGlobal.where(:global_id=>@question.id, :node_id=>node_to)[0] || NodesGlobal.create(:global=>@question, :node_id=>node_to)
-    link_params = params[:link].merge(:nodes_global_from_id=>nodes_global_from.id,:nodes_global_to_id=>nodes_global_to.id)
-    unless request.xhr?
-      respond_to do |format|
-        if @link = @user.create_association(link_params)
-          format.html { redirect_to @link, notice: 'Link was successfully created.' }
-          format.json { render json: @link, status: :created, location: @link }
-        else
-          format.html { render action: "new" }
-          format.json { render json: @link.errors, status: :unprocessable_entity }
-        end
-      end
-    else
-      if @link = @user.create_association(link_params)
-        render :partial => 'a_link', :locals=>{:link=>@link, :type=>params[:type]}
+    @link = Link.new(params[:link])
+    respond_to do |format|
+      if @link.save && GlobalLinkUser.create(:global => @question, :link_id => @link.id, :user => @user, :node_from_id => @link.node_from_id, :node_to_id => @link.node_to_id)
+        format.js { render :partial => 'a_link', :locals=>{:link=>@link, :type=>params[:type]} }
+        format.html { redirect_to @link, notice: 'Link was successfully created.' }
+        format.json { render json: @link, status: :created, location: @link }
       else
         link_params = params[:link]
         link_params.delete(:value)
         blank_link = Link.new(link_params)
-        render :partial => 'a_link', :locals=>{:link=>blank_link, :type=>params[:type]}
+        format.js { render :partial => 'a_link', :locals=>{:link=>blank_link, :type=>params[:type]} }
+        format.html { render action: "new" }
+        format.json { render json: @link.errors, status: :unprocessable_entity }
       end
     end
   end
