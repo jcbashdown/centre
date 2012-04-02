@@ -45,7 +45,7 @@ describe GlobalLinkUser do
         glu.link_user.should be_persisted
         glu.link_user.should be_a(LinkUser)
       end
-      it 'should create the gnus' do
+      it 'should create the gnus and increment the votes' do
         glu = GlobalLinkUser.create(:user=>@user, :link=>@link, :global => @global, :node_from_id => @node_one.id, :node_to_id => @node_two.id)
         glu.global_node_user_from.should be_persisted
         glu.global_node_user_from.should be_a(GlobalNodeUser)
@@ -54,6 +54,14 @@ describe GlobalLinkUser do
         glu.global_node_user_to.should be_a(GlobalNodeUser)
         glu.global_node_user_to.global_link_users_count.should == 1
         glu.global_node_user_to.upvotes_count.should == 1
+        glu_all = GlobalLinkUser.where(:user_id=>@user.id, :link_id=>@link.id, :global_id => Global.find_by_name('All').id, :node_from_id => @node_one.id, :node_to_id => @node_two.id)
+        glu_all.global_node_user_from.should be_persisted
+        glu_all.global_node_user_from.should be_a(GlobalNodeUser)
+        glu_all.global_node_user_from.global_link_users_count.should == 1
+        glu_all.global_node_user_to.should be_persisted
+        glu_all.global_node_user_to.should be_a(GlobalNodeUser)
+        glu_all.global_node_user_to.global_link_users_count.should == 1
+        glu_all.global_node_user_to.upvotes_count.should == 1
       end
       it 'should increment the votes on the gn' do
         GlobalLinkUser.create(:user=>@user, :link=>@link, :global => @global, :node_from_id => @node_one.id, :node_to_id => @node_two.id)
@@ -67,11 +75,44 @@ describe GlobalLinkUser do
     end
   end
 
-  describe 'destroy' do
-
-  end
-
   describe 'update' do
 
   end
+
+  describe 'destroy' do
+    #Do this first as it will need to be used when updating association
+    #
+    context 'when there is only this glu and all and associated gnus' do
+      context 'from the non all glu' do
+        it 'should destroy the glu and all glu' do
+  
+        end
+  
+        it 'should decrement the glus count by two' do
+  
+        end
+  
+        it 'should destroy the gl and all gl' do
+  
+        end
+
+        it 'should decrement the gl count by two' do
+  
+        end
+  
+        it 'should destroy the lu' do
+
+        end
+
+        it 'should decrement the lu count by 1' do
+  
+        end
+  
+        it 'should destroy all 4 gnus (unless they created it? or we shouldnt be creating gnus unless through links?)' do
+
+        end
+      end
+    end
+  end
+
 end

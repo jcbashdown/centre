@@ -17,6 +17,7 @@ class GlobalLinkUser < ActiveRecord::Base
   after_destroy :delete_global_link, :delete_link_user, :delete_all
 
   validates_uniqueness_of :link_id, :scope => [:global_id, :user_id]
+  validates_uniqueness_of :value, :scope => [:node_from_id, :node_to_id]
   
   protected
   def create_global_link

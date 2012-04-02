@@ -10,4 +10,6 @@ class Node < ActiveRecord::Base
 
   has_many :node_tos, :through => :link_tos, :class_name => "Node", :foreign_key => "node_to_id", :source=>:node_to
   has_many :node_froms, :through => :link_ins, :class_name => "Node", :foreign_key => "node_from_id", :source=>:node_from
+
+  validates_uniqueness_of :name
 end
