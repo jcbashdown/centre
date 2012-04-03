@@ -61,34 +61,34 @@ class NodesController < ApplicationController
   end
 
   def create
-    @node = Node.new(params[:node])
+    @gnu = GlobalNodeUser.new({:user=>@user, :global=>@question}.merge(params[:node]))
     respond_to do |format|
-      if @node.save
-        @gnu = GlobalNodeUser.create(:user=>@user, :node=>@node, :global=>@question)
+      if @gnu.save
+        @node = @gnu.node
         format.html { redirect_to @node, notice: 'Node was successfully created.' }
         format.json { render json: @node, status: :created, location: @node }
       else
         format.html { render action: "new" }
-        format.json { render json: @node.errors, status: :unprocessable_entity }
+        format.json { render json: @gnu.errors, status: :unprocessable_entity }
       end
     end
   end
 
-  def update
-    @node = Node.find(params[:id])
-    text = params[:node][:text] ? params[:node][:text] : ""
-    respond_to do |format|
-      if @node.update_attributes({:text=>text})
-        @gnu = GlobalNodeUser.where(:user_id=>@user.id, :node_id=>@node.id, :global_id=>@question.id)[0] || GlobalNodeUser.create(:user=>@user, :node=>@node, :global=>@question)
-        @gn = GlobalNode.where(:node_id=>@node.id, :global_id=>@question.id)[0]
-        format.html { redirect_to @node, notice: 'Node was successfully updated.' }
-        format.json { head :ok }
-      else
-        format.html { render action: "edit" }
-        format.json { render json: @node.errors, status: :unprocessable_entity }
-      end
-    end
-  end
+#  def update
+#    @node = Node.find(params[:id])
+#    text = params[:node][:text] ? params[:node][:text] : ""
+#    respond_to do |format|
+#      if @node.update_attributes({:text=>text})
+#        @gnu = GlobalNodeUser.where(:user_id=>@user.id, :node_id=>@node.id, :global_id=>@question.id)[0] || GlobalNodeUser.create(:user=>@user, :node=>@node, :global=>@question)
+#        @gn = GlobalNode.where(:node_id=>@node.id, :global_id=>@question.id)[0]
+#        format.html { redirect_to @node, notice: 'Node was successfully updated.' }
+#        format.json { head :ok }
+#      else
+#        format.html { render action: "edit" }
+#        format.json { render json: @node.errors, status: :unprocessable_entity }
+#      end
+#    end
+#  end
 
   def destroy
     node = Node.find(params[:id])
