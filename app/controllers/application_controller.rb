@@ -10,9 +10,6 @@ class ApplicationController < ActionController::Base
   def find_limit_order
     order = params[:order]
     question_id = params[:question]
-    unless question_id
-      question_id = Global.find_by_name('All').id
-    end
     unless order
       order = 'older'
     end
@@ -27,7 +24,9 @@ class ApplicationController < ActionController::Base
     else
       @order_query = "id asc"
     end
-    @question = Global.find(question_id)
+    unless question_id
+      @question = Global.find(question_id)
+    end
     @limit_order = {:question => question_id, :order => order}
   end
 

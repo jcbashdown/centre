@@ -42,16 +42,16 @@ class LinksController < ApplicationController
   # POST /links
   # POST /links.json
   def create
-    @link = Link.new(params[:link])
+    @glu = GlobalLinkUser.new(params[:link].merge(:global => @question, :user => @user))
     respond_to do |format|
-      if @link.save && GlobalLinkUser.create(:global => @question, :link_id => @link.id, :user => @user, :node_from_id => @link.node_from_id, :node_to_id => @link.node_to_id)
-        format.js { render :partial => 'a_link', :locals=>{:link=>@link, :type=>params[:type]} }
-        format.html { redirect_to @link, notice: 'Link was successfully created.' }
-        format.json { render json: @link, status: :created, location: @link }
+      if @glu.save
+        format.js { render :partial => 'a_link', :locals=>{:link=>@glu, :type=>params[:type]} }
+        format.html { redirect_to @glu, notice: 'Link was successfully created.' }
+        format.json { render json: @glu, status: :created, location: @glu }
       else
         link_params = params[:link]
         link_params.delete(:value)
-        blank_link = Link.new(link_params)
+        blank_link = GlobalLinkUser.new(link_params)
         format.js { render :partial => 'a_link', :locals=>{:link=>blank_link, :type=>params[:type]} }
         format.html { render action: "new" }
         format.json { render json: @link.errors, status: :unprocessable_entity }

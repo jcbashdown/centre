@@ -82,28 +82,21 @@ describe LinksController do
     before do
       @user = Factory(:user)
       controller.stub(:current_user).and_return @user
-      @node_one = Factory(:node)
-      @node_two = Factory(:node, :title=>'title')
-      @ugn1 = GlobalNodeUser.create(:user=>@user, :node=>@node_one, :global=>@global)
-      @ugn2 = GlobalNodeUser.create(:user=>@user, :node=>@node_two, :global=>@global)
+      @ugn1 = GlobalNodeUser.create(:user=>@user, :title=>'title', :global=>@global)
+      @node_one = @ugn1.node
+      @ugn2 = GlobalNodeUser.create(:user=>@user, :title=>'test', :global=>@global)
+      @node_two = @ugn2.node
     end
     context 'when ajax request' do
       context 'with valid params' do
         before do
           @params = {"link"=>{"node_from_id"=>@node_one.id.to_s, "value"=>-1.to_s, "node_to_id"=>@node_two.id.to_s}}
-          @unsaved_link = Link.new(@params["link"])
+          @mock_link = mock('global_link_user')
+          @mock_link.stub(:save).and_return true
         end
-        it 'should save the link' do
-          Link.stub(:new).and_return @unsaved_link
-          @unsaved_link.should_receive(:save)
-          xhr :post, :create, @params
-        end
-        it 'should should save the the glu' do
-          @saved_link = @unsaved_link
-          @saved_link.save
-          @glu_params = {:global => @global, :link_id => @saved_link.id, :user => @user, :node_from_id => @node_one.id, :node_to_id => @node_two.id}
-          Link.stub(:new).and_return @saved_link
-          GlobalLinkUser.should_receive(:create).with(@glu_params)
+        it 'should save the glu' do
+          GlobalLinkUser.stub(:new).and_return @mock_link
+          @mock_link.should_receive(:save)
           xhr :post, :create, @params
         end
         it 'increment the caches' do
@@ -113,6 +106,8 @@ describe LinksController do
           link.users_count.should == 1
         end
         it 'should render the link partial for the newly associated link (not tested)' do
+          @mock_link.stub(:save).and_return true
+          GlobalLinkUser.stub(:new).and_return(@mock_link)
           xhr :post, :create, @params
           response.should render_template(:partial => "_a_link")
         end
@@ -120,21 +115,26 @@ describe LinksController do
         #can't test in partial
         it 'should assign the correct link' do
           post :create, @params
-          new_link = Link.where(@params["link"]).first
-          assigns(:link).should == new_link
-        end
-      end
-      context 'when save returns false for glu or link' do
-        before do
-          @params = {"link"=>{"node_from_id"=>@node_one.id.to_s, "node_to_id"=>@node_two.id.to_s}}
-          @unsaved_link = Link.new(@params["link"])
-          @unsaved_link.stub(:save).and_return false
+          new_link = GlobalLinkUser.where(@params["link"].merge(:user_id => @user.id, :global_id => @global.id)).first
+          assigns(:gnu).should == new_link
         end
         it 'initialise a new link with the correct parameters' do
-          Link.should_receive(:new).twice.with(@params["link"]).and_return @unsaved_link
+          GlobalLinkUser.should_receive(:new).with(@params["link"].merge("global" => @global, "user" => @user)).and_return @mock_link
+          xhr :post, :create, @params
+        end
+      end
+      context 'when save returns false for glu' do
+        before do
+          @params = {"link"=>{"node_from_id"=>@node_one.id.to_s, "node_to_id"=>@node_two.id.to_s}}
+          @mock_link = mock('global_link_user')
+          @mock_link.stub(:save).and_return false
+        end
+        it 'initialise a new link with the correct parameters' do
+          GlobalLinkUser.should_receive(:new).twice.and_return @mock_link
           xhr :post, :create, @params
         end
         it 'should render the link template' do
+          GlobalLinkUser.stub(:new).and_return @mock_link
           xhr :post, :create, @params
           response.should render_template(:partial => "_a_link")
         end

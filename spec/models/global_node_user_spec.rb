@@ -55,31 +55,37 @@ describe GlobalNodeUser do
         gnu.should be_a(GlobalNodeUser)
       end
     end
-    describe 'creation with existing inclusion for all' do
+    describe 'creation with existing nu' do
       before do
         @gnu = GlobalNodeUser.create(:user=>@user, :global=>Global.find_by_name('All'), :title => 'Title')
+        @gnu.node_user.should_not be_nil
       end
-      context 'when in all' do
+      context 'when in the global' do
         before do
           @global = Global.find_by_name('All')
         end
-        context 'when existing gnu' do
-          it 'should create 0 globals_nodes' do
-            expect {
-              GlobalNodeUser.create(:user=>@user, :global=>@global, :title => 'Title')
-            }.to change(GlobalNode, :count).by(0)
-          end
-          it 'should create 0 global_node_users' do
-            expect {
-              GlobalNodeUser.create(:user=>@user, :global=>@global, :title => 'Title')
-            }.to change(GlobalNodeUser, :count).by(0)
-          end
-          it 'there should be only one gnu for this description' do
-            gnu = GlobalNodeUser.create(:user=>@user, :node=>@node, :global=>@global)
-            GlobalNodeUser.where(:user_id=>@user.id, :title=>'Title', :global_id=>@global.id).count.should == 1
-          end
+        it 'should create 0 globals_nodes' do
+          expect {
+            GlobalNodeUser.create(:user=>@user, :global=>@global, :title => 'Title')
+          }.to change(GlobalNode, :count).by(0)
         end
-        context 'when new gnu' do
+        it 'should create 0 global_node_users' do
+          expect {
+            GlobalNodeUser.create(:user=>@user, :global=>@global, :title => 'Title')
+          }.to change(GlobalNodeUser, :count).by(0)
+        end
+        it 'should create 0 node_users' do
+          expect {
+            GlobalNodeUser.create(:user=>@user, :global=>@global, :title => 'Title')
+          }.to change(NodeUser, :count).by(0)
+        end
+        it 'there should be only one gnu etc for this description' do
+          gnu = GlobalNodeUser.create(:user=>@user, :global=>@global, :title => 'Title')
+          GlobalNodeUser.where(:user_id=>@user.id, :title=>'Title', :global_id=>@global.id).count.should == 1
+          NodeUser.where(:user_id=>@user.id, :title=>'Title').count.should == 1
+          GlobalNode.where(:title=>'Title', :global_id=>@global.id).count.should == 1
+        end
+        context 'when new user' do
           before do
             @user = Factory(:user, :email=>"another@test.com")
           end
@@ -93,14 +99,24 @@ describe GlobalNodeUser do
               GlobalNodeUser.create(:user=>@user, :global=>@global, :title => 'Title')
             }.to change(GlobalNodeUser, :count).by(1)
           end
-          it 'should create a globals_node_user for the global and node' do
+          it 'should create 1 node_users' do
+            expect {
+              GlobalNodeUser.create(:user=>@user, :global=>@global, :title => 'Title')
+            }.to change(NodeUser, :count).by(1)
+          end
+          it 'should create a globals_node_user etc' do
             gnu = GlobalNodeUser.create(:user=>@user, :global=>@global, :title => 'Title')
             GlobalNodeUser.where(:user_id=>@user.id, :title=>'Title', :global_id=>@global.id).count.should == 1
+            NodeUser.where(:user_id=>@user.id, :title=>'Title').count.should == 1
+            GlobalNode.where(:title=>'Title', :global_id=>@global.id).count.should == 1
           end
         end
       end
-      context 'user has gnu for all' do
-        context 'when outside of all with no existing gn/gnu' do
+      context 'when outside of the global' do
+        context 'when existing nu' do
+          before do
+            NodeUser.where(:user_id=>@user.id, :title => 'Title').count.should == 1
+          end
           it 'should create 1 globals_nodes' do
             expect {
               GlobalNodeUser.create(:user=>@user, :global=>@global, :title => 'Title')
@@ -111,277 +127,138 @@ describe GlobalNodeUser do
               GlobalNodeUser.create(:user=>@user, :global=>@global, :title => 'Title')
             }.to change(GlobalNodeUser, :count).by(1)
           end
-          it 'should create a globals_node for the global and node' do
-            gnu = GlobalNodeUser.create(:user=>@user, :global=>@global, :title => 'Title')
-            gnu.global_node.should_not be_nil
+          it 'should create 1 node_users' do
+            expect {
+              GlobalNodeUser.create(:user=>@user, :global=>@global, :title => 'Title')
+            }.to change(NodeUser, :count).by(0)
           end
-          it 'should create a globals_node_user for the global and node' do
+          it 'should create a globals_node_user etc for the global and node' do
             gnu = GlobalNodeUser.create(:user=>@user, :global=>@global, :title => 'Title')
             GlobalNodeUser.where(:user_id=>@user.id, :title=>'Title', :global_id=>@global.id).count.should == 1
+            NodeUser.where(:user_id=>@user.id, :title=>'Title').count.should == 1
+            GlobalNode.where(:title=>'Title', :global_id=>@global.id).count.should == 1
           end
         end
-        context 'when outside of all with existing gn' do
+        context 'when no existing nu' do
           before do
-            @new_user = Factory(:user, :email=>"another@test.com")
-            GlobalNodeUser.create(:user=>@new_user, :node=>@node, :global=>@global)
+            @user = Factory(:user, :email=>"another@test.com")
           end
           it 'should create 0 globals_nodes' do
             expect {
-              GlobalNodeUser.create(:user=>@user, :node=>@node, :global=>@global)
-            }.to change(GlobalNode, :count).by(0)
+              GlobalNodeUser.create(:user=>@user, :title=>'Title', :global=>@global)
+            }.to change(GlobalNode, :count).by(1)
           end
           it 'should create 1 global_node_users' do
             expect {
-              GlobalNodeUser.create(:user=>@user, :node=>@node, :global=>@global)
+              GlobalNodeUser.create(:user=>@user, :title=>'Title', :global=>@global)
             }.to change(GlobalNodeUser, :count).by(1)
           end
-          it 'should create a globals_node_user for the global and node' do
-            GlobalNodeUser.create(:user=>@user, :node=>@node, :global=>@global)
-            GlobalNodeUser.where(:user_id=>@user.id, :node_id=>@node.id, :global_id=>@global.id)[0].should_not be_nil
-          end
-        end
-        context 'when outside of all with existing gn/gnu' do
-          before do
-            GlobalNodeUser.create(:user=>@user, :node=>@node, :global=>@global)
-          end
-          it 'should create 0 globals_nodes' do
+          it 'should create 1 node_users' do
             expect {
-              GlobalNodeUser.create(:user=>@user, :node=>@node, :global=>@global)
-            }.to change(GlobalNode, :count).by(0)
+              GlobalNodeUser.create(:user=>@user, :title=>'Title', :global=>@global)
+            }.to change(NodeUser, :count).by(1)
           end
-          it 'should create 0 global_node_users' do
-            expect {
-              GlobalNodeUser.create(:user=>@user, :node=>@node, :global=>@global)
-            }.to change(GlobalNodeUser, :count).by(0)
-          end
-          it 'there should be only one gnu for this description' do
-            GlobalNodeUser.create(:user=>@user, :node=>@node, :global=>@global)
-            GlobalNodeUser.where(:user_id=>@user.id, :node_id=>@node.id, :global_id=>@global.id).count.should == 1
+          it 'should create a globals_node_user etc for the global and node' do
+            gnu = GlobalNodeUser.create(:user=>@user, :global=>@global, :title => 'Title')
+            GlobalNodeUser.where(:user_id=>@user.id, :title=>'Title', :global_id=>@global.id).count.should == 1
+            NodeUser.where(:user_id=>@user.id, :title=>'Title').count.should == 1
+            GlobalNode.where(:title=>'Title', :global_id=>@global.id).count.should == 1
           end
         end
       end
-      context 'user has no gnu for all' do
-        before do
-          @user = Factory(:user, :email=>"another@test.com")
-        end
-        context 'when outside of all with no existing gn/gnu' do
-          it 'should create 1 globals_nodes' do
-            expect {
-              GlobalNodeUser.create(:user=>@user, :node=>@node, :global=>@global)
-            }.to change(GlobalNode, :count).by(1)
-          end
-          it 'should create 2 global_node_users' do
-            expect {
-              GlobalNodeUser.create(:user=>@user, :node=>@node, :global=>@global)
-            }.to change(GlobalNodeUser, :count).by(2)
-          end
-          it 'should create a globals_node for the global and node' do
-            GlobalNodeUser.create(:user=>@user, :node=>@node, :global=>@global)
-            GlobalNode.where(:node_id=>@node.id, :global_id=>@global.id)[0].should_not be_nil
-          end
-          it 'should create a globals_node_user for the global and node' do
-            GlobalNodeUser.create(:user=>@user, :node=>@node, :global=>@global)
-            GlobalNodeUser.where(:user_id=>@user.id, :node_id=>@node.id, :global_id=>@global.id)[0].should_not be_nil
-          end
-        end
-        context 'when outside of all with existing gn' do
-          before do
-            @new_user = Factory(:user, :email=>"afurther@test.com")
-            GlobalNodeUser.create(:user=>@new_user, :node=>@node, :global=>@global)
-          end
-          it 'should create 0 globals_nodes' do
-            expect {
-              GlobalNodeUser.create(:user=>@user, :node=>@node, :global=>@global)
-            }.to change(GlobalNode, :count).by(0)
-          end
-          it 'should create 2 global_node_users' do
-            expect {
-              GlobalNodeUser.create(:user=>@user, :node=>@node, :global=>@global)
-            }.to change(GlobalNodeUser, :count).by(2)
-          end
-          it 'should create a globals_node_user for the global and node' do
-            GlobalNodeUser.create(:user=>@user, :node=>@node, :global=>@global)
-            GlobalNodeUser.where(:user_id=>@user.id, :node_id=>@node.id, :global_id=>@global.id)[0].should_not be_nil
-          end
-        end
-        context 'when outside of all with existing gn/gnu' do
-          before do
-            GlobalNodeUser.create(:user=>@user, :node=>@node, :global=>@global)
-          end
-          it 'should create 0 globals_nodes' do
-            expect {
-              GlobalNodeUser.create(:user=>@user, :node=>@node, :global=>@global)
-            }.to change(GlobalNode, :count).by(0)
-          end
-          it 'should create 0 global_node_users' do
-            expect {
-              GlobalNodeUser.create(:user=>@user, :node=>@node, :global=>@global)
-            }.to change(GlobalNodeUser, :count).by(0)
-          end
-          it 'there should be only one gnu for this description' do
-            GlobalNodeUser.create(:user=>@user, :node=>@node, :global=>@global)
-            GlobalNodeUser.where(:user_id=>@user.id, :node_id=>@node.id, :global_id=>@global.id).count.should == 1
-          end
-        end
-      end
-    end
-    describe 'creation with existing inclusion in current gn and gnu when no all' do
-      #should never happen
     end
   end
   describe 'deletion' do
     context 'when there are no associated links' do
-      describe 'when both the global nodes global node user count is less than two (when there is only this user for both)' do
+      describe 'when the global nodes global node user count is less than two (when there is only this user)' do
         before do
-          gnu = GlobalNodeUser.create(:user=>@user, :node=>@node, :global=>@global)
-          gnu_all = GlobalNodeUser.where(:user_id=>@user.id, :node_id=>@node.id, :global_id=>Global.find_by_name('All').id)[0]
+          gnu = GlobalNodeUser.create(:user=>@user, :title=>'Title', :global=>@global)
           gnu.global_node.reload.global_node_users_count.should == 1
-          gnu_all.global_node.reload.global_node_users_count.should == 1
         end
-        it 'should destroy 2 globals_nodes' do
+        it 'should destroy 1 node' do
           expect {
-            GlobalNodeUser.where(:user_id=>@user.id, :node_id=>@node.id, :global_id=>@global.id)[0].destroy
-          }.to change(GlobalNode, :count).by(-2)
+            GlobalNodeUser.where(:user_id=>@user.id, :title=>'Title', :global_id=>@global.id)[0].destroy
+          }.to change(Node, :count).by(-1)
         end
-        it 'should destroy 2 globals_nodes_users' do
+        it 'should destroy 1 globals_nodes' do
           expect {
-            GlobalNodeUser.where(:user_id=>@user.id, :node_id=>@node.id, :global_id=>@global.id)[0].destroy
-          }.to change(GlobalNodeUser, :count).by(-2)
+            GlobalNodeUser.where(:user_id=>@user.id, :title=>'Title', :global_id=>@global.id)[0].destroy
+          }.to change(GlobalNode, :count).by(-1)
         end
-        it 'should destroy 2 globals_nodes_users' do
+        it 'should destroy 1 globals_nodes_users' do
           expect {
-            GlobalNodeUser.where(:user_id=>@user.id, :node_id=>@node.id, :global_id=>@global.id)[0].destroy
+            GlobalNodeUser.where(:user_id=>@user.id, :title=>'Title', :global_id=>@global.id)[0].destroy
+          }.to change(GlobalNodeUser, :count).by(-1)
+        end
+        it 'should destroy 1 globals_nodes_users' do
+          expect {
+            GlobalNodeUser.where(:user_id=>@user.id, :title=>'Title', :global_id=>@global.id)[0].destroy
           }.to change(NodeUser, :count).by(-1)
         end
         it 'should create a globals_node for the global and node and all and node' do
-          gn = GlobalNode.where(:node_id=>@node.id, :global_id=>@global.id)[0]
-          gn_all = GlobalNode.where(:node_id=>@node.id, :global_id=>Global.find_by_name('All').id)[0]
+          gn = GlobalNode.where(:title=>'Title', :global_id=>@global.id)[0]
           gn.should_not be_nil
-          gn_all.should_not be_nil
-          GlobalNodeUser.where(:user_id=>@user.id, :node_id=>@node.id, :global_id=>@global.id)[0].destroy
-          gn = GlobalNode.where(:node_id=>@node.id, :global_id=>@global.id)[0]
+          GlobalNodeUser.where(:user_id=>@user.id, :title=>'Title', :global_id=>@global.id)[0].destroy
+          gn = GlobalNode.where(:title=>'Title', :global_id=>@global.id)[0]
           gn.should be_nil
-          gn_all = GlobalNode.where(:node_id=>@node.id, :global_id=>Global.find_by_name('All').id)[0]
-          gn_all.should be_nil
         end
         it 'should create a globals_node for the global and node and all and node' do
-          GlobalNodeUser.where(:user_id=>@user.id, :node_id=>@node.id, :global_id=>@global.id)[0].destroy
-          nu = NodeUser.where(:node_id=>@node.id, :user_id=>@user.id)[0]
+          GlobalNodeUser.where(:user_id=>@user.id, :title=>'Title', :global_id=>@global.id)[0].destroy
+          nu = NodeUser.where(:title=>'Title', :user_id=>@user.id)[0]
           nu.should be_nil
         end
         it 'should destroy a globals_node for the global and node and all and node' do
-          GlobalNodeUser.where(:user_id=>@user.id, :node_id=>@node.id, :global_id=>@global.id)[0].destroy
-          GlobalNode.where(:node_id=>@node.id, :global_id=>@global.id)[0].should be_nil
-          GlobalNode.where(:node_id=>@node.id, :global_id=>Global.find_by_name('All').id)[0].should be_nil
+          GlobalNodeUser.where(:user_id=>@user.id, :title=>'Title', :global_id=>@global.id)[0].destroy
+          GlobalNode.where(:title=>'Title', :global_id=>@global.id)[0].should be_nil
         end
         it 'should destroy a globals_node_user for the global and node and all and node' do
-          GlobalNodeUser.where(:user_id=>@user.id, :node_id=>@node.id, :global_id=>@global.id)[0].destroy
-          GlobalNodeUser.where(:node_id=>@node.id, :global_id=>@global.id)[0].should be_nil
-          GlobalNodeUser.where(:node_id=>@node.id, :global_id=>Global.find_by_name('All').id)[0].should be_nil
-        end
-        context 'when destroying just the all gnu' do
-          before do
-            @global_orig = @global
-            @global = Global.find_by_name('All')
-          end
-          it 'should destroy any unsused non all gnus or it should fail to destroy if these are used' do
-            pending
-          end
-          it 'should destroy 2 globals_nodes' do
-            expect {
-              GlobalNodeUser.where(:user_id=>@user.id, :node_id=>@node.id, :global_id=>@global.id)[0].destroy
-            }.to change(GlobalNode, :count).by(-1)
-          end
-          it 'should destroy 2 globals_nodes_users' do
-            expect {
-              GlobalNodeUser.where(:user_id=>@user.id, :node_id=>@node.id, :global_id=>@global.id)[0].destroy
-            }.to change(GlobalNodeUser, :count).by(-1)
-          end
-          it 'should destroy 2 globals_nodes_users' do
-            expect {
-              GlobalNodeUser.where(:user_id=>@user.id, :node_id=>@node.id, :global_id=>@global.id)[0].destroy
-            }.to change(NodeUser, :count).by(0)
-          end
-          it 'should create a globals_node for the global and node and all and node' do
-            gn = GlobalNode.where(:node_id=>@node.id, :global_id=>@global_orig.id)[0]
-            gn_all = GlobalNode.where(:node_id=>@node.id, :global_id=>Global.find_by_name('All').id)[0]
-            gn.should_not be_nil
-            gn_all.should_not be_nil
-            GlobalNodeUser.where(:user_id=>@user.id, :node_id=>@node.id, :global_id=>@global.id)[0].destroy
-            gn = GlobalNode.where(:node_id=>@node.id, :global_id=>@global_orig.id)[0]
-            gn.should_not be_nil
-            gn.global_node_users_count.should == 1
-            gn_all = GlobalNode.where(:node_id=>@node.id, :global_id=>Global.find_by_name('All').id)[0]
-            gn_all.should be_nil
-          end
-          it 'should create a globals_node for the global and node and all and node' do
-            GlobalNodeUser.where(:user_id=>@user.id, :node_id=>@node.id, :global_id=>@global.id)[0].destroy
-            nu = NodeUser.where(:node_id=>@node.id, :user_id=>@user.id)[0]
-            nu.should_not be_nil
-            nu.global_node_users_count.should == 1
-          end
-          it 'should destroy a globals_node for the global and node and all and node' do
-            GlobalNodeUser.where(:user_id=>@user.id, :node_id=>@node.id, :global_id=>@global.id)[0].destroy
-            GlobalNode.where(:node_id=>@node.id, :global_id=>@global.id)[0].should be_nil
-            GlobalNode.where(:node_id=>@node.id, :global_id=>Global.find_by_name('All').id)[0].should be_nil
-          end
-          it 'should destroy a globals_node_user for the global and node and all and node' do
-            GlobalNodeUser.where(:user_id=>@user.id, :node_id=>@node.id, :global_id=>@global.id)[0].destroy
-            GlobalNodeUser.where(:node_id=>@node.id, :global_id=>@global.id)[0].should be_nil
-            GlobalNodeUser.where(:node_id=>@node.id, :global_id=>Global.find_by_name('All').id)[0].should be_nil
-           
-          end
-          it 'should not destroy the all unless there is only one other ugn for this user and this node and this has no links' do
-            pending
-          end
+          GlobalNodeUser.where(:user_id=>@user.id, :title=>'Title', :global_id=>@global.id)[0].destroy
+          GlobalNodeUser.where(:title=>'Title', :global_id=>@global.id)[0].should be_nil
         end
         context 'with another user for the global node' do
           before do
             @user = Factory(:user, :email => "a@test.com")
-            gnu = GlobalNodeUser.create(:user=>@user, :node=>@node, :global=>@global)
-            gnu_all = GlobalNodeUser.where(:user_id=>@user.id, :node_id=>@node.id, :global_id=>Global.find_by_name('All').id)[0]
+            gnu = GlobalNodeUser.create(:user=>@user, :title=>'Title', :global=>@global)
             gnu.global_node.reload.global_node_users_count.should == 2
-            gnu_all.global_node.reload.global_node_users_count.should == 2
           end
-          it 'should destroy 2 globals_nodes' do
+          it 'should destroy 0 globals_nodes' do
             expect {
-              GlobalNodeUser.where(:user_id=>@user.id, :node_id=>@node.id, :global_id=>@global.id)[0].destroy
+              GlobalNodeUser.where(:user_id=>@user.id, :title=>'Title', :global_id=>@global.id)[0].destroy
+            }.to change(Node, :count).by(0)
+          end
+          it 'should destroy 0 globals_nodes' do
+            expect {
+              GlobalNodeUser.where(:user_id=>@user.id, :title=>'Title', :global_id=>@global.id)[0].destroy
             }.to change(GlobalNode, :count).by(0)
           end
-          it 'should destroy 2 globals_nodes_users' do
+          it 'should destroy 1 globals_nodes_users' do
             expect {
-              GlobalNodeUser.where(:user_id=>@user.id, :node_id=>@node.id, :global_id=>@global.id)[0].destroy
-            }.to change(GlobalNodeUser, :count).by(-2)
+              GlobalNodeUser.where(:user_id=>@user.id, :title=>'Title', :global_id=>@global.id)[0].destroy
+            }.to change(GlobalNodeUser, :count).by(-1)
           end
-          it 'should destroy 2 globals_nodes_users' do
+          it 'should destroy 1 nodes_users' do
             expect {
-              GlobalNodeUser.where(:user_id=>@user.id, :node_id=>@node.id, :global_id=>@global.id)[0].destroy
+              GlobalNodeUser.where(:user_id=>@user.id, :title=>'Title', :global_id=>@global.id)[0].destroy
             }.to change(NodeUser, :count).by(-1)
           end
           it 'should create a globals_node for the global and node and all and node' do
-            gn = GlobalNode.where(:node_id=>@node.id, :global_id=>@global.id)[0]
-            gn_all = GlobalNode.where(:node_id=>@node.id, :global_id=>Global.find_by_name('All').id)[0]
+            gn = GlobalNode.where(:title=>'Title', :global_id=>@global.id)[0]
             gn.should_not be_nil
-            gn_all.should_not be_nil
-            GlobalNodeUser.where(:user_id=>@user.id, :node_id=>@node.id, :global_id=>@global.id)[0].destroy
-            gn = GlobalNode.where(:node_id=>@node.id, :global_id=>@global.id)[0]
+            GlobalNodeUser.where(:user_id=>@user.id, :title=>'Title', :global_id=>@global.id)[0].destroy
+            gn = GlobalNode.where(:title=>'Title', :global_id=>@global.id)[0]
             gn.should_not be_nil
             gn.global_node_users_count.should == 1
-            gn_all = GlobalNode.where(:node_id=>@node.id, :global_id=>Global.find_by_name('All').id)[0]
-            gn_all.should_not be_nil
-            gn_all.global_node_users_count.should == 1
+            gn.node.global_node_users_count.should == 1
           end
           it 'should create a globals_node for the global and node and all and node' do
-            GlobalNodeUser.where(:user_id=>@user.id, :node_id=>@node.id, :global_id=>@global.id)[0].destroy
-            nu = NodeUser.where(:node_id=>@node.id, :user_id=>@user.id)[0]
+            GlobalNodeUser.where(:user_id=>@user.id, :title=>'Title', :global_id=>@global.id)[0].destroy
+            nu = NodeUser.where(:title=>'Title', :user_id=>@user.id)[0]
             nu.should be_nil
           end
           it 'should destroy a globals_node_user for the global and node and all and node' do
-            GlobalNodeUser.where(:user_id=>@user.id, :node_id=>@node.id, :global_id=>@global.id)[0].destroy
-            GlobalNodeUser.where(:node_id=>@node.id, :global_id=>@global.id)[0].should_not be_nil
-            GlobalNodeUser.where(:node_id=>@node.id, :user_id => @user.id, :global_id=>@global.id)[0].should be_nil
-            GlobalNodeUser.where(:node_id=>@node.id, :global_id=>Global.find_by_name('All').id)[0].should_not be_nil
-            GlobalNodeUser.where(:node_id=>@node.id, :user_id => @user.id, :global_id=>Global.find_by_name('All').id)[0].should be_nil
+            GlobalNodeUser.where(:user_id=>@user.id, :title=>'Title', :global_id=>@global.id)[0].destroy
+            GlobalNode.where(:title=>'Title', :global_id=>@global.id)[0].should_not be_nil
+            GlobalNodeUser.where(:title=>'Title', :user_id => @user.id, :global_id=>@global.id)[0].should be_nil
           end
         end
         #with other users should decrement counter caches

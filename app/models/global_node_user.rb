@@ -1,6 +1,6 @@
 class GlobalNodeUser < ActiveRecord::Base
   belongs_to :global
-  belongs_to :node
+  belongs_to :node, :counter_cache => true
   belongs_to :user
   belongs_to :node_user, :counter_cache => true
   belongs_to :global_node, :counter_cache => true
@@ -48,7 +48,9 @@ class GlobalNodeUser < ActiveRecord::Base
   end
 
   def delete_node_if_allowed
-
+    if node.global_node_users_count < 2
+      node.destroy
+    end
   end
 
   def update_xml
