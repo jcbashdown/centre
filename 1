@@ -11,13 +11,13 @@ describe GlobalLinkUser do
       end
       it 'should create 2 glus (for this and all)' do
         expect {
-          GlobalLinkUser.create(:user=>@user, :link=>@link, :global => @global, :node_from_id => @node_one.id, :node_to_id => @node_two.id)
-        }.to change(GlobalLinkUser, :count).by(2)
+          GlobalLinkUser.create(:user=>@user, :global => @global, :node_from_id => @gnu1.node.id, :node_to_id => @gnu2.node.id, :value => 1)
+        }.to change(GlobalLinkUser, :count).by(1)
       end
-      it 'should create the glu for this and all' do
-        glu = GlobalLinkUser.create(:user=>@user, :link=>@link, :global => @global, :node_from_id => @node_one.id, :node_to_id => @node_two.id)
+      it 'should create the glu for this' do
+        glu = GlobalLinkUser.create(:user=>@user, :global => @global, :node_from_id => @gnu1.node.id, :node_to_id => @gnu2.node.id, :value => 1)
         glu.should be_persisted
-        glu_all = GlobalLinkUser.where(:user_id=>@user.id, :link_id=>@link.id, :global_id=>Global.find_by_name('All').id)[0].should be_a(GlobalLinkUser)
+        glu = GlobalLinkUser.where(:user_id=>@user.id, :node_from_id => @gnu1.node.id, :node_to_id => @gnu2.node.id, :value => 1, :global_id=>@global.id).count .should == 1
       end
       it 'should create 2 gls (for this and all)' do
         expect {

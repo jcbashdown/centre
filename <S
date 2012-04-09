@@ -25,52 +25,50 @@ describe GlobalLinkUser do
         }.to change(GlobalLink, :count).by(1)
       end
       it 'should create the gl for this and all' do
-        glu = GlobalLinkUser.create(:user=>@user, :global => @global, :node_from_id => @gnu1.node.id, :node_to_id => @gnu2.node.id, :value => 1)
+        glu = GlobalLinkUser.create(:user=>@user, :link=>@link, :global => @global, :node_from_id => @node_one.id, :node_to_id => @node_two.id)
         glu.global_link.should be_persisted
         glu.global_link.should be_a(GlobalLink)
-        glu.global_link.reload.global_link_users_count.should == 1
+        glu.global_link.global_link_users_count.should == 1
+        glu_all = GlobalLinkUser.where(:user_id=>@user.id, :link_id=>@link.id, :global_id=>Global.find_by_name('All').id)[0].should be_a(GlobalLinkUser)
+        glu_all.global_link.should be_a(GlobalLink)
+        glu_all.global_link.global_link_users_count.should == 1
       end
-      it 'should create 1 lu' do
+      it 'should create 2 lus (for this and all)' do
         expect {
-          GlobalLinkUser.create(:user=>@user, :global => @global, :node_from_id => @gnu1.node.id, :node_to_id => @gnu2.node.id, :value => 1)
+          GlobalLinkUser.create(:user=>@user, :link=>@link, :global => @global, :node_from_id => @node_one.id, :node_to_id => @node_two.id)
         }.to change(LinkUser, :count).by(1)
       end
       it 'should create the lu' do
-        glu = GlobalLinkUser.create(:user=>@user, :global => @global, :node_from_id => @gnu1.node.id, :node_to_id => @gnu2.node.id, :value => 1)
+        glu = GlobalLinkUser.create(:user=>@user, :link=>@link, :global => @global, :node_from_id => @node_one.id, :node_to_id => @node_two.id)
         glu.link_user.should be_persisted
         glu.link_user.should be_a(LinkUser)
-        glu.link_user.reload.global_link_users_count.should == 1
-      end
-      it 'should create an l' do
-        expect {
-          GlobalLinkUser.create(:user=>@user, :global => @global, :node_from_id => @gnu1.node.id, :node_to_id => @gnu2.node.id, :value => 1)
-        }.to change(Link, :count).by(1)
-      end
-      it 'should create the l' do
-        glu = GlobalLinkUser.create(:user=>@user, :global => @global, :node_from_id => @gnu1.node.id, :node_to_id => @gnu2.node.id, :value => 1)
-        glu.link.should be_persisted
-        glu.link.should be_a(Link)
-        glu.link.reload.global_link_users_count.should == 1
       end
       it 'should create the gnus and increment the votes' do
-        glu = GlobalLinkUser.create(:user=>@user, :global => @global, :node_from_id => @gnu1.node.id, :node_to_id => @gnu2.node.id, :value => 1)
+        glu = GlobalLinkUser.create(:user=>@user, :link=>@link, :global => @global, :node_from_id => @node_one.id, :node_to_id => @node_two.id)
         glu.global_node_user_from.should be_persisted
         glu.global_node_user_from.should be_a(GlobalNodeUser)
-        glu.global_node_user_from.reload.global_link_users_count.should == 1
+        glu.global_node_user_from.global_link_users_count.should == 1
         glu.global_node_user_to.should be_persisted
         glu.global_node_user_to.should be_a(GlobalNodeUser)
-        glu.global_node_user_to.reload.global_link_users_count.should == 1
+        glu.global_node_user_to.global_link_users_count.should == 1
         glu.global_node_user_to.upvotes_count.should == 1
+        glu_all = GlobalLinkUser.where(:user_id=>@user.id, :link_id=>@link.id, :global_id => Global.find_by_name('All').id, :node_from_id => @node_one.id, :node_to_id => @node_two.id)
+        glu_all.global_node_user_from.should be_persisted
+        glu_all.global_node_user_from.should be_a(GlobalNodeUser)
+        glu_all.global_node_user_from.global_link_users_count.should == 1
+        glu_all.global_node_user_to.should be_persisted
+        glu_all.global_node_user_to.should be_a(GlobalNodeUser)
+        glu_all.global_node_user_to.global_link_users_count.should == 1
+        glu_all.global_node_user_to.upvotes_count.should == 1
       end
       it 'should increment the votes on the gn' do
-        GlobalLinkUser.create(:user=>@user, :global => @global, :node_from_id => @gnu1.node.id, :node_to_id => @gnu2.node.id, :value => 1)
-        GlobalNode.where(:node_id => @gnu2.node.id, :global_id => @global.id)[0].upvotes_count.should == 1
-        GlobalNode.where(:node_id => @gnu1.node.id, :global_id => @global.id)[0].should_not be_nil
+        GlobalLinkUser.create(:user=>@user, :link=>@link, :global => @global, :node_from_id => @node_one.id, :node_to_id => @node_two.id)
+        GlobalNode.where(:node_id => @node_two.id, :global_id => @global.id)[0].upvotes_count.should == 1
+        GlobalNode.where(:node_id => @node_two.id, :global_id => Global.find_by_name('All').id)[0].upvotes_count.should == 1
       end
       it 'should register the vote on nu' do
-        GlobalLinkUser.create(:user=>@user, :global => @global, :node_from_id => @gnu1.node.id, :node_to_id => @gnu2.node.id, :value => 1)
-        NodeUser.where(:node_id => @gnu2.node.id, :user_id => @user.id)[0].upvotes_count.should == 1
-        NodeUser.where(:node_id => @gnu1.node.id, :user_id => @user.id)[0].should_not be_nil
+        GlobalLinkUser.create(:user=>@user, :link=>@link, :global => @global, :node_from_id => @node_one.id, :node_to_id => @node_two.id)
+        NodeUser.where(:node_id => @node_two.id, :user_id => @user.id)[0].upvotes_count.should == 1
       end
     end
   end

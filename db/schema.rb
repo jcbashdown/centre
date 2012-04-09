@@ -46,15 +46,16 @@ ActiveRecord::Schema.define(:version => 20120327210137) do
     t.integer  "global_node_id"
     t.string   "title"
     t.text     "text"
-    t.integer  "equivalents_count", :default => 0,     :null => false
-    t.integer  "upvotes_count",     :default => 0,     :null => false
-    t.integer  "downvotes_count",   :default => 0,     :null => false
-    t.boolean  "ignore",            :default => true
-    t.boolean  "boolean",           :default => false
-    t.boolean  "is_conclusion",     :default => false
+    t.integer  "global_link_users_count", :default => 0,     :null => false
+    t.integer  "equivalents_count",       :default => 0,     :null => false
+    t.integer  "upvotes_count",           :default => 0,     :null => false
+    t.integer  "downvotes_count",         :default => 0,     :null => false
+    t.boolean  "ignore",                  :default => true
+    t.boolean  "boolean",                 :default => false
+    t.boolean  "is_conclusion",           :default => false
     t.float    "page_rank"
-    t.datetime "created_at",                           :null => false
-    t.datetime "updated_at",                           :null => false
+    t.datetime "created_at",                                 :null => false
+    t.datetime "updated_at",                                 :null => false
   end
 
   create_table "global_nodes", :force => true do |t|
@@ -102,10 +103,11 @@ ActiveRecord::Schema.define(:version => 20120327210137) do
   create_table "links", :force => true do |t|
     t.integer  "node_from_id"
     t.integer  "node_to_id"
-    t.integer  "users_count",  :default => 0, :null => false
+    t.integer  "global_link_users_count", :default => 0, :null => false
+    t.integer  "users_count",             :default => 0, :null => false
     t.integer  "value"
-    t.datetime "created_at",                  :null => false
-    t.datetime "updated_at",                  :null => false
+    t.datetime "created_at",                             :null => false
+    t.datetime "updated_at",                             :null => false
   end
 
   create_table "node_users", :force => true do |t|

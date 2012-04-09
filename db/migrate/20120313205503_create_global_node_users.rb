@@ -9,6 +9,7 @@ class CreateGlobalNodeUsers < ActiveRecord::Migration
       t.references :global_node
       t.string :title
       t.text :text
+      t.integer :global_link_users_count, :default=>0, :null => false
       t.integer :equivalents_count, :default=>0, :null => false
       t.integer :upvotes_count, :default=>0, :null => false
       t.integer :downvotes_count, :default=>0, :null => false
