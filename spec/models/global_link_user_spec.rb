@@ -64,6 +64,11 @@ describe GlobalLinkUser do
       end
       it 'should increment the votes on the gn' do
         GlobalLinkUser.create(:user=>@user, :global => @global, :node_from_id => @gnu1.node.id, :node_to_id => @gnu2.node.id, :value => 1)
+        Node.where(:id => @gnu2.node.id)[0].upvotes_count.should == 1
+        Node.where(:id => @gnu1.node.id)[0].should_not be_nil
+      end
+      it 'should increment the votes on the gn' do
+        GlobalLinkUser.create(:user=>@user, :global => @global, :node_from_id => @gnu1.node.id, :node_to_id => @gnu2.node.id, :value => 1)
         GlobalNode.where(:node_id => @gnu2.node.id, :global_id => @global.id)[0].upvotes_count.should == 1
         GlobalNode.where(:node_id => @gnu1.node.id, :global_id => @global.id)[0].should_not be_nil
       end

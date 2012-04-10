@@ -13,6 +13,7 @@ class CreateGlobalNodes < ActiveRecord::Migration
       t.boolean :is_conclusion, :boolean, :default=>false
       t.float :page_rank
       t.integer :global_node_users_count, :default=>0, :null => false
+      t.integer :global_link_users_count, :default=>0, :null => false
 
       t.timestamps
     end
