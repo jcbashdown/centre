@@ -45,16 +45,14 @@ class LinksController < ApplicationController
     @glu = GlobalLinkUser.new(params[:link].merge(:global => @question, :user => @user))
     respond_to do |format|
       if @glu.save
-        format.js { render :partial => 'a_link', :locals=>{:link=>@glu, :type=>params[:type]} }
-        format.html { redirect_to @glu, notice: 'Link was successfully created.' }
-        format.json { render json: @glu, status: :created, location: @glu }
+        format.js { render :partial => 'a_link', :locals=>{:link=>@glu.link, :type=>params[:type]} }
+        format.html { redirect_to @glu.link, notice: 'Link was successfully created.' }
       else
         link_params = params[:link]
         link_params.delete(:value)
-        blank_link = GlobalLinkUser.new(link_params)
+        blank_link = Link.new(link_params)
         format.js { render :partial => 'a_link', :locals=>{:link=>blank_link, :type=>params[:type]} }
         format.html { render action: "new" }
-        format.json { render json: @link.errors, status: :unprocessable_entity }
       end
     end
   end
