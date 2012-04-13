@@ -18,12 +18,10 @@ class GlobalLinkUser < ActiveRecord::Base
   #validates :node_to, :presence => true
   after_save :update_caches
   after_create :set_or_create_link, :set_or_create_global_link, :set_or_create_link_user, :set_or_create_global_node_user_and_node_models#update xml
-  after_destroy :delete_link_if_allowed, :delete_global_link_if_allowed, :delete_link_user_if_allowed, :delete_global_node_user_and_node_models_if_allowed, :update_caches#update xml
+  after_destroy :delete_link_if_allowed, :delete_global_link_if_allowed, :delete_link_user_if_allowed, :update_caches#update xml
 
   validates_uniqueness_of :link_id, :scope => [:global_id, :user_id]
-  validates_uniqueness_of :value, :scope => [:node_from_id, :node_to_id]
-  validates_uniqueness_of :node_from_id, :scope => [:node_to_id]
-  validates_uniqueness_of :node_to_id, :scope => [:node_from_id]
+  validates_uniqueness_of :user_id, :scope => [:node_from_id, :node_to_id]
   
   protected
   def set_or_create_link
@@ -64,7 +62,9 @@ class GlobalLinkUser < ActiveRecord::Base
   end
 
   def delete_link_if_allowed
-
+    if link.global_link_users_count < 2
+      link.destroy
+    end
   end
 
   def delete_global_link_if_allowed
@@ -77,10 +77,6 @@ class GlobalLinkUser < ActiveRecord::Base
     if link_user.global_link_users_count < 2
       link_user.destroy
     end
-  end
-
-  def delete_global_node_users_if_allowed
-
   end
 
 #  def turn_off_node_ignore

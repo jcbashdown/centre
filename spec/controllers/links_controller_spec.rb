@@ -32,7 +32,10 @@ describe LinksController do
       @node_two = @ugn2.node
       @node_one = Factory(:node)
       @params_one = {"link"=>{"node_from_id"=>@node_one.id.to_s, "value"=>1.to_s, "node_to_id"=>@node_two.id.to_s}}
-      @glu = GlobalLinkUser.new(@params_one["link"].merge(:global => @global, :user => @user))
+      @glu = GlobalLinkUser.create(@params_one["link"].merge(:global => @global, :user => @user))
+      @user_two = Factory(:user, :email => "user2@test.com")
+      @gluser2 = GlobalLinkUser.create!(@params_one["link"].merge(:global => @global, :user => @user_two))
+      @glu.link.should == @gluser2.link
     end
     #update will destroy and then create as too much logic for an after save if we check if we need to to destroy global links etc.
     context 'when ajax request' do
@@ -42,58 +45,62 @@ describe LinksController do
           @mock_glu = mock('global_link_user')
           @mock_glu_2 = mock('global_link_user')
           @mock_link = mock('link')
-          @mock_glu.stub(:save).and_return true
-          @mock_glu.stub(:link).and_return @mock_link
-          @mock_glu_2.stub(:destroy).and_return true
+          @mock_glu_2.stub(:save).and_return true
+          @mock_glu_2.stub(:link).and_return @mock_link
+          @mock_glu.stub(:destroy).and_return true
         end
         it 'should save the glu' do
-          GlobalLinkUser.stub(:find).and_return @mock_link_2
-          @mock_link.should_receive(:destroy)
+          GlobalLinkUser.stub(:find).and_return @mock_glu
+          @mock_glu.should_receive(:destroy)
           xhr :put, :update, @params
         end
         it 'should save the glu' do
-          GlobalLinkUser.stub(:new).and_return @mock_link
-          @mock_link.should_receive(:save)
+          GlobalLinkUser.stub(:find).and_return @mock_glu
+          GlobalLinkUser.stub(:new).and_return @mock_glu_2
+          @mock_glu_2.should_receive(:save)
           xhr :put, :update, @params
         end
         it 'increment the caches' do
           Link.where(@params["link"]).first.should be_nil
           link = Link.where(@params_one["link"]).first
-          link.users_count.should == 1
-          xhr :post, :create, @params
+          link.reload.global_link_users_count.should == 2
+          link.users_count.should == 2 
+          xhr :post, :update, @params
           link = Link.where(@params["link"]).first
+          link.global_link_users_count.should == 1
           link.users_count.should == 1
           link = Link.where(@params_one["link"]).first
-          link.users_count.should == 0 
+          link.global_link_users_count.should == 1
+          link.users_count.should == 1
         end
         it 'should render the link partial for the newly associated link (not tested)' do
-          @mock_link.stub(:save).and_return true
-          GlobalLinkUser.stub(:new).and_return(@mock_link)
           xhr :put, :update, @params
           response.should render_template(:partial => "_a_link")
         end
         it 'should assign the correct link' do
           put :update, @params
           new_link = GlobalLinkUser.where(@params["link"].merge(:user_id => @user.id, :global_id => @global.id)).first
-          assigns(:gnu).should == new_link
+          assigns(:glu).should == new_link
         end
-        it 'initialise a new link with the correct parameters' do
-          GlobalLinkUser.should_receive(:new).with(@params["link"].merge("global" => @global, "user" => @user)).and_return @mock_link
-          xhr :post, :create, @params
+        it 'should create a link with the correct parameters' do
+          @glu = GlobalLinkUser.create(@params["link"].merge("global" => @global, "user" => @user))
+          GlobalLinkUser.should_receive(:create).with(@params["link"].merge("global" => @global, "user" => @user)).and_return @glu
+          xhr :post, :update, @params
         end
       end
       context 'when destroy or save returns false for glu' do
         before do
-          @params = {"link"=>{"node_from_id"=>@node_one.id.to_s, "node_to_id"=>@node_two.id.to_s}}
-          @mock_link = mock('global_link_user')
-          @mock_link.stub(:save).and_return false
+          @params = {"link"=>{"node_from_id"=>@node_one.id.to_s, "value"=>-1.to_s, "node_to_id"=>@node_two.id.to_s}, "id" =>@glu.id}
+          @new_link_params = {"link"=>{"node_from_id"=>@node_one.id.to_s, "node_to_id"=>@node_two.id.to_s}}
+          GlobalLinkUser.stub(:create).and_return false
         end
-        it 'initialise a new link with the correct parameters' do
-          GlobalLinkUser.should_receive(:new).twice.and_return @mock_link
-          xhr :put, :update, @params
+        context 'when glu destroyed but nothing new created' do
+          it 'initialise a new link with the correct parameters' do
+            GlobalLinkUser.should_receive(:new).with(@new_link_params["link"])
+            xhr :put, :update, @params
+          end
         end
         it 'should render the link template' do
-          GlobalLinkUser.stub(:new).and_return @mock_link
           xhr :put, :update, @params
           response.should render_template(:partial => "_a_link")
         end
@@ -154,8 +161,7 @@ describe LinksController do
           @mock_glu.stub(:link).and_return @mock_link
         end
         it 'initialise a new link with the correct parameters' do
-          GlobalLinkUser.should_receive(:new).and_return @mock_glu
-          Link.should_receive(:new).and_return @mock_link
+          GlobalLinkUser.should_receive(:new).twice.and_return @mock_glu
           xhr :post, :create, @params
         end
         it 'should render the link template' do
@@ -168,37 +174,64 @@ describe LinksController do
   end
   describe 'destroy' do
     before do
-      @node_one = Factory(:node)
-      @node_two = Factory(:node, :title=>'title')
-      @nodes_global1 = Factory(:nodes_global, :node=>@node_one, :global=>@global)
-      @nodes_global2 = Factory(:nodes_global, :node=>@node_two, :global=>@global)
       @user = Factory(:user)
-      @link = Link.create(:nodes_global_from=>@nodes_global1,:node_from=>@node_one,:nodes_global_to=>@nodes_global2,:node_to=>@node_two, :users=>[@user],:value=>1)
+      controller.stub(:current_user).and_return @user
+      @ugn1 = GlobalNodeUser.create(:user=>@user, :title=>'title', :global=>@global)
+      @node_one = @ugn1.node
+      @ugn2 = GlobalNodeUser.create(:user=>@user, :title=>'test', :global=>@global)
+      @node_two = @ugn2.node
+      @node_one = Factory(:node)
+      @params_one = {"link"=>{"node_from_id"=>@node_one.id.to_s, "value"=>1.to_s, "node_to_id"=>@node_two.id.to_s}}
+      @glu = GlobalLinkUser.create(@params_one["link"].merge(:global => @global, :user => @user))
+      @user_two = Factory(:user, :email => "user2@test.com")
+      @gluser2 = GlobalLinkUser.create!(@params_one["link"].merge(:global => @global, :user => @user_two))
+      @params_one = {"link"=>{"node_from_id"=>@node_one.id.to_s, "value"=>1.to_s, "node_to_id"=>@node_two.id.to_s}, :id => @glu.id}
+      @glu.link.should == @gluser2.link
     end
+    #update will destroy and then create as too much logic for an after save if we check if we need to to destroy global links etc.
     context 'when ajax request' do
       context 'with valid params' do
         before do
-          @user_two = Factory(:user, :email=>'test@user.com', :password=>'123456AA')
-          controller.stub(:current_user).and_return @user
-          @params = {:id=>@link.id, :link=>{:node_from_id=>@node_one.id, :value=>1, :node_to_id=>@node_two.id}}
-          @user_link = UserLink.where(:user_id=>@user.id, :link_id=>@link)
+          @mock_glu = mock('global_link_user')
+          @mock_glu_2 = mock('global_link_user')
+          @mock_link = mock('link')
+          @mock_glu_2.stub(:save).and_return true
+          @mock_glu_2.stub(:link).and_return @mock_link
+          @mock_glu.stub(:destroy).and_return true
         end
-        it 'should delete the link association' do
-          UserLink.stub(:where).and_return [@user_link]
-          @user_link.should_receive(:try).with(:destroy)
-          xhr :post, :destroy, @params
+        it 'should save the glu' do
+          GlobalLinkUser.stub(:find).and_return @mock_glu
+          @mock_glu.should_receive(:destroy)
+          xhr :put, :destroy, @params_one
         end
-        it 'should save the old link' do
-          Link.stub(:find).and_return @link
-          @link.should_receive(:save!)
-          xhr :post, :destroy, @params
+        it 'decrement the caches' do
+          link = Link.where(@params_one["link"]).first
+          link.should_not be_nil
+          link.reload.global_link_users_count.should == 2
+          link.users_count.should == 2 
+          xhr :post, :destroy, @params_one
+          link = Link.where(@params_one["link"]).first
+          link.global_link_users_count.should == 1
+          link.users_count.should == 1
         end
-        it 'initialise a new link with the correct parameters' do
-          Link.should_receive(:new).with({"node_from_id"=>@node_one.id.to_s, "node_to_id"=>@node_two.id.to_s})
-          xhr :post, :destroy, @params
+        it 'should render the link partial for the newly associated link (not tested)' do
+          xhr :put, :destroy, @params_one
+          response.should render_template(:partial => "_a_link")
+        end
+        it 'should assign the correct link' do
+          @new_link_params = {"link"=>{"node_from_id"=>@node_one.id.to_s, "node_to_id"=>@node_two.id.to_s}}
+          new_link = GlobalLinkUser.new(@new_link_params["link"])
+          GlobalLinkUser.should_receive(:new).with(@new_link_params["link"])
+          xhr :put, :destroy, @params_one
+        end
+      end
+      context 'when destroy or save returns false for glu' do
+        before do
+          @glu.stub(:destroy).and_return false
+          GlobalLinkUser.stub(:find).and_return @glu
         end
         it 'should render the link template' do
-          xhr :post, :destroy, @params
+          xhr :put, :destroy, @params_one
           response.should render_template(:partial => "_a_link")
         end
       end
