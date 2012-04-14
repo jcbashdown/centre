@@ -30,12 +30,10 @@ describe LinksController do
       @node_one = @ugn1.node
       @ugn2 = GlobalNodeUser.create(:user=>@user, :title=>'test', :global=>@global)
       @node_two = @ugn2.node
-      @node_one = Factory(:node)
       @params_one = {"link"=>{"node_from_id"=>@node_one.id.to_s, "value"=>1.to_s, "node_to_id"=>@node_two.id.to_s}}
       @glu = GlobalLinkUser.create(@params_one["link"].merge(:global => @global, :user => @user))
       @user_two = Factory(:user, :email => "user2@test.com")
-      @gluser2 = GlobalLinkUser.create!(@params_one["link"].merge(:global => @global, :user => @user_two))
-      @glu.link.should == @gluser2.link
+      @gluser2 = GlobalLinkUser.create(@params_one["link"].merge(:global => @global, :user => @user_two))
     end
     #update will destroy and then create as too much logic for an after save if we check if we need to to destroy global links etc.
     context 'when ajax request' do
@@ -63,7 +61,8 @@ describe LinksController do
         it 'increment the caches' do
           Link.where(@params["link"]).first.should be_nil
           link = Link.where(@params_one["link"]).first
-          link.reload.global_link_users_count.should == 2
+          link.global_link_users_count.should == 2
+          LinkUser.count.should == 2
           link.users_count.should == 2 
           xhr :post, :update, @params
           link = Link.where(@params["link"]).first
@@ -180,7 +179,6 @@ describe LinksController do
       @node_one = @ugn1.node
       @ugn2 = GlobalNodeUser.create(:user=>@user, :title=>'test', :global=>@global)
       @node_two = @ugn2.node
-      @node_one = Factory(:node)
       @params_one = {"link"=>{"node_from_id"=>@node_one.id.to_s, "value"=>1.to_s, "node_to_id"=>@node_two.id.to_s}}
       @glu = GlobalLinkUser.create(@params_one["link"].merge(:global => @global, :user => @user))
       @user_two = Factory(:user, :email => "user2@test.com")

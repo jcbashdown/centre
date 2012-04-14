@@ -22,40 +22,48 @@ class GlobalLinkUser < ActiveRecord::Base
 
   validates_uniqueness_of :link_id, :scope => [:global_id, :user_id]
   validates_uniqueness_of :user_id, :scope => [:node_from_id, :node_to_id]
+
+  def link_hash
+    {:node_from_id => self.node_from_id, :node_to_id => self.node_to_id, :value =>  self.value}
+  end
   
   protected
   def set_or_create_link
-    l = Link.where(:node_from_id => self.node_from_id, :node_to_id => self.node_to_id, :value =>  self.value)[0] || Link.create(:node_from_id => self.node_from_id, :node_to_id => self.node_to_id, :value =>  self.value)
+    l = Link.where(self.link_hash)[0] || Link.create(self.link_hash)
     self.link = l
     save
   end
 
   def set_or_create_global_link
-    gl = GlobalLink.where(:global_id => self.global_id, :link_id => self.link_id)[0] || GlobalLink.create(:global_id => self.global_id, :link_id => self.link_id)
+    gl = GlobalLink.where(:global_id => self.global_id, :link_id => self.link_id)[0] || GlobalLink.create({:global_id => self.global_id, :link_id => self.link_id}.merge(self.link_hash))
     self.global_link = gl
     save
   end
 
   def set_or_create_link_user
-    lu = LinkUser.where(:user_id => self.user_id, :link_id => self.link_id)[0] || LinkUser.create(:user_id => self.user_id, :link_id => self.link_id)
+    lu = LinkUser.where(:user_id => self.user_id, :link_id => self.link_id)[0] || LinkUser.create({:user_id => self.user_id, :link_id => self.link_id}.merge(self.link_hash))
     self.link_user = lu
     save
   end
   
   def set_or_create_global_node_user_and_node_models
-    gnu_to = GlobalNodeUser.where(:global_id => self.global_id, :node_id => self.node_to_id, :user_id => self.user_id)[0] || GlobalNodeUser.create(:global_id => self.global_id, :node_id => self.node_to_id, :user_id => self.user_id)
+    @gnu_from_hash = {:global_id => self.global_id, :node_id => self.node_to_id, :user_id => self.user_id}
+    @gnu_from_hash_with_title_text = @gnu_from_hash.merge(self.node_to.node_hash)
+    gnu_to = GlobalNodeUser.where(@gnu_from_hash)[0] || GlobalNodeUser.create(@gnu_from_hash_with_title_text)
     self.global_node_user_to = gnu_to
-    gnu_from = GlobalNodeUser.where(:global_id => self.global_id, :node_id => self.node_from_id, :user_id => self.user_id)[0] || GlobalNodeUser.create(:global_id => self.global_id, :node_id => self.node_from_id, :user_id => self.user_id)
+    @gnu_from_hash = {:global_id => self.global_id, :node_id => self.node_from_id, :user_id => self.user_id}
+    @gnu_from_hash_with_title_text = @gnu_from_hash.merge(self.node_from.node_hash)
+    gnu_from = GlobalNodeUser.where(@gnu_from_hash)[0] || GlobalNodeUser.create(@gnu_from_hash_with_title_text)
     self.global_node_user_from = gnu_from
 
-    nu_to = NodeUser.where(:node_id => self.node_to_id, :user_id => self.user_id)[0] || NodeUser.create(:node_id => self.node_to_id, :user_id => self.user_id)
+    nu_to = NodeUser.where(:node_id => self.node_to_id, :user_id => self.user_id)[0]
     self.node_user_to = nu_to
-    nu_from = NodeUser.where(:node_id => self.node_from_id, :user_id => self.user_id)[0] || NodeUser.create(:node_id => self.node_from_id, :user_id => self.user_id)
+    nu_from = NodeUser.where(:node_id => self.node_from_id, :user_id => self.user_id)[0]
     self.node_user_from = nu_from
 
-    gn_to = GlobalNode.where(:global_id => self.global_id, :node_id => self.node_to_id)[0] || GlobalNode.create(:global_id => self.global_id, :node_id => self.node_to_id)
+    gn_to = GlobalNode.where(:global_id => self.global_id, :node_id => self.node_to_id)[0]
     self.global_node_to = gn_to
-    gn_from = GlobalNode.where(:global_id => self.global_id, :node_id => self.node_from_id)[0] || GlobalNode.create(:global_id => self.global_id, :node_id => self.node_from_id)
+    gn_from = GlobalNode.where(:global_id => self.global_id, :node_id => self.node_from_id)[0]
     self.global_node_from = gn_from
 
     save
