@@ -21,7 +21,7 @@ class GlobalLinkUser < ActiveRecord::Base
   after_destroy :delete_link_if_allowed, :delete_global_link_if_allowed, :delete_link_user_if_allowed, :update_caches#update xml
 
   validates_uniqueness_of :link_id, :scope => [:global_id, :user_id]
-  validates_uniqueness_of :user_id, :scope => [:node_from_id, :node_to_id]
+  validates_uniqueness_of :user_id, :scope => [:node_from_id, :node_to_id, :global_id]
 
   def link_hash
     {:node_from_id => self.node_from_id, :node_to_id => self.node_to_id, :value =>  self.value}
@@ -70,19 +70,22 @@ class GlobalLinkUser < ActiveRecord::Base
   end
 
   def delete_link_if_allowed
-    if link.global_link_users_count < 2
+    # less than one because after destroy
+    if self.link.reload.global_link_users_count < 1
       link.destroy
     end
   end
 
   def delete_global_link_if_allowed
-    if global_link.global_link_users_count < 2
+    # less than one because after destroy
+    if self.global_link.reload.global_link_users_count < 1
       global_link.destroy
     end
   end
 
   def delete_link_user_if_allowed
-    if link_user.global_link_users_count < 2
+    # less than one because after destroy
+    if self.link_user.reload.global_link_users_count < 1
       link_user.destroy
     end
   end
@@ -116,38 +119,38 @@ class GlobalLinkUser < ActiveRecord::Base
 #  end  
 
   def update_caches
-    self.node_to.upvotes_count = GlobalLinkUser.count( :conditions => ["value = 1 AND node_to_id = ?",self.node_to_id])
-    self.node_to.downvotes_count = GlobalLinkUser.count( :conditions => ["value = -1 AND node_to_id = ?",self.node_to_id])
-    self.node_to.equivalents_count = GlobalLinkUser.count( :conditions => ["value = 0 AND node_to_id = ?",self.node_to_id])
-    self.node_from.equivalents_count = GlobalLinkUser.count( :conditions => ["value = 0 AND node_from_id = ?",self.node_from_id])
-    self.node_from.save
-    self.node_to.save
+    this_node_to = Node.find(self.node_to_id) 
+    this_node_from = Node.find(self.node_from_id)
+    this_node_to.update_attributes!(:upvotes_count => GlobalLinkUser.count( :conditions => ["value = 1 AND node_to_id = ?",self.node_to_id]))
+    this_node_to.update_attributes!(:downvotes_count => GlobalLinkUser.count( :conditions => ["value = -1 AND node_to_id = ?",self.node_to_id]))
+    this_node_to.update_attributes!(:equivalents_count => GlobalLinkUser.count( :conditions => ["value = 0 AND node_to_id = ?",self.node_to_id]))
+    this_node_from.update_attributes!(:equivalents_count => GlobalLinkUser.count( :conditions => ["value = 0 AND node_from_id = ?",self.node_from_id]))
 
-    if self.global_node_user_to && self.global_node_user_from
-      self.global_node_user_to.upvotes_count = GlobalLinkUser.count( :conditions => ["value = 1 AND global_node_user_to_id = ?",self.global_node_user_to_id])
-      self.global_node_user_to.downvotes_count = GlobalLinkUser.count( :conditions => ["value = -1 AND global_node_user_to_id = ?",self.global_node_user_to_id])
-      self.global_node_user_to.equivalents_count = GlobalLinkUser.count( :conditions => ["value = 0 AND global_node_user_to_id = ?",self.global_node_user_to_id])
-      self.global_node_user_from.equivalents_count = GlobalLinkUser.count( :conditions => ["value = 0 AND global_node_user_from_id = ?",self.global_node_user_from_id])
-      self.global_node_user_from.save
-      self.global_node_user_to.save
+    if self.global_node_user_to_id && self.global_node_user_from_id
+      this_gnu_to = GlobalNodeUser.find(self.global_node_user_to_id) 
+      this_gnu_from = GlobalNodeUser.find(self.global_node_user_from_id)
+      this_gnu_to.update_attributes!(:upvotes_count => GlobalLinkUser.count( :conditions => ["value = 1 AND global_node_user_to_id = ?",self.global_node_user_to_id]))
+      this_gnu_to.update_attributes!(:downvotes_count => GlobalLinkUser.count( :conditions => ["value = -1 AND global_node_user_to_id = ?",self.global_node_user_to_id]))
+      this_gnu_to.update_attributes!(:equivalents_count => GlobalLinkUser.count( :conditions => ["value = 0 AND global_node_user_to_id = ?",self.global_node_user_to_id]))
+      this_gnu_from.update_attributes!(:equivalents_count => GlobalLinkUser.count( :conditions => ["value = 0 AND global_node_user_from_id = ?",self.global_node_user_from_id]))
     end
 
-    if self.global_node_to && self.global_node_from
-      self.global_node_to.upvotes_count = GlobalLinkUser.count( :conditions => ["value = 1 AND global_node_to_id = ?",self.global_node_to_id])
-      self.global_node_to.downvotes_count = GlobalLinkUser.count( :conditions => ["value = -1 AND global_node_to_id = ?",self.global_node_to_id])
-      self.global_node_to.equivalents_count = GlobalLinkUser.count( :conditions => ["value = 0 AND global_node_to_id = ?",self.global_node_to_id])
-      self.global_node_from.equivalents_count = GlobalLinkUser.count( :conditions => ["value = 0 AND global_node_from_id = ?",self.global_node_from_id])
-      self.global_node_from.save
-      self.global_node_to.save
+    if self.global_node_to_id && self.global_node_from_id
+      this_gn_to = GlobalNode.find(self.global_node_to_id) 
+      this_gn_from = GlobalNode.find(self.global_node_from_id)
+      this_gn_to.update_attributes!(:upvotes_count => GlobalLinkUser.count( :conditions => ["value = 1 AND global_node_to_id = ?",self.global_node_to_id]))
+      this_gn_to.update_attributes!(:downvotes_count => GlobalLinkUser.count( :conditions => ["value = -1 AND global_node_to_id = ?",self.global_node_to_id]))
+      this_gn_to.update_attributes!(:equivalents_count => GlobalLinkUser.count( :conditions => ["value = 0 AND global_node_to_id = ?",self.global_node_to_id]))
+      this_gn_from.update_attributes!(:equivalents_count => GlobalLinkUser.count( :conditions => ["value = 0 AND global_node_from_id = ?",self.global_node_from_id]))
     end
 
-    if self.global_node_user_to && self.global_node_user_from
-      self.node_user_to.upvotes_count = GlobalLinkUser.count( :conditions => ["value = 1 AND node_user_to_id = ?",self.node_user_to_id])
-      self.node_user_to.downvotes_count = GlobalLinkUser.count( :conditions => ["value = -1 AND node_user_to_id = ?",self.node_user_to_id])
-      self.node_user_to.equivalents_count = GlobalLinkUser.count( :conditions => ["value = 0 AND node_user_to_id = ?",self.node_user_to_id])
-      self.node_user_from.equivalents_count = GlobalLinkUser.count( :conditions => ["value = 0 AND node_user_from_id = ?",self.node_user_from_id])
-      self.node_user_from.save
-      self.node_user_to.save
+    if self.node_user_to_id && self.node_user_from_id
+      this_nu_to = NodeUser.find(self.node_user_to_id) 
+      this_nu_from = NodeUser.find(self.node_user_from_id)
+      this_nu_to.update_attributes!(:upvotes_count => GlobalLinkUser.count( :conditions => ["value = 1 AND node_user_to_id = ?",self.node_user_to_id]))
+      this_nu_to.update_attributes!(:downvotes_count => GlobalLinkUser.count( :conditions => ["value = -1 AND node_user_to_id = ?",self.node_user_to_id]))
+      this_nu_to.update_attributes!(:equivalents_count => GlobalLinkUser.count( :conditions => ["value = 0 AND node_user_to_id = ?",self.node_user_to_id]))
+      this_nu_from.update_attributes!(:equivalents_count => GlobalLinkUser.count( :conditions => ["value = 0 AND node_user_from_id = ?",self.node_user_from_id]))
     end
   end
 
