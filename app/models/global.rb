@@ -7,4 +7,6 @@ class Global < ActiveRecord::Base
   has_many :links, :through => :global_links
   has_many :global_link_users
   has_many :global_node_users
+
+  validates_uniqueness_of :name
 end

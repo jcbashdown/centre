@@ -2,9 +2,10 @@ require 'spec_helper'
 
 describe GlobalNodeUser do
   before do
-    @user = Factory(:user)
-    @global = Factory(:global)
-    @global2 = Factory(:global, :name => 'All')
+    @user = FactoryGirl.create(:user)
+    @user_two = FactoryGirl.create(:user, :email => "test@email.com")
+    @global = FactoryGirl.create(:global)
+    @global2 = FactoryGirl.create(:global, :name => 'All')
   end
   describe 'creation' do
     describe 'creation with no existing inclusion in gns gnus' do
@@ -87,7 +88,7 @@ describe GlobalNodeUser do
         end
         context 'when new user' do
           before do
-            @user = Factory(:user, :email=>"another@test.com")
+            @user = FactoryGirl.create(:user, :email=>"another@test.com")
           end
           it 'should create 0 globals_nodes' do
             expect {
@@ -141,7 +142,7 @@ describe GlobalNodeUser do
         end
         context 'when no existing nu' do
           before do
-            @user = Factory(:user, :email=>"another@test.com")
+            @user = FactoryGirl.create(:user, :email=>"another@test.com")
           end
           it 'should create 0 globals_nodes' do
             expect {
@@ -195,29 +196,29 @@ describe GlobalNodeUser do
             GlobalNodeUser.where(:user_id=>@user.id, :title=>'Title', :global_id=>@global.id)[0].destroy
           }.to change(NodeUser, :count).by(-1)
         end
-        it 'should create a globals_node for the global and node and all and node' do
+        it 'should destroy the global node' do
           gn = GlobalNode.where(:title=>'Title', :global_id=>@global.id)[0]
           gn.should_not be_nil
           GlobalNodeUser.where(:user_id=>@user.id, :title=>'Title', :global_id=>@global.id)[0].destroy
           gn = GlobalNode.where(:title=>'Title', :global_id=>@global.id)[0]
           gn.should be_nil
         end
-        it 'should create a globals_node for the global and node and all and node' do
+        it 'should destroy the node user' do
           GlobalNodeUser.where(:user_id=>@user.id, :title=>'Title', :global_id=>@global.id)[0].destroy
           nu = NodeUser.where(:title=>'Title', :user_id=>@user.id)[0]
           nu.should be_nil
         end
-        it 'should destroy a globals_node for the global and node and all and node' do
+        it 'should destroy the node' do
           GlobalNodeUser.where(:user_id=>@user.id, :title=>'Title', :global_id=>@global.id)[0].destroy
-          GlobalNode.where(:title=>'Title', :global_id=>@global.id)[0].should be_nil
+          Node.where(:title=>'Title')[0].should be_nil
         end
-        it 'should destroy a globals_node_user for the global and node and all and node' do
+        it 'should destroy the global node user' do
           GlobalNodeUser.where(:user_id=>@user.id, :title=>'Title', :global_id=>@global.id)[0].destroy
           GlobalNodeUser.where(:title=>'Title', :global_id=>@global.id)[0].should be_nil
         end
         context 'with another user for the global node' do
           before do
-            @user = Factory(:user, :email => "a@test.com")
+            @user = FactoryGirl.create(:user, :email => "a@test.com")
             gnu = GlobalNodeUser.create(:user=>@user, :title=>'Title', :global=>@global)
             gnu.global_node.reload.global_node_users_count.should == 2
           end
@@ -241,7 +242,7 @@ describe GlobalNodeUser do
               GlobalNodeUser.where(:user_id=>@user.id, :title=>'Title', :global_id=>@global.id)[0].destroy
             }.to change(NodeUser, :count).by(-1)
           end
-          it 'should create a globals_node for the global and node and all and node' do
+          it 'should update the caches' do
             gn = GlobalNode.where(:title=>'Title', :global_id=>@global.id)[0]
             gn.should_not be_nil
             GlobalNodeUser.where(:user_id=>@user.id, :title=>'Title', :global_id=>@global.id)[0].destroy
@@ -250,63 +251,399 @@ describe GlobalNodeUser do
             gn.global_node_users_count.should == 1
             gn.node.global_node_users_count.should == 1
           end
-          it 'should create a globals_node for the global and node and all and node' do
+          it 'should destroy the node user' do
             GlobalNodeUser.where(:user_id=>@user.id, :title=>'Title', :global_id=>@global.id)[0].destroy
             nu = NodeUser.where(:title=>'Title', :user_id=>@user.id)[0]
             nu.should be_nil
           end
-          it 'should destroy a globals_node_user for the global and node and all and node' do
+          it 'should not destroy the node and global node and should destroy the gnu' do
             GlobalNodeUser.where(:user_id=>@user.id, :title=>'Title', :global_id=>@global.id)[0].destroy
             GlobalNode.where(:title=>'Title', :global_id=>@global.id)[0].should_not be_nil
+            Node.where(:title=>'Title')[0].should_not be_nil
             GlobalNodeUser.where(:title=>'Title', :user_id => @user.id, :global_id=>@global.id)[0].should be_nil
           end
         end
-        #with other users should decrement counter caches
       end
     end
     describe 'with existing links' do
-    before do
-      @global = Factory(:global)
-      @user = Factory(:user)
-      @gnu1 = GlobalNodeUser.create(:title => 'title', :global => @global, :user => @user)
-      @gnu2 = GlobalNodeUser.create(:title => 'test', :global => @global, :user => @user)
-    end
-    context 'when there is only this glu' do
       before do
+        @gnu1 = GlobalNodeUser.create(:title => 'title', :global => @global, :user => @user)
+        @gnu2 = GlobalNodeUser.create(:title => 'test', :global => @global, :user => @user)
+        @gnu3 = GlobalNodeUser.create(:title => 'another', :global => @global, :user => @user)
         @glu = GlobalLinkUser.create(:user=>@user, :global => @global, :node_from_id => @gnu1.node.id, :node_to_id => @gnu2.node.id, :value => 1)
       end
-    end
-      it 'should destroy the current user links for this node' do
+      it 'should destroy 1 node' do
+        expect {
+          @gnu1.destroy
+        }.to change(Node, :count).by(-1)
+      end
+      it 'should destroy 1 globals_nodes' do
+        expect {
+          @gnu1.destroy
+        }.to change(GlobalNode, :count).by(-1)
+      end
+      it 'should destroy 1 globals_nodes_users' do
+        expect {
+          @gnu1.destroy
+        }.to change(GlobalNodeUser, :count).by(-1)
+      end
+      it 'should destroy 1 nodes_users' do
+        expect {
+          @gnu1.destroy
+        }.to change(NodeUser, :count).by(-1)
+      end
+
+      it 'should destroy 1 link' do
+        expect {
+          @gnu1.destroy
+        }.to change(Link, :count).by(-1)
+      end
+
+      it 'should destroy 1 glu' do
+        expect {
+          @gnu1.destroy
+        }.to change(GlobalLinkUser, :count).by(-1)
+      end
+
+      it 'should destroy 1 glu' do
+        expect {
+          @gnu1.destroy
+        }.to change(GlobalLink, :count).by(-1)
+      end
+
+      it 'should destroy 1 glu' do
+        expect {
+          @gnu1.destroy
+        }.to change(LinkUser, :count).by(-1)
+      end
+
+      it 'update the caches' do
+        @gnu2.reload.upvotes_count.should == 1
+        @gnu2.node_user.reload.upvotes_count.should == 1
+        @gnu2.global_node.reload.upvotes_count.should == 1
+        @gnu2.node.reload.upvotes_count.should == 1
+        @gnu1.destroy
+        @gnu2.reload.upvotes_count.should == 0 
+        @gnu2.node_user.reload.upvotes_count.should == 0
+        @gnu2.global_node.reload.upvotes_count.should == 0
+        @gnu2.node.reload.upvotes_count.should == 0
+      end
+      
+      context 'when another user has the link in this global' do
+        before do
+          @glu2 = GlobalLinkUser.create(:user=>@user_two, :global => @global, :node_from_id => @gnu1.node.id, :node_to_id => @gnu2.node.id, :value => 1)
+        end
+        it 'should destroy 0 node' do
+          expect {
+            @gnu1.destroy
+          }.to change(Node, :count).by(0)
+        end
+        it 'should destroy 0 globals_nodes' do
+          expect {
+            @gnu1.destroy
+          }.to change(GlobalNode, :count).by(0)
+        end
+        it 'should destroy 1 globals_nodes_users' do
+          expect {
+            @gnu1.destroy
+          }.to change(GlobalNodeUser, :count).by(-1)
+        end
+        it 'should destroy 1 nodes_users' do
+          expect {
+            @gnu1.destroy
+          }.to change(NodeUser, :count).by(-1)
+        end
   
+        it 'should destroy 0 link' do
+          expect {
+            @gnu1.destroy
+          }.to change(Link, :count).by(0)
+        end
+  
+        it 'should destroy 1 glu' do
+          expect {
+            @gnu1.destroy
+          }.to change(GlobalLinkUser, :count).by(-1)
+        end
+  
+        it 'should destroy 0 gl' do
+          expect {
+            @gnu1.destroy
+          }.to change(GlobalLink, :count).by(0)
+        end
+  
+        it 'should destroy 1 lu' do
+          expect {
+            @gnu1.destroy
+          }.to change(LinkUser, :count).by(-1)
+        end
+  
+        it 'update the caches' do
+          @gnu2.reload.upvotes_count.should == 1
+          @gnu2.node_user.reload.upvotes_count.should == 1
+          @gnu2.global_node.reload.upvotes_count.should == 2
+          @gnu2.node.reload.upvotes_count.should == 2
+          @gnu1.destroy
+          @gnu2.reload.upvotes_count.should == 0 
+          @gnu2.node_user.reload.upvotes_count.should == 0
+          @gnu2.global_node.reload.upvotes_count.should == 1
+          @gnu2.node.reload.upvotes_count.should == 1
+        end
       end
   
-      it 'should destroy the current gnu' do
+      context 'when another user has another link in this global which uses the same node from' do
+        before do
+          @glu2 = GlobalLinkUser.create(:user=>@user_two, :global => @global, :node_from_id => @gnu1.node.id, :node_to_id => @gnu3.node.id, :value => 1)
+        end
+        it 'should destroy 0 node (due to shared node from and diff users)' do
+          expect {
+            @gnu1.destroy
+          }.to change(Node, :count).by(0)
+        end
+        it 'should destroy 0 globals_nodes' do
+          expect {
+            @gnu1.destroy
+          }.to change(GlobalNode, :count).by(0)
+        end
+        it 'should destroy 1 globals_nodes_users' do
+          expect {
+            @gnu1.destroy
+          }.to change(GlobalNodeUser, :count).by(-1)
+        end
+        it 'should destroy 1 nodes_users' do
+          expect {
+            @gnu1.destroy
+          }.to change(NodeUser, :count).by(-1)
+        end
   
+        it 'should destroy 0 link' do
+          expect {
+            @gnu1.destroy
+          }.to change(Link, :count).by(0)
+        end
+  
+        it 'should destroy 1 glu' do
+          expect {
+            @gnu1.destroy
+          }.to change(GlobalLinkUser, :count).by(-1)
+        end
+  
+        it 'should destroy 1 gl' do
+          expect {
+            @gnu1.destroy
+          }.to change(GlobalLink, :count).by(-1)
+        end
+  
+        it 'should destroy 1 lu' do
+          expect {
+            @gnu1.destroy
+          }.to change(LinkUser, :count).by(-1)
+        end
+  
+        it 'update the caches' do
+          @gnu2.reload.upvotes_count.should == 1
+          @gnu2.node_user.reload.upvotes_count.should == 1
+          @gnu2.global_node.reload.upvotes_count.should == 1
+          @gnu2.node.reload.upvotes_count.should == 1
+          @gnu1.destroy
+          @gnu2.reload.upvotes_count.should == 0 
+          @gnu2.node_user.reload.upvotes_count.should == 0
+          @gnu2.global_node.reload.upvotes_count.should == 0
+          @gnu2.node.reload.upvotes_count.should == 0
+        end
       end
   
-      context 'when only this user has a link the node features in' do
-        it 'should destroy the link and global links' do
-          #call backs on links should unravel any link stuff
-  
+      context 'when another user has the link in another global' do
+        before do
+          @glu2 = GlobalLinkUser.create(:user=>@user_two, :global => @global2, :node_from_id => @gnu1.node.id, :node_to_id => @gnu2.node.id, :value => 1)
         end
-        context 'when only this user has the node' do
-          it 'should destroy the node and global nodes' do
+        it 'should destroy 0 node' do
+          expect {
+            @gnu1.destroy
+          }.to change(Node, :count).by(0)
+        end
+        it 'should destroy 1 globals_nodes' do
+          expect {
+            @gnu1.destroy
+          }.to change(GlobalNode, :count).by(-1)
+        end
+        it 'should destroy 1 globals_nodes_users' do
+          expect {
+            @gnu1.destroy
+          }.to change(GlobalNodeUser, :count).by(-1)
+        end
+        it 'should destroy 1 nodes_users' do
+          expect {
+            @gnu1.destroy
+          }.to change(NodeUser, :count).by(-1)
+        end
   
-          end
+        it 'should destroy 0 link' do
+          expect {
+            @gnu1.destroy
+          }.to change(Link, :count).by(0)
+        end
+  
+        it 'should destroy 1 glu' do
+          expect {
+            @gnu1.destroy
+          }.to change(GlobalLinkUser, :count).by(-1)
+        end
+  
+        it 'should destroy 1 gl' do
+          expect {
+            @gnu1.destroy
+          }.to change(GlobalLink, :count).by(-1)
+        end
+  
+        it 'should destroy 1 lu' do
+          expect {
+            @gnu1.destroy
+          }.to change(LinkUser, :count).by(-1)
+        end
+  
+        it 'update the caches' do
+          @gnu2.reload.upvotes_count.should == 1
+          @gnu2.node_user.reload.upvotes_count.should == 1
+          @gnu2.global_node.reload.upvotes_count.should == 1
+          @gnu2.node.reload.upvotes_count.should == 2
+          @gnu1.destroy
+          @gnu2.reload.upvotes_count.should == 0 
+          @gnu2.node_user.reload.upvotes_count.should == 0
+          @gnu2.global_node.reload.upvotes_count.should == 0
+          @gnu2.node.reload.upvotes_count.should == 1
         end
       end
   
-      context 'when only this user has the node' do
-        it 'should destroy the node and global nodes' do
-  
+      context 'when the user has the link in another global' do
+        before do
+          @glu2 = GlobalLinkUser.create(:user=>@user, :global => @global2, :node_from_id => @gnu1.node.id, :node_to_id => @gnu2.node.id, :value => 1)
+        end
+        it 'should destroy 0 node' do
+          expect {
+            @gnu1.destroy
+          }.to change(Node, :count).by(0)
+        end
+        it 'should destroy 1 globals_nodes' do
+          expect {
+            @gnu1.destroy
+          }.to change(GlobalNode, :count).by(-1)
+        end
+        it 'should destroy 1 globals_nodes_users' do
+          expect {
+            @gnu1.destroy
+          }.to change(GlobalNodeUser, :count).by(-1)
+        end
+        it 'should destroy 0 nodes_users' do
+          expect {
+            @gnu1.destroy
+          }.to change(NodeUser, :count).by(0)
         end
   
-        context 'when only this user has a link the node features in' do
-          #call backs on links should unravel any link stuff
-          it 'should destroy the link and global links' do
+        it 'should destroy 0 link' do
+          expect {
+            @gnu1.destroy
+          }.to change(Link, :count).by(0)
+        end
   
-          end
+        it 'should destroy 1 glu' do
+          expect {
+            @gnu1.destroy
+          }.to change(GlobalLinkUser, :count).by(-1)
+        end
   
+        it 'should destroy 1 gl' do
+          expect {
+            @gnu1.destroy
+          }.to change(GlobalLink, :count).by(-1)
+        end
+  
+        it 'should destroy 0 lu' do
+          expect {
+            @gnu1.destroy
+          }.to change(LinkUser, :count).by(0)
+        end
+  
+        it 'update the caches' do
+          @gnu2.reload.upvotes_count.should == 1
+          @gnu2.node_user.reload.upvotes_count.should == 1
+          @gnu2.global_node.reload.upvotes_count.should == 1
+          @gnu2.node.reload.upvotes_count.should == 2
+          @gnu1.destroy
+          @gnu2.reload.upvotes_count.should == 0 
+          @gnu2.node_user.reload.upvotes_count.should == 1
+          @gnu2.global_node.reload.upvotes_count.should == 0
+          @gnu2.node.reload.upvotes_count.should == 1
+        end
+      end
+
+      context 'when the user has another link in this global where the links share a node from' do
+        before do
+          @glu2 = GlobalLinkUser.create(:user=>@user, :global => @global, :node_from_id => @gnu1.node.id, :node_to_id => @gnu3.node.id, :value => 1)
+        end
+        it 'should destroy 1 node (despite shared node from -- all on user)' do
+          expect {
+            @gnu1.destroy
+          }.to change(Node, :count).by(-1)
+        end
+        it 'should destroy 1 globals_nodes' do
+          expect {
+            @gnu1.destroy
+          }.to change(GlobalNode, :count).by(-1)
+        end
+        it 'should destroy 1 globals_nodes_users' do
+          expect {
+            @gnu1.destroy
+          }.to change(GlobalNodeUser, :count).by(-1)
+        end
+        it 'should destroy 1 nodes_users' do
+          expect {
+            @gnu1.destroy
+          }.to change(NodeUser, :count).by(-1)
+        end
+  
+        it 'should destroy 1 link' do
+          expect {
+            @gnu1.destroy
+          }.to change(Link, :count).by(-2)
+        end
+  
+        it 'should destroy 1 glu' do
+          expect {
+            @gnu1.destroy
+          }.to change(GlobalLinkUser, :count).by(-2)
+        end
+  
+        it 'should destroy 1 glu' do
+          expect {
+            @gnu1.destroy
+          }.to change(GlobalLink, :count).by(-2)
+        end
+  
+        it 'should destroy 1 glu' do
+          expect {
+            @gnu1.destroy
+          }.to change(LinkUser, :count).by(-2)
+        end
+  
+        it 'update the caches' do
+          @gnu2.reload.upvotes_count.should == 1
+          @gnu2.node_user.reload.upvotes_count.should == 1
+          @gnu2.global_node.reload.upvotes_count.should == 1
+          @gnu2.node.reload.upvotes_count.should == 1
+          @gnu3.reload.upvotes_count.should == 1
+          @gnu3.node_user.reload.upvotes_count.should == 1
+          @gnu3.global_node.reload.upvotes_count.should == 1
+          @gnu3.node.reload.upvotes_count.should == 1
+          @gnu1.destroy
+          @gnu2.reload.upvotes_count.should == 0 
+          @gnu2.node_user.reload.upvotes_count.should == 0
+          @gnu2.global_node.reload.upvotes_count.should == 0
+          @gnu2.node.reload.upvotes_count.should == 0
+          @gnu3.reload.upvotes_count.should == 0 
+          @gnu3.node_user.reload.upvotes_count.should == 0
+          @gnu3.global_node.reload.upvotes_count.should == 0
+          @gnu3.node.reload.upvotes_count.should == 0
         end
       end
     end

@@ -5,8 +5,15 @@ class GlobalNodeUser < ActiveRecord::Base
   belongs_to :node_user, :counter_cache => true
   belongs_to :global_node, :counter_cache => true
 
+  has_many :global_link_user_ins, :foreign_key => "global_node_user_to_id", :class_name => "GlobalLinkUser"
+  has_many :global_link_user_tos, :foreign_key => "global_node_user_from_id", :class_name => "GlobalLinkUser"
+
+  has_many :global_node_user_tos, :through => :global_link_user_tos, :class_name => "GlobalNodeUser", :foreign_key => "global_node_user_to_id", :source=>:global_node_user_to
+  has_many :global_node_user_froms, :through => :global_link_user_ins, :class_name => "GlobalNodeUser", :foreign_key => "global_node_user_from_id", :source=>:global_node_user_from
+
   after_save :update_xml, :update_globals_user_xml
   after_create :set_or_create_node, :set_or_create_global_node, :set_or_create_node_user
+  before_destroy :delete_links_if_allowed
   after_destroy :update_xml, :delete_node_user_if_allowed, :delete_global_node_if_allowed, :delete_node_if_allowed
 
   validates_uniqueness_of :node_id, :scope => [:global_id, :user_id]
@@ -36,20 +43,29 @@ class GlobalNodeUser < ActiveRecord::Base
   end
 
   def delete_global_node_if_allowed
-    if global_node.global_node_users_count < 2
+    if global_node.reload.global_node_users_count < 1
       global_node.destroy
     end
   end
 
   def delete_node_user_if_allowed
-    if node_user.global_node_users_count < 2
+    if node_user.reload.global_node_users_count < 1
       node_user.destroy
     end
   end
 
   def delete_node_if_allowed
-    if node.global_node_users_count < 2
+    if node.reload.global_node_users_count < 1 
       node.destroy
+    end
+  end
+
+  def delete_links_if_allowed
+    self.global_link_user_tos.each do |glut|
+      glut.destroy
+    end
+    self.global_link_user_ins.each do |glui|
+      gluf.destroy
     end
   end
 
