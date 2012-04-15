@@ -329,6 +329,7 @@ describe GlobalLinkUser do
         @gl_attrs = {:link_id => @glu.link.id, :global_id => @global.id}
         LinkUser.where(@lu_attrs)[0].global_link_users_count.should == 1 
         @glu_two = GlobalLinkUser.create(:user=>@user, :global => @global_two, :node_from_id => @gnu1.node.id, :node_to_id => @gnu2.node.id, :value => 1)
+        LinkUser.count.should == 1
         LinkUser.where(@lu_attrs)[0].global_link_users_count.should == 2 
       end
       it 'should destroy the glu' do
@@ -380,10 +381,10 @@ describe GlobalLinkUser do
         gnu_to = GlobalNodeUser.where(:global_id => @global.id, :node_id => @gnu2.node_id, :user_id => @user.id)[0]
         gn_to = GlobalNode.where(:global_id => @global.id, :node_id => @gnu2.node_id)[0]
         nu_to = NodeUser.where(:node_id => @gnu2.node_id, :user_id => @user.id)[0]
-        node_to.upvotes_count.should == 2
+        node_to.upvotes_count.should == 1 
         gnu_to.upvotes_count.should == 1
         gn_to.upvotes_count.should == 1
-        nu_to.upvotes_count.should == 2
+        nu_to.upvotes_count.should == 1 
         @glu.destroy
         node_to = Node.where(:title => @gnu2.node.title)[0]
         gnu_to = GlobalNodeUser.where(:global_id => @global.id, :node_id => @gnu2.node_id, :user_id => @user.id)[0]

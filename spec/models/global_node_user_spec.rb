@@ -416,10 +416,10 @@ describe GlobalNodeUser do
           }.to change(NodeUser, :count).by(-1)
         end
   
-        it 'should destroy 0 link' do
+        it 'should destroy 1 link' do
           expect {
             @gnu1.destroy
-          }.to change(Link, :count).by(0)
+          }.to change(Link, :count).by(-1)
         end
   
         it 'should destroy 1 glu' do
@@ -568,7 +568,7 @@ describe GlobalNodeUser do
           @gnu2.reload.upvotes_count.should == 1
           @gnu2.node_user.reload.upvotes_count.should == 1
           @gnu2.global_node.reload.upvotes_count.should == 1
-          @gnu2.node.reload.upvotes_count.should == 2
+          @gnu2.node.reload.upvotes_count.should == 1
           @gnu1.destroy
           @gnu2.reload.upvotes_count.should == 0 
           @gnu2.node_user.reload.upvotes_count.should == 1
