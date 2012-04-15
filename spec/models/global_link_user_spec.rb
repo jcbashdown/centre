@@ -396,37 +396,80 @@ describe GlobalLinkUser do
       end
     end
     context 'when there is this glu and another for a different user' do
+      before do
+        @user_two = Factory(:user, :email => "test@user.com")
+        @glu = GlobalLinkUser.create(:user=>@user, :global => @global, :node_from_id => @gnu1.node.id, :node_to_id => @gnu2.node.id, :value => 1)
+        @glu_attrs = @glu.attributes
+        @lu_attrs = {:link_id => @glu.link.id, :user_id => @user.id}
+        @gl_attrs = {:link_id => @glu.link.id, :global_id => @global.id}
+        GlobalLink.where(@gl_attrs)[0].global_link_users_count.should == 1 
+        @glu_two = GlobalLinkUser.create(:user=>@user_two, :global => @global, :node_from_id => @gnu1.node.id, :node_to_id => @gnu2.node.id, :value => 1)
+        GlobalLink.where(@gl_attrs)[0].global_link_users_count.should == 2 
+      end
       it 'should destroy the glu' do
-
+        GlobalLinkUser.where(@glu_attrs)[0].should_not be_nil
+        @glu.destroy
+        GlobalLinkUser.where(@glu_attrs)[0].should be_nil
       end
 
       it 'should decrement the glus count by 1' do
-
+        expect {
+          @glu.destroy
+        }.to change(GlobalLinkUser, :count).by(-1)
       end
 
-      it 'should not destroy the gl' do
-
+      it 'should destroy the gl' do
+        GlobalLink.where(@gl_attrs)[0].should_not be_nil
+        @glu.destroy
+        GlobalLink.where(@gl_attrs)[0].should_not be_nil
       end
 
-      it 'should not decrement the gl count' do
-
+      it 'should decrement the gl count by 1' do
+        expect {
+          @glu.destroy
+        }.to change(GlobalLink, :count).by(0)
       end
-      
+
       it 'should decrement the gls glu count by 1' do
-
+        GlobalLink.count.should == 1
+        GlobalLink.where(@gl_attrs)[0].global_link_users_count.should == 2
+        @glu.destroy
+        GlobalLink.count.should == 1
+        GlobalLink.where(@gl_attrs)[0].global_link_users_count.should == 1 
       end
 
-      it 'should destroy the lu' do
-
+      it 'should not destroy the lu' do
+        LinkUser.where(@lu_attrs)[0].should_not be_nil
+        @glu.destroy
+        LinkUser.where(@lu_attrs)[0].should be_nil
       end
 
-      it 'should decrement the lu count by 1' do
-
+      it 'should not decrement the lu count' do
+        expect {
+          @glu.destroy
+        }.to change(LinkUser, :count).by(-1)
       end
       
       it 'should update the caches' do
-
+        node_to = Node.where(:title => @gnu2.node.title)[0]
+        gnu_to = GlobalNodeUser.where(:global_id => @global.id, :node_id => @gnu2.node_id, :user_id => @user.id)[0]
+        gn_to = GlobalNode.where(:global_id => @global.id, :node_id => @gnu2.node_id)[0]
+        nu_to = NodeUser.where(:node_id => @gnu2.node_id, :user_id => @user.id)[0]
+        node_to.upvotes_count.should == 2
+        gnu_to.upvotes_count.should == 1
+        gn_to.upvotes_count.should == 2
+        nu_to.upvotes_count.should == 1
+        @glu.destroy
+        node_to = Node.where(:title => @gnu2.node.title)[0]
+        gnu_to = GlobalNodeUser.where(:global_id => @global.id, :node_id => @gnu2.node_id, :user_id => @user.id)[0]
+        gn_to = GlobalNode.where(:global_id => @global.id, :node_id => @gnu2.node_id)[0]
+        nu_to = NodeUser.where(:node_id => @gnu2.node_id, :user_id => @user.id)[0]
+        node_to.reload.upvotes_count.should == 1 
+        gnu_to.upvotes_count.should == 0 
+        gn_to.upvotes_count.should == 1
+        nu_to.upvotes_count.should == 0 
       end
+
     end
   end
 

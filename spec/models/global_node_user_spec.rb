@@ -265,6 +265,17 @@ describe GlobalNodeUser do
       end
     end
     describe 'with existing links' do
+    before do
+      @global = Factory(:global)
+      @user = Factory(:user)
+      @gnu1 = GlobalNodeUser.create(:title => 'title', :global => @global, :user => @user)
+      @gnu2 = GlobalNodeUser.create(:title => 'test', :global => @global, :user => @user)
+    end
+    context 'when there is only this glu' do
+      before do
+        @glu = GlobalLinkUser.create(:user=>@user, :global => @global, :node_from_id => @gnu1.node.id, :node_to_id => @gnu2.node.id, :value => 1)
+      end
+    end
       it 'should destroy the current user links for this node' do
   
       end
