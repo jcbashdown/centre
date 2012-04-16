@@ -7,7 +7,10 @@
 #   Mayor.create(name: 'Emanuel', city: cities.first)
 puts 'Add All global'
 Global.create(:name=>"All")
-puts 'all global created'
+puts 'All global created'
+puts 'Add Unclassified global'
+Global.create(:name=>"Unclassified")
+puts 'Unclassified global created'
 #puts 'SETTING UP DEFAULT USER LOGIN'
 #user = User.create! :name => 'First User', :email => 'user@example.com', :password => 'please', :password_confirmation => 'please'
 #puts 'New user created: ' << user.name

@@ -1,6 +1,8 @@
 class LinksController < ApplicationController
   before_filter :signed_in_user
-  before_filter :find_limit_order
+  before_filter :set_node_limit
+  before_filter :set_node_order
+  before_filter :set_node_limit_order
 
   def create
     @glu = GlobalLinkUser.new(params[:link].merge(:global => @question, :user => @user))
