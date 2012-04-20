@@ -5,7 +5,7 @@ describe GlobalNodeUser do
     @user = FactoryGirl.create(:user)
     @user_two = FactoryGirl.create(:user, :email => "test@email.com")
     @global = FactoryGirl.create(:global)
-    @global2 = FactoryGirl.create(:global, :name => 'All')
+    @global2 = FactoryGirl.create(:global, :name => 'Aaa')
   end
   describe 'creation' do
     describe 'creation with no existing inclusion in gns gnus' do

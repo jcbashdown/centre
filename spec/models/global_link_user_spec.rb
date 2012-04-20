@@ -4,8 +4,8 @@ describe GlobalLinkUser do
   describe 'create' do
     context 'when there is no existing glu' do
       before do
-        @global = Factory(:global)
-        @user = Factory(:user)
+        @global = FactoryGirl.create(:global)
+        @user = FactoryGirl.create(:user)
         @gnu1 = GlobalNodeUser.create(:title => 'title', :global => @global, :user => @user)
         @gnu2 = GlobalNodeUser.create(:title => 'test', :global => @global, :user => @user)
       end
@@ -178,8 +178,8 @@ describe GlobalLinkUser do
     end
     context 'when creating equivalents' do
       before do
-        @global = Factory(:global)
-        @user = Factory(:user)
+        @global = FactoryGirl.create(:global)
+        @user = FactoryGirl.create(:user)
         @gnu1 = GlobalNodeUser.create(:title => 'title', :global => @global, :user => @user)
         @gnu2 = GlobalNodeUser.create(:title => 'test', :global => @global, :user => @user)
       end
@@ -266,8 +266,8 @@ describe GlobalLinkUser do
 
   describe 'destroy' do
     before do
-      @global = Factory(:global)
-      @user = Factory(:user)
+      @global = FactoryGirl.create(:global)
+      @user = FactoryGirl.create(:user)
       @gnu1 = GlobalNodeUser.create(:title => 'title', :global => @global, :user => @user)
       @gnu2 = GlobalNodeUser.create(:title => 'test', :global => @global, :user => @user)
     end
@@ -322,7 +322,7 @@ describe GlobalLinkUser do
     end
     context 'when there is this glu and another for a different global' do
       before do
-        @global_two = Factory(:global, :name => 'test global')
+        @global_two = FactoryGirl.create(:global, :name => 'test global')
         @glu = GlobalLinkUser.create(:user=>@user, :global => @global, :node_from_id => @gnu1.node.id, :node_to_id => @gnu2.node.id, :value => 1)
         @glu_attrs = @glu.attributes
         @lu_attrs = {:link_id => @glu.link.id, :user_id => @user.id}
@@ -398,7 +398,7 @@ describe GlobalLinkUser do
     end
     context 'when there is this glu and another for a different user' do
       before do
-        @user_two = Factory(:user, :email => "test@user.com")
+        @user_two = FactoryGirl.create(:user, :email => "test@user.com")
         @glu = GlobalLinkUser.create(:user=>@user, :global => @global, :node_from_id => @gnu1.node.id, :node_to_id => @gnu2.node.id, :value => 1)
         @glu_attrs = @glu.attributes
         @lu_attrs = {:link_id => @glu.link.id, :user_id => @user.id}

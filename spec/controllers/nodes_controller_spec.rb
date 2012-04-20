@@ -2,9 +2,9 @@ require 'spec_helper'
 
 describe NodesController do
   before do
-    @user = Factory(:user)
+    @user = FactoryGirl.create(:user)
     controller.stub(:current_user).and_return @user
-    @global = Factory(:global)
+    @global = FactoryGirl.create(:global)
     Global.stub(:find).and_return @global
   end
   # This should return the minimal set of attributes required to create a valid
@@ -15,21 +15,27 @@ describe NodesController do
   end
 
   describe "GET index" do
-    it "assigns all nodes as @nodes for the current global" do
-      node = Node.create! valid_attributes
-      node.globals << @global
-      get :index
-      assigns(:nodes).should eq([node])
+    it "assigns all nodes as @global_nodes for the current global" do
+      global_node_user = GlobalNodeUser.create!({:user=>@user, :global=>@global}.merge(valid_attributes))
+      global_node = global_node_user.global_node
+      get :index, :question => @global.id
+      assigns(:global_nodes).should eq([global_node])
     end
   end
 
   describe "GET show" do
+    before do
+      global_node_user = GlobalNodeUser.create!({:user=>@user, :global=>@global}.merge(valid_attributes))
+      @global_node_one = global_node_user.global_node 
+      @node_one = global_node_user.node 
+      @params = {:id=>@node_one.id}
+      controller.stub(:set_links)
+    end
+    it "assigns all nodes as @global_nodes for the current global" do
+      get :show, :question => @global.id
+      assigns(:global_nodes).should eq([@global_node_one])
+    end
     context 'when node is node one' do
-      before do
-        @node_one = Factory(:node)
-        @params = {:id=>@node_one.id}
-        controller.stub(:set_links)
-      end
       it 'should call set_node' do
         controller.should_receive(:set_node)
         get :show, @params
@@ -38,16 +44,22 @@ describe NodesController do
         get :show, @params
         assigns(:node).should == @node_one
       end
-      context 'when user is @user' do
-        it 'should set user links' do
-          controller.should_receive(:set_links)
-          get :show, @params
-        end
+      it 'should set user links' do
+        controller.should_receive(:set_links)
+        get :show, @params
       end
     end
   end
 
   describe "GET new" do
+    before do
+      global_node_user = GlobalNodeUser.create!({:user=>@user, :global=>@global}.merge(valid_attributes))
+      @global_node_one = global_node_user.global_node 
+    end
+    it "assigns all nodes as @global_nodes for the current global" do
+      get :new, :question => @global.id
+      assigns(:global_nodes).should eq([@global_node_one])
+    end
     context 'when no node' do
       before do
         @node = Node.new
@@ -57,26 +69,26 @@ describe NodesController do
         controller.should_receive(:set_node)
         get :new
       end
-      it 'should call set_node' do
+      it 'should assign node' do
         get :new
         assigns(:node).should == @node
-      end
-      context 'when user is @user' do
-        it 'should set user links' do
-          controller.should_not_receive(:set_links)
-          get :new, @params
-        end
       end
     end
   end
 
   describe "GET edit" do
+    before do
+      global_node_user = GlobalNodeUser.create!({:user=>@user, :global=>@global}.merge(valid_attributes))
+      @global_node_one = global_node_user.global_node 
+      @node_one = global_node_user.node 
+      @params = {:id=>@node_one.id}
+      controller.stub(:set_links)
+    end
+    it "assigns all nodes as @global_nodes for the current global" do
+      get :edit, :question => @global.id
+      assigns(:global_nodes).should eq([@global_node_one])
+    end
     context 'when node is node one' do
-      before do
-        @node_one = Factory(:node)
-        @params = {:id=>@node_one.id}
-        controller.stub(:set_links)
-      end
       it 'should call set_node' do
         controller.should_receive(:set_node)
         get :edit, @params
@@ -85,11 +97,9 @@ describe NodesController do
         get :edit, @params
         assigns(:node).should == @node_one
       end
-      context 'when user is @user' do
-        it 'should set user links' do
-          controller.should_receive(:set_links)
-          get :edit, @params
-        end
+      it 'should set user links' do
+        controller.should_receive(:set_links)
+        get :edit, @params
       end
     end
   end
@@ -98,37 +108,37 @@ describe NodesController do
     describe "with valid params" do
       it "creates a new Node" do
         expect {
-          post :create, :node => valid_attributes
+          post :create, :node => valid_attributes, :question => @global.id
         }.to change(Node, :count).by(1)
       end
 
       it "creates a new GlobalNodeUser" do
         expect {
-          post :create, :node => valid_attributes
+          post :create, :node => valid_attributes, :question => @global.id
         }.to change(GlobalNodeUser, :count).by(1)
       end
 
       it "creates a new GlobalNode" do
         expect {
-          post :create, :node => valid_attributes
+          post :create, :node => valid_attributes, :question => @global.id
         }.to change(GlobalNode, :count).by(1)
       end
 
       it 'should have called create on global node user' do
         gnu = GlobalNodeUser.new({:user => @user, :global => @global}.merge({"title" => 'title', "text" => ''}))
         GlobalNodeUser.should_receive(:new).with({:user => @user, :global => @global}.merge({"title" => 'title', "text" => ''})).and_return gnu
-        post :create, :node => valid_attributes
+        post :create, :node => valid_attributes, :question => @global.id
       end
 
       it "assigns a newly created node as @node" do
-        post :create, :node => valid_attributes
+        post :create, :node => valid_attributes, :question => @global.id
         assigns(:node).should be_a(Node)
         assigns(:gnu).should be_a(GlobalNodeUser)
         assigns(:node).should be_persisted
       end
 
       it "redirects to the created node" do
-        post :create, :node => valid_attributes
+        post :create, :node => valid_attributes, :question => @global.id
         node = Node.last
         response.should redirect_to node
       end
@@ -153,7 +163,7 @@ describe NodesController do
 
 #  describe "PUT update" do
 #    before do
-#      @node = Node.create! valid_attributes
+#      @node = Node.create! valid_attributes, :question => @global.id
 #      @gnu = GlobalNodeUser.create(:user=>@user, :node=>@node, :global=>Global.find_by_name('All'))
 #      Node.stub(:find).and_return @node
 #    end
@@ -190,7 +200,7 @@ describe NodesController do
 
   describe "DELETE destroy" do
     before do
-      @node = Node.create! valid_attributes
+      @node = Node.create! valid_attributes, :question => @global.id
       @gnu = GlobalNodeUser.create(:user=>@user, :node=>@node, :global=>@global)
       GlobalNodeUser.stub(:where).and_return [@gnu]
       Node.stub(:find).and_return @node

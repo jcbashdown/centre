@@ -3,6 +3,7 @@ class NodesController < ApplicationController
   before_filter :set_node_limit
   before_filter :set_node_order
   before_filter :set_node_limit_order
+  before_filter :set_nodes, :only => [:index, :show, :edit, :new]
   before_filter :set_node, :only => [:show, :edit, :new]
   before_filter :set_links, :only => [:show, :edit]
 
@@ -23,9 +24,12 @@ class NodesController < ApplicationController
       @links_in = @node.construct_to_node_links
     end
   end
+  
+  def set_nodes
+    @global_nodes = @question.global_nodes.paginate(:page => params[:page], :per_page=>5).order(@order_query)
+  end
 
   def index
-    @nodes = @question.nodes.paginate(:page => params[:page], :per_page=>5).order(@order_query)
     if request.xhr?
       render :index, :layout => false
     else
@@ -34,7 +38,6 @@ class NodesController < ApplicationController
   end
 
   def show
-    @nodes = @question.nodes.paginate(:page => params[:page], :per_page=>5).order(@order_query)
     if request.xhr?
       render :show, :layout => false
     else
@@ -43,8 +46,6 @@ class NodesController < ApplicationController
   end
 
   def new
-    @nodes = @question.nodes.paginate(:page => params[:page], :per_page=>5).order(@order_query)
-    @node = Node.new
     if request.xhr?
       render :new, :layout => false
     else
@@ -52,9 +53,7 @@ class NodesController < ApplicationController
     end
   end
 
-  # GET /nodes/1/edit
   def edit
-    @nodes = @question.nodes.paginate(:page => params[:page], :per_page=>5).order(@order_query)
     if request.xhr?
       render :edit, :layout => false
     else

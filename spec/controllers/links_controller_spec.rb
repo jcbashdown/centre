@@ -3,7 +3,7 @@ require 'spec_helper'
 describe LinksController do
 
   before do
-    @global = Factory(:global)
+    @global = FactoryGirl.create(:global)
     Global.stub(:find).and_return @global
   end
   # This should return the minimal set of attributes required to create a valid
@@ -24,7 +24,7 @@ describe LinksController do
   
   describe 'update' do
     before do
-      @user = Factory(:user)
+      @user = FactoryGirl.create(:user)
       controller.stub(:current_user).and_return @user
       @ugn1 = GlobalNodeUser.create(:user=>@user, :title=>'title', :global=>@global)
       @node_one = @ugn1.node
@@ -32,14 +32,14 @@ describe LinksController do
       @node_two = @ugn2.node
       @params_one = {"link"=>{"node_from_id"=>@node_one.id.to_s, "value"=>1.to_s, "node_to_id"=>@node_two.id.to_s}}
       @glu = GlobalLinkUser.create(@params_one["link"].merge(:global => @global, :user => @user))
-      @user_two = Factory(:user, :email => "user2@test.com")
+      @user_two = FactoryGirl.create(:user, :email => "user2@test.com")
       @gluser2 = GlobalLinkUser.create(@params_one["link"].merge(:global => @global, :user => @user_two))
     end
     #update will destroy and then create as too much logic for an after save if we check if we need to to destroy global links etc.
     context 'when ajax request' do
       context 'with valid params' do
         before do
-          @params = {"link"=>{"node_from_id"=>@node_one.id.to_s, "value"=>-1.to_s, "node_to_id"=>@node_two.id.to_s}, "id" =>@glu.id}
+          @params = {"link"=>{"node_from_id"=>@node_one.id.to_s, "value"=>-1.to_s, "node_to_id"=>@node_two.id.to_s}, "id" =>@glu.id, "question" => @global.id}
           @mock_glu = mock('global_link_user')
           @mock_glu_2 = mock('global_link_user')
           @mock_link = mock('link')
@@ -108,7 +108,7 @@ describe LinksController do
   end
   describe 'create' do
     before do
-      @user = Factory(:user)
+      @user = FactoryGirl.create(:user)
       controller.stub(:current_user).and_return @user
       @ugn1 = GlobalNodeUser.create(:user=>@user, :title=>'title', :global=>@global)
       @node_one = @ugn1.node
@@ -118,7 +118,7 @@ describe LinksController do
     context 'when ajax request' do
       context 'with valid params' do
         before do
-          @params = {"link"=>{"node_from_id"=>@node_one.id.to_s, "value"=>-1.to_s, "node_to_id"=>@node_two.id.to_s}}
+          @params = {"link"=>{"node_from_id"=>@node_one.id.to_s, "value"=>-1.to_s, "node_to_id"=>@node_two.id.to_s}, "question" => @global.id}
           @mock_glu = mock('global_link_user')
           @mock_link = mock('link')
           @mock_glu.stub(:save).and_return true
@@ -173,7 +173,7 @@ describe LinksController do
   end
   describe 'destroy' do
     before do
-      @user = Factory(:user)
+      @user = FactoryGirl.create(:user)
       controller.stub(:current_user).and_return @user
       @ugn1 = GlobalNodeUser.create(:user=>@user, :title=>'title', :global=>@global)
       @node_one = @ugn1.node
@@ -181,7 +181,7 @@ describe LinksController do
       @node_two = @ugn2.node
       @params_one = {"link"=>{"node_from_id"=>@node_one.id.to_s, "value"=>1.to_s, "node_to_id"=>@node_two.id.to_s}}
       @glu = GlobalLinkUser.create(@params_one["link"].merge(:global => @global, :user => @user))
-      @user_two = Factory(:user, :email => "user2@test.com")
+      @user_two = FactoryGirl.create(:user, :email => "user2@test.com")
       @gluser2 = GlobalLinkUser.create!(@params_one["link"].merge(:global => @global, :user => @user_two))
       @params_one = {"link"=>{"node_from_id"=>@node_one.id.to_s, "value"=>1.to_s, "node_to_id"=>@node_two.id.to_s}, :id => @glu.id}
       @glu.link.should == @gluser2.link
