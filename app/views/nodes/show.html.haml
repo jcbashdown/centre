@@ -1,5 +1,5 @@
-.span12
-  .row.show-grid
+.span9
+  .row
     .span6.main_content
       %p#notice= notice
       .center
@@ -12,5 +12,5 @@
         %br
         - if @user
           = link_to 'Edit text', edit_node_path(@node, @limit_order), :class => "load"
-    .span6.right_content
+    .span3.right_content
       = render 'links', :nodes=>@nodes_with_links

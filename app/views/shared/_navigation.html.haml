@@ -15,7 +15,7 @@
             %li.divider-vertical
             %li
               = form_tag user_session_path, :class => 'navbar-form' do
-                = email_field :user, :email, {:value=>nil, :placeholder=>"Email", :class=>"span3"}
-                = password_field :user, :password, {:value=>nil, :placeholder=>"Password", :class=>"span3"}
+                = email_field :user, :email, {:value=>nil, :placeholder=>"Email", :class=>"span2"}
+                = password_field :user, :password, {:value=>nil, :placeholder=>"Password", :class=>"span2"}
                 = hidden_field :user, :remember_me, {:value=>0}
                 = submit_tag "Submit"

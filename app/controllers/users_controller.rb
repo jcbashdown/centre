@@ -1,4 +1,5 @@
 class UsersController < ApplicationController
+  layout 'sign_up'
   before_filter :authenticate_user!
 
   def show
