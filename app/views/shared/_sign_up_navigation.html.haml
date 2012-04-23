@@ -1,7 +1,7 @@
 .navbar
   .navbar-inner
     .container
-      %a.brand{:href => "#"} Centre
+      %a.brand{:href => nodes_path(@limit_order)} Centre
       .nav-collapse
         %ul.nav.pull-right
           - if user_signed_in?
