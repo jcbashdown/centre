@@ -1,20 +1,12 @@
-= form_for @node do |f|
-  -if @node.errors.any?
+= form_for @new_node, :html => {:class => 'form-inline'} do |f|
+  -if @new_node.errors.any?
     #error_explanation
-      %h2= "#{pluralize(@node.errors.count, "error")} prohibited this node from being saved:"
+      %h2= "#{pluralize(@new_node.errors.count, "error")} prohibited this node from being saved:"
       %ul
-        - @node.errors.full_messages.each do |msg|
+        - @new_node.errors.full_messages.each do |msg|
           %li= msg
-  %ul.unstyled
-    %li.clearfix 
-      = f.label :title, {:class=>"width_80"}
-      .margin_100
-        = f.text_field :title
-    %li.clearfix
-      = f.label :text, {:class=>"width_80"}
-      .margin_100
-        = f.text_area :text, {:class=>"height_300"}
-        - unless @question.name == "All"
-          = f.hidden_field "global_ids", {:value=>@question.id}
-  .actions
-    = f.submit 'Save'
+  .input-append
+    = f.text_field :title, :placeholder=>"Node Title", :class=>"span2"
+    - unless @question.name == "All"
+      = f.hidden_field "global_ids", {:value=>@question.id}
+    = f.submit 'Add New', :class => 'btn'

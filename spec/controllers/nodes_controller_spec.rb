@@ -15,24 +15,38 @@ describe NodesController do
   end
 
   describe "GET index" do
+    before do
+      @node = Node.new
+      Node.stub(:new).and_return @node
+    end
     it "assigns all nodes as @global_nodes for the current global" do
       global_node_user = GlobalNodeUser.create!({:user=>@user, :global=>@global}.merge(valid_attributes))
       global_node = global_node_user.global_node
       get :index, :question => @global.id
       assigns(:global_nodes).should eq([global_node])
     end
+    it 'should assign node' do
+      get :index, :question => @global.id
+      assigns(:new_node).should == @node
+    end
   end
 
   describe "GET show" do
     before do
+      @node = Node.new
+      Node.stub(:new).and_return @node
       global_node_user = GlobalNodeUser.create!({:user=>@user, :global=>@global}.merge(valid_attributes))
       @global_node_one = global_node_user.global_node 
       @node_one = global_node_user.node 
-      @params = {:id=>@node_one.id}
+      @params = {:id=>@node_one.id, :question => @global.id}
       controller.stub(:set_links)
     end
+    it 'should assign node' do
+      get :show, @params
+      assigns(:new_node).should == @node
+    end
     it "assigns all nodes as @global_nodes for the current global" do
-      get :show, :question => @global.id
+      get :show, @params
       assigns(:global_nodes).should eq([@global_node_one])
     end
     context 'when node is node one' do
@@ -47,6 +61,14 @@ describe NodesController do
       it 'should set user links' do
         controller.should_receive(:set_links)
         get :show, @params
+      end
+      context 'when set_links is unstubbed' do
+        before do
+          controller.unstub!(:set_links)
+        end
+        it 'should set the links for the gnu or potential gnu' do
+          pending
+        end
       end
     end
   end
@@ -140,7 +162,7 @@ describe NodesController do
       it "redirects to the created node" do
         post :create, :node => valid_attributes, :question => @global.id
         node = Node.last
-        response.should redirect_to node
+        response.should redirect_to nodes_path(:order => 'older', :question => @global.id)
       end
     end
 
@@ -148,15 +170,15 @@ describe NodesController do
       it "assigns a newly created but unsaved node as @node" do
         # Trigger the behavior that occurs when invalid params are submitted
         GlobalNodeUser.any_instance.stub(:save).and_return(false)
-        post :create, :node => {}
+        post :create, :node => {}, :question => @global.id
         assigns(:gnu).should be_a_new(GlobalNodeUser)
       end
 
       it "re-renders the 'new' template" do
         # Trigger the behavior that occurs when invalid params are submitted
         GlobalNodeUser.any_instance.stub(:save).and_return(false)
-        post :create, :node => {}
-        response.should render_template("new")
+        post :create, :node => {}, :question => @global.id
+        response.should redirect_to nodes_path(:order => 'older', :question => @global.id)
       end
     end
   end

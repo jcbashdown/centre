@@ -30,6 +30,7 @@ class NodesController < ApplicationController
   end
 
   def index
+    @new_node = Node.new
     if request.xhr?
       render :index, :layout => false
     else
@@ -38,6 +39,7 @@ class NodesController < ApplicationController
   end
 
   def show
+    @new_node = Node.new
     if request.xhr?
       render :show, :layout => false
     else
@@ -66,10 +68,10 @@ class NodesController < ApplicationController
     respond_to do |format|
       if @gnu.save
         @node = @gnu.node
-        format.html { redirect_to @node, notice: 'Node was successfully created.' }
-        format.json { render json: @node, status: :created, location: @node }
+        format.html { redirect_to nodes_path(@limit_order), notice: 'Node was successfully created.' }
+        format.json { render json: @node, status: :created, location: nodes_path(@limit_order) }
       else
-        format.html { render action: "new" }
+        format.html { redirect_to nodes_path(@limit_order), notice: 'That Title has already been taken. Please use the existing node' }
         format.json { render json: @gnu.errors, status: :unprocessable_entity }
       end
     end
