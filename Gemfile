@@ -44,4 +44,6 @@ gem 'less-rails-bootstrap'
 gem 'ruby-debug19'
 gem "rails-backbone"
 gem "nokogiri"
+gem 'sunspot_rails'
+gem 'sunspot_solr'
 

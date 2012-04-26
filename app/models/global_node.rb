@@ -1,4 +1,7 @@
 class GlobalNode < ActiveRecord::Base
+  searchable do
+    text :title
+  end
   belongs_to :global
   belongs_to :node
   has_many :global_node_users
