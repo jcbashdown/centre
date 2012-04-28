@@ -46,6 +46,8 @@ tmp/*
 /spec/routing
 /spec/views
 /specifications
+/solr/pids
+/solr/data
 
 # scm revert files
 **.orig
