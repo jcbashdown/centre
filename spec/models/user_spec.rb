@@ -4,10 +4,10 @@ describe User do
   describe 'set_user_links' do
     context 'when there is a user' do
       before do
-        @user_two = Factory(:user, :email=>'test@user.com', :password=>'123456AA')
-        @node_one = Factory(:node, :title=>'aone1')
-        @node_two = Factory(:node, :title=>'ctwo2')
-        @node_three = Factory(:node, :title=>'bthree3')
+        @user_two = FactoryGirl.create(:user, :email=>'test@user.com', :password=>'123456AA')
+        @node_one = FactoryGirl.create(:node, :title=>'aone1')
+        @node_two = FactoryGirl.create(:node, :title=>'ctwo2')
+        @node_three = FactoryGirl.create(:node, :title=>'bthree3')
         @link1=Link.create(:node_from=> @node_one, :value=>1, :node_to=>@node_two)
         @link1u2=Link.new(:node_from=> @node_one, :node_to=>@node_two)
         @link1.users << @user
@@ -81,10 +81,10 @@ describe User do
     end
     context 'links in for node' do
       before do
-        @user_two = Factory(:user, :email=>'test@user.com', :password=>'123456AA')
-        @node_one = Factory(:node, :title=>'aone1')
-        @node_two = Factory(:node, :title=>'ctwo2')
-        @node_three = Factory(:node, :title=>'bthree3')
+        @user_two = FactoryGirl.create(:user, :email=>'test@user.com', :password=>'123456AA')
+        @node_one = FactoryGirl.create(:node, :title=>'aone1')
+        @node_two = FactoryGirl.create(:node, :title=>'ctwo2')
+        @node_three = FactoryGirl.create(:node, :title=>'bthree3')
         @link1=Link.create(:node_from=> @node_one, :value=>1, :node_to=>@node_two)
         @link1u2=Link.new(:node_from=> @node_one, :node_to=>@node_two)
         @link1.users << @user

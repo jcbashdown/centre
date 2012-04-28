@@ -7,8 +7,8 @@ class CreateGlobalNodeUsers < ActiveRecord::Migration
       t.references :node
       t.references :node_user
       t.references :global_node
-      t.string :title
-      t.text :text
+      t.text :title
+      t.text :body
       t.integer :global_link_users_count, :default=>0, :null => false
       t.integer :equivalents_count, :default=>0, :null => false
       t.integer :upvotes_count, :default=>0, :null => false

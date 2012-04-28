@@ -27,14 +27,10 @@ class NodesController < ApplicationController
   
   def set_nodes
     if params[:find]
-      p @question.id
-      p params[:find]
-      binding.pry
       @global_nodes = GlobalNode.search do
-                        fulltext params[:find]
-                        #with :global_id, @question.id
-                        paginate(:page => params[:page], :per_page => 5)#.order(@order_query)
-                      end.results
+                        fulltext 'params[:find]'
+                        with :global_id, @question.id
+                      end.results.paginate(:page => params[:page], :per_page=>5).order(@order_query)
     else
       @global_nodes = @question.global_nodes.paginate(:page => params[:page], :per_page=>5).order(@order_query)
     end

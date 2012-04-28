@@ -50,8 +50,8 @@ ActiveRecord::Schema.define(:version => 20120327210137) do
     t.integer  "node_id"
     t.integer  "node_user_id"
     t.integer  "global_node_id"
-    t.string   "title"
-    t.text     "text"
+    t.text     "title"
+    t.text     "body"
     t.integer  "global_link_users_count", :default => 0,     :null => false
     t.integer  "equivalents_count",       :default => 0,     :null => false
     t.integer  "upvotes_count",           :default => 0,     :null => false
@@ -68,8 +68,8 @@ ActiveRecord::Schema.define(:version => 20120327210137) do
     t.text     "node_xml"
     t.integer  "global_id"
     t.integer  "node_id"
-    t.string   "title"
-    t.text     "text"
+    t.text     "title"
+    t.text     "body"
     t.integer  "equivalents_count",       :default => 0,     :null => false
     t.integer  "upvotes_count",           :default => 0,     :null => false
     t.integer  "downvotes_count",         :default => 0,     :null => false
@@ -120,8 +120,8 @@ ActiveRecord::Schema.define(:version => 20120327210137) do
   create_table "node_users", :force => true do |t|
     t.integer  "node_id"
     t.integer  "user_id"
-    t.string   "title"
-    t.text     "text"
+    t.text     "title"
+    t.text     "body"
     t.integer  "global_node_users_count", :default => 0,     :null => false
     t.integer  "global_link_users_count", :default => 0,     :null => false
     t.integer  "equivalents_count",       :default => 0,     :null => false
@@ -136,8 +136,8 @@ ActiveRecord::Schema.define(:version => 20120327210137) do
   end
 
   create_table "nodes", :force => true do |t|
-    t.string   "title"
-    t.text     "text"
+    t.text     "title"
+    t.text     "body"
     t.integer  "equivalents_count",       :default => 0,     :null => false
     t.integer  "upvotes_count",           :default => 0,     :null => false
     t.integer  "downvotes_count",         :default => 0,     :null => false

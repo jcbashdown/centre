@@ -18,26 +18,27 @@ class GlobalNodeUser < ActiveRecord::Base
 
   validates_uniqueness_of :node_id, :scope => [:global_id, :user_id]
   validates_uniqueness_of :title, :scope => [:global_id, :user_id]
+  validates :title, :presence => true
 
   def node_hash
-    {:title => self.title, :text => self.text}
+    {:title => self.title, :body => self.body}
   end
   
   protected
   def set_or_create_node
-    n = Node.where(:title => self.title)[0] || Node.create(node_hash)
+    n = Node.where(:title => self.title, :body => self.body)[0] || Node.create!(:title => self.title, :body =>self.body)
     self.node = n
     save
   end
 
   def set_or_create_global_node
-    gn = GlobalNode.where(:global_id => self.global_id, :node_id => self.node_id)[0] || GlobalNode.create({:global_id => self.global_id, :node_id => self.node_id}.merge(node_hash))
+    gn = GlobalNode.where(:global_id => self.global_id, :node_id => self.node_id)[0] || GlobalNode.create!({:global_id => self.global_id, :node_id => self.node_id}.merge(node_hash))
     self.global_node = gn
     save
   end
 
   def set_or_create_node_user
-    nu = NodeUser.where(:user_id => self.user_id, :node_id => self.node_id)[0] || NodeUser.create({:user_id => self.user_id, :node_id => self.node_id}.merge(node_hash))
+    nu = NodeUser.where(:user_id => self.user_id, :node_id => self.node_id)[0] || NodeUser.create!({:user_id => self.user_id, :node_id => self.node_id}.merge(node_hash))
     self.node_user = nu
     save
   end

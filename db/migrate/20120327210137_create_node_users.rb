@@ -3,8 +3,8 @@ class CreateNodeUsers < ActiveRecord::Migration
     create_table :node_users do |t|
       t.references :node
       t.references :user
-      t.string :title
-      t.text :text
+      t.text :title
+      t.text :body
       t.integer :global_node_users_count, :default=>0, :null => false
       t.integer :global_link_users_count, :default=>0, :null => false
       t.integer :equivalents_count, :default=>0, :null => false

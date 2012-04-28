@@ -1,19 +1,19 @@
 require 'factory_girl'
+FactoryGirl.define do
 
-Factory.define :node do |n|
-  n.title 'Test'
-  n.text 'Test text'
-end
-
-Factory.define :global do |n|
-  n.name 'Test'
-end
-
-Factory.define :user do |u|
-  u.name 'Test User'
-  u.email 'user@test.com'
-  u.password 'please'
-end
-
-Factory.define :nodes_global do |ng|
+  factory :node do
+    title 'Test'
+    body 'Test text'
+  end
+  
+  factory :global do
+    name 'Test'
+  end
+  
+  factory :user do
+    name 'Test User'
+    email 'user@test.com'
+    password 'please'
+  end
+  
 end

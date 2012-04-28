@@ -46,4 +46,4 @@ gem "rails-backbone"
 gem "nokogiri"
 gem 'sunspot_rails'
 gem 'sunspot_solr'
-
+gem 'pry', :group => :test

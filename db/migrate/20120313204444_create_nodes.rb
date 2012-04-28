@@ -1,8 +1,8 @@
 class CreateNodes < ActiveRecord::Migration
   def change
     create_table :nodes do |t|
-      t.string :title
-      t.text :text
+      t.text :title
+      t.text :body
       t.integer :equivalents_count, :default=>0, :null => false
       t.integer :upvotes_count, :default=>0, :null => false
       t.integer :downvotes_count, :default=>0, :null => false

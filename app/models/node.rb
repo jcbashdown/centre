@@ -12,8 +12,9 @@ class Node < ActiveRecord::Base
   has_many :node_froms, :through => :link_ins, :class_name => "Node", :foreign_key => "node_from_id", :source=>:node_from
 
   validates_uniqueness_of :title
+  validates :title, :presence => true
 
   def node_hash
-    {:title => self.title, :text => self.text}
+    {:title => self.title, :body=> self.body}
   end
 end

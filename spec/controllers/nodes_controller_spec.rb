@@ -11,30 +11,40 @@ describe NodesController do
   # Node. As you add validations to Node, be sure to
   # update the return value of this method accordingly.
   def valid_attributes
-    {:title => 'title', :text => ''}
+    {:title => 'title', :body => 'abc'}
   end
 
   describe "GET index" do
-    before do
-      @node = Node.new
-      Node.stub(:new).and_return @node
+    context 'when there is no search term' do
+      it "assigns all nodes as @global_nodes for the current global" do
+        @gnu1 = GlobalNodeUser.create!(:user=>@user, :global=>@global, :title => 'Aardvark Anecdote Awkward About', :body => '')
+        global_node = @gnu1.global_node
+        get :index, :question => @global.id
+        assigns(:global_nodes).should eq([global_node])
+      end
+      it 'should assign node' do
+        get :index, :question => @global.id
+        assigns(:new_node).should be_a(Node)
+        assigns(:new_node).should_not be_persisted
+      end
     end
-    it "assigns all nodes as @global_nodes for the current global" do
-      global_node_user = GlobalNodeUser.create!({:user=>@user, :global=>@global}.merge(valid_attributes))
-      global_node = global_node_user.global_node
-      get :index, :question => @global.id
-      assigns(:global_nodes).should eq([global_node])
-    end
-    it 'should assign node' do
-      get :index, :question => @global.id
-      assigns(:new_node).should == @node
+    context 'when there is a search term' do
+      before do
+        @gnu1 = GlobalNodeUser.create!(:user=>@user, :global=>@global, :title => 'Aardvark Anecdote Awkward About', :body => '')
+        @gnu2 = GlobalNodeUser.create!(:user=>@user, :global=>@global, :title => 'Aardvark', :body => 'blargh')
+        @gnu3 = GlobalNodeUser.create!(:user=>@user, :global=>@global, :title => 'Anecdote Awkward About', :body => '')
+        @term = 'Aardvark'
+      end
+      it "assigns all nodes as @global_nodes for the current global" do
+        get :index, :question => @global.id, :find => @term
+        assigns(:global_nodes).should eq([@gnu1.global_node, @gnu2.global_node])
+      end
+
     end
   end
 
   describe "GET show" do
     before do
-      @node = Node.new
-      Node.stub(:new).and_return @node
       global_node_user = GlobalNodeUser.create!({:user=>@user, :global=>@global}.merge(valid_attributes))
       @global_node_one = global_node_user.global_node 
       @node_one = global_node_user.node 
@@ -43,7 +53,8 @@ describe NodesController do
     end
     it 'should assign node' do
       get :show, @params
-      assigns(:new_node).should == @node
+      assigns(:new_node).should be_a(Node)
+      assigns(:new_node).should_not be_persisted
     end
     it "assigns all nodes as @global_nodes for the current global" do
       get :show, @params
@@ -147,8 +158,8 @@ describe NodesController do
       end
 
       it 'should have called create on global node user' do
-        gnu = GlobalNodeUser.new({:user => @user, :global => @global}.merge({"title" => 'title', "text" => ''}))
-        GlobalNodeUser.should_receive(:new).with({:user => @user, :global => @global}.merge({"title" => 'title', "text" => ''})).and_return gnu
+        gnu = GlobalNodeUser.new({:user => @user, :global => @global}.merge({"title" => 'title', "body" => ''}))
+        GlobalNodeUser.should_receive(:new).with({:user => @user, :global => @global}.merge({"title" => 'title', "body" => 'abc'})).and_return gnu
         post :create, :node => valid_attributes, :question => @global.id
       end
 
@@ -190,7 +201,7 @@ describe NodesController do
 #      Node.stub(:find).and_return @node
 #    end
 #    it 'should receive the correct parameters' do
-#      @node.should_receive(:update_attributes).with({:text => 'some text'})
+#      @node.should_receive(:update_attributes).with({:body => 'some text'})
 #      Node.stub(:find).and_return @node
 #      put :update, :id => @node.id, :node => {'text' => 'some text', 'these' => 'params'}
 #    end
