@@ -6,6 +6,7 @@ class NodesController < ApplicationController
   before_filter :set_nodes, :only => [:index, :show, :edit, :new]
   before_filter :set_node, :only => [:show, :edit, :new]
   before_filter :set_links, :only => [:show, :edit]
+  before_filter :redirect_if_new_exists, :only => [:create]
 
   def set_node
     unless params[:id]
@@ -42,9 +43,9 @@ class NodesController < ApplicationController
   def index
     @new_node = Node.new
     respond_to do |format|
+      format.js { render :partial => 'current_nodes', :locals => {:global_nodes => @global_nodes}}
+      format.json { render json: @global_nodes.to_json(:only => [:id, :title]) }
       format.html
-      format.js  {render :layout => false }
-      format.json { render json: @global_nodes }
     end
   end
 
@@ -116,6 +117,15 @@ class NodesController < ApplicationController
         format.html { redirect_to "/" }
         format.json { head :ok }
       end
+    end
+  end
+
+  protected
+
+  def redirect_if_new_exists
+    @gnu = GlobalNodeUser.where({:user_id => @user.id, :global_id => @question.id, :title => params[:node][:title]})[0]
+    if @gnu
+      redirect_to node_path(@gnu.node, @limit_order)
     end
   end
   

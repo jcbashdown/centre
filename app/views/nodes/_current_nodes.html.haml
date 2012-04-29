@@ -1,0 +1,17 @@
+#accordion2.accordion
+  - global_nodes.each do |node|
+    .accordion-group
+      .accordion-heading-override
+        %a.accordion-toggle-two{"data-parent" => "#accordion2", "data-toggle" => "collapse", :href => "#collapse#{node.node.id}"}
+          %i.icon-plus
+          =node.title
+        %a{:href => node_path(node.node, @limit_order), :class => 'accordion-toggle-override'}
+          %i.icon-play.right
+      .accordion-body.collapse{:style => "height: 0px;", :id => "collapse#{node.node.id}"}
+        .accordion-inner
+          &nbsp;
+          =node.body
+          - if @user
+            %a.right.accordion-toggle-override{"data-confirm" => "Are you sure?", "data-method" => "delete", :href => node_path(node.node), :rel => "nofollow"}
+              %i.icon-remove.right
+= will_paginate @global_nodes

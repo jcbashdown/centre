@@ -1,17 +1,30 @@
 $(document).ready ->
-  # This example does an AJAX lookup and is in CoffeeScript
   $('.typeahead').typeahead(
-    # source can be a function
     source: (typeahead, query) ->
-      # this function receives the typeahead object and the query string
+      url = "/nodes.js"
+      method = "GET"
+      data_hash = {"find":query}
       $.ajax(
-        url: "/nodes.json?find="+query
-        # i'm binding the function here using CoffeeScript syntactic sugar,
-        # you can use for example Underscore's bind function instead.
-        success: (data) =>
-          # data must be a list of either strings or objects
-          # data = [{'name': 'Joe', }, {'name': 'Henry'}, ...]
-          typeahead.process(data)
+        url: url
+        type: method  
+        data: data_hash   
+        dataType: "html"
+        error: (XMLHttpRequest, textStatus, errorThrown) ->
+          alert errorThrown    
+        success: (data, textStatus, XMLHttpRequest) ->
+          $('#current_nodes').html(data)
+          url = "/nodes.json"
+          method = "GET"
+          data_hash = {"find":query}
+          $.ajax(
+            url: url
+            type: method  
+            data: data_hash   
+            error: (XMLHttpRequest, textStatus, errorThrown) ->
+              alert errorThrown    
+            success: (data, textStatus, XMLHttpRequest) ->
+              typeahead.process(data)
+          )
       )
     # if we return objects to typeahead.process we must specify the property
     # that typeahead uses to look up the display value

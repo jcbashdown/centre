@@ -192,6 +192,15 @@ describe NodesController do
     end
 
     describe "with invalid params" do
+      context 'when the node already exists' do
+        before do
+          @gnu = GlobalNodeUser.create!(:user=>@user, :title=>'a test node', :global=>@global)
+        end
+        it 'should redirect to show the node' do
+          post :create, :node => {:title => 'a test node', :body => 'abc'}, :question => @global.id
+          response.should redirect_to node_path(@gnu.node, {:question => @global.id, :order => 'older'})
+        end
+      end
       it "assigns a newly created but unsaved node as @node" do
         # Trigger the behavior that occurs when invalid params are submitted
         GlobalNodeUser.any_instance.stub(:save).and_return(false)
