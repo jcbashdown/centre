@@ -8,5 +8,5 @@
 //= require jquery.ajaxLoader
 //= require jquery_ujs
 //= require links
-//= require homepage
-//= require twitter/bootstrap
+//= require nodes 
+//= require bootstrap

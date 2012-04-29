@@ -6,7 +6,7 @@
         - @new_node.errors.full_messages.each do |msg|
           %li= msg
   .input-append
-    = f.text_field :title, :placeholder=>"Node Title", :class=>"span2"
+    = f.text_field :title, :placeholder=>"Node Title", :class=>"span2 typeahead"
     - unless @question.name == "All"
       = f.hidden_field "global_ids", {:value=>@question.id}
     = f.submit 'Add New', :class => 'btn'
