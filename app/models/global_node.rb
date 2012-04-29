@@ -2,6 +2,9 @@ class GlobalNode < ActiveRecord::Base
   searchable do
     text :title
     integer :global_id
+    integer :id
+    double :page_rank
+    time :created_at
   end
   belongs_to :global
   belongs_to :node

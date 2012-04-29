@@ -33,6 +33,7 @@ describe NodesController do
         @gnu1 = GlobalNodeUser.create!(:user=>@user, :global=>@global, :title => 'Aardvark Anecdote Awkward About', :body => '')
         @gnu2 = GlobalNodeUser.create!(:user=>@user, :global=>@global, :title => 'Aardvark', :body => 'blargh')
         @gnu3 = GlobalNodeUser.create!(:user=>@user, :global=>@global, :title => 'Anecdote Awkward About', :body => '')
+        GlobalNode.reindex
         @term = 'Aardvark'
       end
       it "assigns all nodes as @global_nodes for the current global" do
@@ -80,6 +81,19 @@ describe NodesController do
         it 'should set the links for the gnu or potential gnu' do
           pending
         end
+      end
+    end
+    context 'when there is a search term' do
+      before do
+        @gnu1 = GlobalNodeUser.create!(:user=>@user, :global=>@global, :title => 'Aardvark Anecdote Awkward About', :body => '')
+        @gnu2 = GlobalNodeUser.create!(:user=>@user, :global=>@global, :title => 'Aardvark', :body => 'blargh')
+        @gnu3 = GlobalNodeUser.create!(:user=>@user, :global=>@global, :title => 'Anecdote Awkward About', :body => '')
+        GlobalNode.reindex
+        @term = 'Aardvark'
+      end
+      it "assigns all nodes as @global_nodes for the current global" do
+        get :show, :question => @global.id, :find => @term
+        assigns(:global_nodes).should eq([@gnu1.global_node, @gnu2.global_node])
       end
     end
   end

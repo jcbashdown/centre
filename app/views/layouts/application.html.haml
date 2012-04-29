@@ -32,8 +32,7 @@
                       %i.icon-play.right
                   .accordion-body.collapse{:style => "height: 0px;", :id => "collapse#{node.node.id}"}
                     .accordion-inner
-                      test
-                      =node.text
+                      =node.body
                       - if @user
                         %a.right.accordion-toggle-override{"data-confirm" => "Are you sure?", "data-method" => "delete", :href => node_path(node.node), :rel => "nofollow"}
                           %i.icon-remove.right

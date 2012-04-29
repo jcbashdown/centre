@@ -27,25 +27,24 @@ class NodesController < ApplicationController
   
   def set_nodes
     if params[:find]
-      p @question.id
-      p params[:find]
-      binding.pry
+      question_id =  @question.id
       @global_nodes = GlobalNode.search do
                         fulltext params[:find]
-                        #with :global_id, @question.id
-                        paginate(:page => params[:page], :per_page => 5)#.order(@order_query)
+                        with :global_id, question_id
+                        order_by(:id, :asc)
+                        paginate(:page => params[:page], :per_page => 5)
                       end.results
     else
-      @global_nodes = @question.global_nodes.paginate(:page => params[:page], :per_page=>5).order(@order_query)
+      @global_nodes = @question.global_nodes.paginate(:page => params[:page], :per_page=>5).order(@order_query_all)
     end
   end
 
   def index
     @new_node = Node.new
-    if request.xhr?
-      render :index, :layout => false
-    else
-      # renders index view
+    respond_to do |format|
+      format.html
+      format.js  {render :layout => false }
+      format.json { render json: @global_nodes }
     end
   end
 

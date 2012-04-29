@@ -13,15 +13,20 @@ class ApplicationController < ActionController::Base
       @order = 'older'
     end
     if @order == "strongest"
-      @order_query = "page_rank desc"
+      @order_query = [:page_rank, :desc]
+      @order_query_all = 'page_rank desc'
     elsif @order == "weakest"
-      @order_query = "page_rank asc"
+      @order_query = [:page_rank, :asc]
+      @order_query_all = 'page_rank asc'
     elsif @order == "newer"
-      @order_query = "created_at desc"
+      @order_query = [:created_at, :desc]
+      @order_query_all = 'created_at desc'
     elsif @order == "older"
-      @order_query = "created_at asc"
+      @order_query = [:created_at, :asc]
+      @order_query_all = 'created_at asc'
     else
-      @order_query = "id asc"
+      @order_query = [:id, :asc]
+      @order_query_all = 'id asc'
     end
   end
 
