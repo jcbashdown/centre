@@ -1,30 +1,30 @@
 require 'spec_helper'
 
 describe User do
+  before do
+    @user = FactoryGirl.create(:user)
+    @global = FactoryGirl.create(:global)
+  end
   describe 'set_user_links' do
     context 'when there is a user' do
       before do
         @user_two = FactoryGirl.create(:user, :email=>'test@user.com', :password=>'123456AA')
-        @node_one = FactoryGirl.create(:node, :title=>'aone1')
-        @node_two = FactoryGirl.create(:node, :title=>'ctwo2')
-        @node_three = FactoryGirl.create(:node, :title=>'bthree3')
-        @link1=Link.create(:node_from=> @node_one, :value=>1, :node_to=>@node_two)
+        @node_one = GlobalNodeUser.create(:global => @global, :user => @user, :title=>'aone1').node
+        @node_two = GlobalNodeUser.create(:global => @global, :user => @user, :title=>'ctwo2').node
+        @node_three = GlobalNodeUser.create(:global => @global, :user => @user, :title=>'bthree3').node
+        @link1=GlobalLinkUser.create(:user => @user, :global => @global, :node_from=> @node_one, :value=>1, :node_to=>@node_two).link
         @link1u2=Link.new(:node_from=> @node_one, :node_to=>@node_two)
-        @link1.users << @user
         #node two activity is one
-        @link2=Link.create(:node_from=> @node_one, :value=>1, :node_to=>@node_three)
-        @link2.users << @user
-        @link2.users << @user_two 
+        @link2=GlobalLinkUser.create(:user => @user, :global => @global, :node_from=> @node_one, :value=>1, :node_to=>@node_three).link
+        @link2u2=GlobalLinkUser.create(:user => @user_two, :global => @global, :node_from=> @node_one, :value=>1, :node_to=>@node_three).link
         #node three activity is two
-        @link3=Link.create(:node_from=> @node_two, :value=>1, :node_to=>@node_one)
+        @link3=GlobalLinkUser.create(:user => @user, :global => @global, :node_from=> @node_two, :value=>1, :node_to=>@node_one).link
         @link3u2=Link.new(:node_from=> @node_two, :node_to=>@node_one)
-        @link3.users << @user
         #node one activity is one
         @link4=Link.new(:node_from=> @node_two, :node_to=>@node_three)
         @link5=Link.new(:node_from=> @node_three, :node_to=>@node_one)
-        @link6=Link.create(:node_from=> @node_three, :value=>-1, :node_to=>@node_two)
-        @link6.users << @user
-        @link6.users << @user_two 
+        @link6=GlobalLinkUser.create(:user => @user, :global => @global, :node_from=> @node_three, :value=>-1, :node_to=>@node_two).link
+        @link6u2=GlobalLinkUser.create(:user => @user_two, :global => @global, :node_from=> @node_three, :value=>-1, :node_to=>@node_two).link
         #node two activity is three
         #for user = @user
         @user_links_out_alph_up_for_node_one = [@link2,
@@ -82,26 +82,22 @@ describe User do
     context 'links in for node' do
       before do
         @user_two = FactoryGirl.create(:user, :email=>'test@user.com', :password=>'123456AA')
-        @node_one = FactoryGirl.create(:node, :title=>'aone1')
-        @node_two = FactoryGirl.create(:node, :title=>'ctwo2')
-        @node_three = FactoryGirl.create(:node, :title=>'bthree3')
-        @link1=Link.create(:node_from=> @node_one, :value=>1, :node_to=>@node_two)
+        @node_one = GlobalNodeUser.create(:global => @global, :user => @user, :title=>'aone1').node
+        @node_two = GlobalNodeUser.create(:global => @global, :user => @user, :title=>'ctwo2').node
+        @node_three = GlobalNodeUser.create(:global => @global, :user => @user, :title=>'bthree3').node
+        @link1=GlobalLinkUser.create(:user => @user, :global => @global, :node_from=> @node_one, :value=>1, :node_to=>@node_two).link
         @link1u2=Link.new(:node_from=> @node_one, :node_to=>@node_two)
-        @link1.users << @user
         #node two activity is one
-        @link2=Link.create(:node_from=> @node_one, :value=>1, :node_to=>@node_three)
-        @link2.users << @user
-        @link2.users << @user_two 
+        @link2=GlobalLinkUser.create(:user => @user, :global => @global, :node_from=> @node_one, :value=>1, :node_to=>@node_three).link
+        @link2u2=GlobalLinkUser.create(:user => @user_two, :global => @global, :node_from=> @node_one, :value=>1, :node_to=>@node_three).link
         #node three activity is two
-        @link3=Link.create(:node_from=> @node_two, :value=>1, :node_to=>@node_one)
+        @link3=GlobalLinkUser.create(:user => @user, :global => @global, :node_from=> @node_two, :value=>1, :node_to=>@node_one).link
         @link3u2=Link.new(:node_from=> @node_two, :node_to=>@node_one)
-        @link3.users << @user
         #node one activity is one
         @link4=Link.new(:node_from=> @node_two, :node_to=>@node_three)
         @link5=Link.new(:node_from=> @node_three, :node_to=>@node_one)
-        @link6=Link.create(:node_from=> @node_three, :value=>-1, :node_to=>@node_two)
-        @link6.users << @user
-        @link6.users << @user_two 
+        @link6=GlobalLinkUser.create(:user => @user, :global => @global, :node_from=> @node_three, :value=>-1, :node_to=>@node_two).link
+        @link6u2=GlobalLinkUser.create(:user => @user_two, :global => @global, :node_from=> @node_three, :value=>-1, :node_to=>@node_two).link
         #node two activity is three
         #for user = @user
         @user_links_in_alph_up_for_node_one = [@link5,
