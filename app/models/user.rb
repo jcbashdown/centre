@@ -16,18 +16,18 @@ class User < ActiveRecord::Base
   # Setup accessible (or protected) attributes for your model
   attr_accessible :name, :email, :password, :password_confirmation, :remember_me
   
-  #no longer used
   def user_to_node_links(to_node, order="")
     constructed_links = []
     persisted_links = []
+    these_link_users = self.link_users
     Node.all.each do |node|
       unless node == to_node
-        this_link = self.links.where('links.node_from_id = ? AND links.node_to_id = ?', node.id, to_node.id)
+        this_link = these_link_users.where(:node_from_id => node.id, :node_to_id => to_node.id)
         #first level of sorted - peristed from unpersisted
         unless this_link.empty?
           persisted_links << this_link[0]
         else
-          constructed_links << Link.new(:node_from_id=>node.id, :node_to_id=>to_node.id)
+          constructed_links << LinkUser.new(:node_from_id=>node.id, :node_to_id=>to_node.id)
         end
       end
     end
@@ -37,18 +37,18 @@ class User < ActiveRecord::Base
     all_links
   end
 
-  #no longer used
   def user_from_node_links(from_node, order="")
     constructed_links = []
     persisted_links = []
+    these_link_users = self.link_users
     Node.all.each do |node|
       unless node == from_node
-        this_link = self.links.where('links.node_from_id = ? AND links.node_to_id = ?', from_node.id, node.id)
+        this_link = these_link_users.where(:node_from_id => from_node.id, :node_to_id => node.id)
         #first level of sorted - peristed from unpersisted
         unless this_link.empty?
           persisted_links << this_link[0]
         else
-          constructed_links << Link.new(:node_from_id=>from_node.id, :node_to_id=>node.id)
+          constructed_links << LinkUser.new(:node_from_id=>from_node.id, :node_to_id=>node.id)
         end
       end
     end

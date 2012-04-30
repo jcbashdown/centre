@@ -21,8 +21,8 @@ class NodesController < ApplicationController
       @links_to = @user.user_from_node_links(@node)
       @links_in = @user.user_to_node_links(@node)
     else
-      @links_to = @node.construct_from_node_links
-      @links_in = @node.construct_to_node_links
+      @links_to = @global.user_from_node_links(@node)
+      @links_in = @global.user_to_node_links(@node)
     end
   end
   
