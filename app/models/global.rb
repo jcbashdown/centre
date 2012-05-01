@@ -9,4 +9,47 @@ class Global < ActiveRecord::Base
   has_many :global_node_users
 
   validates_uniqueness_of :name
+
+  def global_to_node_links(to_node, order="")
+    constructed_links = []
+    persisted_links = []
+    these_global_links = self.global_links
+    Node.all.each do |node|
+      unless node == to_node
+        this_link = these_global_links.where(:node_from_id => node.id, :node_to_id => to_node.id).order('global_link_users_count desc')[0]
+        #first level of sorted - peristed from unpersisted
+        unless this_link.blank?
+          persisted_links << this_link
+        else
+          constructed_links << GlobalLink.new(:node_from_id=>node.id, :node_to_id=>to_node.id)
+        end
+      end
+    end
+    all_links = constructed_links.concat(persisted_links)
+    #second level of sorting - title, id etc may need reverse?
+    all_links.sort!{ |a, b|  a.node_from.title <=> b.node_from.title }
+    all_links
+  end
+
+  def global_from_node_links(from_node, order="")
+    constructed_links = []
+    persisted_links = []
+    these_global_links = self.global_links
+    Node.all.each do |node|
+      unless node == from_node
+        this_link = these_global_links.where(:node_from_id => from_node.id, :node_to_id => node.id).order('global_link_users_count desc')[0]
+        #first level of sorted - peristed from unpersisted
+        unless this_link.blank?
+          persisted_links << this_link
+        else
+          constructed_links << GlobalLink.new(:node_from_id=>from_node.id, :node_to_id=>node.id)
+        end
+      end
+    end
+    all_links = constructed_links.concat(persisted_links)
+    #second level of sorting - title, id etc may need reverse?
+    all_links.sort!{ |a, b|  a.node_to.title <=> b.node_to.title }
+    all_links
+  end
+
 end

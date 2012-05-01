@@ -70,24 +70,20 @@ describe User do
         pending
       end
       it 'should return the user links for @user from @node_one and construct those not present in alphabet order as default' do
-        @user.user_from_node_links(@node_one).each do |node|
-           @user_links_out_alph_up_for_node_one.should include node.id
-        end
+        @user.user_from_node_links(@node_one)[0].id.should == @user_links_out_alph_up_for_node_one[0]
+        @user.user_from_node_links(@node_one)[1].id.should == @user_links_out_alph_up_for_node_one[1]
       end
       it 'should return the user links for @user_two from @node_one and construct those not present in alphabet order as default' do
-        @user_two.user_from_node_links(@node_one).each do |node|
-          @user2_links_out_alph_up_for_node_one.should include node.id
-        end
+        @user_two.user_from_node_links(@node_one)[0].id.should == @user2_links_out_alph_up_for_node_one[0]
+        @user_two.user_from_node_links(@node_one)[1].id.should == @user2_links_out_alph_up_for_node_one[1]
       end
       it 'should return the user links for @user from @node_two and construct those not present in alphabet order as default' do
-        @user.user_from_node_links(@node_two).each do |node|
-          @user_links_out_alph_up_for_node_two.should include node.id
-        end
+        @user.user_from_node_links(@node_two)[0].id.should == @user_links_out_alph_up_for_node_two[0]
+        @user.user_from_node_links(@node_two)[1].id.should == @user_links_out_alph_up_for_node_two[1]
       end
       it 'should return the user links for @user_two from @node_two and construct those not present in alphabet order as default' do
-        @user_two.user_from_node_links(@node_two).each do |node|
-          @user2_links_out_alph_up_for_node_two.should include node.id
-        end
+        @user_two.user_from_node_links(@node_two)[0].id.should == @user2_links_out_alph_up_for_node_two[0]
+        @user_two.user_from_node_links(@node_two)[0].id.should == @user2_links_out_alph_up_for_node_two[1]
       end
     end
     context 'links in for node' do
@@ -129,24 +125,20 @@ describe User do
                                                   @link1.id]
       end
       it 'should return the user links for @user from @node_one and construct those not present in alphabet order as default' do
-        @user.user_to_node_links(@node_one).each do |node|
-          @user_links_in_alph_up_for_node_one.should include node.id
-        end
+        @user.user_to_node_links(@node_one)[0].id.should == @user_links_in_alph_up_for_node_one[0]
+        @user.user_to_node_links(@node_one)[1].id.should == @user_links_in_alph_up_for_node_one[1]
       end
       it 'should return the user links for @user_two from @node_one and construct those not present in alphabet order as default' do
-        @user_two.user_to_node_links(@node_one).each do |node|
-          @user2_links_in_alph_up_for_node_one.should include node.id
-        end
+        @user_two.user_to_node_links(@node_one)[0].id.should == @user2_links_in_alph_up_for_node_one[0]
+        @user_two.user_to_node_links(@node_one)[1].id.should == @user2_links_in_alph_up_for_node_one[1]
       end
       it 'should return the user links for @user from @node_two and construct those not present in alphabet order as default' do
-        @user.user_to_node_links(@node_two).each do |node|
-          @user_links_in_alph_up_for_node_two.should include node.id
-        end
+        @user.user_to_node_links(@node_two)[0].id.should == @user_links_in_alph_up_for_node_two[0]
+        @user.user_to_node_links(@node_two)[1].id.should == @user_links_in_alph_up_for_node_two[1]
       end
       it 'should return the user links for @user_two from @node_two and construct those not present in alphabet order as default' do
-        @user_two.user_to_node_links(@node_two).each do |node|
-          @user2_links_in_alph_up_for_node_two.should include node.id
-        end
+        @user_two.user_to_node_links(@node_two)[0].id.should == @user2_links_in_alph_up_for_node_two[0]
+        @user_two.user_to_node_links(@node_two)[1].id.should == @user2_links_in_alph_up_for_node_two[1]
       end
     end
   end
