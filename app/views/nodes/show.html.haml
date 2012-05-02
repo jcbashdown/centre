@@ -8,9 +8,5 @@
         %br
         %p 
           = @node.body
-        %br
-        %br
-        - if @user
-          = link_to 'Edit text', edit_node_path(@node, @limit_order), :class => "load"
     .span3.right_content
       = render 'links', :nodes=>@nodes_with_links

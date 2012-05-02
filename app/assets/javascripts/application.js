@@ -9,4 +9,5 @@
 //= require jquery_ujs
 //= require links
 //= require nodes 
+//= require homepage 
 //= require bootstrap

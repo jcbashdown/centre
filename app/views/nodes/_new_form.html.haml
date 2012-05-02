@@ -8,5 +8,5 @@
   .input-append
     = f.text_field :title, :placeholder=>"Node Title", :class=>"span2 typeahead", :autocomplete => "off"
     - unless @question.name == "All"
-      = f.hidden_field "global_ids", {:value=>@question.id}
+      %input{:style => 'display:none;', :value => @question.id, :name => "question"}
     = f.submit 'Add/View', :class => 'btn'

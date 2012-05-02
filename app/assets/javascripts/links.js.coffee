@@ -27,6 +27,7 @@ $(document).ready ->
       url: url
       type: method  
       data: data_hash   
+      dataType: "html"
       error: (XMLHttpRequest, textStatus, errorThrown) ->
         $("#link_"+link_id).ajaxLoaderRemove()
         alert errorThrown    
