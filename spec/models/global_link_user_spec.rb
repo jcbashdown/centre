@@ -1,6 +1,11 @@
 require 'spec_helper'
 
 describe GlobalLinkUser do
+  context 'when global is all' do
+    it 'should create links in unclassified - do as done with node' do
+      pending
+    end
+  end
   describe 'create' do
     context 'when there is no existing glu' do
       before do

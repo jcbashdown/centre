@@ -1,4 +1,10 @@
 class Node < ActiveRecord::Base
+  searchable do
+    text :title
+    integer :id
+    double :page_rank
+    time :created_at
+  end
   has_many :global_nodes, :class_name=>'GlobalNode'
   has_many :globals, :through => :global_nodes
   has_many :global_node_users

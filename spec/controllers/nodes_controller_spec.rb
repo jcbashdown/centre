@@ -5,7 +5,7 @@ describe NodesController do
     @user = FactoryGirl.create(:user)
     controller.stub(:current_user).and_return @user
     @global = FactoryGirl.create(:global)
-    Global.stub(:find).and_return @global
+    @all_global = Global.find_by_name('All')
   end
   # This should return the minimal set of attributes required to create a valid
   # Node. As you add validations to Node, be sure to
@@ -13,14 +13,81 @@ describe NodesController do
   def valid_attributes
     {:title => 'title', :body => 'abc'}
   end
+  
+  describe 'set nodes' do
+    before do
+      controller.stub(:show)
+      controller.stub(:set_node)
+      controller.stub(:set_links)
+    end
+    context 'when the global is all' do
+      before do
+        @params = {:question => @all_global.id}
+        Global.stub(:find).and_return @all_global
+      end
+      context 'when there is a find parameter' do
+        before do
+          question_id = nil
+          @params = @params.merge({:find => 'node name'})
+          @mock_results = Node.search do
+                            fulltext 'node name'
+                            with :global_id, question_id if question_id
+                            order_by(:id, :asc)
+                            paginate(:page => 1, :per_page => 5)
+                          end
+        end
+        it 'call search on node class' do
+          @mock_results.should_receive(:results)
+          Node.should_receive(:search).and_return @mock_results
+          get :show, @params
+        end
+      end
+      context 'when there is not find parameter' do
+        before do
+          @nodes = Node.order('id desc')
+          Node.stub(:order).and_return @nodes
+        end
+        it 'should call order on node' do
+          @nodes.should_receive(:paginate)
+          Node.should_receive(:order).and_return @nodes
+          get :show, @params
+        end
+      end
+    end
+    context 'when global is not all' do
+      before do
+        @params = {:question => @global.id}
+        @nodes = @global.nodes
+        @global.stub(:nodes).and_return @nodes
+        Global.stub(:find).and_return @global
+      end
+      context 'when there is a find parameter' do
+        before do
+          @params = @params.merge({:find => 'node name'})
+          @mock_results = mock('results')
+          @mock_results.stub(:results)
+        end
+        it 'call search on GlobalNode class' do
+          GlobalNode.should_receive(:search).and_return @mock_results
+          get :show, @params
+        end
+      end
+      context 'when there is not find parameter' do
+        it 'should call global nodes on the global' do
+          @global.should_receive(:nodes).and_return @nodes
+          get :show, @params
+        end
+      end
+    end
+  end
 
   describe "GET index" do
     context 'when there is no search term' do
       it "assigns all nodes as @global_nodes for the current global" do
         @gnu1 = GlobalNodeUser.create!(:user=>@user, :global=>@global, :title => 'Aardvark Anecdote Awkward About', :body => '')
-        global_node = @gnu1.global_node
+        node = @gnu1.node
         get :index, :question => @global.id
-        assigns(:global_nodes).should eq([global_node])
+        assigns(:nodes).should eq([node])
       end
       it 'should assign node' do
         get :index, :question => @global.id
@@ -38,7 +105,7 @@ describe NodesController do
       end
       it "assigns all nodes as @global_nodes for the current global" do
         get :index, :question => @global.id, :find => @term
-        assigns(:global_nodes).should eq([@gnu1.global_node, @gnu2.global_node])
+        assigns(:nodes).should eq([@gnu1.global_node, @gnu2.global_node])
       end
 
     end
@@ -47,7 +114,7 @@ describe NodesController do
   describe "GET show" do
     before do
       global_node_user = GlobalNodeUser.create!({:user=>@user, :global=>@global}.merge(valid_attributes))
-      @global_node_one = global_node_user.global_node 
+      @node_one = global_node_user.node 
       @node_one = global_node_user.node 
       @params = {:id=>@node_one.id, :question => @global.id}
       controller.stub(:set_links)
@@ -59,7 +126,7 @@ describe NodesController do
     end
     it "assigns all nodes as @global_nodes for the current global" do
       get :show, @params
-      assigns(:global_nodes).should eq([@global_node_one])
+      assigns(:nodes).should eq([@node_one])
     end
     context 'when node is node one' do
       it 'should call set_node' do
@@ -78,8 +145,10 @@ describe NodesController do
         before do
           controller.unstub!(:set_links)
         end
-        it 'should set the links for the gnu or potential gnu' do
-          pending
+        it 'should set user links' do
+          @user.should_receive(:user_from_node_links)
+          @user.should_receive(:user_to_node_links)
+          get :show, @params
         end
       end
     end
@@ -92,61 +161,8 @@ describe NodesController do
         @term = 'Aardvark'
       end
       it "assigns all nodes as @global_nodes for the current global" do
-        get :show, :question => @global.id, :find => @term
-        assigns(:global_nodes).should eq([@gnu1.global_node, @gnu2.global_node])
-      end
-    end
-  end
-
-  describe "GET new" do
-    before do
-      global_node_user = GlobalNodeUser.create!({:user=>@user, :global=>@global}.merge(valid_attributes))
-      @global_node_one = global_node_user.global_node 
-    end
-    it "assigns all nodes as @global_nodes for the current global" do
-      get :new, :question => @global.id
-      assigns(:global_nodes).should eq([@global_node_one])
-    end
-    context 'when no node' do
-      before do
-        @node = Node.new
-        Node.stub(:new).and_return @node
-      end
-      it 'should call set_node' do
-        controller.should_receive(:set_node)
-        get :new
-      end
-      it 'should assign node' do
-        get :new
-        assigns(:node).should == @node
-      end
-    end
-  end
-
-  describe "GET edit" do
-    before do
-      global_node_user = GlobalNodeUser.create!({:user=>@user, :global=>@global}.merge(valid_attributes))
-      @global_node_one = global_node_user.global_node 
-      @node_one = global_node_user.node 
-      @params = {:id=>@node_one.id}
-      controller.stub(:set_links)
-    end
-    it "assigns all nodes as @global_nodes for the current global" do
-      get :edit, :question => @global.id
-      assigns(:global_nodes).should eq([@global_node_one])
-    end
-    context 'when node is node one' do
-      it 'should call set_node' do
-        controller.should_receive(:set_node)
-        get :edit, @params
-      end
-      it 'should call set_node' do
-        get :edit, @params
-        assigns(:node).should == @node_one
-      end
-      it 'should set user links' do
-        controller.should_receive(:set_links)
-        get :edit, @params
+        get :show, :question => @global.id, :find => @term, :id => @gnu1.node.id
+        assigns(:nodes).should eq([@gnu1.global_node, @gnu2.global_node])
       end
     end
   end
@@ -187,7 +203,7 @@ describe NodesController do
       it "redirects to the created node" do
         post :create, :node => valid_attributes, :question => @global.id
         node = Node.last
-        response.should redirect_to nodes_path(:order => 'older', :question => @global.id)
+        response.should redirect_to node_path(node, :order => 'older', :question => @global.id)
       end
     end
 

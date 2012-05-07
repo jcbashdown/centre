@@ -7,6 +7,14 @@ describe GlobalNodeUser do
     @global = FactoryGirl.create(:global)
     @global2 = FactoryGirl.create(:global, :name => 'Aaa')
   end
+
+  describe 'gnus created in all global' do
+
+    it 'should set the global to unclassified' do
+      pending
+    end
+
+  end
   describe 'creation' do
     describe 'creation with no existing inclusion in gns gnus' do
       it 'should create 2 globals_nodes' do

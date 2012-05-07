@@ -1,9 +1,10 @@
 $(document).ready ->
+  question = $('#global_id').text()
   $('.typeahead').typeahead(
     source: (typeahead, query) ->
       url = "/nodes.js"
       method = "GET"
-      data_hash = {"find":query}
+      data_hash = {"find":query, "question":question}
       $.ajax(
         url: url
         type: method  
@@ -15,7 +16,7 @@ $(document).ready ->
           $('#current_nodes').html(data)
           url = "/nodes.json"
           method = "GET"
-          data_hash = {"find":query}
+          data_hash = {"find":query, "question":question}
           $.ajax(
             url: url
             type: method  

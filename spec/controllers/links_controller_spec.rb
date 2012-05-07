@@ -39,7 +39,7 @@ describe LinksController do
     context 'when ajax request' do
       context 'with valid params' do
         before do
-          @params = {"link"=>{"node_from_id"=>@node_one.id.to_s, "value"=>-1.to_s, "node_to_id"=>@node_two.id.to_s}, "id" =>@glu.id, "question" => @global.id}
+          @params = {"link"=>{"node_from_id"=>@node_one.id.to_s, "value"=>-1.to_s, "node_to_id"=>@node_two.id.to_s}, "id" =>@glu.link.id, "question" => @global.id}
           @mock_glu = mock('global_link_user')
           @mock_glu_2 = mock('global_link_user')
           @mock_link = mock('link')
@@ -48,7 +48,7 @@ describe LinksController do
           @mock_glu.stub(:destroy).and_return true
         end
         it 'should save the glu' do
-          GlobalLinkUser.stub(:find).and_return @mock_glu
+          GlobalLinkUser.stub(:where).and_return [@mock_glu]
           @mock_glu.should_receive(:destroy)
           xhr :put, :update, @params
         end
@@ -89,13 +89,13 @@ describe LinksController do
       end
       context 'when destroy or save returns false for glu' do
         before do
-          @params = {"link"=>{"node_from_id"=>@node_one.id.to_s, "value"=>-1.to_s, "node_to_id"=>@node_two.id.to_s}, "id" =>@glu.id}
+          @params = {"link"=>{"node_from_id"=>@node_one.id.to_s, "value"=>-1.to_s, "node_to_id"=>@node_two.id.to_s}, "id" =>@glu.link.id, :question => @global.id}
           @new_link_params = {"link"=>{"node_from_id"=>@node_one.id.to_s, "node_to_id"=>@node_two.id.to_s}}
           GlobalLinkUser.stub(:create).and_return false
         end
         context 'when glu destroyed but nothing new created' do
           it 'initialise a new link with the correct parameters' do
-            GlobalLinkUser.should_receive(:new).with(@new_link_params["link"])
+            Link.should_receive(:new).with(@new_link_params["link"])
             xhr :put, :update, @params
           end
         end
@@ -160,7 +160,8 @@ describe LinksController do
           @mock_glu.stub(:link).and_return @mock_link
         end
         it 'initialise a new link with the correct parameters' do
-          GlobalLinkUser.should_receive(:new).twice.and_return @mock_glu
+          GlobalLinkUser.should_receive(:new).and_return @mock_glu
+          Link.should_receive(:new).and_return @mock_link
           xhr :post, :create, @params
         end
         it 'should render the link template' do
@@ -183,7 +184,7 @@ describe LinksController do
       @glu = GlobalLinkUser.create(@params_one["link"].merge(:global => @global, :user => @user))
       @user_two = FactoryGirl.create(:user, :email => "user2@test.com")
       @gluser2 = GlobalLinkUser.create!(@params_one["link"].merge(:global => @global, :user => @user_two))
-      @params_one = {"link"=>{"node_from_id"=>@node_one.id.to_s, "value"=>1.to_s, "node_to_id"=>@node_two.id.to_s}, :id => @glu.id}
+      @params_one = {"link"=>{"node_from_id"=>@node_one.id.to_s, "value"=>1.to_s, "node_to_id"=>@node_two.id.to_s}, :id => @glu.link.id, :question => @global.id}
       @glu.link.should == @gluser2.link
     end
     #update will destroy and then create as too much logic for an after save if we check if we need to to destroy global links etc.
@@ -198,7 +199,7 @@ describe LinksController do
           @mock_glu.stub(:destroy).and_return true
         end
         it 'should save the glu' do
-          GlobalLinkUser.stub(:find).and_return @mock_glu
+          GlobalLinkUser.stub(:where).and_return [@mock_glu]
           @mock_glu.should_receive(:destroy)
           xhr :put, :destroy, @params_one
         end
@@ -219,7 +220,7 @@ describe LinksController do
         it 'should assign the correct link' do
           @new_link_params = {"link"=>{"node_from_id"=>@node_one.id.to_s, "node_to_id"=>@node_two.id.to_s}}
           new_link = GlobalLinkUser.new(@new_link_params["link"])
-          GlobalLinkUser.should_receive(:new).with(@new_link_params["link"])
+          Link.should_receive(:new).with(@new_link_params["link"]).and_return new_link
           xhr :put, :destroy, @params_one
         end
       end

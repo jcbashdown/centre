@@ -5,26 +5,39 @@ describe User do
     @user = FactoryGirl.create(:user)
     @global = FactoryGirl.create(:global)
   end
+
   describe 'set_user_links' do
+    it 'should get all nodes when global is all and get link values from user from' do
+      pending
+    end
+    it 'should get all nodes when global is all and get link values from user to' do
+      pending
+    end
     context 'when there is a user' do
       before do
         @user_two = FactoryGirl.create(:user, :email=>'test@user.com', :password=>'123456AA')
-        @node_one = GlobalNodeUser.create(:global => @global, :user => @user, :title=>'aone1').node
-        @node_two = GlobalNodeUser.create(:global => @global, :user => @user, :title=>'ctwo2').node
-        @node_three = GlobalNodeUser.create(:global => @global, :user => @user, :title=>'bthree3').node
-        @link1=GlobalLinkUser.create(:user => @user, :global => @global, :node_from=> @node_one, :value=>1, :node_to=>@node_two).link_user
-        @link1u2=LinkUser.new(:node_from=> @node_one, :node_to=>@node_two)
+        @gnu_one = GlobalNodeUser.create(:global => @global, :user => @user, :title=>'aone1')
+        @node_one = @gnu_one.node
+        @global_node_one = @gnu_one.global_node
+        @gnu_two = GlobalNodeUser.create(:global => @global, :user => @user, :title=>'ctwo2')
+        @node_two = @gnu_two.node
+        @global_node_two = @gnu_two.global_node
+        @gnu_three = GlobalNodeUser.create(:global => @global, :user => @user, :title=>'bthree3')
+        @node_three = @gnu_three.node
+        @global_node_three = @gnu_three.global_node
+        @link1=GlobalLinkUser.create(:user => @user, :global => @global, :node_from=> @node_one, :value=>1, :node_to=>@node_two).link
+        @link1u2=Link.new(:node_from=> @node_one, :node_to=>@node_two)
         #node two activity is one
-        @link2=GlobalLinkUser.create(:user => @user, :global => @global, :node_from=> @node_one, :value=>1, :node_to=>@node_three).link_user
-        @link2u2=GlobalLinkUser.create(:user => @user_two, :global => @global, :node_from=> @node_one, :value=>1, :node_to=>@node_three).link_user
+        @link2=GlobalLinkUser.create(:user => @user, :global => @global, :node_from=> @node_one, :value=>1, :node_to=>@node_three).link
+        @link2u2=GlobalLinkUser.create(:user => @user_two, :global => @global, :node_from=> @node_one, :value=>1, :node_to=>@node_three).link
         #node three activity is two
-        @link3=GlobalLinkUser.create(:user => @user, :global => @global, :node_from=> @node_two, :value=>1, :node_to=>@node_one).link_user
-        @link3u2=LinkUser.new(:node_from=> @node_two, :node_to=>@node_one)
+        @link3=GlobalLinkUser.create(:user => @user, :global => @global, :node_from=> @node_two, :value=>1, :node_to=>@node_one).link
+        @link3u2=Link.new(:node_from=> @node_two, :node_to=>@node_one)
         #node one activity is one
-        @link4=LinkUser.new(:node_from=> @node_two, :node_to=>@node_three)
-        @link5=LinkUser.new(:node_from=> @node_three, :node_to=>@node_one)
-        @link6=GlobalLinkUser.create(:user => @user, :global => @global, :node_from=> @node_three, :value=>-1, :node_to=>@node_two).link_user
-        @link6u2=GlobalLinkUser.create(:user => @user_two, :global => @global, :node_from=> @node_three, :value=>-1, :node_to=>@node_two).link_user
+        @link4=Link.new(:node_from=> @node_two, :node_to=>@node_three)
+        @link5=Link.new(:node_from=> @node_three, :node_to=>@node_one)
+        @link6=GlobalLinkUser.create(:user => @user, :global => @global, :node_from=> @node_three, :value=>-1, :node_to=>@node_two).link
+        @link6u2=GlobalLinkUser.create(:user => @user_two, :global => @global, :node_from=> @node_three, :value=>-1, :node_to=>@node_two).link
         #node two activity is three
         #for user = @user
         @user_links_out_alph_up_for_node_one = [@link2.id,
@@ -66,45 +79,51 @@ describe User do
                                                   @link4.id]
       end
       #set user links can happen here but method it calls - specs should be moved to user
-      it 'should test order' do
+      it 'should test order for from' do
         pending
       end
       it 'should return the user links for @user from @node_one and construct those not present in alphabet order as default' do
-        @user.user_from_node_links(@node_one)[0].id.should == @user_links_out_alph_up_for_node_one[0]
-        @user.user_from_node_links(@node_one)[1].id.should == @user_links_out_alph_up_for_node_one[1]
+        @user.user_from_node_links(@node_one, @global)[0].id.should == @user_links_out_alph_up_for_node_one[0]
+        @user.user_from_node_links(@node_one, @global)[1].id.should == @user_links_out_alph_up_for_node_one[1]
       end
       it 'should return the user links for @user_two from @node_one and construct those not present in alphabet order as default' do
-        @user_two.user_from_node_links(@node_one)[0].id.should == @user2_links_out_alph_up_for_node_one[0]
-        @user_two.user_from_node_links(@node_one)[1].id.should == @user2_links_out_alph_up_for_node_one[1]
+        @user_two.user_from_node_links(@node_one, @global)[0].id.should == @user2_links_out_alph_up_for_node_one[0]
+        @user_two.user_from_node_links(@node_one, @global)[1].id.should == @user2_links_out_alph_up_for_node_one[1]
       end
       it 'should return the user links for @user from @node_two and construct those not present in alphabet order as default' do
-        @user.user_from_node_links(@node_two)[0].id.should == @user_links_out_alph_up_for_node_two[0]
-        @user.user_from_node_links(@node_two)[1].id.should == @user_links_out_alph_up_for_node_two[1]
+        @user.user_from_node_links(@node_two, @global)[0].id.should == @user_links_out_alph_up_for_node_two[0]
+        @user.user_from_node_links(@node_two, @global)[1].id.should == @user_links_out_alph_up_for_node_two[1]
       end
       it 'should return the user links for @user_two from @node_two and construct those not present in alphabet order as default' do
-        @user_two.user_from_node_links(@node_two)[0].id.should == @user2_links_out_alph_up_for_node_two[0]
-        @user_two.user_from_node_links(@node_two)[0].id.should == @user2_links_out_alph_up_for_node_two[1]
+        @user_two.user_from_node_links(@node_two, @global)[0].id.should == @user2_links_out_alph_up_for_node_two[0]
+        @user_two.user_from_node_links(@node_two, @global)[0].id.should == @user2_links_out_alph_up_for_node_two[1]
       end
     end
     context 'links in for node' do
       before do
         @user_two = FactoryGirl.create(:user, :email=>'test@user.com', :password=>'123456AA')
-        @node_one = GlobalNodeUser.create(:global => @global, :user => @user, :title=>'aone1').node
-        @node_two = GlobalNodeUser.create(:global => @global, :user => @user, :title=>'ctwo2').node
-        @node_three = GlobalNodeUser.create(:global => @global, :user => @user, :title=>'bthree3').node
-        @link1=GlobalLinkUser.create(:user => @user, :global => @global, :node_from=> @node_one, :value=>1, :node_to=>@node_two).link_user
-        @link1u2=LinkUser.new(:node_from=> @node_one, :node_to=>@node_two)
+        @gnu_one = GlobalNodeUser.create(:global => @global, :user => @user, :title=>'aone1')
+        @node_one = @gnu_one.node
+        @global_node_one = @gnu_one.global_node
+        @gnu_two = GlobalNodeUser.create(:global => @global, :user => @user, :title=>'ctwo2')
+        @node_two = @gnu_two.node
+        @global_node_two = @gnu_two.global_node
+        @gnu_three = GlobalNodeUser.create(:global => @global, :user => @user, :title=>'bthree3')
+        @node_three = @gnu_three.node
+        @global_node_three = @gnu_three.global_node
+        @link1=GlobalLinkUser.create(:user => @user, :global => @global, :node_from=> @node_one, :value=>1, :node_to=>@node_two).link
+        @link1u2=Link.new(:node_from=> @node_one, :node_to=>@node_two)
         #node two activity is one
-        @link2=GlobalLinkUser.create(:user => @user, :global => @global, :node_from=> @node_one, :value=>1, :node_to=>@node_three).link_user
-        @link2u2=GlobalLinkUser.create(:user => @user_two, :global => @global, :node_from=> @node_one, :value=>1, :node_to=>@node_three).link_user
+        @link2=GlobalLinkUser.create(:user => @user, :global => @global, :node_from=> @node_one, :value=>1, :node_to=>@node_three).link
+        @link2u2=GlobalLinkUser.create(:user => @user_two, :global => @global, :node_from=> @node_one, :value=>1, :node_to=>@node_three).link
         #node three activity is two
-        @link3=GlobalLinkUser.create(:user => @user, :global => @global, :node_from=> @node_two, :value=>1, :node_to=>@node_one).link_user
-        @link3u2=LinkUser.new(:node_from=> @node_two, :node_to=>@node_one)
+        @link3=GlobalLinkUser.create(:user => @user, :global => @global, :node_from=> @node_two, :value=>1, :node_to=>@node_one).link
+        @link3u2=Link.new(:node_from=> @node_two, :node_to=>@node_one)
         #node one activity is one
-        @link4=LinkUser.new(:node_from=> @node_two, :node_to=>@node_three)
-        @link5=LinkUser.new(:node_from=> @node_three, :node_to=>@node_one)
-        @link6=GlobalLinkUser.create(:user => @user, :global => @global, :node_from=> @node_three, :value=>-1, :node_to=>@node_two).link_user
-        @link6u2=GlobalLinkUser.create(:user => @user_two, :global => @global, :node_from=> @node_three, :value=>-1, :node_to=>@node_two).link_user
+        @link4=Link.new(:node_from=> @node_two, :node_to=>@node_three)
+        @link5=Link.new(:node_from=> @node_three, :node_to=>@node_one)
+        @link6=GlobalLinkUser.create(:user => @user, :global => @global, :node_from=> @node_three, :value=>-1, :node_to=>@node_two).link
+        @link6u2=GlobalLinkUser.create(:user => @user_two, :global => @global, :node_from=> @node_three, :value=>-1, :node_to=>@node_two).link
         #node two activity is three
         #for user = @user
         @user_links_in_alph_up_for_node_one = [@link5.id,
@@ -124,21 +143,24 @@ describe User do
         @user2_links_in_alph_down_for_node_two = [@link6u2.id,
                                                   @link1.id]
       end
+      it 'should test order for to' do
+        pending
+      end
       it 'should return the user links for @user from @node_one and construct those not present in alphabet order as default' do
-        @user.user_to_node_links(@node_one)[0].id.should == @user_links_in_alph_up_for_node_one[0]
-        @user.user_to_node_links(@node_one)[1].id.should == @user_links_in_alph_up_for_node_one[1]
+        @user.user_to_node_links(@node_one, @global)[0].id.should == @user_links_in_alph_up_for_node_one[0]
+        @user.user_to_node_links(@node_one, @global)[1].id.should == @user_links_in_alph_up_for_node_one[1]
       end
       it 'should return the user links for @user_two from @node_one and construct those not present in alphabet order as default' do
-        @user_two.user_to_node_links(@node_one)[0].id.should == @user2_links_in_alph_up_for_node_one[0]
-        @user_two.user_to_node_links(@node_one)[1].id.should == @user2_links_in_alph_up_for_node_one[1]
+        @user_two.user_to_node_links(@node_one, @global)[0].id.should == @user2_links_in_alph_up_for_node_one[0]
+        @user_two.user_to_node_links(@node_one, @global)[1].id.should == @user2_links_in_alph_up_for_node_one[1]
       end
       it 'should return the user links for @user from @node_two and construct those not present in alphabet order as default' do
-        @user.user_to_node_links(@node_two)[0].id.should == @user_links_in_alph_up_for_node_two[0]
-        @user.user_to_node_links(@node_two)[1].id.should == @user_links_in_alph_up_for_node_two[1]
+        @user.user_to_node_links(@node_two, @global)[0].id.should == @user_links_in_alph_up_for_node_two[0]
+        @user.user_to_node_links(@node_two, @global)[1].id.should == @user_links_in_alph_up_for_node_two[1]
       end
       it 'should return the user links for @user_two from @node_two and construct those not present in alphabet order as default' do
-        @user_two.user_to_node_links(@node_two)[0].id.should == @user2_links_in_alph_up_for_node_two[0]
-        @user_two.user_to_node_links(@node_two)[1].id.should == @user2_links_in_alph_up_for_node_two[1]
+        @user_two.user_to_node_links(@node_two, @global)[0].id.should == @user2_links_in_alph_up_for_node_two[0]
+        @user_two.user_to_node_links(@node_two, @global)[1].id.should == @user2_links_in_alph_up_for_node_two[1]
       end
     end
   end

@@ -16,18 +16,24 @@ class User < ActiveRecord::Base
   # Setup accessible (or protected) attributes for your model
   attr_accessible :name, :email, :password, :password_confirmation, :remember_me
   
-  def user_to_node_links(to_node, order="")
+  def user_to_node_links(to_node, global, order="")
+    if global.name == 'All'
+      these_nodes = Node.all
+    else
+      these_nodes = global.nodes
+    end
     constructed_links = []
     persisted_links = []
-    these_link_users = self.link_users
-    Node.all.each do |node|
-      unless node == to_node
-        this_link = these_link_users.where(:node_from_id => node.id, :node_to_id => to_node.id)
+    these_link_users = self.links
+    these_nodes.each do |node|
+      from_node = node
+      unless from_node == to_node
+        this_link = these_link_users.where(:node_from_id => from_node.id, :node_to_id => to_node.id)
         #first level of sorted - peristed from unpersisted
         unless this_link.empty?
           persisted_links << this_link[0]
         else
-          constructed_links << LinkUser.new(:node_from_id=>node.id, :node_to_id=>to_node.id)
+          constructed_links << Link.new(:node_from_id=> from_node.id, :node_to_id => to_node.id)
         end
       end
     end
@@ -37,18 +43,24 @@ class User < ActiveRecord::Base
     all_links
   end
 
-  def user_from_node_links(from_node, order="")
+  def user_from_node_links(from_node, global, order="")
+    if global.name == 'All'
+      these_nodes = Node.all
+    else
+      these_nodes = global.nodes
+    end
     constructed_links = []
     persisted_links = []
-    these_link_users = self.link_users
-    Node.all.each do |node|
-      unless node == from_node
-        this_link = these_link_users.where(:node_from_id => from_node.id, :node_to_id => node.id)
+    these_link_users = self.links
+    these_nodes.each do |node|
+      to_node = node
+      unless to_node == from_node
+        this_link = these_link_users.where(:node_from_id => from_node.id, :node_to_id => to_node.id)
         #first level of sorted - peristed from unpersisted
         unless this_link.empty?
           persisted_links << this_link[0]
         else
-          constructed_links << LinkUser.new(:node_from_id=>from_node.id, :node_to_id=>node.id)
+          constructed_links << Link.new(:node_from_id=>from_node.id, :node_to_id=>to_node.id)
         end
       end
     end

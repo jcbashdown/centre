@@ -3,6 +3,7 @@ class LinksController < ApplicationController
   before_filter :set_node_limit
   before_filter :set_node_order
   before_filter :set_node_limit_order
+  before_filter :set_global, :only => [:create, :destroy, :update]
 
   def create
     @glu = GlobalLinkUser.new(params[:link].merge(:global => @question, :user => @user))
@@ -19,12 +20,13 @@ class LinksController < ApplicationController
   end
 
   def update
-    @glu = GlobalLinkUser.find(params[:id])
+    @link = Link.find(params[:id])
+    @glu = GlobalLinkUser.where(:global_id => @question.id, :user_id => @user.id, :link_id => @link.id)[0]
     respond_to do |format|
       if @glu.destroy && (@glu = GlobalLinkUser.create(params[:link].merge(:global => @question, :user => @user)))
         format.js { render :partial => 'a_link', :locals=>{:link=> @glu.link, :type=>params[:type]} }
       else
-        unless @glu
+        unless @glu && @glu.persisted?
           link_params = params[:link]
           link_params.delete(:value)
           link = Link.new(link_params)
@@ -37,7 +39,8 @@ class LinksController < ApplicationController
   end
 
   def destroy
-    @glu = GlobalLinkUser.find(params[:id])
+    @link = Link.find(params[:id])
+    @glu = GlobalLinkUser.where(:global_id => @question.id, :user_id => @user.id, :link_id => @link.id)[0]
     respond_to do |format|
       if @glu.destroy
         link_params = params[:link]
@@ -49,4 +52,11 @@ class LinksController < ApplicationController
       end
     end
   end
+  
+  protected
+
+  def set_global
+    @global = (@question.name == 'All') ? Global.find_by_name('Unclassified') : @question
+  end
+
 end

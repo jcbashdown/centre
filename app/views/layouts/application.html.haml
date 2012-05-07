@@ -19,9 +19,10 @@
       #main{:role => "main"}
         .row
           .span3
+            #global_id.hidden= @question.id
             -if @user
               = render 'new_form'
             #current_nodes
-              =render :partial => 'current_nodes', :locals => {:global_nodes => @global_nodes}
+              =render :partial => 'current_nodes', :locals => {:nodes => @nodes}
           =yield 
       %footer
