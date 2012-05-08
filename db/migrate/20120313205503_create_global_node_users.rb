@@ -13,9 +13,9 @@ class CreateGlobalNodeUsers < ActiveRecord::Migration
       t.integer :equivalents_count, :default=>0, :null => false
       t.integer :upvotes_count, :default=>0, :null => false
       t.integer :downvotes_count, :default=>0, :null => false
-      t.boolean :ignore, :boolean, :default=>true
-      t.boolean :is_conclusion, :boolean, :default=>false
-      t.float :page_rank
+      t.boolean :ignore, :default=>true
+      t.boolean :is_conclusion, :default=>false
+      t.float :page_rank, :default => 0.0
 
       t.timestamps
     end

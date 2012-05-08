@@ -14,18 +14,22 @@ class Global < ActiveRecord::Base
     if self.name == 'All'
       these_nodes = Node.all
       these_global_links = Link
+      #only get most voted for link all over with each user only getting one vote
+      this_order = 'users_count desc'
     else
       these_nodes = self.nodes
-      these_global_links = self.links
+      these_global_links = self.global_links
+      #only get most voted for link in global
+      this_order = 'global_link_users_count desc'
     end
     constructed_links = []
     persisted_links = []
     these_nodes.each do |node|
       unless node == to_node
-        this_link = these_global_links.where(:node_from_id => node.id, :node_to_id => to_node.id).order('global_link_users_count desc')[0]
+        this_link = these_global_links.where(:node_from_id => node.id, :node_to_id => to_node.id).order(this_order)[0]
         #first level of sorted - peristed from unpersisted
         unless this_link.blank?
-          persisted_links << this_link
+          persisted_links << ((this_link.is_a?(GlobalLink)) ? this_link.link : this_link)
         else
           constructed_links << Link.new(:node_from_id=>node.id, :node_to_id=>to_node.id)
         end
@@ -41,18 +45,22 @@ class Global < ActiveRecord::Base
     if self.name == 'All'
       these_nodes = Node.all
       these_global_links = Link
+      #only get most voted for link all over with each user only getting one vote
+      this_order = 'users_count desc'
     else
       these_nodes = self.nodes
-      these_global_links = self.links
+      these_global_links = self.global_links
+      #only get most voted for link in global
+      this_order = 'global_link_users_count desc'
     end
     constructed_links = []
     persisted_links = []
     these_nodes.each do |node|
       unless node == from_node
-        this_link = these_global_links.where(:node_from_id => from_node.id, :node_to_id => node.id).order('global_link_users_count desc')[0]
+        this_link = these_global_links.where(:node_from_id => from_node.id, :node_to_id => node.id).order(this_order)[0]
         #first level of sorted - peristed from unpersisted
         unless this_link.blank?
-          persisted_links << this_link
+          persisted_links << ((this_link.is_a?(GlobalLink)) ? this_link.link : this_link)
         else
           constructed_links << Link.new(:node_from_id=>from_node.id, :node_to_id=>node.id)
         end
