@@ -11,10 +11,9 @@ class GlobalNodeUser < ActiveRecord::Base
   has_many :global_node_user_tos, :through => :global_link_user_tos, :class_name => "GlobalNodeUser", :foreign_key => "global_node_user_to_id", :source=>:global_node_user_to
   has_many :global_node_user_froms, :through => :global_link_user_ins, :class_name => "GlobalNodeUser", :foreign_key => "global_node_user_from_id", :source=>:global_node_user_from
 
-  after_save :update_xml, :update_globals_user_xml
   after_create :set_or_create_node, :set_or_create_global_node, :set_or_create_node_user
   before_destroy :delete_links_if_allowed
-  after_destroy :update_xml, :delete_node_user_if_allowed, :delete_global_node_if_allowed, :delete_node_if_allowed
+  after_destroy :delete_node_user_if_allowed, :delete_global_node_if_allowed, :delete_node_if_allowed
 
   validates_uniqueness_of :node_id, :scope => [:global_id, :user_id]
   validates_uniqueness_of :title, :scope => [:global_id, :user_id]
@@ -70,11 +69,4 @@ class GlobalNodeUser < ActiveRecord::Base
     end
   end
 
-  def update_xml
-
-  end
-
-  def update_globals_user_xml
-
-  end
 end

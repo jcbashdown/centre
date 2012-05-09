@@ -273,7 +273,7 @@ describe NodesController do
   describe "DELETE destroy" do
     before do
       @node = Node.create! valid_attributes, :question => @global.id
-      @gnu = GlobalNodeUser.create(:user=>@user, :node=>@node, :global=>@global)
+      @gnu = GlobalNodeUser.create(:user=>@user, :node=>@node, :global=>@global)   
       GlobalNodeUser.stub(:where).and_return [@gnu]
       Node.stub(:find).and_return @node
     end
@@ -285,8 +285,8 @@ describe NodesController do
 
     it "redirects to the nodes list" do
       @gnu.stub(:destroy)
-      delete :destroy, :id => @node.id
-      response.should redirect_to("/")
+      delete :destroy, :id => @node.id, :question => @global.id
+      response.should redirect_to nodes_path(:order => 'older', :question => @global.id)
     end
   end
 
