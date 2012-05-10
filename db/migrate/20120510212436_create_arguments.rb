@@ -3,7 +3,8 @@ class CreateArguments < ActiveRecord::Migration
     create_table :arguments do |t|
       t.text :content
       t.integer :subject_id
-      t.integer :subject_type
+      t.string :subject_type
+      t.string :type
 
       t.timestamps
     end

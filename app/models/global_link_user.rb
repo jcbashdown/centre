@@ -17,7 +17,7 @@ class GlobalLinkUser < ActiveRecord::Base
   #validates :node_from, :presence => true
   #validates :node_to, :presence => true
   #after_save :update_caches
-  after_create :set_or_create_link, :set_or_create_global_link, :set_or_create_link_user, :set_or_create_global_node_user_and_node_models, :update_caches#update xml
+  after_create :set_or_create_link, :set_or_create_global_link, :set_or_create_link_user, :set_or_create_global_node_user_and_node_models, :update_caches, :update_node_to_xml
   after_destroy :delete_link_if_allowed, :delete_global_link_if_allowed, :delete_link_user_if_allowed, :update_caches#update xml
 
   validates_uniqueness_of :user_id, :scope => [:link_id, :global_id]
@@ -148,6 +148,10 @@ class GlobalLinkUser < ActiveRecord::Base
         this_nu_to.update_attributes!(vote_type => this_value) 
       end
     end
+  end
+
+  def update_node_to_xml
+
   end
 
 end
