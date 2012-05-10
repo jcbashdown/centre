@@ -151,7 +151,24 @@ class GlobalLinkUser < ActiveRecord::Base
   end
 
   def update_node_to_xml
+=begin
+      if the vote is positive
+      then update positive node arg
+      set to xml array of immediate sub nodes node to and node from args
+      delete any xml blocks <></> with this nodes id
+      if neg
+      update neg node arg
 
+      AFTER ALL THIS
+
+      update node args of any nodes this links to
+      they will do above
+      and update their parents
+      
+      AFTER ALL THIS 
+
+      if is conclusion then do whole arg update with this conclusion block (reset to this node tos new from and to args
+=end
   end
 
 end
