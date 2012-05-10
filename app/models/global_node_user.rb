@@ -10,10 +10,11 @@ class GlobalNodeUser < ActiveRecord::Base
 
   has_many :global_node_user_tos, :through => :global_link_user_tos, :class_name => "GlobalNodeUser", :foreign_key => "global_node_user_to_id", :source=>:global_node_user_to
   has_many :global_node_user_froms, :through => :global_link_user_ins, :class_name => "GlobalNodeUser", :foreign_key => "global_node_user_from_id", :source=>:global_node_user_from
+  has_one :argument, :as => :subject, :foreign_key => 'subject_id'
 
-  after_create :set_or_create_node, :set_or_create_global_node, :set_or_create_node_user
+  after_create :create_argument, :set_or_create_node, :set_or_create_global_node, :set_or_create_node_user
   before_destroy :delete_links_if_allowed
-  after_destroy :delete_node_user_if_allowed, :delete_global_node_if_allowed, :delete_node_if_allowed
+  after_destroy :delete_node_user_if_allowed, :delete_global_node_if_allowed, :delete_node_if_allowed, :destroy_argument
 
   validates_uniqueness_of :node_id, :scope => [:global_id, :user_id]
   validates_uniqueness_of :title, :scope => [:global_id, :user_id]
@@ -24,6 +25,14 @@ class GlobalNodeUser < ActiveRecord::Base
   end
   
   protected
+  def create_argument
+    Argument.create(:subject_type => 'GlobalNodeUser', :subject_id => self.id)
+  end
+
+  def destroy_argument
+    self.argument.destroy
+  end
+
   def set_or_create_node
     n = Node.where(:title => self.title, :body => self.body)[0] || Node.create!(:title => self.title, :body =>self.body)
     self.node = n

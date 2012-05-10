@@ -1,7 +1,6 @@
 class CreateGlobalNodes < ActiveRecord::Migration
   def change
     create_table :global_nodes do |t|
-      t.text :node_xml
       t.references :global
       t.references :node
       t.text :title

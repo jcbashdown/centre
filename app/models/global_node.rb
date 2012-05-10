@@ -10,19 +10,22 @@ class GlobalNode < ActiveRecord::Base
   belongs_to :node
   has_many :global_node_users
 
+  has_one :argument, :as => :subject, :foreign_key => 'subject_id'
+
   validates :node, :presence => true
   validates :title, :presence => true
 
   validates_uniqueness_of :node_id, :scope => [:global_id]
 
-  before_save :update_xml, :update_global_xml
-  before_destroy :update_global_xml
+  after_create :create_argument
+  after_create :destroy_argument
 
-  def update_xml
-
+  protected
+  def create_argument
+    Argument.create(:subject_type => 'GlobalNode', :subject_id => self.id)
   end
 
-  def update_global_xml
-
+  def destroy_argument
+    self.argument.destroy
   end
 end
