@@ -151,6 +151,11 @@ class GlobalLinkUser < ActiveRecord::Base
   end
 
   def update_node_to_xml
+    if self.value == 1
+      
+    elsif self.value == -1
+
+    end
 =begin
       if the vote is positive
       then update positive node arg

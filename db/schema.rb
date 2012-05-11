@@ -16,7 +16,8 @@ ActiveRecord::Schema.define(:version => 20120510212436) do
   create_table "arguments", :force => true do |t|
     t.text     "content"
     t.integer  "subject_id"
-    t.integer  "subject_type"
+    t.string   "subject_type"
+    t.string   "type"
     t.datetime "created_at",   :null => false
     t.datetime "updated_at",   :null => false
   end
