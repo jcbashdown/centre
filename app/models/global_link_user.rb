@@ -151,19 +151,26 @@ class GlobalLinkUser < ActiveRecord::Base
   end
 
   def update_node_to_xml
+    update_global_node_user_to_xml
+    update_global_node_to_xml
+  end
+
+  def update_global_node_user_to_xml
     if self.value == 1
-      
+      node_argument = global_node_user_to.positive_node_argument
     elsif self.value == -1
-
+      node_argument = global_node_user_to.negative_node_argument
+    else
+      return
     end
+    #remove looping references
+    new_argument_doc = Nokogiri::XML(global_node_user_from.node_argument) {|config| config.default_xml.noblanks}
+    new_argument_doc.xpath("//id[text()='#{global_node_user_to.id}']").each {|node| node.parent.remove}
+    new_argument = new_argument_doc.to_xml(:indent=>2).gsub(%Q|<?xml version="1.0" encoding="UTF-8"?>\n|, "")
+    new_content = node_argument.content+new_argument
+    node_argument.update_attributes!(:content => new_content)
+    #delete? change existing?
 =begin
-      if the vote is positive
-      then update positive node arg
-      set to xml array of immediate sub nodes node to and node from args
-      delete any xml blocks <></> with this nodes id
-      if neg
-      update neg node arg
-
       AFTER ALL THIS
 
       update node args of any nodes this links to
@@ -174,6 +181,10 @@ class GlobalLinkUser < ActiveRecord::Base
 
       if is conclusion then do whole arg update with this conclusion block (reset to this node tos new from and to args
 =end
+  end
+  
+  def update_global_node_to_xml
+
   end
 
 end

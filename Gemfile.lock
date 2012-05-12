@@ -136,6 +136,8 @@ GEM
       treetop (~> 1.4.8)
     method_source (0.7.1)
     mime-types (1.18)
+    morph (0.3.3)
+      activesupport (>= 2.0.2)
     multi_json (1.2.0)
     mysql2 (0.3.11)
     nokogiri (1.5.2)
@@ -267,6 +269,7 @@ DEPENDENCIES
   launchy (>= 2.0.5)
   less-rails-bootstrap
   libnotify
+  morph
   mysql2
   nokogiri
   pry

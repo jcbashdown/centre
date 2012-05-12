@@ -45,7 +45,7 @@ class GlobalNodeUser < ActiveRecord::Base
 
     this_negative_node_argument.parent = to_node
     this_positive_node_argument.parent = to_node
-    to_doc
+    to_doc.to_xml
   end
   
   protected

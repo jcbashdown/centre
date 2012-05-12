@@ -8,5 +8,10 @@
         %br
         %p 
           = @node.body
+        - if @positive_argument
+          %ul
+            - @positive_argument.global_node_users.each do |node|
+              %li= node.title
+        
     .span3.right_content
       = render 'links', :nodes=>@nodes_with_links

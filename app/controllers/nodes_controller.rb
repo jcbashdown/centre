@@ -52,6 +52,14 @@ class NodesController < ApplicationController
   end
 
   def show
+    positive = GlobalNodeUser.where(:node_id => @node.id, :global_id =>  @question.id, :user_id => @user.id)[0].positive_node_argument.content
+    if positive && positive.length > 0
+      @positive_argument = Morph.from_xml(%Q|<positive>|+positive+%Q|</positive>|)
+    end
+    negative = GlobalNodeUser.where(:node_id => @node.id, :global_id =>  @question.id, :user_id => @user.id)[0].negative_node_argument.content
+    if negative && negative.length > 0
+      @negative_argument = Morph.from_xml(%Q|<negative>|+negative+%Q|</negative>|)
+    end
     @new_node = Node.new
     if request.xhr?
       render :show, :layout => false
