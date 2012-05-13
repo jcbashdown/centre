@@ -157,22 +157,27 @@ class GlobalLinkUser < ActiveRecord::Base
 
   def update_global_node_user_to_xml
     if self.value == 1
-      p "positive"
       node_argument = global_node_user_to.positive_node_argument
+      node_argument_to_clear = global_node_user_to.negative_node_argument
     elsif self.value == -1
-      p "negative"
       node_argument = global_node_user_to.negative_node_argument
+      node_argument_to_clear = global_node_user_to.positive_node_argument
     else
+      #return if node equivalent
       return
     end
-    p node_argument
-    p node_argument_content = clear_gnu_from_xml_if_needed(node_argument)
     if self.persisted?
-      p "persisted"
+      #if this is an update clear the opposite if it's there
+      cleared_node_argument_content = clear_gnu_from_xml_if_needed(node_argument_to_clear)
+      #update the opposite whether or not it's cleared
+      node_argument_to_clear.update_attributes!(:content => cleared_node_argument_content)
+      #get the gnu from argument with any references to the gnu to removed
       new_argument = add_gnu_from_to_xml
-      new_content = node_argument_content+new_argument
+      #update the current (positive or negative) argument with the new nodes froms arg
+      new_content = node_argument.content+new_argument
     else
-      p "not persisted"
+      #clear old vote if this glu has been destroyed
+      node_argument_content = clear_gnu_from_xml_if_needed(node_argument)
       new_content = node_argument_content
     end
     node_argument.update_attributes!(:content => new_content)
@@ -195,18 +200,10 @@ class GlobalLinkUser < ActiveRecord::Base
 
   def clear_gnu_from_xml_if_needed(node_argument)
     node_argument_doc = Nokogiri::XML(node_argument.content) {|config| config.default_xml.noblanks}
-    p 1
-    p node_argument_doc
-    node_argument_doc.xpath("//id[text()='#{global_node_user_from.id}']").each {|node| p node;node.parent.remove}
-    p 2
-    p node_argument_doc
+    node_argument_doc.xpath("//id[text()='#{global_node_user_from.id}']").each {|node| node.parent.remove}
     node_arg = node_argument_doc.to_xml(:indent=>2)
-    p 3
-    p node_arg
     node_arg.gsub!(%Q|<?xml version="1.0" encoding="UTF-8"?>\n|, "")
     node_arg.gsub!(%Q|<?xml version="1.0"?>\n|, "") if (node_arg.length > 0)
-    p 4 
-    p node_arg
     node_arg
   end
 
@@ -218,7 +215,10 @@ class GlobalLinkUser < ActiveRecord::Base
     #remove looping references
     new_argument_doc = Nokogiri::XML(global_node_user_from.node_argument) {|config| config.default_xml.noblanks}
     new_argument_doc.xpath("//id[text()='#{global_node_user_to.id}']").each {|node| node.parent.remove}
-    new_argument_doc.to_xml(:indent=>2).gsub(%Q|<?xml version="1.0" encoding="UTF-8"?>\n|, "")
+    new_arg = new_argument_doc.to_xml(:indent=>2)
+    new_arg.gsub!(%Q|<?xml version="1.0" encoding="UTF-8"?>\n|, "")
+    new_arg.gsub!(%Q|<?xml version="1.0"?>\n|, "") if (new_arg.length > 0)
+    new_arg
   end
 
   def add_gn_from_to_xml

@@ -47,7 +47,6 @@ class NodesController < ApplicationController
     if current_user
       positive = GlobalNodeUser.where(:node_id => @node.id, :global_id =>  @global.id, :user_id => @user.id)[0].positive_node_argument.content
       if positive && positive.length > 0
-        p positive
         @positive_argument = Morph.from_xml(%Q|<positive>|+positive+%Q|</positive>|)
       end
       negative = GlobalNodeUser.where(:node_id => @node.id, :global_id =>  @global.id, :user_id => @user.id)[0].negative_node_argument.content

@@ -1,0 +1,30 @@
+.span9
+  .row
+    .span6.main_content
+      %p#notice= notice
+      .center
+        %h2
+          = @node.title
+        %br
+        %p 
+          = @node.body
+        - if @positive_argument
+          %ul
+            - unless @positive_argument.global_node_user
+              - @positive_argument.global_node_users.each do |node|
+                %li= node.title
+                - positive = node.positive
+                  - while positive
+                    %ul
+                      - unless positive.global_node_user
+                        - positive.global_node_users.each do |node|
+                          %li= node.title
+                          - positive = node.positive
+                      - else
+                        %li= positive.global_node_user.title
+                        - positive = positive.global_node_user.positive
+            - else
+              %li= @positive_argument.global_node_user.title
+        
+    .span3.right_content
+      = render 'links', :nodes=>@nodes_with_links
