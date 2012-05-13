@@ -18,7 +18,7 @@ class GlobalLinkUser < ActiveRecord::Base
   #validates :node_to, :presence => true
   #after_save :update_caches
   after_create :set_or_create_link, :set_or_create_global_link, :set_or_create_link_user, :set_or_create_global_node_user_and_node_models, :update_caches, :update_node_to_xml
-  after_destroy :delete_link_if_allowed, :delete_global_link_if_allowed, :delete_link_user_if_allowed, :update_caches#update xml
+  after_destroy :delete_link_if_allowed, :delete_global_link_if_allowed, :delete_link_user_if_allowed, :update_caches
 
   validates_uniqueness_of :user_id, :scope => [:link_id, :global_id]
   validates_uniqueness_of :user_id, :scope => [:node_from_id, :node_to_id, :global_id]
@@ -163,13 +163,14 @@ class GlobalLinkUser < ActiveRecord::Base
     else
       return
     end
-    #remove looping references
-    new_argument_doc = Nokogiri::XML(global_node_user_from.node_argument) {|config| config.default_xml.noblanks}
-    new_argument_doc.xpath("//id[text()='#{global_node_user_to.id}']").each {|node| node.parent.remove}
-    new_argument = new_argument_doc.to_xml(:indent=>2).gsub(%Q|<?xml version="1.0" encoding="UTF-8"?>\n|, "")
-    new_content = node_argument.content+new_argument
+    node_argument_content = clear_gnu_from_xml_if_needed(node_argument)
+    if self.persisted?
+      new_argument = add_gnu_from_to_xml
+      new_content = node_argument_content+new_argument
+    else
+      new_content = node_argument_content
+    end
     node_argument.update_attributes!(:content => new_content)
-    #delete? change existing?
 =begin
       AFTER ALL THIS
 
@@ -187,4 +188,24 @@ class GlobalLinkUser < ActiveRecord::Base
 
   end
 
+  def clear_gnu_from_xml_if_needed(node_argument)
+    node_argument_doc = Nokogiri::XML(node_argument.content) {|config| config.default_xml.noblanks}
+    node_argument_doc.xpath("//id[text()='#{global_node_user_from.id}']").each {|node| node.parent.remove}
+    node_argument_doc.to_xml(:indent=>2).gsub(%Q|<?xml version="1.0" encoding="UTF-8"?>\n|, "")
+  end
+
+  def clear_gn_from_xml_if_needed
+
+  end
+
+  def add_gnu_from_to_xml
+    #remove looping references
+    new_argument_doc = Nokogiri::XML(global_node_user_from.node_argument) {|config| config.default_xml.noblanks}
+    new_argument_doc.xpath("//id[text()='#{global_node_user_to.id}']").each {|node| node.parent.remove}
+    new_argument_doc.to_xml(:indent=>2).gsub(%Q|<?xml version="1.0" encoding="UTF-8"?>\n|, "")
+  end
+
+  def add_gn_from_to_xml
+
+  end
 end

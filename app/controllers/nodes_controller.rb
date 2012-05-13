@@ -7,7 +7,8 @@ class NodesController < ApplicationController
   before_filter :set_node, :only => [:show]
   before_filter :set_links, :only => [:show]
   before_filter :redirect_if_new_exists, :only => [:create]
-  before_filter :set_global, :only => [:create, :destroy]
+  before_filter :set_global, :only => [:create, :destroy, :show]
+  before_filter :set_argument, :only => [:show]
 
   def set_node
     @node = Node.find(params[:id])
@@ -42,6 +43,23 @@ class NodesController < ApplicationController
     end
   end
 
+  def set_argument
+    if current_user
+      positive = GlobalNodeUser.where(:node_id => @node.id, :global_id =>  @global.id, :user_id => @user.id)[0].positive_node_argument.content
+      if positive && positive.length > 0
+        @positive_argument = Morph.from_xml(%Q|<positive>|+positive+%Q|</positive>|)
+      end
+      negative = GlobalNodeUser.where(:node_id => @node.id, :global_id =>  @global.id, :user_id => @user.id)[0].negative_node_argument.content
+      if negative && negative.length > 0
+        @negative_argument = Morph.from_xml(%Q|<negative>|+negative+%Q|</negative>|)
+      end
+      p @negative_argument
+      p @positive_argument
+    else
+
+    end
+  end
+
   def index
     @new_node = Node.new
     respond_to do |format|
@@ -52,14 +70,6 @@ class NodesController < ApplicationController
   end
 
   def show
-    positive = GlobalNodeUser.where(:node_id => @node.id, :global_id =>  @question.id, :user_id => @user.id)[0].positive_node_argument.content
-    if positive && positive.length > 0
-      @positive_argument = Morph.from_xml(%Q|<positive>|+positive+%Q|</positive>|)
-    end
-    negative = GlobalNodeUser.where(:node_id => @node.id, :global_id =>  @question.id, :user_id => @user.id)[0].negative_node_argument.content
-    if negative && negative.length > 0
-      @negative_argument = Morph.from_xml(%Q|<negative>|+negative+%Q|</negative>|)
-    end
     @new_node = Node.new
     if request.xhr?
       render :show, :layout => false

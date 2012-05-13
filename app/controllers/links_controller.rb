@@ -6,7 +6,7 @@ class LinksController < ApplicationController
   before_filter :set_global, :only => [:create, :destroy, :update]
 
   def create
-    @glu = GlobalLinkUser.new(params[:link].merge(:global => @question, :user => @user))
+    @glu = GlobalLinkUser.new(params[:link].merge(:global => @global, :user => @user))
     respond_to do |format|
       if @glu.save
         format.js { render :partial => 'a_link', :locals=>{:link => @glu.link, :type=>params[:type]} }
@@ -21,9 +21,9 @@ class LinksController < ApplicationController
 
   def update
     @link = Link.find(params[:id])
-    @glu = GlobalLinkUser.where(:global_id => @question.id, :user_id => @user.id, :link_id => @link.id)[0]
+    @glu = GlobalLinkUser.where(:global_id => @global.id, :user_id => @user.id, :link_id => @link.id)[0]
     respond_to do |format|
-      if @glu.destroy && (@glu = GlobalLinkUser.create(params[:link].merge(:global => @question, :user => @user)))
+      if @glu.destroy && (@glu = GlobalLinkUser.create(params[:link].merge(:global => @global, :user => @user)))
         format.js { render :partial => 'a_link', :locals=>{:link=> @glu.link, :type=>params[:type]} }
       else
         unless @glu && @glu.persisted?
@@ -40,7 +40,7 @@ class LinksController < ApplicationController
 
   def destroy
     @link = Link.find(params[:id])
-    @glu = GlobalLinkUser.where(:global_id => @question.id, :user_id => @user.id, :link_id => @link.id)[0]
+    @glu = GlobalLinkUser.where(:global_id => @global.id, :user_id => @user.id, :link_id => @link.id)[0]
     respond_to do |format|
       if @glu.destroy
         link_params = params[:link]

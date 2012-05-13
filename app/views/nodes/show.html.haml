@@ -10,8 +10,11 @@
           = @node.body
         - if @positive_argument
           %ul
-            - @positive_argument.global_node_users.each do |node|
-              %li= node.title
+            - unless @positive_argument.global_node_user
+              - @positive_argument.global_node_users.each do |node|
+                %li= node.title
+            - else
+              %li= @positive_argument.global_node_user.title
         
     .span3.right_content
       = render 'links', :nodes=>@nodes_with_links
