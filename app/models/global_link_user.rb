@@ -18,7 +18,7 @@ class GlobalLinkUser < ActiveRecord::Base
   #validates :node_to, :presence => true
   #after_save :update_caches
   after_create :set_or_create_link, :set_or_create_global_link, :set_or_create_link_user, :set_or_create_global_node_user_and_node_models, :update_caches, :update_node_to_xml
-  after_destroy :delete_link_if_allowed, :delete_global_link_if_allowed, :delete_link_user_if_allowed, :update_caches
+  after_destroy :delete_link_if_allowed, :delete_global_link_if_allowed, :delete_link_user_if_allowed, :update_caches, :update_node_to_xml
 
   validates_uniqueness_of :user_id, :scope => [:link_id, :global_id]
   validates_uniqueness_of :user_id, :scope => [:node_from_id, :node_to_id, :global_id]
@@ -157,17 +157,22 @@ class GlobalLinkUser < ActiveRecord::Base
 
   def update_global_node_user_to_xml
     if self.value == 1
+      p "positive"
       node_argument = global_node_user_to.positive_node_argument
     elsif self.value == -1
+      p "negative"
       node_argument = global_node_user_to.negative_node_argument
     else
       return
     end
-    node_argument_content = clear_gnu_from_xml_if_needed(node_argument)
+    p node_argument
+    p node_argument_content = clear_gnu_from_xml_if_needed(node_argument)
     if self.persisted?
+      p "persisted"
       new_argument = add_gnu_from_to_xml
       new_content = node_argument_content+new_argument
     else
+      p "not persisted"
       new_content = node_argument_content
     end
     node_argument.update_attributes!(:content => new_content)
@@ -190,8 +195,19 @@ class GlobalLinkUser < ActiveRecord::Base
 
   def clear_gnu_from_xml_if_needed(node_argument)
     node_argument_doc = Nokogiri::XML(node_argument.content) {|config| config.default_xml.noblanks}
-    node_argument_doc.xpath("//id[text()='#{global_node_user_from.id}']").each {|node| node.parent.remove}
-    node_argument_doc.to_xml(:indent=>2).gsub(%Q|<?xml version="1.0" encoding="UTF-8"?>\n|, "")
+    p 1
+    p node_argument_doc
+    node_argument_doc.xpath("//id[text()='#{global_node_user_from.id}']").each {|node| p node;node.parent.remove}
+    p 2
+    p node_argument_doc
+    node_arg = node_argument_doc.to_xml(:indent=>2)
+    p 3
+    p node_arg
+    node_arg.gsub!(%Q|<?xml version="1.0" encoding="UTF-8"?>\n|, "")
+    node_arg.gsub!(%Q|<?xml version="1.0"?>\n|, "") if (node_arg.length > 0)
+    p 4 
+    p node_arg
+    node_arg
   end
 
   def clear_gn_from_xml_if_needed
