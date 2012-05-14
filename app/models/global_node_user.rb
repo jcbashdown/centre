@@ -27,24 +27,30 @@ class GlobalNodeUser < ActiveRecord::Base
 
   def node_argument
     this_negative_node_argument = NegativeNodeArgument.select(:content).where(:subject_id => self.id, :subject_type => 'GlobalNodeUser')[0]
-    this_negative_node_argument_doc = Nokogiri::XML(%Q|<negative>|+this_negative_node_argument.content+%Q|</negative>|) do |config|
-      config.default_xml.noblanks
+    if this_negative_node_argument.content.length > 0
+      this_negative_node_argument_doc = Nokogiri::XML(%Q|<negative>|+this_negative_node_argument.content+%Q|</negative>|) do |config|
+        config.default_xml.noblanks
+      end
+      this_negative_node_argument = this_negative_node_argument_doc.xpath('/negative').first
     end
-    this_negative_node_argument = this_negative_node_argument_doc.xpath('/negative').first
-
     this_positive_node_argument = PositiveNodeArgument.select(:content).where(:subject_id => self.id, :subject_type => 'GlobalNodeUser')[0]
-    this_positive_node_argument_doc = Nokogiri::XML(%Q|<positive>|+this_positive_node_argument.content+%Q|</positive>|) do |config|
-      config.default_xml.noblanks
+    if this_negative_node_argument.content.length > 0
+      this_positive_node_argument_doc = Nokogiri::XML(%Q|<positive>|+this_positive_node_argument.content+%Q|</positive>|) do |config|
+        config.default_xml.noblanks
+      end
+      this_positive_node_argument = this_positive_node_argument_doc.xpath('/positive').first
     end
-    this_positive_node_argument = this_positive_node_argument_doc.xpath('/positive').first
 
     to_doc = Nokogiri::XML(self.to_xml) do |config|
       config.default_xml.noblanks
     end
     to_node = to_doc.xpath('/global-node-user').first
-
-    this_negative_node_argument.parent = to_node
-    this_positive_node_argument.parent = to_node
+    if this_negative_node_argument 
+      this_negative_node_argument.parent = to_node
+    end
+    if this_positive_node_argument
+      this_positive_node_argument.parent = to_node
+    end
     to_doc.to_xml
   end
   

@@ -46,15 +46,127 @@ class NodesController < ApplicationController
   def set_argument
     if current_user
       positive = GlobalNodeUser.where(:node_id => @node.id, :global_id =>  @global.id, :user_id => @user.id)[0].positive_node_argument.content
+      p positive
       if positive && positive.length > 0
         @positive_argument = Morph.from_xml(%Q|<positive>|+positive+%Q|</positive>|)
       end
       negative = GlobalNodeUser.where(:node_id => @node.id, :global_id =>  @global.id, :user_id => @user.id)[0].negative_node_argument.content
+      p negative
+      p negative.length > 0
       if negative && negative.length > 0
+        p "neg"
         @negative_argument = Morph.from_xml(%Q|<negative>|+negative+%Q|</negative>|)
       end
-      p @negative_argument
-      p @positive_argument
+=begin
+x.gsub!("\n", "")
+<positive>
+  <global-node-user>
+    <downvotes-count type=\"integer\">0</downvotes-count>
+    <equivalents-count type=\"integer\">0</equivalents-count>
+    <id type=\"integer\">2</id>
+    <is-conclusion type=\"boolean\">false</is-conclusion>
+    <page-rank type=\"float\">0.0</page-rank>
+    <title>another</title>
+    <upvotes-count type=\"integer\">1</upvotes-count>
+    <negative/>
+    <positive>
+      <global-node-user>
+        <downvotes-count type=\"integer\">0</downvotes-count>
+        <equivalents-count type=\"integer\">0</equivalents-count>
+        <id type=\"integer\">3</id>
+        <is-conclusion type=\"boolean\">false</is-conclusion>
+        <page-rank type=\"float\">0.0</page-rank>
+        <title>a third</title>
+        <upvotes-count type=\"integer\">0</upvotes-count>
+        <negative/>
+        <positive/>
+      </global-node-user>
+    </positive>
+  </global-node-user>
+</positive>
+this:
+#<Morph::Positive:0x0000000395ee28 @global_node_users=[#<Morph::GlobalNodeUser:0x0000000490e9b8 @created_at=2012-05-14 19:36:56 UTC, @downvotes_count=0, @equivalents_count=0, @global_id=2, @global_link_users_count=0, @global_node_id=3, @id=3, @ignore=true, @is_conclusion=false, @node_id=3, @node_user_id=3, @page_rank=0.0, @title="a third", @updated_at=2012-05-14 19:36:56 UTC, @upvotes_count=0, @user_id=1>, #<Morph::GlobalNodeUser:0x000000030239a8 @created_at=2012-05-14 19:36:56 UTC, @downvotes_count=0, @equivalents_count=0, @global_id=2, @global_link_users_count=1, @global_node_id=3, @id=3, @ignore=true, @is_conclusion=false, @node_id=3, @node_user_id=3, @page_rank=0.0, @title="a third", @updated_at=2012-05-14 19:36:56 UTC, @upvotes_count=0, @user_id=1>], @positive=#<Morph::Positive:0x000000040a1b18 @global_node_user=#<Morph::GlobalNodeUser:0x000000040c6760 @created_at=2012-05-14 19:36:51 UTC, @downvotes_count=0, @equivalents_count=0, @global_id=2, @global_link_users_count=1, @global_node_id=2, @id=2, @ignore=true, @is_conclusion=false, @node_id=2, @node_user_id=2, @page_rank=0.0, @title="another", @updated_at=2012-05-14 19:37:16 UTC, @upvotes_count=1, @user_id=1>>> 
+
+comes from
+
+this:
+
+"<positive>
+    <positive>
+
+  <global-node-user>
+    <body nil=\"true\"/>
+    <created-at type=\"datetime\">2012-05-14T19:36:51Z</created-at>
+    <downvotes-count type=\"integer\">0</downvotes-count>
+    <equivalents-count type=\"integer\">0</equivalents-count>
+    <global-id type=\"integer\">2</global-id>
+    <global-link-users-count type=\"integer\">1</global-link-users-count>
+    <global-node-id type=\"integer\">2</global-node-id>
+    <id type=\"integer\">2</id>
+    <ignore type=\"boolean\">true</ignore>
+    <is-conclusion type=\"boolean\">false</is-conclusion>
+    <node-id type=\"integer\">2</node-id>
+    <node-user-id type=\"integer\">2</node-user-id>
+    <page-rank type=\"float\">0.0</page-rank>
+    <title>another</title>
+    <updated-at type=\"datetime\">2012-05-14T19:37:16Z</updated-at>
+    <upvotes-count type=\"integer\">1</upvotes-count>
+    <user-id type=\"integer\">1</user-id>
+  </global-node-user>
+
+    </positive>
+      <global-node-user>
+        <body nil=\"true\"/>
+        <created-at type=\"datetime\">2012-05-14T19:36:56Z</created-at>
+        <downvotes-count type=\"integer\">0</downvotes-count>
+        <equivalents-count type=\"integer\">0</equivalents-count>
+        <global-id type=\"integer\">2</global-id>
+        <global-link-users-count type=\"integer\">0</global-link-users-count>
+        <global-node-id type=\"integer\">3</global-node-id>
+        <id type=\"integer\">3</id>
+        <ignore type=\"boolean\">true</ignore>
+        <is-conclusion type=\"boolean\">false</is-conclusion>
+        <node-id type=\"integer\">3</node-id>
+        <node-user-id type=\"integer\">3</node-user-id>
+        <page-rank type=\"float\">0.0</page-rank>
+        <title>a third</title>
+        <updated-at type=\"datetime\">2012-05-14T19:36:56Z</updated-at>
+        <upvotes-count type=\"integer\">0</upvotes-count>
+        <user-id type=\"integer\">1</user-id>
+      </global-node-user>
+  <global-node-user>
+    <body nil=\"true\"/>
+    <created-at type=\"datetime\">2012-05-14T19:36:56Z</created-at>
+    <downvotes-count type=\"integer\">0</downvotes-count>
+    <equivalents-count type=\"integer\">0</equivalents-count>
+    <global-id type=\"integer\">2</global-id>
+    <global-link-users-count type=\"integer\">1</global-link-users-count>
+    <global-node-id type=\"integer\">3</global-node-id>
+    <id type=\"integer\">3</id>
+    <ignore type=\"boolean\">true</ignore>
+    <is-conclusion type=\"boolean\">false</is-conclusion>
+    <node-id type=\"integer\">3</node-id>
+    <node-user-id type=\"integer\">3</node-user-id>
+    <page-rank type=\"float\">0.0</page-rank>
+    <title>a third</title>
+    <updated-at type=\"datetime\">2012-05-14T19:36:56Z</updated-at>
+    <upvotes-count type=\"integer\">0</upvotes-count>
+    <user-id type=\"integer\">1</user-id>
+  </global-node-user>
+</positive>"
+
+sub all new lines
+
+sub all closing positives and negatives
+
+remove all gnu ends
+
+insert gnu end before every positive and negative
+
+replace every starting positive and negative with self enclosing
+=end
+      p %Q|<positive>|+positive+%Q|</positive>|
+      p %Q|<negative>|+negative+%Q|</negative>|
     else
 
     end
