@@ -9,12 +9,14 @@
         %p 
           = @node.body
         - if @positive_argument
+          %h3 Argument For
           %ul
-            - unless @positive_argument.global_node_user
-              - @positive_argument.global_node_users.each do |node|
-                %li= node.title
-            - else
-              %li= @positive_argument.global_node_user.title
+            = argument_helper(@positive_argument)
+        - if @negative_argument
+          %h3 Argument Against
+          %ul
+            = argument_helper(@negative_argument)
+               
         
     .span3.right_content
       = render 'links', :nodes=>@nodes_with_links
