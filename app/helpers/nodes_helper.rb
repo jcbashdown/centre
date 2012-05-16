@@ -3,7 +3,6 @@ module NodesHelper
     argument_html = ""
     argument.each do |element|
       Rails.logger.info(element)
-      Rails.logger.info(element.positive)
       if element.global_node_user
         argument_html+=%Q|<li>#{element.global_node_user.title}</li>|
       elsif element.positive == "1"

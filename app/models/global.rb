@@ -7,12 +7,8 @@ class Global < ActiveRecord::Base
   has_many :links, :through => :global_links
   has_many :global_link_users
   has_many :global_node_users
-  has_one :whole_argument, :as => :subject
 
   validates_uniqueness_of :name
-
-  after_create :create_whole_argument
-  after_create :destroy_whole_argument
 
   def global_to_node_links(to_node, order="")
     if self.name == 'All'
@@ -76,12 +72,4 @@ class Global < ActiveRecord::Base
     all_links
   end
 
-  protected
-  def create_whole_argument
-    WholeArgument.create(:subject_type => 'Global', :subject_id => self.id)
-  end
-
-  def destroy_whole_argument
-    self.whole_argument.destroy
-  end
 end

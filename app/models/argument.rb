@@ -1,6 +1,9 @@
 class Argument < ActiveRecord::Base
   attr_accessible :content, :subject_id, :subject_type
-  after_create :set_default_attributes
+  before_create :set_default_attributes
+  #after_save :update_whole_argument
+  belongs_to :subject, :polymorphic => true
+  delegate :global_link_user_tos, :to => :subject 
 
   def friendly_argument
     list = content.gsub("\n", "")
@@ -23,11 +26,25 @@ class Argument < ActiveRecord::Base
     list_array
   end
 
-  belongs_to :subject, :polymorphic => true
+  def update_whole_argument
+    if type == "NegativeNodeArgument" || type == "PositiveNodeArgument"
+      if subject_type == "GlobalNodeUser"
+        global_link_user_tos.each do |glu|
+  	  if glu.value == 1
+  	    glu.update_node_to_xml
+  	  elsif glu.value == -1
+  	    glu.update_node_to_xml
+  	  end
+        end
+      elsif subject_type == "GlobalNode"
+      
+      end
+    end
+  end
 
   protected
   def set_default_attributes
     self.content = ""
-    save
   end
+
 end

@@ -1,2 +1,0 @@
-class WholeArgument < Argument
-end

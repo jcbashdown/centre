@@ -29,7 +29,6 @@ class User < ActiveRecord::Base
       from_node = node
       unless from_node == to_node
         this_link = these_link_users.where(:node_from_id => from_node.id, :node_to_id => to_node.id)
-        #first level of sorted - peristed from unpersisted
         unless this_link.empty?
           persisted_links << this_link[0]
         else
@@ -56,7 +55,6 @@ class User < ActiveRecord::Base
       to_node = node
       unless to_node == from_node
         this_link = these_link_users.where(:node_from_id => from_node.id, :node_to_id => to_node.id)
-        #first level of sorted - peristed from unpersisted
         unless this_link.empty?
           persisted_links << this_link[0]
         else

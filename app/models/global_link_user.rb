@@ -16,7 +16,6 @@ class GlobalLinkUser < ActiveRecord::Base
 
   #validates :node_from, :presence => true
   #validates :node_to, :presence => true
-  #after_save :update_caches
   after_create :set_or_create_link, :set_or_create_global_link, :set_or_create_link_user, :set_or_create_global_node_user_and_node_models, :update_caches, :update_node_to_xml
   after_destroy :delete_link_if_allowed, :delete_global_link_if_allowed, :delete_link_user_if_allowed, :update_caches, :update_node_to_xml
 
@@ -26,7 +25,12 @@ class GlobalLinkUser < ActiveRecord::Base
   def link_hash
     {:node_from_id => self.node_from_id, :node_to_id => self.node_to_id, :value =>  self.value}
   end
-  
+
+  def update_node_to_xml
+    update_global_node_user_to_xml
+    update_global_node_to_xml
+  end
+
   protected
   def set_or_create_link
     l = Link.where(self.link_hash)[0] || Link.create(self.link_hash)
@@ -150,12 +154,7 @@ class GlobalLinkUser < ActiveRecord::Base
     end
   end
 
-  def update_node_to_xml
-    update_global_node_user_to_xml
-    update_global_node_to_xml
-  end
-
-  def update_global_node_user_to_xml
+  def update_global_node_user_to_xml(do_parents = true)
     if self.value == 1
       node_argument = global_node_user_to.positive_node_argument
       node_argument_to_clear = global_node_user_to.negative_node_argument
@@ -163,7 +162,10 @@ class GlobalLinkUser < ActiveRecord::Base
       node_argument = global_node_user_to.negative_node_argument
       node_argument_to_clear = global_node_user_to.positive_node_argument
     else
-      #return if node equivalent
+      cleared_positive_node_argument_content = clear_gnu_from_xml_if_needed(global_node_user_to.positive_node_argument)
+      global_node_user_to.positive_node_argument.update_attributes!(:content => cleared_positive_node_argument_content)
+      cleared_negative_node_argument_content = clear_gnu_from_xml_if_needed(global_node_user_to.negative_node_argument)
+      global_node_user_to.negative_node_argument.update_attributes!(:content => cleared_negative_node_argument_content)
       return
     end
     if self.persisted?
@@ -181,17 +183,11 @@ class GlobalLinkUser < ActiveRecord::Base
       new_content = node_argument_content
     end
     node_argument.update_attributes!(:content => new_content)
-=begin
-      AFTER ALL THIS
-
-      update node args of any nodes this links to
-      they will do above
-      and update their parents
-      
-      AFTER ALL THIS 
-
-      if is conclusion then do whole arg update with this conclusion block (reset to this node tos new from and to args
-=end
+    #delayed job this in future
+    #if do_parents
+    #  Rails.logger.info("do parents")
+    #  global_node_user_to.parents(global_node_user_to).each {|parent| p parent;parent.update_global_node_user_to_xml(false)}
+    #end
   end
   
   def update_global_node_to_xml

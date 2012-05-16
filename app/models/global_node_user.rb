@@ -24,6 +24,16 @@ class GlobalNodeUser < ActiveRecord::Base
   def node_hash
     {:title => self.title, :body => self.body}
   end
+  
+  def parents(exclude=self)
+    array_of_links_arrays = [global_link_user_tos]
+    global_node_user_tos.each do |gnu|
+      unless gnu == exclude
+        array_of_links_arrays << gnu.parents(self)
+      end
+    end
+    array_of_links_arrays.flatten.uniq
+  end
 
   def node_argument
     this_negative_node_argument = NegativeNodeArgument.select(:content).where(:subject_id => self.id, :subject_type => 'GlobalNodeUser')[0]
