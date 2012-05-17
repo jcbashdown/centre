@@ -29,7 +29,7 @@ class GlobalNodeUser < ActiveRecord::Base
     array_of_links_arrays = [global_link_user_tos]
     global_node_user_tos.each do |gnu|
       unless gnu == exclude
-        array_of_links_arrays << gnu.parents(self)
+        array_of_links_arrays << gnu.parents(exclude)
       end
     end
     array_of_links_arrays.flatten.uniq

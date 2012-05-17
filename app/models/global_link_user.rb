@@ -184,10 +184,9 @@ class GlobalLinkUser < ActiveRecord::Base
     end
     node_argument.update_attributes!(:content => new_content)
     #delayed job this in future
-    #if do_parents
-    #  Rails.logger.info("do parents")
-    #  global_node_user_to.parents(global_node_user_to).each {|parent| p parent;parent.update_global_node_user_to_xml(false)}
-    #end
+    if do_parents
+      global_node_user_to.parents(global_node_user_to).each {|parent| parent.update_global_node_user_to_xml(false)}
+    end
   end
   
   def update_global_node_to_xml
@@ -200,6 +199,7 @@ class GlobalLinkUser < ActiveRecord::Base
     node_arg = node_argument_doc.to_xml(:indent=>2)
     node_arg.gsub!(%Q|<?xml version="1.0" encoding="UTF-8"?>\n|, "")
     node_arg.gsub!(%Q|<?xml version="1.0"?>\n|, "") if (node_arg.length > 0)
+    # the problem is that this is added on again whether or nor it's already there. going round and stopping before this would solve problem - don't even add if already there...
     node_arg
   end
 
@@ -209,11 +209,14 @@ class GlobalLinkUser < ActiveRecord::Base
 
   def add_gnu_from_to_xml
     #remove looping references
+    p global_node_user_from.node_argument
+    p global_node_user_to.id
     new_argument_doc = Nokogiri::XML(global_node_user_from.node_argument) {|config| config.default_xml.noblanks}
     new_argument_doc.xpath("//id[text()='#{global_node_user_to.id}']").each {|node| node.parent.remove}
     new_arg = new_argument_doc.to_xml(:indent=>2)
     new_arg.gsub!(%Q|<?xml version="1.0" encoding="UTF-8"?>\n|, "")
     new_arg.gsub!(%Q|<?xml version="1.0"?>\n|, "") if (new_arg.length > 0)
+    p new_arg
     new_arg
   end
 
