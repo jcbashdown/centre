@@ -157,11 +157,9 @@ class GlobalLinkUser < ActiveRecord::Base
   def update_global_node_user_to_xml(do_parents = true)
     if self.value == 1
       node_argument = global_node_user_to.positive_node_argument
-      node_argument_to_clear = global_node_user_to.negative_node_argument
     elsif self.value == -1
       node_argument = global_node_user_to.negative_node_argument
-      node_argument_to_clear = global_node_user_to.positive_node_argument
-    else
+    elsif self.value == 0 
       cleared_positive_node_argument_content = clear_gnu_from_xml_if_needed(global_node_user_to.positive_node_argument)
       global_node_user_to.positive_node_argument.update_attributes!(:content => cleared_positive_node_argument_content)
       cleared_negative_node_argument_content = clear_gnu_from_xml_if_needed(global_node_user_to.negative_node_argument)
@@ -169,10 +167,12 @@ class GlobalLinkUser < ActiveRecord::Base
       return
     end
     if self.persisted?
-      #if this is an update clear the opposite if it's there
-      cleared_node_argument_content = clear_gnu_from_xml_if_needed(node_argument_to_clear)
-      #update the opposite whether or not it's cleared
-      node_argument_to_clear.update_attributes!(:content => cleared_node_argument_content)
+      #if this is an update clear if it's there
+      cleared_positive_node_argument_content = clear_gnu_from_xml_if_needed(global_node_user_to.positive_node_argument)
+      cleared_negative_node_argument_content = clear_gnu_from_xml_if_needed(global_node_user_to.negative_node_argument)
+      #update
+      global_node_user_to.positive_node_argument.update_attributes!(:content => cleared_positive_node_argument_content)
+      global_node_user_to.negative_node_argument.update_attributes!(:content => cleared_negative_node_argument_content)
       #get the gnu from argument with any references to the gnu to removed
       new_argument = add_gnu_from_to_xml
       #update the current (positive or negative) argument with the new nodes froms arg
@@ -199,7 +199,6 @@ class GlobalLinkUser < ActiveRecord::Base
     node_arg = node_argument_doc.to_xml(:indent=>2)
     node_arg.gsub!(%Q|<?xml version="1.0" encoding="UTF-8"?>\n|, "")
     node_arg.gsub!(%Q|<?xml version="1.0"?>\n|, "") if (node_arg.length > 0)
-    # the problem is that this is added on again whether or nor it's already there. going round and stopping before this would solve problem - don't even add if already there...
     node_arg
   end
 

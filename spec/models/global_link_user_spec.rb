@@ -27,6 +27,11 @@ describe GlobalLinkUser do
         arg2 = @gnu2.positive_node_argument.reload.friendly_argument
         arg3 = @gnu1.positive_node_argument.reload.friendly_argument
         p arg
+	arg[0].global_node_user.id.should == @gnu2.id
+        arg[1].positive.should == "1"
+	arg[2].global_node_user.id.should == @gnu1.id
+        arg[3].positive_up.should == "1"
+        arg[4].should be_nil
 	arg2[0].global_node_user.id.should == @gnu1.id
         arg2[1].positive.should == "1"
 	arg2[2].global_node_user.id.should == @gnu3.id
@@ -37,11 +42,6 @@ describe GlobalLinkUser do
 	arg3[2].global_node_user.id.should == @gnu2.id
         arg3[3].positive_up.should == "1"
         arg3[4].should be_nil
-	arg[0].global_node_user.id.should == @gnu2.id
-        arg[1].positive.should == "1"
-	arg[2].global_node_user.id.should == @gnu1.id
-        arg[3].positive_up.should == "1"
-        arg[4].should be_nil
       end
     end
     context 'when there is no existing glu' do
