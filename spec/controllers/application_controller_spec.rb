@@ -5,7 +5,7 @@ describe ApplicationController do
 
   describe "set current user" do
     before do
-      @user = Factory(:user)
+      @user = FactoryGirl.create(:user)
       @controller.stub(:current_user).and_return @user
     end
     it "assigns the user" do

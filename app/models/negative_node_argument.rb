@@ -1,2 +1,0 @@
-class NegativeNodeArgument < Argument
-end

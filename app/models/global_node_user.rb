@@ -13,9 +13,9 @@ class GlobalNodeUser < ActiveRecord::Base
   has_one :positive_node_argument, :as => :subject, :foreign_key => 'subject_id'
   has_one :negative_node_argument, :as => :subject, :foreign_key => 'subject_id'
 
-  after_create :create_node_arguments, :set_or_create_node, :set_or_create_global_node, :set_or_create_node_user
+  after_create :set_or_create_node, :set_or_create_global_node, :set_or_create_node_user
   before_destroy :delete_links_if_allowed
-  after_destroy :delete_node_user_if_allowed, :delete_global_node_if_allowed, :delete_node_if_allowed, :destroy_node_arguments
+  after_destroy :delete_node_user_if_allowed, :delete_global_node_if_allowed, :delete_node_if_allowed
 
   validates_uniqueness_of :node_id, :scope => [:global_id, :user_id]
   validates_uniqueness_of :title, :scope => [:global_id, :user_id]
@@ -35,37 +35,7 @@ class GlobalNodeUser < ActiveRecord::Base
     array_of_links_arrays.flatten.uniq
   end
 
-  def node_argument
-    this_negative_node_argument = NegativeNodeArgument.select(:content).where(:subject_id => self.id, :subject_type => 'GlobalNodeUser')[0]
-    this_negative_node_argument_doc = Nokogiri::XML(%Q|<negative>|+this_negative_node_argument.content+%Q|</negative>|) do |config|
-      config.default_xml.noblanks
-    end
-    this_negative_node_argument_content = this_negative_node_argument_doc.xpath('/negative').first
-    this_positive_node_argument = PositiveNodeArgument.select(:content).where(:subject_id => self.id, :subject_type => 'GlobalNodeUser')[0]
-    this_positive_node_argument_doc = Nokogiri::XML(%Q|<positive>|+this_positive_node_argument.content+%Q|</positive>|) do |config|
-      config.default_xml.noblanks
-    end
-    this_positive_node_argument_content = this_positive_node_argument_doc.xpath('/positive').first
-
-    to_doc = Nokogiri::XML(self.to_xml) do |config|
-      config.default_xml.noblanks
-    end
-    to_node = to_doc.xpath('/global-node-user').first
-    this_negative_node_argument_content.parent = to_node
-    this_positive_node_argument_content.parent = to_node
-    to_doc.to_xml
-  end
-  
   protected
-  def create_node_arguments
-    PositiveNodeArgument.create(:subject_type => 'GlobalNodeUser', :subject_id => self.id)
-    NegativeNodeArgument.create(:subject_type => 'GlobalNodeUser', :subject_id => self.id)
-  end
-
-  def destroy_node_arguments
-    self.positive_node_argument.destroy
-    self.negative_node_argument.destroy
-  end
 
   def set_or_create_node
     n = Node.where(:title => self.title, :body => self.body)[0] || Node.create!(:title => self.title, :body =>self.body)
