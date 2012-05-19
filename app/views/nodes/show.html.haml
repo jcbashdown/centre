@@ -1,16 +1,15 @@
 .span9
-  .row
-    .span6.main_content
+  .row-fluid
+    .span8.main_content
       %p#notice= notice
-      .center
-        %h2
-          = @node.title
-        %br
-        %p 
-          = @node.body
-        -froms_positive = @gnu.positive_global_node_user_froms
-        -froms_negative = @gnu.negative_global_node_user_froms
-        = render :partial => 'arguments/show', :locals => {:froms_positive => froms_positive, :froms_negative => froms_negative}
+      %h2
+        = @node.title
+      %br
+      %p 
+        = @node.body
+      -froms_positive = @gnu.positive_global_node_user_froms
+      -froms_negative = @gnu.negative_global_node_user_froms
+      = render :partial => 'arguments/show', :locals => {:froms_positive => froms_positive, :froms_negative => froms_negative}
         
-    .span3.right_content
+    .span4.right_content
       = render 'links', :nodes=>@nodes_with_links

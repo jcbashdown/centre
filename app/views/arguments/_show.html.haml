@@ -2,14 +2,16 @@
   %ul.positive
     -froms_positive.each do |from|
       %li
+        %i{:class => "icon-plus"}
         = from.title
         %a{:href => argument_path(from.id), :'data-remote' => true}
-          %i.icon-plus-sign
+          %i{:class => "icon-plus-sign #{from.id}"}
       %div{:id => "#{from.id}", :style => "display:none;"}
   %ul.positive
     -froms_negative.each do |from|
       %li
-      = from.title
-      %a{:href => argument_path(from.id), :'data-remote' => true}
-        %i.icon-plus-sign
+        %i{:class => "icon-minus"}
+        = from.title
+        %a{:href => argument_path(from.id), :'data-remote' => true}
+          %i{:class => "icon-plus-sign #{from.id}"}
       %div{:id => "#{from.id}", :style => "display:none;"}
