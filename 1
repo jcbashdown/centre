@@ -1,0 +1,14 @@
+class ArgumentsController < ActionController::Base
+  
+  def show
+    @gnu = GlobalNodeUser.find(params[:id])
+    if @gnu.global_node_user_froms
+      @froms_positive = @gnu.global_node_user_froms.where(:value => 1)
+      @froms_negative = @gnu.global_node_user_froms.where(:value => -1)
+      respond_to do |format|
+        format.js { render :partial => 'argument', :locals => {:froms_positive => @froms_postive, :froms_negative => @froms_negative}}
+      end
+    end
+  end 
+ 
+end

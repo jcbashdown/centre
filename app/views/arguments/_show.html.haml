@@ -1,0 +1,15 @@
+%div{:id => "#{(@gnu ? @gnu.id : gnu)}"}
+  %ul.positive
+    -froms_positive.each do |from|
+      %li
+        = from.title
+        %a{:href => argument_path(from.id), :'data-remote' => true}
+          %i.icon-plus-sign
+      %div{:id => "#{from.id}", :style => "display:none;"}
+  %ul.positive
+    -froms_negative.each do |from|
+      %li
+      = from.title
+      %a{:href => argument_path(from.id), :'data-remote' => true}
+        %i.icon-plus-sign
+      %div{:id => "#{from.id}", :style => "display:none;"}

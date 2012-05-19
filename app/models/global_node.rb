@@ -10,9 +10,6 @@ class GlobalNode < ActiveRecord::Base
   belongs_to :node
   has_many :global_node_users
 
-  has_one :positive_node_argument, :as => :subject, :foreign_key => 'subject_id'
-  has_one :negative_node_argument, :as => :subject, :foreign_key => 'subject_id'
-
   validates :node, :presence => true
   validates :title, :presence => true
 

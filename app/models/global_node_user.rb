@@ -8,10 +8,18 @@ class GlobalNodeUser < ActiveRecord::Base
   has_many :global_link_user_ins, :foreign_key => "global_node_user_to_id", :class_name => "GlobalLinkUser"
   has_many :global_link_user_tos, :foreign_key => "global_node_user_from_id", :class_name => "GlobalLinkUser"
 
+  has_many :positive_global_link_user_ins, :foreign_key => "global_node_user_to_id", :class_name => "GlobalLinkUser", :conditions => {:value => 1}
+  has_many :positive_global_link_user_tos, :foreign_key => "global_node_user_from_id", :class_name => "GlobalLinkUser", :conditions => {:value => 1}
+  has_many :negative_global_link_user_ins, :foreign_key => "global_node_user_to_id", :class_name => "GlobalLinkUser", :conditions => {:value => -1}
+  has_many :negative_global_link_user_tos, :foreign_key => "global_node_user_from_id", :class_name => "GlobalLinkUser", :conditions => {:value => -1}
+
   has_many :global_node_user_tos, :through => :global_link_user_tos, :class_name => "GlobalNodeUser", :foreign_key => "global_node_user_to_id", :source=>:global_node_user_to
   has_many :global_node_user_froms, :through => :global_link_user_ins, :class_name => "GlobalNodeUser", :foreign_key => "global_node_user_from_id", :source=>:global_node_user_from
-  has_one :positive_node_argument, :as => :subject, :foreign_key => 'subject_id'
-  has_one :negative_node_argument, :as => :subject, :foreign_key => 'subject_id'
+
+  has_many :positive_global_node_user_tos, :through => :positive_global_link_user_tos, :class_name => "GlobalNodeUser", :foreign_key => "global_node_user_to_id", :source=>:global_node_user_to
+  has_many :positive_global_node_user_froms, :through => :positive_global_link_user_ins, :class_name => "GlobalNodeUser", :foreign_key => "global_node_user_from_id", :source=>:global_node_user_from
+  has_many :negative_global_node_user_tos, :through => :negative_global_link_user_tos, :class_name => "GlobalNodeUser", :foreign_key => "global_node_user_to_id", :source=>:global_node_user_to
+  has_many :negative_global_node_user_froms, :through => :negative_global_link_user_ins, :class_name => "GlobalNodeUser", :foreign_key => "global_node_user_from_id", :source=>:global_node_user_from
 
   after_create :set_or_create_node, :set_or_create_global_node, :set_or_create_node_user
   before_destroy :delete_links_if_allowed

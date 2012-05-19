@@ -1,0 +1,2 @@
+var j = '<%= j render(:partial => 'arguments/show', :locals => {:froms_positive => @froms_positive, :froms_negative => @froms_negative, :gnu => @gnu}) %>';
+$('#<%= @gnu.id %>').replaceWith(j);
