@@ -72,8 +72,10 @@ class GlobalNodeUser < ActiveRecord::Base
   def delete_global_node_if_allowed
     if global_node.reload.global_node_users_count < 1
       global_node.destroy
+    else
+      new_is_conclusion = (GlobalNodeUser.where(:global_id => self.global.id, :node_id => self.node.id, :is_conclusion => true).count > GlobalNodeUser.where(:global_id => self.global.id, :node_id => self.node.id, :is_conclusion => false).count)
+      global_node.update_attributes!(:is_conclusion => new_is_conclusion) unless new_is_conclusion==global_node.is_conclusion
     end
-    #else do update is conclusion
   end
 
   def delete_node_user_if_allowed

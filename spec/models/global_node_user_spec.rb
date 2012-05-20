@@ -120,7 +120,7 @@ describe GlobalNodeUser do
             gnu = GlobalNodeUser.create(:user=>@user, :global=>@global, :title => 'Title', :is_conclusion => true)
             GlobalNodeUser.where(:user_id=>@user.id, :title=>'Title', :global_id=>@global.id, :is_conclusion => true).count.should == 1
             NodeUser.where(:user_id=>@user.id, :title=>'Title', :is_conclusion => true).count.should == 1
-            GlobalNode.where(:title=>'Title', :global_id=>@global.id, :is_conclusion => false).count.should == 1
+            GlobalNode.where(:title=>'Title', :global_id=>@global.id, :is_conclusion => true).count.should == 0
             @user = FactoryGirl.create(:user, :email=>"another@test2.com")
             gnu = GlobalNodeUser.create(:user=>@user, :global=>@global, :title => 'Title', :is_conclusion => true)
             GlobalNodeUser.where(:user_id=>@user.id, :title=>'Title', :global_id=>@global.id, :is_conclusion => true).count.should == 1
@@ -189,7 +189,7 @@ describe GlobalNodeUser do
     context 'when there are no associated links' do
       describe 'when the global nodes global node user count is less than two (when there is only this user)' do
         before do
-          gnu = GlobalNodeUser.create(:user=>@user, :title=>'Title', :global=>@global)
+          gnu = GlobalNodeUser.create(:user=>@user, :title=>'Title', :global=>@global, :is_conclusion => false)
           gnu.global_node.reload.global_node_users_count.should == 1
         end
         it 'should destroy 1 node' do
@@ -235,7 +235,7 @@ describe GlobalNodeUser do
         context 'with another user for the global node' do
           before do
             @user = FactoryGirl.create(:user, :email => "a@test.com")
-            gnu = GlobalNodeUser.create(:user=>@user, :title=>'Title', :global=>@global)
+            gnu = GlobalNodeUser.create(:user=>@user, :title=>'Title', :global=>@global, :is_conclusion => false)
             gnu.global_node.reload.global_node_users_count.should == 2
           end
           it 'should destroy 0 globals_nodes' do
@@ -273,8 +273,18 @@ describe GlobalNodeUser do
             nu.should be_nil
           end
           it 'should not destroy the node and global node and should destroy the gnu' do
+            @user_two = FactoryGirl.create(:user, :email=>"another@test.com")
+            gnu = GlobalNodeUser.create(:user=>@user_two, :global=>@global, :title => 'Title', :is_conclusion => true)
+            GlobalNodeUser.where(:user_id=>@user_two.id, :title=>'Title', :global_id=>@global.id, :is_conclusion => true).count.should == 1
+            NodeUser.where(:user_id=>@user_two.id, :title=>'Title', :is_conclusion => true).count.should == 1
+            GlobalNode.where(:title=>'Title', :global_id=>@global.id, :is_conclusion => true).count.should == 0
+            @user_three = FactoryGirl.create(:user, :email=>"another@test2.com")
+            gnu = GlobalNodeUser.create(:user=>@user_three, :global=>@global, :title => 'Title', :is_conclusion => true)
+            GlobalNodeUser.where(:user_id=>@user_three.id, :title=>'Title', :global_id=>@global.id, :is_conclusion => true).count.should == 1
+            NodeUser.where(:user_id=>@user_three.id, :title=>'Title', :is_conclusion => true).count.should == 1
+            GlobalNode.where(:title=>'Title', :global_id=>@global.id, :is_conclusion => true).count.should == 0
             GlobalNodeUser.where(:user_id=>@user.id, :title=>'Title', :global_id=>@global.id)[0].destroy
-            GlobalNode.where(:title=>'Title', :global_id=>@global.id)[0].should_not be_nil
+            GlobalNode.where(:title=>'Title', :global_id=>@global.id, :is_conclusion => true)[0].should_not be_nil
             Node.where(:title=>'Title')[0].should_not be_nil
             GlobalNodeUser.where(:title=>'Title', :user_id => @user.id, :global_id=>@global.id)[0].should be_nil
           end
