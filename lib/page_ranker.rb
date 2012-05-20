@@ -1,8 +1,13 @@
 require "matrix"
 class PageRanker
 
-  def self.build_and_save_rank
-    matrix = PageRanker.build_link_matrix
+  def self.build_and_save_ranks
+    def self.build_and_save_rank(NodeUser)
+    def self.build_and_save_rank(GlobalNode)
+  end
+
+  def self.build_and_save_rank(class)
+    matrix = PageRanker.build_link_matrix(class)
     p 1
     p matrix
     matrix = PageRanker.row_stochastic(matrix)
@@ -31,9 +36,9 @@ class PageRanker
     end
   end
 
-  def self.build_link_matrix
+  def self.build_link_matrix(class)
     array = []
-    Node.all.each do |node|
+    class.all.each do |node|
       unless node.ignore
         array << node.build_link_array
       end
