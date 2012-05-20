@@ -31,3 +31,14 @@ $(document).ready ->
     # that typeahead uses to look up the display value
     property: "title"
   )
+  $('.icon-minus-sign').live "click", (event) ->
+    target = event.target
+    $(target).hide()
+    target_class = $(target).attr('class')
+    id_from_class = target_class.replace('icon-minus-sign ', "")
+    $('.'+id_from_class).parent().show()
+    $('#'+id_from_class).html("")
+    $('#'+id_from_class).hide()
+    return true
+  return false
+    

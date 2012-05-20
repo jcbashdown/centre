@@ -29,7 +29,8 @@
             %td
               = hidden_field link_id, :node_from, {:value=>link.node_from_id, :class=>"node_from #{link_id}"}
               = hidden_field link_id, :node_to, {:value=>link.node_to_id, :class=>"node_to #{link_id}"}
-              = link.node_to.title
+              %a{:href => node_path(link.node_to, @limit_order)}
+                = link.node_to.title
     #links_ins_edit.tab-pane
       %table.table-striped.table-condensed.table
         %tr
@@ -52,4 +53,5 @@
             %td
               = hidden_field link_id, :node_from, {:value=>link.node_from_id, :class=>"node_from #{link_id}"}
               = hidden_field link_id, :node_to, {:value=>link.node_to_id, :class=>"node_to #{link_id}"}
-              = link.node_from.title
+              %a{:href => node_path(link.node_to, @limit_order)}
+                = link.node_from.title

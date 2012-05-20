@@ -1,5 +1,6 @@
 var j = '<%= j render(:partial => 'arguments/show', :locals => {:froms_positive => @froms_positive, :froms_negative => @froms_negative, :gnu => @gnu, :previous => @previous, :original => @original}) %>';
 if('<%= @previous+@gnu.id.to_s %>' !== '<%= @previous+@original.to_s %>'){
-  $('.<%= @previous+@gnu.id.to_s %>').addClass('icon-minus-sign');
+  $('.icon-plus-sign.<%= @previous+@gnu.id.to_s %>').parent().hide();
+  $('.icon-minus-sign.<%= @previous+@gnu.id.to_s %>').show();
   $('#<%= @previous+@gnu.id.to_s %>').replaceWith(j);
 }
