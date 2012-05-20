@@ -66,7 +66,7 @@ describe GlobalNodeUser do
     end
     describe 'creation with existing nu' do
       before do
-        @gnu = GlobalNodeUser.create(:user=>@user, :global=>Global.find_by_name('All'), :title => 'Title')
+        @gnu = GlobalNodeUser.create(:user=>@user, :global=>Global.find_by_name('All'), :title => 'Title', :is_conclusion => false)
         @gnu.node_user.should_not be_nil
       end
       context 'when in the global' do
@@ -89,10 +89,13 @@ describe GlobalNodeUser do
           }.to change(NodeUser, :count).by(0)
         end
         it 'there should be only one gnu etc for this description' do
+          GlobalNodeUser.where(:user_id=>@user.id, :title=>'Title', :global_id=>@global.id, :is_conclusion => false).count.should == 1
+          NodeUser.where(:user_id=>@user.id, :title=>'Title', :is_conclusion => false).count.should == 1
+          GlobalNode.where(:title=>'Title', :global_id=>@global.id, :is_conclusion => false).count.should == 1
           gnu = GlobalNodeUser.create(:user=>@user, :global=>@global, :title => 'Title')
-          GlobalNodeUser.where(:user_id=>@user.id, :title=>'Title', :global_id=>@global.id).count.should == 1
-          NodeUser.where(:user_id=>@user.id, :title=>'Title').count.should == 1
-          GlobalNode.where(:title=>'Title', :global_id=>@global.id).count.should == 1
+          GlobalNodeUser.where(:user_id=>@user.id, :title=>'Title', :global_id=>@global.id, :is_conclusion => false).count.should == 1
+          NodeUser.where(:user_id=>@user.id, :title=>'Title', :is_conclusion => false).count.should == 1
+          GlobalNode.where(:title=>'Title', :global_id=>@global.id, :is_conclusion => false).count.should == 1
         end
         context 'when new user' do
           before do
@@ -114,10 +117,15 @@ describe GlobalNodeUser do
             }.to change(NodeUser, :count).by(1)
           end
           it 'should create a globals_node_user etc' do
-            gnu = GlobalNodeUser.create(:user=>@user, :global=>@global, :title => 'Title')
-            GlobalNodeUser.where(:user_id=>@user.id, :title=>'Title', :global_id=>@global.id).count.should == 1
-            NodeUser.where(:user_id=>@user.id, :title=>'Title').count.should == 1
-            GlobalNode.where(:title=>'Title', :global_id=>@global.id).count.should == 1
+            gnu = GlobalNodeUser.create(:user=>@user, :global=>@global, :title => 'Title', :is_conclusion => true)
+            GlobalNodeUser.where(:user_id=>@user.id, :title=>'Title', :global_id=>@global.id, :is_conclusion => true).count.should == 1
+            NodeUser.where(:user_id=>@user.id, :title=>'Title', :is_conclusion => true).count.should == 1
+            GlobalNode.where(:title=>'Title', :global_id=>@global.id, :is_conclusion => false).count.should == 1
+            @user = FactoryGirl.create(:user, :email=>"another@test2.com")
+            gnu = GlobalNodeUser.create(:user=>@user, :global=>@global, :title => 'Title', :is_conclusion => true)
+            GlobalNodeUser.where(:user_id=>@user.id, :title=>'Title', :global_id=>@global.id, :is_conclusion => true).count.should == 1
+            NodeUser.where(:user_id=>@user.id, :title=>'Title', :is_conclusion => true).count.should == 1
+            GlobalNode.where(:title=>'Title', :global_id=>@global.id, :is_conclusion => true).count.should == 1
           end
         end
       end

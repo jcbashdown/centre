@@ -56,11 +56,16 @@ class GlobalNodeUser < ActiveRecord::Base
     unless gn
       gn = GlobalNode.create!({:global_id => self.global_id, :node_id => self.node_id}.merge(node_hash))
     else
-      new_is_conclusion = (GlobalNodeUser.where(:global_id => self.global.id, :node_id => self.node.id, :is_conclusion => true).count > GlobalNodeUser.where(:global_id => self.global.id, :node_id => self.node.id, :is_conclusion => false).count)
-      gn.update_attributes!(:is_conclusion => new_is_conclusion) unless new_is_conclusion==gn.is_conclusion
+      if self.is_conclusion == false
+        new_is_conclusion = (NodeUser.where(:node_id => self.node.id, :is_conclusion => false).count+1 > NodeUser.where(:node_id => self.node.id, :is_conclusion => true).count) ? false : true
+      else
+        new_is_conclusion = (NodeUser.where(:node_id => self.node.id, :is_conclusion => false).count > NodeUser.where(:node_id => self.node.id, :is_conclusion => true).count+1) ? true : false
+      end
+      p new_is_conclusion
+      gn.update_attributes!(:is_conclusion => new_is_conclusion)
     end
     self.global_node = gn
-    save
+    save!
   end
 
   def set_or_create_node_user
@@ -73,7 +78,6 @@ class GlobalNodeUser < ActiveRecord::Base
     if global_node.reload.global_node_users_count < 1
       global_node.destroy
     end
-    #else do update is conclusion
   end
 
   def delete_node_user_if_allowed
