@@ -7,9 +7,10 @@
       %br
       %p 
         = @node.body
-      -froms_positive = @gnu.positive_global_node_user_froms
-      -froms_negative = @gnu.negative_global_node_user_froms
-      = render :partial => 'arguments/show', :locals => {:froms_positive => froms_positive, :froms_negative => froms_negative}
+      - if @gnu
+        -froms_positive = @gnu.positive_global_node_user_froms
+        -froms_negative = @gnu.negative_global_node_user_froms
+        = render :partial => 'arguments/show', :locals => {:froms_positive => froms_positive, :froms_negative => froms_negative, :gnu => @gnu, :previous => "", :original => @gnu.id}
         
     .span4.right_content
       = render 'links', :nodes=>@nodes_with_links

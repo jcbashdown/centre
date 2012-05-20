@@ -52,7 +52,9 @@ class NodesController < ApplicationController
   end
 
   def show
-    @gnu = GlobalNodeUser.where(:user_id=>@user.id, :node_id=>@node.id, :global_id=>@global.id)[0]
+    if @user
+      @gnu = GlobalNodeUser.where(:user_id=>@user.id, :node_id=>@node.id, :global_id=>@global.id)[0]
+    end
     @new_node = Node.new
     if request.xhr?
       render :show, :layout => false

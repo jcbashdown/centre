@@ -1,17 +1,17 @@
-%div{:id => "#{(@gnu ? @gnu.id : gnu)}"}
+%div{:id => "#{previous}#{gnu.id}"}
   %ul.positive
     -froms_positive.each do |from|
       %li
         %i{:class => "icon-plus"}
         = from.title
-        %a{:href => argument_path(from.id), :'data-remote' => true}
-          %i{:class => "icon-plus-sign #{from.id}"}
-      %div{:id => "#{from.id}", :style => "display:none;"}
+        %a{:href => argument_path(from.id, {:path => previous+"plus", :original => original}), :'data-remote' => true}
+          %i{:class => "icon-plus-sign #{previous}plus#{from.id}"}
+      %div{:id => "#{previous}plus#{from.id}", :style => "display:none;"}
   %ul.positive
     -froms_negative.each do |from|
       %li
         %i{:class => "icon-minus"}
         = from.title
-        %a{:href => argument_path(from.id), :'data-remote' => true}
-          %i{:class => "icon-plus-sign #{from.id}"}
-      %div{:id => "#{from.id}", :style => "display:none;"}
+        %a{:href => argument_path(from.id, {:path => previous+"minus", :original => original}), :'data-remote' => true}
+          %i{:class => "icon-plus-sign #{previous}minus#{from.id}"}
+      %div{:id => "#{previous}minus#{from.id}", :style => "display:none;"}
