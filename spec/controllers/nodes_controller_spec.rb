@@ -130,7 +130,8 @@ describe NodesController do
     end
     context 'when node is node one' do
       it 'should call set_node' do
-        controller.should_receive(:set_node).and_return @node_one
+        controller.stub(:show)
+        controller.should_receive(:set_node)
         get :show, @params
       end
       it 'should call set_node' do
