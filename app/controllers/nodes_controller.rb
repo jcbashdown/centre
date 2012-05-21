@@ -7,7 +7,7 @@ class NodesController < ApplicationController
   before_filter :set_node, :only => [:show]
   before_filter :set_links, :only => [:show]
   before_filter :redirect_if_new_exists, :only => [:create]
-  before_filter :set_global, :only => [:create, :destroy, :show]
+  before_filter :set_global, :only => [:create, :destroy, :show, :index]
 
   def set_node
     @node = Node.find(params[:id])

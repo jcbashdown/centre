@@ -6,7 +6,13 @@
         - @new_node.errors.full_messages.each do |msg|
           %li= msg
   .input-append
-    = f.text_field :title, :placeholder=>"Node Title", :class=>"span2 typeahead", :autocomplete => "off"
-    - unless @question.name == "All"
-      %input{:style => 'display:none;', :value => @question.id, :name => "question"}
+    = f.text_field :title, :placeholder=>"Node Title", :class=>"typeahead", :autocomplete => "off"
     = f.submit 'Add/View', :class => 'btn'
+  .row-fluid
+    .span12
+      %br
+      %label.checkbox.right
+        Conclusion?&nbsp;
+        = f.check_box :is_conclusion, :class => 'right'
+  - unless @question.name == "All"
+    %input{:style => 'display:none;', :value => @question.id, :name => "question"}
