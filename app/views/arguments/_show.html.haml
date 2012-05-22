@@ -1,6 +1,6 @@
 %div{:id => "#{previous}#{gnu.id}"}
   - if gnu.id == original
-    %h3 Argument For
+    %h5 Argument For
   %ul.positive
     -froms_positive.each do |from|
       %li
@@ -13,7 +13,7 @@
           %i{:class => "icon-plus-sign #{previous}plus#{from.id}"}
       %div{:id => "#{previous}plus#{from.id}", :style => "display:none;"}
   - if gnu.id == original
-    %h3 Argument Against
+    %h5 Argument Against
   %ul.positive
     -froms_negative.each do |from|
       %li
