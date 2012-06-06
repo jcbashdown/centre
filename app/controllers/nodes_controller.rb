@@ -35,9 +35,9 @@ class NodesController < ApplicationController
       end
     else
       unless @question.name == "All"
-        @nodes = @question.nodes.paginate(:page => params[:page], :per_page=>5).order(@order_query_all)
+        @nodes = @question.nodes.page.page(params[:page]).per(5).order(@order_query_all)
       else
-        @nodes = Node.order(@order_query_all).paginate(:page => params[:page], :per_page=>5)
+        @nodes = Node.order(@order_query_all).page(params[:page]).per(5)
       end
     end
   end

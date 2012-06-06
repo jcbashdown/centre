@@ -7,7 +7,7 @@ group :assets do
   gem 'coffee-rails', "~> 3.2.1"
   gem 'uglifier', '>= 1.0.3'
 end
-gem 'will_paginate'
+gem 'kaminari'
 gem 'mysql2'
 gem 'jquery-rails'
 if HOST_OS =~ /linux/i

@@ -16,4 +16,4 @@
           - if @user
             %a.right.accordion-toggle-override{"data-confirm" => "Are you sure?", "data-method" => "delete", :href => node_path(node, @limit_order), :rel => "nofollow"}
               %i.icon-remove.right
-= will_paginate nodes
+= paginate nodes, :remote => true
