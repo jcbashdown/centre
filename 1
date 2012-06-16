@@ -9,29 +9,13 @@
         = @node.body
       .tabbable
         %ul.nav.nav-pills.right
-          %li#menu1.dropdown
-            %a.dropdown-toggle{"data-toggle" => "dropdown", :href => "#menu1"}
-              Node
-              %b.caret
-            %ul.dropdown-menu
-              - if current_user
-                %li.active
-                  %a{"data-toggle" => "tab", :href => "#me"} My Node
-              %li.divider
-              %li
-                %a{"data-toggle" => "tab", :href => "#other_user"} My Node
-          %li#menu2.dropdown
-            %a.dropdown-toggle{"data-toggle" => "dropdown", :href => "#menu2"}
-              Topic 
-              %b.caret
-            %ul.dropdown-menu
-              - if current_user
-                %li
-                  %a{"data-toggle" => "tab", :href => "#my_topic"} My Topic
-              %li.divider
-              %li
-                %a{"data-toggle" => "tab", :href => "#everyones_topic", :class => "#{current_user ? '' : 'active'}"}
-                  Everyone's topic
+          - unless current_user.blank?
+            %li.active
+              %a{"data-toggle" => "tab", :href => "#me"} My Node
+            %li
+              %a{"data-toggle" => "tab", :href => "#my_topic"} My Topic
+          %li
+            %a{"data-toggle" => "tab", :href => "#everyones_topic"} Everyone's topic
         .tab-content
           -if current_user
             #me.tab-pane.active
@@ -46,7 +30,6 @@
                   -froms_positive = gnu.positive_global_node_user_froms
                   -froms_negative = gnu.negative_global_node_user_froms
                   = render :partial => 'arguments/show', :locals => {:froms_positive => froms_positive, :froms_negative => froms_negative, :gnu => gnu, :previous => "global_user", :original => gnu.id}
-          #other_user.tab-pane
           #everyones_topic{:class => "tab-pane #{current_user ? '' : 'active'}"}
             - unless @question.name == 'All'
               - @question.conclusions.each do |gn| 

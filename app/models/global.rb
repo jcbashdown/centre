@@ -14,6 +14,10 @@ class Global < ActiveRecord::Base
     global_node_users.where(:is_conclusion => true)
   end
 
+  def conclusions
+    global_nodes.where(:is_conclusion => true)
+  end
+
   def global_to_node_links(to_node, order="")
     if self.name == 'All'
       these_nodes = Node.all

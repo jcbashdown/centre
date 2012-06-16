@@ -1,7 +1,7 @@
 .span9
   .row-fluid
     .span8.main_content
-      - unless @question.name == 'All'
+      - unless @question.name == 'All' || current_user.blank?
         - @question.user_conclusions.each do |gnu| 
           %h3= gnu.title
           -froms_positive = gnu.positive_global_node_user_froms

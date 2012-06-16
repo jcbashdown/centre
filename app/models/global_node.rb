@@ -10,6 +10,15 @@ class GlobalNode < ActiveRecord::Base
   belongs_to :node
   has_many :global_node_users
 
+  has_many :positive_global_link_ins, :foreign_key => "global_node_to_id", :class_name => "GlobalLink", :conditions => {:value => 1, :active => true}
+  has_many :positive_global_link_tos, :foreign_key => "global_node_from_id", :class_name => "GlobalLink", :conditions => {:value => 1, :active => true}
+  has_many :negative_global_link_ins, :foreign_key => "global_node_to_id", :class_name => "GlobalLink", :conditions => {:value => -1, :active => true}
+  has_many :negative_global_link_tos, :foreign_key => "global_node_from_id", :class_name => "GlobalLink", :conditions => {:value => -1, :active => true}
+  has_many :positive_global_node_tos, :through => :positive_global_link_tos, :class_name => "GlobalNode", :foreign_key => "global_node_to_id", :source=>:global_node_to
+  has_many :positive_global_node_froms, :through => :positive_global_link_ins, :class_name => "GlobalNode", :foreign_key => "global_node_from_id", :source=>:global_node_from
+  has_many :negative_global_node_tos, :through => :negative_global_link_tos, :class_name => "GlobalNode", :foreign_key => "global_node_to_id", :source=>:global_node_to
+  has_many :negative_global_node_froms, :through => :negative_global_link_ins, :class_name => "GlobalNode", :foreign_key => "global_node_from_id", :source=>:global_node_from
+
   validates :node, :presence => true
   validates :title, :presence => true
 

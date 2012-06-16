@@ -35,9 +35,9 @@ class NodesController < ApplicationController
       end
     else
       unless @question.name == "All"
-        @nodes = @question.nodes.page.page(params[:page]).per(5).order(@order_query_all)
+        @nodes = @question.nodes.page.page(params[:page]).per(15).order(@order_query_all)
       else
-        @nodes = Node.order(@order_query_all).page(params[:page]).per(5)
+        @nodes = Node.order(@order_query_all).page(params[:page]).per(15)
       end
     end
   end
@@ -123,7 +123,7 @@ class NodesController < ApplicationController
                      fulltext params[:find]
                      with :global_id, question_id if question_id
                      order_by(:id, :asc)
-                     paginate(:page => params[:page], :per_page => 5)
+                     paginate(:page => params[:page], :per_page => 15)
                    end.results
   end
 

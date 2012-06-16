@@ -16,7 +16,7 @@ class GlobalLinkUser < ActiveRecord::Base
 
   #validates :node_from, :presence => true
   #validates :node_to, :presence => true
-  after_create :set_or_create_link, :set_or_create_global_link, :set_or_create_link_user, :set_or_create_global_node_user_and_node_models, :update_caches
+  after_create :set_or_create_global_node_user_and_node_models, :set_or_create_link, :set_or_create_global_link, :set_or_create_link_user, :update_caches
   after_destroy :delete_link_if_allowed, :delete_global_link_if_allowed, :delete_link_user_if_allowed, :update_caches
 
   validates_uniqueness_of :user_id, :scope => [:link_id, :global_id]
@@ -24,6 +24,10 @@ class GlobalLinkUser < ActiveRecord::Base
 
   def link_hash
     {:node_from_id => self.node_from_id, :node_to_id => self.node_to_id, :value =>  self.value}
+  end
+
+  def global_link_hash
+    {:global_node_from_id => self.global_node_from_id, :global_node_to_id => self.global_node_to_id}
   end
 
   protected
@@ -44,9 +48,15 @@ class GlobalLinkUser < ActiveRecord::Base
   end
 
   def set_or_create_global_link
-    gl = GlobalLink.where(:global_id => self.global_id, :link_id => self.link_id)[0] || GlobalLink.create({:global_id => self.global_id, :link_id => self.link_id}.merge(self.link_hash))
+    gl = GlobalLink.where(:global_id => self.global_id, :link_id => self.link_id)[0] || GlobalLink.create({:global_id => self.global_id, :link_id => self.link_id}.merge(self.link_hash).merge(self.global_link_hash))
     self.global_link = gl
     save
+    # untested
+    active_link = GlobalLink.where(:global_id => self.global_id, :node_from_id => self.node_from_id).order("global_link_users_count desc")[0]
+    unless active_link.active
+      active_link.update_attributes(:active => true)
+    end
+    # end untested
   end
 
   def set_or_create_link_user
