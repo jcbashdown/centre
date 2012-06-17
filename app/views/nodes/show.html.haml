@@ -16,10 +16,12 @@
             %ul.dropdown-menu
               - if current_user
                 %li.active
-                  %a{"data-toggle" => "tab", :href => "#me"} My Node
+                  %a{"data-toggle" => "tab", "data-target" => "#me", :href => user_argument_path(@gnu.id, {:path => "me", :original => @gnu}), "data-remote" => true} My Node
               %li.divider
-              %li
-                %a{"data-toggle" => "tab", :href => "#other_user"} My Node
+              - User.all.each do |user|
+                - if gnu = user.global_node_users.where(:global_node_id => @gnu.global_node_id)[0]
+                  %li
+                    %a{"data-toggle" => "tab", "data-target" => "#other_user", :href => user_argument_path(gnu.id, {:path => "other_user", :original => gnu}), "data-remote" => true}= user.name
           %li#menu2.dropdown
             %a.dropdown-toggle{"data-toggle" => "dropdown", :href => "#menu2"}
               Topic 
@@ -27,32 +29,25 @@
             %ul.dropdown-menu
               - if current_user
                 %li
-                  %a{"data-toggle" => "tab", :href => "#my_topic"} My Topic
+                  %a{"data-toggle" => "tab", "data-target" => "#my_topic", :href => user_arguments_path(:global_id => @question.id, :path => "my_topic"), "data-remote" => true} My Topic
               %li.divider
-              %li
-                %a{"data-toggle" => "tab", :href => "#everyones_topic", :class => "#{current_user ? '' : 'active'}"}
-                  Everyone's topic
+                %li
+                  %a{"data-toggle" => "tab", "data-target" => "#everyones_topic", :href => global_arguments_path(:global_id => @question.id, :path => "everyones_topic"), "data-remote" => true} Everyone's topic
+              %li.divider
+                - User.all.each do |user|
+                  %li
+                    %a{"data-toggle" => "tab", "data-target" => "#other_user_topic", :href => user_arguments_path(:global_id => @question.id, :user_id => user.id, :path => "other_user_topic"), "data-remote" => true}= user.name 
         .tab-content
           -if current_user
             #me.tab-pane.active
-              - if @gnu
-                -froms_positive = @gnu.positive_global_node_user_froms
-                -froms_negative = @gnu.negative_global_node_user_froms
-                = render :partial => 'arguments/show', :locals => {:froms_positive => froms_positive, :froms_negative => froms_negative, :gnu => @gnu, :previous => "", :original => @gnu.id}
+              Loading...
             #my_topic.tab-pane
-              - unless @question.name == 'All'
-                - @question.user_conclusions.each do |gnu| 
-                  %h3= gnu.title
-                  -froms_positive = gnu.positive_global_node_user_froms
-                  -froms_negative = gnu.negative_global_node_user_froms
-                  = render :partial => 'arguments/show', :locals => {:froms_positive => froms_positive, :froms_negative => froms_negative, :gnu => gnu, :previous => "global_user", :original => gnu.id}
+              Loading...
           #other_user.tab-pane
+            Loading...
+          #other_user_topic.tab-pane
+            Loading...
           #everyones_topic{:class => "tab-pane #{current_user ? '' : 'active'}"}
-            - unless @question.name == 'All'
-              - @question.conclusions.each do |gn| 
-                %h3= gn.title
-                -froms_positive = gn.positive_global_node_froms
-                -froms_negative = gn.negative_global_node_froms
-                = render :partial => 'arguments/show', :locals => {:froms_positive => froms_positive, :froms_negative => froms_negative, :gnu => gn, :previous => "global", :original => gn.id}
+            Loading...
     .span4.right_content
       = render 'links', :nodes=>@nodes_with_links

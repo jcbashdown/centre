@@ -1,8 +1,8 @@
-class UserArgumentsController < ActionController::Base
+class GlobalArgumentsController < ActionController::Base
   
   def show
-    @node = GlobalNodeUser.find(params[:id])
-    if @node.node_froms
+    @node = GlobalNode.find(params[:id])
+    if @node.global_node_froms
       @previous = params[:path]
       @original= params[:original]
       respond_to do |format|
@@ -12,10 +12,7 @@ class UserArgumentsController < ActionController::Base
   end 
  
   def index
-    unless @user = User.find(params[:user])
-      @user = current_user
-    end
-    unless @question = Global.find(params[:global])
+    unless params[:global_id] && @question = Global.find(params[:global_id])
       @question = Global.find_by_name("All")
     end
     @previous = params[:path]

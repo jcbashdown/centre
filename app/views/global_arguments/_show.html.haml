@@ -1,5 +1,5 @@
--froms_positive = @node.positive_global_node_user_froms
--froms_negative = @node.negative_global_node_user_froms
+-froms_positive = node.positive_global_node_froms
+-froms_negative = node.negative_global_node_froms
 %div{:id => "#{previous}#{node.id}"}
   - if node.id == original
     %h5 Argument For
@@ -11,7 +11,7 @@
           = from.title
         %a{:href => "#"}
           %i{:class => "icon-minus-sign #{previous}plus#{from.id}", :style => "display:none;"}
-        %a{:href => argument_path(from.id, {:path => previous+"plus", :original => original}), :'data-remote' => true}
+        %a{:href => global_argument_path(from.id, {:path => previous+"plus", :original => original}), :'data-remote' => true}
           %i{:class => "icon-plus-sign #{previous}plus#{from.id}"}
       %div{:id => "#{previous}plus#{from.id}", :style => "display:none;"}
   - if node.id == original
@@ -24,6 +24,6 @@
           = from.title
         %a{:href => "#"}
           %i{:class => "icon-minus-sign #{previous}minus#{from.id}", :style => "display:none;"}
-        %a{:href => argument_path(from.id, {:path => previous+"minus", :original => original}), :'data-remote' => true}
+        %a{:href => global_argument_path(from.id, {:path => previous+"minus", :original => original}), :'data-remote' => true}
           %i{:class => "icon-plus-sign #{previous}minus#{from.id}"}
       %div{:id => "#{previous}minus#{from.id}", :style => "display:none;"}

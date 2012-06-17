@@ -1,4 +1,4 @@
-var j = '<%= j render(:partial => 'arguments/show', :locals => {:node => @node, :previous => @previous, :original => @original}) %>';
+var j = '<%= j render(:partial => 'global_arguments/show', :locals => {:node=> @node, :previous => @previous, :original => @original}) %>';
 if($('#<%= @previous+@node.id.to_s %>').length > 0){
   if('<%= @previous+@node.id.to_s %>' !== '<%= @previous+@original.to_s %>'){
     $('.icon-plus-sign.<%= @previous+@node.id.to_s %>').parent().hide();

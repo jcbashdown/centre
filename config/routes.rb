@@ -3,8 +3,9 @@ Centre::Application.routes.draw do
   resources :nodes, :except => [:new, :edit]
   resources :globals
   resources :links
-  resources :arguments, :only => :show
-  match '/nodes/:id/add_or_edit_link' => 'nodes#add_or_edit_link', :as => :add_or_edit_link
+  resources :user_arguments, :only => [:show, :index]
+  resources :global_arguments, :only => [:show, :index]
+  resources :arguments, :only => [:show, :index]
 
   root :to => "nodes#index"
 

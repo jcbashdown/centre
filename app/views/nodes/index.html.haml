@@ -1,11 +1,5 @@
 .span9
   .row-fluid
     .span8.main_content
-      - unless @question.name == 'All' || current_user.blank?
-        - @question.user_conclusions.each do |gnu| 
-          %h3= gnu.title
-          -froms_positive = gnu.positive_global_node_user_froms
-          -froms_negative = gnu.negative_global_node_user_froms
-          = render :partial => 'arguments/show', :locals => {:froms_positive => froms_positive, :froms_negative => froms_negative, :gnu => gnu, :previous => "global", :original => gnu.id}
         
     .span4.right_content

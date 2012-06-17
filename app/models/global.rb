@@ -10,8 +10,8 @@ class Global < ActiveRecord::Base
 
   validates_uniqueness_of :name
 
-  def user_conclusions
-    global_node_users.where(:is_conclusion => true)
+  def user_conclusions(user)
+    global_node_users.where(:is_conclusion => true, :user_id => user.id)
   end
 
   def conclusions
