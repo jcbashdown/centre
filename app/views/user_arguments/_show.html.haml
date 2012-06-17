@@ -1,7 +1,7 @@
 -froms_positive = node.positive_global_node_user_froms
 -froms_negative = node.negative_global_node_user_froms
 %div{:id => "#{previous}#{node.id}"}
-  - if node.id == original
+  - if node.id == original.to_i
     %h5 Argument For
   %ul.positive
     -froms_positive.each do |from|
@@ -14,7 +14,7 @@
         %a{:href => user_argument_path(from.id, {:path => previous+"plus", :original => original}), :'data-remote' => true}
           %i{:class => "icon-plus-sign #{previous}plus#{from.id}"}
       %div{:id => "#{previous}plus#{from.id}", :style => "display:none;"}
-  - if node.id == original
+  - if node.id == original.to_i
     %h5 Argument Against
   %ul.positive
     -froms_negative.each do |from|
