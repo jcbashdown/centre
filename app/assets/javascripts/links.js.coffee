@@ -34,5 +34,13 @@ $(document).ready ->
       success: (data, textStatus, XMLHttpRequest) ->
         $("#link_"+link_id).ajaxLoaderRemove()
         $("#link_"+link_id).replaceWith(data)
+        visible = $("li.arg-option.active > a")
+        path = visible.attr("href")
+        #active_panel = visible.attr("data-target")
+        $.ajax   
+          url: path
+          type: "get"
+          dataType: "js"
+          # not working for the same reason refresh when already in context not working = need to replace whole div when force
     return true
   return false

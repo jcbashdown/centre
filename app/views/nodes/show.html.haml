@@ -9,34 +9,34 @@
         = @node.body
       .tabbable
         %ul.nav.nav-pills.right
-          %li#menu1.dropdown
+          %li#menu1.dropdown{:class => "#{current_user ? 'active' : ''}"}
             %a.dropdown-toggle{"data-toggle" => "dropdown", :href => "#menu1"}
               Node
               %b.caret
             %ul.dropdown-menu
               - if current_user
-                %li.active
+                %li.arg-option.active
                   %a{"data-toggle" => "tab", "data-target" => "#me", :href => user_argument_path(@gnu.id, {:path => "me", :original => @gnu}), "data-remote" => true} My Node
               %li.divider
               - User.all.each do |user|
                 - if gnu = user.global_node_users.where(:global_id => @question.id, :node_id => @node.id)[0]
-                  %li
+                  %li.arg-option
                     %a{"data-toggle" => "tab", "data-target" => "#other_user", :href => user_argument_path(gnu.id, {:path => "other_user", :original => gnu.id}), "data-remote" => true}= user.name
           - unless @question.name == 'All'
-            %li#menu2.dropdown
+            %li#menu2.dropdown{:class => "#{current_user ? '' : 'active'}"}
               %a.dropdown-toggle{"data-toggle" => "dropdown", :href => "#menu2"}
                 Topic 
                 %b.caret
               %ul.dropdown-menu
                 - if current_user
-                  %li
+                  %li.arg-option
                     %a{"data-toggle" => "tab", "data-target" => "#my_topic", :href => user_arguments_path(:global_id => @question.id, :path => "my_topic"), "data-remote" => true} My Topic
                 %li.divider
-                  %li
+                  %li{:class => "arg-option #{current_user ? '' : 'active'}"}
                     %a{"data-toggle" => "tab", "data-target" => "#everyones_topic", :href => global_arguments_path(:global_id => @question.id, :path => "everyones_topic"), "data-remote" => true} Everyone's topic
                 %li.divider
                   - User.all.each do |user|
-                    %li
+                    %li.arg-option
                       %a{"data-toggle" => "tab", "data-target" => "#other_user_topic", :href => user_arguments_path(:global_id => @question.id, :user_id => user.id, :path => "other_user_topic"), "data-remote" => true}= user.name 
         .tab-content
           -if current_user
