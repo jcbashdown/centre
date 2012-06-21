@@ -7,6 +7,7 @@ class UserArgumentsController < ActionController::Base
       @original= params[:original]
       respond_to do |format|
         format.js {}
+        format.html {render(:partial => 'user_arguments/show', :locals => {:node => @node, :previous => @previous, :original => @original})}
       end
     end
   end 

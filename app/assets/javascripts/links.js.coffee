@@ -36,11 +36,15 @@ $(document).ready ->
         $("#link_"+link_id).replaceWith(data)
         visible = $("li.arg-option.active > a")
         path = visible.attr("href")
-        #active_panel = visible.attr("data-target")
+        active_panel = visible.attr("data-target")
         $.ajax   
           url: path
           type: "get"
-          dataType: "js"
-          # not working for the same reason refresh when already in context not working = need to replace whole div when force
+          dataType: "html"
+          success: (data, textStatus, XMLHttpRequest) ->
+            $(active_panel).html(data)
+            return false
+          # not working as within js - either eval returned js or replace data target with html and request html - either way, need success
+        return true
     return true
   return false
