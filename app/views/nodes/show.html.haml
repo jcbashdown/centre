@@ -14,7 +14,7 @@
               Node
               %b.caret
             %ul.dropdown-menu
-              - if current_user
+              - if current_user && @gnu
                 %li.arg-option.active
                   %a{"data-toggle" => "tab", "data-target" => "#me", :href => user_argument_path(@gnu.id, {:path => "me", :original => @gnu}), "data-remote" => true} My Node
               %li.divider
@@ -39,7 +39,7 @@
                     %li.arg-option
                       %a{"data-toggle" => "tab", "data-target" => "#other_user_topic", :href => user_arguments_path(:global_id => @question.id, :user_id => user.id, :path => "other_user_topic"), "data-remote" => true}= user.name 
         .tab-content
-          -if current_user
+          -if current_user && @gnu
             #me.tab-pane.active
               = render(:partial => 'user_arguments/show', :locals => {:node => @gnu, :previous => "me", :original => @gnu.id})
             #my_topic.tab-pane

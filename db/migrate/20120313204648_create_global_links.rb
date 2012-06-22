@@ -8,7 +8,7 @@ class CreateGlobalLinks < ActiveRecord::Migration
       t.integer :global_node_from_id
       t.integer :global_node_to_id
       t.integer :value
-      t.boolean :active
+      t.boolean :active, :default => true
       t.integer :global_link_users_count, :default=>0, :null => false
 
       t.timestamps

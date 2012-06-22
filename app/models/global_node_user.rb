@@ -52,15 +52,13 @@ class GlobalNodeUser < ActiveRecord::Base
   end
 
   def set_or_create_global_node
-    gn = GlobalNode.where(:global_id => self.global_id, :node_id => self.node_id)[0]
-    unless gn
-      gn = GlobalNode.create!({:global_id => self.global_id, :node_id => self.node_id}.merge(node_hash))
-    else
-      new_is_conclusion = (GlobalNodeUser.where(:global_id => self.global.id, :node_id => self.node.id, :is_conclusion => true).count > GlobalNodeUser.where(:global_id => self.global.id, :node_id => self.node.id, :is_conclusion => false).count)
-      gn.update_attributes!(:is_conclusion => new_is_conclusion) unless new_is_conclusion==gn.is_conclusion
-    end
+    gn = GlobalNode.where(:global_id => self.global_id, :node_id => self.node_id)[0] || GlobalNode.create!({:global_id => self.global_id, :node_id => self.node_id}.merge(node_hash))
     self.global_node = gn
     save
+    #untested
+    new_is_conclusion = (GlobalNodeUser.where(:global_id => self.global.id, :node_id => self.node.id, :is_conclusion => true).count > GlobalNodeUser.where(:global_id => self.global.id, :node_id => self.node.id, :is_conclusion => false).count)
+    gn.update_attributes!(:is_conclusion => new_is_conclusion) unless new_is_conclusion==gn.is_conclusion
+    #end untested
   end
 
   def set_or_create_node_user
@@ -95,7 +93,7 @@ class GlobalNodeUser < ActiveRecord::Base
       glut.destroy
     end
     self.global_link_user_ins.each do |glui|
-      gluf.destroy
+      glui.destroy
     end
   end
 

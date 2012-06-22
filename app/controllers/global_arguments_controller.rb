@@ -7,6 +7,7 @@ class GlobalArgumentsController < ActionController::Base
       @original= params[:original]
       respond_to do |format|
         format.js {}
+        format.html {render(:partial => 'global_arguments/show', :locals => {:node => @node, :previous => @previous, :original => @original})}
       end
     end
   end 
@@ -18,6 +19,7 @@ class GlobalArgumentsController < ActionController::Base
     @previous = params[:path]
     respond_to do |format|
       format.js {}
+      format.html { render(:partial => 'global_arguments/index', :locals => {:previous => @previous, :question => @question}) }
     end
   end
  

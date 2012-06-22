@@ -52,9 +52,12 @@ class GlobalLinkUser < ActiveRecord::Base
     self.global_link = gl
     save
     # untested
-    active_link = GlobalLink.where(:global_id => self.global_id, :node_from_id => self.node_from_id).order("global_link_users_count desc")[0]
-    unless active_link.active
+    old_active_link = GlobalLink.where(:active => true)[0]
+    active_link = GlobalLink.where(:global_id => self.global_id, :link_id => self.link_id).order("global_link_users_count desc")[0]
+    # need to turn off others
+    unless active_link == old_active_link
       active_link.update_attributes(:active => true)
+      old_active_link.update_attributes(:active => false)
     end
     # end untested
   end

@@ -11,16 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120510212436) do
-
-  create_table "arguments", :force => true do |t|
-    t.text     "content"
-    t.integer  "subject_id"
-    t.string   "subject_type"
-    t.string   "type"
-    t.datetime "created_at",   :null => false
-    t.datetime "updated_at",   :null => false
-  end
+ActiveRecord::Schema.define(:version => 20120327210137) do
 
   create_table "global_link_users", :force => true do |t|
     t.integer  "global_id"
@@ -49,10 +40,10 @@ ActiveRecord::Schema.define(:version => 20120510212436) do
     t.integer  "global_node_from_id"
     t.integer  "global_node_to_id"
     t.integer  "value"
-    t.boolean  "active"
-    t.integer  "global_link_users_count", :default => 0, :null => false
-    t.datetime "created_at",                             :null => false
-    t.datetime "updated_at",                             :null => false
+    t.boolean  "active",                  :default => true
+    t.integer  "global_link_users_count", :default => 0,    :null => false
+    t.datetime "created_at",                                :null => false
+    t.datetime "updated_at",                                :null => false
   end
 
   create_table "global_node_users", :force => true do |t|

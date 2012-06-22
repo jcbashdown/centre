@@ -22,6 +22,7 @@ class UserArgumentsController < ActionController::Base
     @previous = params[:path]
     respond_to do |format|
       format.js {}
+      format.html { render(:partial => 'global_arguments/index', :locals => {:previous => @previous, :question => @question}) }
     end
   end
  
