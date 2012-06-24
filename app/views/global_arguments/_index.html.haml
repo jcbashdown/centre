@@ -1,4 +1,4 @@
 - unless question.name == 'All'
-  - question.conclusions.each do |node| 
+  - question.concluding_nodes.each do |node| 
     %h3= node.title
     = render :partial => 'global_arguments/show', :locals => {:node => node, :previous => previous, :original => node.id}

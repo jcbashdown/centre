@@ -10,12 +10,36 @@ class Global < ActiveRecord::Base
 
   validates_uniqueness_of :name
 
-  def user_conclusions(user)
-    global_node_users.where(:is_conclusion => true, :user_id => user.id)
+  def links
+    if global.name == 'All'
+      Link.all
+    else
+      global_links.all
+    end
   end
 
-  def conclusions
-    global_nodes.where(:is_conclusion => true)
+  def nodes
+    if global.name == 'All'
+      Node.all
+    else
+      global_nodes.all
+    end
+  end
+  
+  def active_links
+    if global.name == 'All'
+      Link.where(:active => true)
+    else
+      global_links.where(:active => true)
+    end
+  end
+
+  def concluding_nodes
+    if global.name == 'All'
+      []
+    else
+      global_nodes.where(:is_conclusion => true)
+    end
   end
 
   def global_to_node_links(to_node, order="")

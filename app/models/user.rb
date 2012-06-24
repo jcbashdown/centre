@@ -15,7 +15,39 @@ class User < ActiveRecord::Base
 
   # Setup accessible (or protected) attributes for your model
   attr_accessible :name, :email, :password, :password_confirmation, :remember_me
+
+  def links_for_global global
+    if global.name == 'All'
+      global_link_users.all
+    else
+      global_link_users.where(:global_id => global.id)
+    end
+  end
+
+  def nodes_for_global global
+    if global.name == 'All'
+      global_node_users.all
+    else
+      global_node_users.where(:global_id => global.id)
+    end
+  end
   
+  def active_links_for_global global
+    if global.name == 'All'
+      global_link_users.where(:active => true)
+    else
+      global_link_users.where(:global_id => global.id, :active => true)
+    end
+  end
+
+  def concluding_nodes_for_global global
+    if global.name == 'All'
+      global_node_users.where(:is_conclusion => true)
+    else
+      global_node_users.where(:global_id => global.id, :is_conclusion => true)
+    end
+  end
+
   def user_to_node_links(to_node, global, order="")
     if global.name == 'All'
       these_nodes = Node.all
