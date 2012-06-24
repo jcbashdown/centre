@@ -274,8 +274,10 @@ describe NodesController do
   describe "DELETE destroy" do
     before do
       @node = Node.create! valid_attributes, :question => @global.id
-      @gnu = GlobalNodeUser.create(:user=>@user, :node=>@node, :global=>@global)   
-      GlobalNodeUser.stub(:where).and_return [@gnu]
+      @gnu = GlobalNodeUser.create(:user=>@user, :node=>@node, :global=>@global)
+      mock_relation = mock('relation')
+      mock_relation.stub(:where).and_return [@gnu]
+      GlobalNodeUser.stub(:with_all_associations).and_return mock_relation
       Node.stub(:find).and_return @node
     end
 
