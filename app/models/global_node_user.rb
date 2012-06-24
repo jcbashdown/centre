@@ -1,7 +1,11 @@
+require "#{Rails.root}/lib/global_node_mixin.rb"
+require "#{Rails.root}/lib/node_user_mixin.rb"
+
 class GlobalNodeUser < ActiveRecord::Base
-  belongs_to :global
+  include GlobalNodeMixin
+  include NodeUserMixin
+
   belongs_to :node, :counter_cache => true
-  belongs_to :user
   belongs_to :node_user, :counter_cache => true
   belongs_to :global_node, :counter_cache => true
 
@@ -41,6 +45,14 @@ class GlobalNodeUser < ActiveRecord::Base
       end
     end
     array_of_links_arrays.flatten.uniq
+  end
+
+  class << self
+
+    def with_all_associations
+      GlobalLinkUser.includes(:global, :node, :user, :node_user, :global_node, :global_link_user_ins, :global_link_user_tos, :global_node_user_tos, :global_node_user_froms)
+    end
+
   end
 
   protected

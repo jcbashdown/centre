@@ -95,7 +95,7 @@ class NodesController < ApplicationController
 
   def destroy
     node = Node.find(params[:id])
-    gnu = GlobalNodeUser.where(:user_id=>@user.id, :node_id=>node.id, :global_id=>@global.id)[0]
+    gnu = GlobalNodeUser.with_all_associations.where(:user_id=>@user.id, :node_id=>node.id, :global_id=>@global.id)[0]
     if gnu.destroy
       respond_to do |format|
         format.html { redirect_to nodes_path(@limit_order) }

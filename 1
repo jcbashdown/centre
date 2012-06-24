@@ -1,7 +1,7 @@
-require "#{Rails.root}/lib/link_mixin.rb"
+require "#{Rails.root}/lib/link_class_mixin.rb"
 
 class Link < ActiveRecord::Base
-  include LinkMixin
+  include LinkClassMixin
 
   has_many :link_users
   has_many :users, :through => :link_users

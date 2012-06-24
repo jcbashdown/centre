@@ -46,9 +46,11 @@ describe LinksController do
           @mock_glu_2.stub(:save).and_return true
           @mock_glu_2.stub(:link).and_return @mock_link
           @mock_glu.stub(:destroy).and_return true
+          @mock_relation = mock('relation')
         end
-        it 'should save the glu' do
-          GlobalLinkUser.stub(:where).and_return [@mock_glu]
+        it 'should destroy the glu' do
+          @mock_relation.stub(:where).and_return [@mock_glu]
+          GlobalLinkUser.stub(:with_all_associations).and_return @mock_relation
           @mock_glu.should_receive(:destroy)
           xhr :put, :update, @params
         end
@@ -63,14 +65,14 @@ describe LinksController do
           link = Link.where(@params_one["link"]).first
           link.global_link_users_count.should == 2
           LinkUser.count.should == 2
-          link.users_count.should == 2 
+          link.link_users_count.should == 2 
           xhr :post, :update, @params
           link = Link.where(@params["link"]).first
           link.global_link_users_count.should == 1
-          link.users_count.should == 1
+          link.link_users_count.should == 1
           link = Link.where(@params_one["link"]).first
           link.global_link_users_count.should == 1
-          link.users_count.should == 1
+          link.link_users_count.should == 1
         end
         it 'should render the link partial for the newly associated link (not tested)' do
           xhr :put, :update, @params
@@ -133,7 +135,7 @@ describe LinksController do
           Link.where(@params["link"]).first.should be_nil
           xhr :post, :create, @params
           link = Link.where(@params["link"]).first
-          link.users_count.should == 1
+          link.link_users_count.should == 1
         end
         it 'should render the link partial for the newly associated link (not tested)' do
           @mock_glu.stub(:save).and_return true
@@ -197,9 +199,11 @@ describe LinksController do
           @mock_glu_2.stub(:save).and_return true
           @mock_glu_2.stub(:link).and_return @mock_link
           @mock_glu.stub(:destroy).and_return true
+          @mock_relation = mock('relation')
         end
         it 'should save the glu' do
-          GlobalLinkUser.stub(:where).and_return [@mock_glu]
+          @mock_relation.stub(:where).and_return [@mock_glu]
+          GlobalLinkUser.stub(:with_all_associations).and_return @mock_relation
           @mock_glu.should_receive(:destroy)
           xhr :put, :destroy, @params_one
         end
@@ -207,11 +211,11 @@ describe LinksController do
           link = Link.where(@params_one["link"]).first
           link.should_not be_nil
           link.reload.global_link_users_count.should == 2
-          link.users_count.should == 2 
+          link.link_users_count.should == 2 
           xhr :post, :destroy, @params_one
           link = Link.where(@params_one["link"]).first
           link.global_link_users_count.should == 1
-          link.users_count.should == 1
+          link.link_users_count.should == 1
         end
         it 'should render the link partial for the newly associated link (not tested)' do
           xhr :put, :destroy, @params_one

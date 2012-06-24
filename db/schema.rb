@@ -108,7 +108,7 @@ ActiveRecord::Schema.define(:version => 20120327210137) do
     t.integer  "node_from_id"
     t.integer  "node_to_id"
     t.integer  "global_link_users_count", :default => 0, :null => false
-    t.integer  "users_count",             :default => 0, :null => false
+    t.integer  "link_users_count",        :default => 0, :null => false
     t.integer  "value"
     t.datetime "created_at",                             :null => false
     t.datetime "updated_at",                             :null => false

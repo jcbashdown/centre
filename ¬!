@@ -33,7 +33,6 @@ class GlobalLinkUser < ActiveRecord::Base
     def with_all_associations
       GlobalLinkUser.includes(:global, :link, :user, :global_node_user_from, :global_node_user_to, :node_user_to, :node_user_from, :global_node_to, :global_node_from, :link_user, :global_link)
     end
-
   end
 
 
