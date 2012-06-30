@@ -1,4 +1,4 @@
 require 'spec_helper'
 
-describe GlobalNode do
+describe Node::GlobalNode do
 end

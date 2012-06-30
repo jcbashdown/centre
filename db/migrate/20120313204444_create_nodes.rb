@@ -3,6 +3,8 @@ class CreateNodes < ActiveRecord::Migration
     create_table :nodes do |t|
       t.references :node_title
       t.references :node_body
+      t.references :user
+      t.references :question
       t.text :title
       t.integer :equivalents_count, :default=>0, :null => false
       t.integer :upvotes_count, :default=>0, :null => false
@@ -13,5 +15,9 @@ class CreateNodes < ActiveRecord::Migration
 
       t.timestamps
     end
+    add_index :nodes, :node_title_id
+    add_index :nodes, :node_body_id
+    add_index :nodes, :user_id
+    add_index :nodes, :question_id
   end
 end

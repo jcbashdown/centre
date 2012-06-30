@@ -1,13 +1,10 @@
 class NodesController < ApplicationController
   before_filter :signed_in_user, :except => [:show, :index]
   before_filter :set_node_limit
-  before_filter :set_node_order
-  before_filter :set_node_limit_order
   before_filter :set_nodes, :only => [:index, :show]
   before_filter :set_node, :only => [:show]
   before_filter :set_links, :only => [:show]
   before_filter :redirect_if_new_exists, :only => [:create]
-  before_filter :set_global, :only => [:create, :destroy, :show, :index]
 
   def set_node
     @node = Node.find(params[:id])
@@ -26,7 +23,7 @@ class NodesController < ApplicationController
   def set_nodes
     if params[:find]
       unless @question.name == "All"
-        question_id =  @question.id
+        question_id =  @question.try(:id)
         type = GlobalNode
         @nodes = search_for_nodes(type, question_id)
       else
@@ -53,7 +50,7 @@ class NodesController < ApplicationController
 
   def show
     if @user
-      @gnu = GlobalNodeUser.where(:user_id=>@user.id, :node_id=>@node.id, :global_id=>@global.id)[0]
+      @gnu = GlobalNodeUser.where(:user_id=>@user.id, :node_id=>@node.id, :question_id=>@question.try(:id))[0]
     end
     @new_node = Node.new
     if request.xhr?
@@ -64,46 +61,27 @@ class NodesController < ApplicationController
   end
 
   def create
-    @gnu = GlobalNodeUser.new({:user=>@user, :global=>@global}.merge(params[:node]))
+    context_node = ContextNode.new({:user=>@user, :question_id => @question.try(:id)}.merge(params[:node]))
     respond_to do |format|
-      if @gnu.save
-        @node = @gnu.node
-        format.html { redirect_to node_path(@gnu.node, @limit_order), notice: 'Node was successfully created.' }
-        format.json { render json: @node, status: :created, location: nodes_path(@limit_order) }
+      if context_node.save
+        @node = context_node.global_node
+        format.html { redirect_to node_path(@node), notice: 'Node was successfully created.' }
       else
-        format.html { redirect_to nodes_path(@limit_order), notice: 'That Title has already been taken. Please use the existing node' }
-        format.json { render json: @gnu.errors, status: :unprocessable_entity }
+        format.html { redirect_to nodes_path, notice: 'That Title has already been taken. Please use the existing node' }
       end
     end
   end
 
-#  def update
-#    @node = Node.find(params[:id])
-#    text = params[:node][:text] ? params[:node][:text] : ""
-#    respond_to do |format|
-#      if @node.update_attributes({:text=>text})
-#        @gnu = GlobalNodeUser.where(:user_id=>@user.id, :node_id=>@node.id, :global_id=>@question.id)[0] || GlobalNodeUser.create(:user=>@user, :node=>@node, :global=>@question)
-#        @gn = GlobalNode.where(:node_id=>@node.id, :global_id=>@question.id)[0]
-#        format.html { redirect_to @node, notice: 'Node was successfully updated.' }
-#        format.json { head :ok }
-#      else
-#        format.html { render action: "edit" }
-#        format.json { render json: @node.errors, status: :unprocessable_entity }
-#      end
-#    end
-#  end
-
   def destroy
-    node = Node.find(params[:id])
-    gnu = GlobalNodeUser.with_all_associations.where(:user_id=>@user.id, :node_id=>node.id, :global_id=>@global.id)[0]
-    if gnu.destroy
+    context_node = ContextNode.with_all_associations.where(:user_id=>@user.id, :node_title_id=>params[:id], :question_id=>@question.try(:id))[0]
+    if context_node.destroy
       respond_to do |format|
-        format.html { redirect_to nodes_path(@limit_order) }
+        format.html { redirect_to nodes_path }
         format.json { head :ok }
       end
     else
       respond_to do |format|
-        format.html { redirect_to nodes_path(@limit_order) }
+        format.html { redirect_to nodes_path }
         format.json { head :ok }
       end
     end
@@ -112,23 +90,19 @@ class NodesController < ApplicationController
   protected
 
   def redirect_if_new_exists
-    @gnu = GlobalNodeUser.where({:user_id => @user.id, :global_id => @question.id, :title => params[:node][:title]})[0]
-    if @gnu
-      redirect_to node_path(@gnu.node, @limit_order)
+    @context_node = ContextNode.where({:user_id => @user.id, :question_id => @question.try(:id), :title => params[:node][:title]})[0]
+    if @context_node
+      redirect_to node_path(@context_node.global_node)
     end
   end
 
   def search_for_nodes type, question_id=nil
     nodes = type.search do
                      fulltext params[:find]
-                     with :global_id, question_id if question_id
+                     with :question_id, question_id if question_id
                      order_by(:id, :asc)
                      paginate(:page => params[:page], :per_page => 15)
                    end.results
   end
 
-  def set_global
-    @global = (@question.name == 'All') ? Global.find_by_name('Unclassified') : @question
-  end
-  
 end

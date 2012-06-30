@@ -16,5 +16,10 @@ class CreateContextLinks < ActiveRecord::Migration
 
       t.timestamps
     end
+    add_index :context_links, :question_id
+    add_index :context_links, :user_id
+    add_index :context_links, :global_link_id
+    add_index :context_links, :type
+    #intersection index really needed here
   end
 end

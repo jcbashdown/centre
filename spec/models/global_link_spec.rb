@@ -1,4 +1,4 @@
 require 'spec_helper'
 
-describe GlobalLink do
+describe Link::GlobalLink do
 end

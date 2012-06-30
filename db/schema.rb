@@ -11,139 +11,113 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120327210137) do
+ActiveRecord::Schema.define(:version => 20120630131231) do
 
-  create_table "global_link_users", :force => true do |t|
-    t.integer  "global_id"
+  create_table "context_links", :force => true do |t|
+    t.integer  "question_id"
     t.integer  "user_id"
-    t.integer  "link_id"
-    t.integer  "link_user_id"
     t.integer  "global_link_id"
-    t.integer  "node_from_id"
-    t.integer  "node_to_id"
-    t.integer  "global_node_user_from_id"
-    t.integer  "global_node_user_to_id"
     t.integer  "global_node_from_id"
     t.integer  "global_node_to_id"
+    t.integer  "context_node_from_id"
+    t.integer  "context_node_to_id"
+    t.integer  "question_node_from_id"
+    t.integer  "question_node_to_id"
     t.integer  "node_user_from_id"
     t.integer  "node_user_to_id"
-    t.integer  "value"
-    t.datetime "created_at",               :null => false
-    t.datetime "updated_at",               :null => false
+    t.integer  "type"
+    t.datetime "created_at",            :null => false
+    t.datetime "updated_at",            :null => false
   end
 
-  create_table "global_links", :force => true do |t|
-    t.integer  "global_id"
-    t.integer  "link_id"
+  add_index "context_links", ["global_link_id"], :name => "index_context_links_on_global_link_id"
+  add_index "context_links", ["question_id"], :name => "index_context_links_on_question_id"
+  add_index "context_links", ["type"], :name => "index_context_links_on_type"
+  add_index "context_links", ["user_id"], :name => "index_context_links_on_user_id"
+
+  create_table "context_nodes", :force => true do |t|
+    t.integer  "user_id"
+    t.integer  "question_id"
+    t.integer  "global_node_id"
+    t.integer  "node_title_id"
+    t.text     "title"
+    t.integer  "equivalents_count", :default => 0,     :null => false
+    t.integer  "upvotes_count",     :default => 0,     :null => false
+    t.integer  "downvotes_count",   :default => 0,     :null => false
+    t.boolean  "is_conclusion",     :default => false
+    t.datetime "created_at",                           :null => false
+    t.datetime "updated_at",                           :null => false
+  end
+
+  add_index "context_nodes", ["global_node_id"], :name => "index_context_nodes_on_global_node_id"
+  add_index "context_nodes", ["node_title_id"], :name => "index_context_nodes_on_node_title_id"
+  add_index "context_nodes", ["question_id"], :name => "index_context_nodes_on_question_id"
+  add_index "context_nodes", ["user_id"], :name => "index_context_nodes_on_user_id"
+
+  create_table "links", :force => true do |t|
+    t.integer  "user_id"
+    t.integer  "question_id"
     t.integer  "node_from_id"
     t.integer  "node_to_id"
-    t.integer  "global_node_from_id"
-    t.integer  "global_node_to_id"
-    t.integer  "value"
-    t.boolean  "active",                  :default => true
-    t.integer  "global_link_users_count", :default => 0,    :null => false
-    t.datetime "created_at",                                :null => false
-    t.datetime "updated_at",                                :null => false
+    t.integer  "users_count",  :default => 0, :null => false
+    t.integer  "type"
+    t.boolean  "active"
+    t.datetime "created_at",                  :null => false
+    t.datetime "updated_at",                  :null => false
   end
 
-  create_table "global_node_users", :force => true do |t|
-    t.integer  "user_id"
-    t.integer  "global_id"
-    t.integer  "node_id"
-    t.integer  "node_user_id"
-    t.integer  "global_node_id"
-    t.text     "title"
+  add_index "links", ["active"], :name => "index_links_on_active"
+  add_index "links", ["node_from_id"], :name => "index_links_on_node_from_id"
+  add_index "links", ["node_to_id"], :name => "index_links_on_node_to_id"
+  add_index "links", ["question_id"], :name => "index_links_on_question_id"
+  add_index "links", ["type"], :name => "index_links_on_type"
+  add_index "links", ["user_id"], :name => "index_links_on_user_id"
+
+  create_table "node_bodies", :force => true do |t|
     t.text     "body"
-    t.integer  "global_link_users_count", :default => 0,     :null => false
-    t.integer  "equivalents_count",       :default => 0,     :null => false
-    t.integer  "upvotes_count",           :default => 0,     :null => false
-    t.integer  "downvotes_count",         :default => 0,     :null => false
-    t.boolean  "ignore",                  :default => true
-    t.boolean  "is_conclusion",           :default => false
-    t.float    "page_rank",               :default => 0.0
-    t.datetime "created_at",                                 :null => false
-    t.datetime "updated_at",                                 :null => false
-  end
-
-  create_table "global_nodes", :force => true do |t|
-    t.integer  "global_id"
-    t.integer  "node_id"
-    t.text     "title"
-    t.text     "body"
-    t.integer  "equivalents_count",       :default => 0,     :null => false
-    t.integer  "upvotes_count",           :default => 0,     :null => false
-    t.integer  "downvotes_count",         :default => 0,     :null => false
-    t.boolean  "ignore",                  :default => true
-    t.boolean  "is_conclusion",           :default => false
-    t.float    "page_rank",               :default => 0.0
-    t.integer  "global_node_users_count", :default => 0,     :null => false
-    t.integer  "global_link_users_count", :default => 0,     :null => false
-    t.datetime "created_at",                                 :null => false
-    t.datetime "updated_at",                                 :null => false
-  end
-
-  create_table "global_users", :id => false, :force => true do |t|
-    t.integer "global_id"
-    t.integer "user_id"
-  end
-
-  create_table "globals", :force => true do |t|
-    t.string   "name"
     t.datetime "created_at", :null => false
     t.datetime "updated_at", :null => false
   end
 
-  create_table "link_users", :force => true do |t|
-    t.integer  "link_id"
-    t.integer  "user_id"
-    t.integer  "node_from_id"
-    t.integer  "node_to_id"
-    t.integer  "value"
-    t.integer  "global_link_users_count", :default => 0, :null => false
-    t.datetime "created_at",                             :null => false
-    t.datetime "updated_at",                             :null => false
-  end
-
-  create_table "links", :force => true do |t|
-    t.integer  "node_from_id"
-    t.integer  "node_to_id"
-    t.integer  "global_link_users_count", :default => 0, :null => false
-    t.integer  "link_users_count",        :default => 0, :null => false
-    t.integer  "value"
-    t.datetime "created_at",                             :null => false
-    t.datetime "updated_at",                             :null => false
-  end
-
-  create_table "node_users", :force => true do |t|
-    t.integer  "node_id"
-    t.integer  "user_id"
+  create_table "node_titles", :force => true do |t|
     t.text     "title"
-    t.text     "body"
-    t.integer  "global_node_users_count", :default => 0,     :null => false
-    t.integer  "global_link_users_count", :default => 0,     :null => false
-    t.integer  "equivalents_count",       :default => 0,     :null => false
-    t.integer  "upvotes_count",           :default => 0,     :null => false
-    t.integer  "downvotes_count",         :default => 0,     :null => false
-    t.boolean  "ignore",                  :default => true
-    t.boolean  "is_conclusion",           :default => false
-    t.float    "page_rank",               :default => 0.0
-    t.datetime "created_at",                                 :null => false
-    t.datetime "updated_at",                                 :null => false
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
   end
 
   create_table "nodes", :force => true do |t|
+    t.integer  "node_title_id"
+    t.integer  "node_body_id"
+    t.integer  "user_id"
+    t.integer  "question_id"
     t.text     "title"
-    t.text     "body"
-    t.integer  "equivalents_count",       :default => 0,     :null => false
-    t.integer  "upvotes_count",           :default => 0,     :null => false
-    t.integer  "downvotes_count",         :default => 0,     :null => false
-    t.boolean  "ignore",                  :default => true
-    t.boolean  "is_conclusion",           :default => false
-    t.float    "page_rank",               :default => 0.0
-    t.integer  "global_node_users_count", :default => 0,     :null => false
-    t.integer  "global_link_users_count", :default => 0,     :null => false
-    t.datetime "created_at",                                 :null => false
-    t.datetime "updated_at",                                 :null => false
+    t.integer  "equivalents_count", :default => 0,     :null => false
+    t.integer  "upvotes_count",     :default => 0,     :null => false
+    t.integer  "downvotes_count",   :default => 0,     :null => false
+    t.boolean  "is_conclusion",     :default => false
+    t.float    "page_rank",         :default => 0.0
+    t.integer  "users_count",       :default => 0,     :null => false
+    t.datetime "created_at",                           :null => false
+    t.datetime "updated_at",                           :null => false
+  end
+
+  add_index "nodes", ["node_body_id"], :name => "index_nodes_on_node_body_id"
+  add_index "nodes", ["node_title_id"], :name => "index_nodes_on_node_title_id"
+  add_index "nodes", ["question_id"], :name => "index_nodes_on_question_id"
+  add_index "nodes", ["user_id"], :name => "index_nodes_on_user_id"
+
+  create_table "question_users", :force => true do |t|
+    t.integer "question_id"
+    t.integer "user_id"
+  end
+
+  add_index "question_users", ["question_id"], :name => "index_question_users_on_question_id"
+  add_index "question_users", ["user_id"], :name => "index_question_users_on_user_id"
+
+  create_table "questions", :force => true do |t|
+    t.string   "name"
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
   end
 
   create_table "users", :force => true do |t|

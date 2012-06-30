@@ -4,5 +4,7 @@ class CreateQuestionUsers < ActiveRecord::Migration
       t.references :question
       t.references :user
     end
+    add_index :question_users, :question_id
+    add_index :question_users, :user_id
   end
 end

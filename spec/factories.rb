@@ -6,7 +6,7 @@ FactoryGirl.define do
     body 'Test text'
   end
   
-  factory :global do
+  factory :question do
     name 'Test'
   end
   
