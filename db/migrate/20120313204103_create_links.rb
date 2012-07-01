@@ -6,8 +6,9 @@ class CreateLinks < ActiveRecord::Migration
       t.integer :node_from_id
       t.integer :node_to_id
       t.integer :users_count, :default=>0, :null => false
+      t.boolean :active, :default=>false
+      t.boolean :private, :default=>false
       t.string :type
-      t.boolean :active
 
       t.timestamps
     end

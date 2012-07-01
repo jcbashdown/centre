@@ -7,7 +7,7 @@ describe NodesController do
   end
 
   def valid_attributes
-    {:title => 'title'}
+    {:node => {:title => 'title'}, :question => @question}
   end
   
 #  describe 'set nodes' do
@@ -166,87 +166,91 @@ describe NodesController do
 
   describe "POST create" do
     describe "with no question" do
+      before do
+        @question = nil
+      end
       it "creates a new ContextNode" do
         expect {
-          post :create, :node => valid_attributes
+          post :create, valid_attributes
         }.to change(ContextNode, :count).by(1)
       end
 
       it "creates a new GlobalNode" do
         expect {
-          post :create, :node => valid_attributes
+          post :create, valid_attributes
         }.to change(Node::GlobalNode, :count).by(1)
       end
 
       it "doesn't create a new QuestionNode" do
         expect {
-          post :create, :node => valid_attributes
+          post :create, valid_attributes
         }.to change(Node::QuestionNode, :count).by(0)
       end
 
       it "creates a new UserNode" do
         expect {
-          post :create, :node => valid_attributes
+          post :create, valid_attributes
         }.to change(Node::UserNode, :count).by(1)
       end
 
       it 'should have called new on global node user' do
         gnu = ContextNode.new({:user_id => @user.id, :title => 'title'})
-        ContextNode.should_receive(:new).with({:user_id => @user.id, :title => 'title'}).and_return gnu
-        post :create, :node => valid_attributes
+        ContextNode.should_receive(:new).with({:user_id => @user.id, :question_id => nil, 'title' => 'title'}).and_return gnu
+        post :create, valid_attributes
       end
 
       it "assigns a newly created correct context node as @node" do
-        post :create, :node => valid_attributes
+        post :create, valid_attributes
         assigns(:node).should be_a(Node::GlobalNode)
       end
 
       it "redirects to the created node" do
-        post :create, :node => valid_attributes
+        post :create, valid_attributes
         response.should redirect_to node_path(assigns(:node))
       end
     end
     describe "with question" do
       before do
         @question = FactoryGirl.create(:question)
+        Question.stub(:find).and_return @question
       end
       it "creates a new GlobalNodeUser" do
         expect {
-          post :create, :node => valid_attributes.merge(:question => @question)
+          post :create, valid_attributes
         }.to change(ContextNode, :count).by(1)
       end
 
       it "creates a new Node" do
         expect {
-          post :create, :node => valid_attributes.merge(:question => @question)
+          post :create, valid_attributes
         }.to change(Node::GlobalNode, :count).by(1)
       end
 
       it "doesn't create a new QuestionNode" do
         expect {
-          post :create, :node => valid_attributes.merge(:question => @question)
+          post :create, valid_attributes
         }.to change(Node::QuestionNode, :count).by(1)
       end
 
       it "creates a new UserNode" do
         expect {
-          post :create, :node => valid_attributes.merge(:question => @question)
+          post :create, valid_attributes
         }.to change(Node::UserNode, :count).by(1)
       end
 
       it 'should have called new on global node user' do
         gnu = ContextNode.new({:user_id => @user.id, :title => 'title'})
-        ContextNode.should_receive(:new).with({:user => @user, :title => 'title'}).and_return gnu
-        post :create, :node => valid_attributes.merge(:question => @question)
+        ContextNode.should_receive(:new).with({:user_id => @user.id, :question_id => @question.id, 'title' => 'title'}).and_return gnu
+        post :create, valid_attributes
       end
 
       it "assigns a newly created correct context node as @node" do
-        post :create, :node => valid_attributes.merge(:question => @question)
+        post :create, valid_attributes
         assigns(:node).should be_a(Node::QuestionNode)
       end
 
       it "redirects to the created node" do
-        post :create, :node => valid_attributes.merge(:question => @question)
+        post :create, valid_attributes
         response.should redirect_to node_path(assigns(:node))
       end
     end
@@ -254,7 +258,7 @@ describe NodesController do
     describe "with invalid params" do
       context 'when the node already exists' do
         before do
-          @context_node = context_node.create!(:user => @user, :title => 'a test node')
+          @context_node = ContextNode.create!(:user => @user, :title => 'a test node')
         end
         it 'should redirect to show the node' do
           post :create, :node => {:title => 'a test node'}
@@ -262,7 +266,7 @@ describe NodesController do
         end
         it "creates a new GlobalNodeUser" do
           expect {
-            post :create, :node => valid_attributes
+            post :create, valid_attributes
           }.to change(ContextNode, :count).by(0)
         end
       end

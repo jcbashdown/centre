@@ -63,8 +63,12 @@ class NodesController < ApplicationController
   def create
     context_node = ContextNode.new({:user_id => current_user.id, :question_id => @question.try(:id)}.merge(params[:node]))
     respond_to do |format|
-      if context_node.save!
-        @node = context_node.global_node
+      if context_node.save
+        if context_node.question_node
+          @node = context_node.question_node
+        else
+          @node = context_node.global_node
+        end
         format.html { redirect_to node_path(@node), notice: 'Node was successfully created.' }
       else
         format.html { redirect_to nodes_path, notice: 'That Title has already been taken. Please use the existing node' }
@@ -94,7 +98,6 @@ class NodesController < ApplicationController
     if @context_node
       redirect_to node_path(@context_node.global_node)
     end
-    p "new exists"
   end
 
   def search_for_nodes type, question_id=nil

@@ -33,7 +33,6 @@ class ApplicationController < ActionController::Base
     else
       @question = nil
     end
-    p "question"
   end
   
   #def set_node_limit_order
@@ -41,7 +40,6 @@ class ApplicationController < ActionController::Base
   #end
 
   def set_questions
-    p params
     @questions = Question.all.map { |question| [question.name, question.id] }
     @questions << ['New/Search For Question', '#new']
   end
@@ -51,7 +49,6 @@ class ApplicationController < ActionController::Base
       flash[:notice] = "You must be a signed in user to view this page"
       redirect_to "/"
     end
-    p "signed_in"
   end
   
 #  def update_session
