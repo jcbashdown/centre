@@ -11,9 +11,9 @@ class NodesController < ApplicationController
   end
 
   def set_links
-    if @user
-      @links_to = @user.user_from_node_links(@node, @question)
-      @links_in = @user.user_to_node_links(@node, @question)
+    if current_user
+      @links_to = current_user.user_from_node_links(@node, @question)
+      @links_in = current_user.user_to_node_links(@node, @question)
     else
       @links_to = @question.global_from_node_links(@node)
       @links_in = @question.global_to_node_links(@node)
@@ -49,8 +49,8 @@ class NodesController < ApplicationController
   end
 
   def show
-    if @user
-      @gnu = GlobalNodeUser.where(:user_id=>@user.id, :node_id=>@node.id, :question_id=>@question.try(:id))[0]
+    if current_user
+      @gnu = GlobalNodeUser.where(:user_id=>current_user.id, :node_id=>@node.id, :question_id=>@question.try(:id))[0]
     end
     @new_node = Node.new
     if request.xhr?
@@ -61,9 +61,9 @@ class NodesController < ApplicationController
   end
 
   def create
-    context_node = ContextNode.new({:user=>@user, :question_id => @question.try(:id)}.merge(params[:node]))
+    context_node = ContextNode.new({:user_id => current_user.id, :question_id => @question.try(:id)}.merge(params[:node]))
     respond_to do |format|
-      if context_node.save
+      if context_node.save!
         @node = context_node.global_node
         format.html { redirect_to node_path(@node), notice: 'Node was successfully created.' }
       else
@@ -73,7 +73,7 @@ class NodesController < ApplicationController
   end
 
   def destroy
-    context_node = ContextNode.with_all_associations.where(:user_id=>@user.id, :node_title_id=>params[:id], :question_id=>@question.try(:id))[0]
+    context_node = ContextNode.with_all_associations.where(:user_id => current_user.id, :node_title_id=>params[:id], :question_id=>@question.try(:id))[0]
     if context_node.destroy
       respond_to do |format|
         format.html { redirect_to nodes_path }
@@ -90,10 +90,11 @@ class NodesController < ApplicationController
   protected
 
   def redirect_if_new_exists
-    @context_node = ContextNode.where({:user_id => @user.id, :question_id => @question.try(:id), :title => params[:node][:title]})[0]
+    @context_node = ContextNode.where({:user_id => current_user.id, :question_id => @question.try(:id), :title => params[:node][:title]})[0]
     if @context_node
       redirect_to node_path(@context_node.global_node)
     end
+    p "new exists"
   end
 
   def search_for_nodes type, question_id=nil

@@ -166,13 +166,13 @@ describe NodesController do
 
   describe "POST create" do
     describe "with no question" do
-      it "creates a new GlobalNodeUser" do
+      it "creates a new ContextNode" do
         expect {
           post :create, :node => valid_attributes
         }.to change(ContextNode, :count).by(1)
       end
 
-      it "creates a new Node" do
+      it "creates a new GlobalNode" do
         expect {
           post :create, :node => valid_attributes
         }.to change(Node::GlobalNode, :count).by(1)

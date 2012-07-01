@@ -9,6 +9,6 @@ class Node::GlobalNode < Node
 
   validates :title, :presence => true
   validates_uniqueness_of :title
-  validates_uniqueness_of :title_id
+  validates_uniqueness_of :node_title_id
 
 end

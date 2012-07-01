@@ -36,23 +36,24 @@ ActiveRecord::Schema.define(:version => 20120630131231) do
   add_index "context_links", ["user_id"], :name => "index_context_links_on_user_id"
 
   create_table "context_nodes", :force => true do |t|
-    t.integer  "user_id"
     t.integer  "question_id"
+    t.integer  "user_id"
     t.integer  "global_node_id"
+    t.integer  "user_node_id"
+    t.integer  "question_node_id"
     t.integer  "node_title_id"
     t.text     "title"
-    t.integer  "equivalents_count", :default => 0,     :null => false
-    t.integer  "upvotes_count",     :default => 0,     :null => false
-    t.integer  "downvotes_count",   :default => 0,     :null => false
-    t.boolean  "is_conclusion",     :default => false
-    t.datetime "created_at",                           :null => false
-    t.datetime "updated_at",                           :null => false
+    t.boolean  "is_conclusion",    :default => false
+    t.datetime "created_at",                          :null => false
+    t.datetime "updated_at",                          :null => false
   end
 
   add_index "context_nodes", ["global_node_id"], :name => "index_context_nodes_on_global_node_id"
   add_index "context_nodes", ["node_title_id"], :name => "index_context_nodes_on_node_title_id"
   add_index "context_nodes", ["question_id"], :name => "index_context_nodes_on_question_id"
+  add_index "context_nodes", ["question_node_id"], :name => "index_context_nodes_on_question_node_id"
   add_index "context_nodes", ["user_id"], :name => "index_context_nodes_on_user_id"
+  add_index "context_nodes", ["user_node_id"], :name => "index_context_nodes_on_user_node_id"
 
   create_table "links", :force => true do |t|
     t.integer  "user_id"
@@ -60,7 +61,7 @@ ActiveRecord::Schema.define(:version => 20120630131231) do
     t.integer  "node_from_id"
     t.integer  "node_to_id"
     t.integer  "users_count",  :default => 0, :null => false
-    t.integer  "type"
+    t.string   "type"
     t.boolean  "active"
     t.datetime "created_at",                  :null => false
     t.datetime "updated_at",                  :null => false
@@ -87,7 +88,6 @@ ActiveRecord::Schema.define(:version => 20120630131231) do
 
   create_table "nodes", :force => true do |t|
     t.integer  "node_title_id"
-    t.integer  "node_body_id"
     t.integer  "user_id"
     t.integer  "question_id"
     t.text     "title"
@@ -97,13 +97,14 @@ ActiveRecord::Schema.define(:version => 20120630131231) do
     t.boolean  "is_conclusion",     :default => false
     t.float    "page_rank",         :default => 0.0
     t.integer  "users_count",       :default => 0,     :null => false
+    t.string   "type"
     t.datetime "created_at",                           :null => false
     t.datetime "updated_at",                           :null => false
   end
 
-  add_index "nodes", ["node_body_id"], :name => "index_nodes_on_node_body_id"
   add_index "nodes", ["node_title_id"], :name => "index_nodes_on_node_title_id"
   add_index "nodes", ["question_id"], :name => "index_nodes_on_question_id"
+  add_index "nodes", ["type"], :name => "index_nodes_on_type"
   add_index "nodes", ["user_id"], :name => "index_nodes_on_user_id"
 
   create_table "question_users", :force => true do |t|

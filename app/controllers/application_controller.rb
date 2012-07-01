@@ -1,7 +1,4 @@
 class ApplicationController < ActionController::Base
-  #todo - no create, update or add/edit links if no current user, no new and edit actions too
-  #no links to edit and new, all link boxes disabled
-
   protect_from_forgery
 
   before_filter :set_questions
@@ -36,6 +33,7 @@ class ApplicationController < ActionController::Base
     else
       @question = nil
     end
+    p "question"
   end
   
   #def set_node_limit_order
@@ -43,15 +41,17 @@ class ApplicationController < ActionController::Base
   #end
 
   def set_questions
+    p params
     @questions = Question.all.map { |question| [question.name, question.id] }
     @questions << ['New/Search For Question', '#new']
   end
 
   def signed_in_user
-    unless @user 
+    unless current_user 
       flash[:notice] = "You must be a signed in user to view this page"
       redirect_to "/"
     end
+    p "signed_in"
   end
   
 #  def update_session
