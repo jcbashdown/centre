@@ -264,9 +264,9 @@ describe NodesController do
           post :create, :node => {:title => 'a test node'}
           response.should redirect_to node_path(@context_node.global_node)
         end
-        it "creates a new GlobalNodeUser" do
+        it "creates a new context node" do
           expect {
-            post :create, valid_attributes
+            post :create, :node => {:title => 'a test node'}
           }.to change(ContextNode, :count).by(0)
         end
       end
@@ -279,24 +279,49 @@ describe NodesController do
   end
 
   describe "DELETE destroy" do
-    before do
-      @node = Node.create! valid_attributes, :question => @global.id
-      @gnu = GlobalNodeUser.create(:user=>@user, :node=>@node, :global=>@global)
-      mock_relation = mock('relation')
-      mock_relation.stub(:where).and_return [@gnu]
-      GlobalNodeUser.stub(:with_all_associations).and_return mock_relation
-      Node.stub(:find).and_return @node
+    context 'when there is a question' do
+      before do
+        @question = FactoryGirl.create(:question)
+        Question.stub(:find).and_return @question
+        @context_node = ContextNode.create(:user=>@user, :title => 'Title', :question => @question)
+        mock_relation = mock('relation')
+        mock_relation.stub(:where).and_return [@context_node]
+        ContextNode.stub(:with_all_associations).and_return mock_relation
+      end
+  
+      it 'should call destroy on the current gnu' do
+        @context_node.should_receive(:destroy)
+        delete :destroy, :id => @context_node.node_title_id
+      end
+  
+      it "redirects to the nodes list" do
+        @context_node.stub(:destroy)
+        delete :destroy, :id => @context_node.node_title_id
+        response.should redirect_to nodes_path
+      end
     end
+    context 'when there is no question' do
+      before do
+        @question = FactoryGirl.create(:question)
+        no_question_context_node = ContextNode.create(:user=>@user, :title => 'Title', :question => @question)
+        @context_node = ContextNode.create(:user=>@user, :title => 'Title', :question => nil)
+        no_question_context_node.node_title.should == @context_node.node_title
+        mock_relation = mock('relation')
+        mock_relation.stub(:where).and_return [@context_node]
+        ContextNode.stub(:with_all_associations).and_return mock_relation
+      end
+  
+      it 'should call destroy on the current gnu' do
+        @context_node.should_receive(:destroy)
+        delete :destroy, :id => @context_node.node_title_id
+      end
+  
+      it "redirects to the nodes list" do
+        @context_node.stub(:destroy)
+        delete :destroy, :id => @context_node.node_title_id
+        response.should redirect_to nodes_path
+      end
 
-    it 'should call destroy on the current gnu' do
-      @gnu.should_receive(:destroy)
-      delete :destroy, :id => @node.id
-    end
-
-    it "redirects to the nodes list" do
-      @gnu.stub(:destroy)
-      delete :destroy, :id => @node.id, :question => @global.id
-      response.should redirect_to nodes_path(:order => 'older', :question => @global.id)
     end
   end
 
