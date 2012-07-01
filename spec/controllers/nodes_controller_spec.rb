@@ -192,7 +192,7 @@ describe NodesController do
 
       it 'should have called new on global node user' do
         gnu = ContextNode.new({:user_id => @user.id, :title => 'title'})
-        ContextNode.should_receive(:new).with({:user => @user, :title => 'title'}).and_return gnu
+        ContextNode.should_receive(:new).with({:user_id => @user.id, :title => 'title'}).and_return gnu
         post :create, :node => valid_attributes
       end
 
@@ -225,7 +225,7 @@ describe NodesController do
       it "doesn't create a new QuestionNode" do
         expect {
           post :create, :node => valid_attributes.merge(:question => @question)
-        }.to change(Node::QuestionNode, :count).by(0)
+        }.to change(Node::QuestionNode, :count).by(1)
       end
 
       it "creates a new UserNode" do
