@@ -1,3 +1,4 @@
+#links go everywhere by default for the purpose of page rank? though not for counts? (except when private) or entirely do away with question links and always do all?
 class CreateContextLinks < ActiveRecord::Migration
   def change
     create_table :context_links do |t|

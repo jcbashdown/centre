@@ -1,3 +1,4 @@
+#nodes are context specific - do not easily flow between contexts like links. need question nodes
 class CreateContextNodes < ActiveRecord::Migration
   def change
     create_table :context_nodes do |t|
