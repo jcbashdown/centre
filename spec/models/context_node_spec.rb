@@ -8,13 +8,6 @@ describe ContextNode do
     @question2 = FactoryGirl.create(:question, :name => 'Aaa')
   end
 
-  describe 'context_nodes created in all question' do
-
-    it 'should set the question to unclassified' do
-      pending
-    end
-
-  end
   describe 'creation' do
     describe 'creation with no existing inclusion in gns context_nodes' do
       it 'should create 2 questions_nodes' do
@@ -66,13 +59,10 @@ describe ContextNode do
     end
     describe 'creation with existing nu' do
       before do
-        @context_node = ContextNode.create(:user=>@user, :question=>Question.find_by_name('All'), :title => 'Title', :is_conclusion => false)
+        @context_node = ContextNode.create(:user=>@user, :question=>@question, :title => 'Title', :is_conclusion => false)
         @context_node.user_node.should_not be_nil
       end
       context 'when in the question' do
-        before do
-          @question = Question.find_by_name('All')
-        end
         it 'should create 0 questions_nodes' do
           expect {
             ContextNode.create(:user=>@user, :question=>@question, :title => 'Title')
@@ -125,6 +115,7 @@ describe ContextNode do
             context_node = ContextNode.create(:user=>@user, :question=>@question, :title => 'Title', :is_conclusion => true)
             ContextNode.where(:user_id=>@user.id, :title=>'Title', :question_id=>@question.id, :is_conclusion => true).count.should == 1
             Node::UserNode.where(:user_id=>@user.id, :title=>'Title', :is_conclusion => true).count.should == 1
+            #fix is conclusion, this is fine but write and test
             Node::QuestionNode.where(:title=>'Title', :question_id=>@question.id, :is_conclusion => true).count.should == 1
           end
         end
@@ -136,24 +127,24 @@ describe ContextNode do
           end
           it 'should create 1 questions_nodes' do
             expect {
-              ContextNode.create(:user=>@user, :question=>@question, :title => 'Title')
+              ContextNode.create(:user=>@user, :question=>@question2, :title => 'Title')
             }.to change(Node::QuestionNode, :count).by(1)
           end
           it 'should create 1 context_nodes' do
             expect {
-              ContextNode.create(:user=>@user, :question=>@question, :title => 'Title')
+              ContextNode.create(:user=>@user, :question=>@question2, :title => 'Title')
             }.to change(ContextNode, :count).by(1)
           end
           it 'should create 1 user_nodes' do
             expect {
-              ContextNode.create(:user=>@user, :question=>@question, :title => 'Title')
+              ContextNode.create(:user=>@user, :question=>@question2, :title => 'Title')
             }.to change(Node::UserNode, :count).by(0)
           end
           it 'should create a questions_user_node etc for the question and node' do
-            context_node = ContextNode.create(:user=>@user, :question=>@question, :title => 'Title')
-            ContextNode.where(:user_id=>@user.id, :title=>'Title', :question_id=>@question.id).count.should == 1
+            context_node = ContextNode.create(:user=>@user, :question=>@question2, :title => 'Title')
+            ContextNode.where(:user_id=>@user.id, :title=>'Title', :question_id=>@question2.id).count.should == 1
             Node::UserNode.where(:user_id=>@user.id, :title=>'Title').count.should == 1
-            Node::QuestionNode.where(:title=>'Title', :question_id=>@question.id).count.should == 1
+            Node::QuestionNode.where(:title=>'Title', :question_id=>@question2.id).count.should == 1
           end
         end
         context 'when no existing nu' do
@@ -162,24 +153,24 @@ describe ContextNode do
           end
           it 'should create 0 questions_nodes' do
             expect {
-              ContextNode.create(:user=>@user, :title=>'Title', :question=>@question)
+              ContextNode.create(:user=>@user, :title=>'Title', :question=>@question2)
             }.to change(Node::QuestionNode, :count).by(1)
           end
           it 'should create 1 context_nodes' do
             expect {
-              ContextNode.create(:user=>@user, :title=>'Title', :question=>@question)
+              ContextNode.create(:user=>@user, :title=>'Title', :question=>@question2)
             }.to change(ContextNode, :count).by(1)
           end
           it 'should create 1 user_nodes' do
             expect {
-              ContextNode.create(:user=>@user, :title=>'Title', :question=>@question)
+              ContextNode.create(:user=>@user, :title=>'Title', :question=>@question2)
             }.to change(Node::UserNode, :count).by(1)
           end
           it 'should create a questions_user_node etc for the question and node' do
-            context_node = ContextNode.create(:user=>@user, :question=>@question, :title => 'Title')
-            ContextNode.where(:user_id=>@user.id, :title=>'Title', :question_id=>@question.id).count.should == 1
+            context_node = ContextNode.create(:user=>@user, :question=>@question2, :title => 'Title')
+            ContextNode.where(:user_id=>@user.id, :title=>'Title', :question_id=>@question2.id).count.should == 1
             Node::UserNode.where(:user_id=>@user.id, :title=>'Title').count.should == 1
-            Node::QuestionNode.where(:title=>'Title', :question_id=>@question.id).count.should == 1
+            Node::QuestionNode.where(:title=>'Title', :question_id=>@question2.id).count.should == 1
           end
         end
       end
