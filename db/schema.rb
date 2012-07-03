@@ -17,6 +17,8 @@ ActiveRecord::Schema.define(:version => 20120630131231) do
     t.integer  "question_id"
     t.integer  "user_id"
     t.integer  "global_link_id"
+    t.integer  "user_link_id"
+    t.integer  "question_link_id"
     t.integer  "global_node_from_id"
     t.integer  "global_node_to_id"
     t.integer  "context_node_from_id"
@@ -25,27 +27,34 @@ ActiveRecord::Schema.define(:version => 20120630131231) do
     t.integer  "question_node_to_id"
     t.integer  "node_user_from_id"
     t.integer  "node_user_to_id"
+    t.boolean  "private",               :default => false
     t.integer  "type"
-    t.datetime "created_at",            :null => false
-    t.datetime "updated_at",            :null => false
+    t.datetime "created_at",                               :null => false
+    t.datetime "updated_at",                               :null => false
   end
 
   add_index "context_links", ["global_link_id"], :name => "index_context_links_on_global_link_id"
   add_index "context_links", ["question_id"], :name => "index_context_links_on_question_id"
+  add_index "context_links", ["question_link_id"], :name => "index_context_links_on_question_link_id"
   add_index "context_links", ["type"], :name => "index_context_links_on_type"
   add_index "context_links", ["user_id"], :name => "index_context_links_on_user_id"
+  add_index "context_links", ["user_link_id"], :name => "index_context_links_on_user_link_id"
 
   create_table "context_nodes", :force => true do |t|
     t.integer  "question_id"
     t.integer  "user_id"
+    t.text     "title"
     t.integer  "global_node_id"
     t.integer  "user_node_id"
     t.integer  "question_node_id"
+    t.integer  "private_global_node_id"
+    t.integer  "private_user_node_id"
+    t.integer  "private_question_node_id"
     t.integer  "node_title_id"
-    t.text     "title"
-    t.boolean  "is_conclusion",    :default => false
-    t.datetime "created_at",                          :null => false
-    t.datetime "updated_at",                          :null => false
+    t.boolean  "is_conclusion",            :default => false
+    t.boolean  "private",                  :default => false
+    t.datetime "created_at",                                  :null => false
+    t.datetime "updated_at",                                  :null => false
   end
 
   add_index "context_nodes", ["global_node_id"], :name => "index_context_nodes_on_global_node_id"
@@ -60,11 +69,12 @@ ActiveRecord::Schema.define(:version => 20120630131231) do
     t.integer  "question_id"
     t.integer  "node_from_id"
     t.integer  "node_to_id"
-    t.integer  "users_count",  :default => 0, :null => false
+    t.integer  "users_count",  :default => 0,     :null => false
+    t.boolean  "active",       :default => false
+    t.boolean  "private",      :default => false
     t.string   "type"
-    t.boolean  "active"
-    t.datetime "created_at",                  :null => false
-    t.datetime "updated_at",                  :null => false
+    t.datetime "created_at",                      :null => false
+    t.datetime "updated_at",                      :null => false
   end
 
   add_index "links", ["active"], :name => "index_links_on_active"
@@ -97,6 +107,7 @@ ActiveRecord::Schema.define(:version => 20120630131231) do
     t.boolean  "is_conclusion",     :default => false
     t.float    "page_rank",         :default => 0.0
     t.integer  "users_count",       :default => 0,     :null => false
+    t.boolean  "private",           :default => false
     t.string   "type"
     t.datetime "created_at",                           :null => false
     t.datetime "updated_at",                           :null => false

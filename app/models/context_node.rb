@@ -1,7 +1,11 @@
 require "#{Rails.root}/lib/node_creation_module.rb"
+require "#{Rails.root}/lib/node_deletion_module.rb"
+require "#{Rails.root}/lib/activerecord_import_methods.rb"
 
 class ContextNode < ActiveRecord::Base
   #no nested attributes as belongs to
+  include ActiverecordImportMethods
+  include NodeDeletionModule
   include NodeCreationModule
   belongs_to :node_title#for title creation through nested attributes
   belongs_to :global_node, :class_name => Node::GlobalNode, :counter_cache => :users_count#for user counts and conclusions
@@ -20,6 +24,8 @@ class ContextNode < ActiveRecord::Base
   before_validation(:on => :create) do
     create_appropriate_nodes
   end
+
+  before_destroy :delete_appropriate_nodes
 
   def question?
     question_id.present?

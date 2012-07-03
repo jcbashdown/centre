@@ -287,7 +287,7 @@ describe ContextNode do
         @context_node1 = ContextNode.create(:title => 'title', :question => @question, :user => @user)
         @context_node2 = ContextNode.create(:title => 'test', :question => @question, :user => @user)
         @context_node3 = ContextNode.create(:title => 'another', :question => @question, :user => @user)
-        @glu = QuestionLinkUser.create(:user=>@user, :question => @question, :node_from_id => @context_node1.node.id, :node_to_id => @context_node2.node.id, :value => 1)
+        @context_link = ContextLink.create(:user=>@user, :question => @question, :node_from_id => @context_node1.node.id, :node_to_id => @context_node2.node.id, :value => 1)
       end
       it 'should destroy 1 node' do
         expect {
@@ -313,25 +313,25 @@ describe ContextNode do
       it 'should destroy 1 link' do
         expect {
           @context_node1.destroy
-        }.to change(Link, :count).by(-1)
+        }.to change(Link::GlobalLink, :count).by(-1)
       end
 
-      it 'should destroy 1 glu' do
+      it 'should destroy 1 context_link' do
         expect {
           @context_node1.destroy
-        }.to change(QuestionLinkUser, :count).by(-1)
+        }.to change(ContextLink, :count).by(-1)
       end
 
-      it 'should destroy 1 glu' do
+      it 'should destroy 1 context_link' do
         expect {
           @context_node1.destroy
-        }.to change(QuestionLink, :count).by(-1)
+        }.to change(Link::QuestionLink, :count).by(-1)
       end
 
-      it 'should destroy 1 glu' do
+      it 'should destroy 1 context_link' do
         expect {
           @context_node1.destroy
-        }.to change(LinkUser, :count).by(-1)
+        }.to change(Link::UserLink, :count).by(-1)
       end
 
       it 'update the caches' do
@@ -348,7 +348,7 @@ describe ContextNode do
       
       context 'when another user has the link in this question' do
         before do
-          @glu2 = QuestionLinkUser.create(:user=>@user_two, :question => @question, :node_from_id => @context_node1.node.id, :node_to_id => @context_node2.node.id, :value => 1)
+          @context_link2 = ContextLink.create(:user=>@user_two, :question => @question, :node_from_id => @context_node1.node.id, :node_to_id => @context_node2.node.id, :value => 1)
         end
         it 'should destroy 0 node' do
           expect {
@@ -374,25 +374,25 @@ describe ContextNode do
         it 'should destroy 0 link' do
           expect {
             @context_node1.destroy
-          }.to change(Link, :count).by(0)
+          }.to change(Link::GlobalLink, :count).by(0)
         end
   
-        it 'should destroy 1 glu' do
+        it 'should destroy 1 context_link' do
           expect {
             @context_node1.destroy
-          }.to change(QuestionLinkUser, :count).by(-1)
+          }.to change(ContextLink, :count).by(-1)
         end
   
         it 'should destroy 0 gl' do
           expect {
             @context_node1.destroy
-          }.to change(QuestionLink, :count).by(0)
+          }.to change(Link::QuestionLink, :count).by(0)
         end
   
         it 'should destroy 1 lu' do
           expect {
             @context_node1.destroy
-          }.to change(LinkUser, :count).by(-1)
+          }.to change(Link::UserLink, :count).by(-1)
         end
   
         it 'update the caches' do
@@ -410,7 +410,7 @@ describe ContextNode do
   
       context 'when another user has another link in this question which uses the same node from' do
         before do
-          @glu2 = QuestionLinkUser.create(:user=>@user_two, :question => @question, :node_from_id => @context_node1.node.id, :node_to_id => @context_node3.node.id, :value => 1)
+          @context_link2 = ContextLink.create(:user=>@user_two, :question => @question, :node_from_id => @context_node1.node.id, :node_to_id => @context_node3.node.id, :value => 1)
         end
         it 'should destroy 0 node (due to shared node from and diff users)' do
           expect {
@@ -436,25 +436,25 @@ describe ContextNode do
         it 'should destroy 1 link' do
           expect {
             @context_node1.destroy
-          }.to change(Link, :count).by(-1)
+          }.to change(Link::GlobalLink, :count).by(-1)
         end
   
-        it 'should destroy 1 glu' do
+        it 'should destroy 1 context_link' do
           expect {
             @context_node1.destroy
-          }.to change(QuestionLinkUser, :count).by(-1)
+          }.to change(ContextLink, :count).by(-1)
         end
   
         it 'should destroy 1 gl' do
           expect {
             @context_node1.destroy
-          }.to change(QuestionLink, :count).by(-1)
+          }.to change(Link::QuestionLink, :count).by(-1)
         end
   
         it 'should destroy 1 lu' do
           expect {
             @context_node1.destroy
-          }.to change(LinkUser, :count).by(-1)
+          }.to change(Link::UserLink, :count).by(-1)
         end
   
         it 'update the caches' do
@@ -472,7 +472,7 @@ describe ContextNode do
   
       context 'when another user has the link in another question' do
         before do
-          @glu2 = QuestionLinkUser.create(:user=>@user_two, :question => @question2, :node_from_id => @context_node1.node.id, :node_to_id => @context_node2.node.id, :value => 1)
+          @context_link2 = ContextLink.create(:user=>@user_two, :question => @question2, :node_from_id => @context_node1.node.id, :node_to_id => @context_node2.node.id, :value => 1)
         end
         it 'should destroy 0 node' do
           expect {
@@ -498,25 +498,25 @@ describe ContextNode do
         it 'should destroy 0 link' do
           expect {
             @context_node1.destroy
-          }.to change(Link, :count).by(0)
+          }.to change(Link::GlobalLink, :count).by(0)
         end
   
-        it 'should destroy 1 glu' do
+        it 'should destroy 1 context_link' do
           expect {
             @context_node1.destroy
-          }.to change(QuestionLinkUser, :count).by(-1)
+          }.to change(ContextLink, :count).by(-1)
         end
   
         it 'should destroy 1 gl' do
           expect {
             @context_node1.destroy
-          }.to change(QuestionLink, :count).by(-1)
+          }.to change(Link::QuestionLink, :count).by(-1)
         end
   
         it 'should destroy 1 lu' do
           expect {
             @context_node1.destroy
-          }.to change(LinkUser, :count).by(-1)
+          }.to change(Link::UserLink, :count).by(-1)
         end
   
         it 'update the caches' do
@@ -534,7 +534,7 @@ describe ContextNode do
   
       context 'when the user has the link in another question' do
         before do
-          @glu2 = QuestionLinkUser.create(:user=>@user, :question => @question2, :node_from_id => @context_node1.node.id, :node_to_id => @context_node2.node.id, :value => 1)
+          @context_link2 = ContextLink.create(:user=>@user, :question => @question2, :node_from_id => @context_node1.node.id, :node_to_id => @context_node2.node.id, :value => 1)
         end
         it 'should destroy 0 node' do
           expect {
@@ -560,25 +560,25 @@ describe ContextNode do
         it 'should destroy 0 link' do
           expect {
             @context_node1.destroy
-          }.to change(Link, :count).by(0)
+          }.to change(Link::GlobalLink, :count).by(0)
         end
   
-        it 'should destroy 1 glu' do
+        it 'should destroy 1 context_link' do
           expect {
             @context_node1.destroy
-          }.to change(QuestionLinkUser, :count).by(-1)
+          }.to change(ContextLink, :count).by(-1)
         end
   
         it 'should destroy 1 gl' do
           expect {
             @context_node1.destroy
-          }.to change(QuestionLink, :count).by(-1)
+          }.to change(Link::QuestionLink, :count).by(-1)
         end
   
         it 'should destroy 0 lu' do
           expect {
             @context_node1.destroy
-          }.to change(LinkUser, :count).by(0)
+          }.to change(Link::UserLink, :count).by(0)
         end
   
         it 'update the caches' do
@@ -596,7 +596,7 @@ describe ContextNode do
 
       context 'when the user has another link in this question where the links share a node from' do
         before do
-          @glu2 = QuestionLinkUser.create(:user=>@user, :question => @question, :node_from_id => @context_node1.node.id, :node_to_id => @context_node3.node.id, :value => 1)
+          @context_link2 = ContextLink.create(:user=>@user, :question => @question, :node_from_id => @context_node1.node.id, :node_to_id => @context_node3.node.id, :value => 1)
         end
         it 'should destroy 1 node (despite shared node from -- all on user)' do
           expect {
@@ -622,25 +622,25 @@ describe ContextNode do
         it 'should destroy 1 link' do
           expect {
             @context_node1.destroy
-          }.to change(Link, :count).by(-2)
+          }.to change(Link::GlobalLink, :count).by(-2)
         end
   
-        it 'should destroy 1 glu' do
+        it 'should destroy 1 context_link' do
           expect {
             @context_node1.destroy
-          }.to change(QuestionLinkUser, :count).by(-2)
+          }.to change(ContextLink, :count).by(-2)
         end
   
-        it 'should destroy 1 glu' do
+        it 'should destroy 1 context_link' do
           expect {
             @context_node1.destroy
-          }.to change(QuestionLink, :count).by(-2)
+          }.to change(Link::QuestionLink, :count).by(-2)
         end
   
-        it 'should destroy 1 glu' do
+        it 'should destroy 1 context_link' do
           expect {
             @context_node1.destroy
-          }.to change(LinkUser, :count).by(-2)
+          }.to change(Link::UserLink, :count).by(-2)
         end
   
         it 'update the caches' do
