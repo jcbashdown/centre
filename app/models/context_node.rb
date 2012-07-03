@@ -25,7 +25,7 @@ class ContextNode < ActiveRecord::Base
     create_appropriate_nodes
   end
 
-  before_destroy :delete_appropriate_nodes
+  after_destroy :delete_appropriate_nodes
 
   def question?
     question_id.present?
