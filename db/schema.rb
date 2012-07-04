@@ -101,16 +101,19 @@ ActiveRecord::Schema.define(:version => 20120630131231) do
     t.integer  "user_id"
     t.integer  "question_id"
     t.text     "title"
-    t.integer  "equivalents_count", :default => 0,     :null => false
-    t.integer  "upvotes_count",     :default => 0,     :null => false
-    t.integer  "downvotes_count",   :default => 0,     :null => false
-    t.boolean  "is_conclusion",     :default => false
-    t.float    "page_rank",         :default => 0.0
-    t.integer  "users_count",       :default => 0,     :null => false
-    t.boolean  "private",           :default => false
+    t.integer  "equivalents_count",      :default => 0,     :null => false
+    t.integer  "upvotes_count",          :default => 0,     :null => false
+    t.integer  "downvotes_count",        :default => 0,     :null => false
+    t.integer  "related_votes_count",    :default => 0,     :null => false
+    t.integer  "part_of_votes_count",    :default => 0,     :null => false
+    t.integer  "conclusion_votes_count", :default => 0,     :null => false
+    t.boolean  "is_conclusion",          :default => false
+    t.float    "page_rank",              :default => 0.0
+    t.integer  "users_count",            :default => 0,     :null => false
+    t.boolean  "private",                :default => false
     t.string   "type"
-    t.datetime "created_at",                           :null => false
-    t.datetime "updated_at",                           :null => false
+    t.datetime "created_at",                                :null => false
+    t.datetime "updated_at",                                :null => false
   end
 
   add_index "nodes", ["node_title_id"], :name => "index_nodes_on_node_title_id"

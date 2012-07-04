@@ -25,7 +25,17 @@ class ContextNode < ActiveRecord::Base
     create_appropriate_nodes
   end
 
-  after_destroy :delete_appropriate_nodes
+  after_save :update_conclusion_caches
+  after_destroy :delete_appropriate_nodes, :update_conclusion_caches
+
+  def update_conclusion_caches
+    self.global_node.conclusion_votes_count = ContextNode.count( :conditions => ["is_conclusion = true AND global_node_id = ?", self.global_node_id] )
+    self.global_node.save
+    self.question_node.conclusion_votes_count = ContextNode.count( :conditions => ["is_conclusion = true AND question_node_id = ?", self.question_node_id] )
+    self.question_node.save
+    self.user_node.conclusion_votes_count = ContextNode.count( :conditions => ["is_conclusion = true AND user_node_id = ?", self.user_node_id] )
+    self.user_node.save
+  end
 
   def question?
     question_id.present?

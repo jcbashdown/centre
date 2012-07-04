@@ -9,7 +9,7 @@ describe ContextNode do
   end
 
   describe 'creation' do
-    describe 'creation with no existing inclusion in gns context_nodes' do
+    describe 'creation with no existing inclusion in qns context_nodes' do
       it 'should create 2 questions_nodes' do
         expect {
           ContextNode.create(:user=>@user, :question=>@question, :title => 'Title')
@@ -43,13 +43,13 @@ describe ContextNode do
       it 'should create a questions_node for the question and node and all and node' do
         context_node = ContextNode.create(:user=>@user, :question=>@question, :title => 'Title')
         context_node2 = ContextNode.create(:user=>@user, :question=>@question2, :title => 'Title')
-        gn = context_node.question_node
-        gn2 = context_node2.question_node
-        gn.should_not be_nil
-        gn2.should_not be_nil
-        gn.should_not == gn2
-        gn.reload.users_count.should == 1 
-        gn2.reload.users_count.should == 1 
+        qn = context_node.question_node
+        qn2 = context_node2.question_node
+        qn.should_not be_nil
+        qn2.should_not be_nil
+        qn.should_not == qn2
+        qn.reload.users_count.should == 1 
+        qn2.reload.users_count.should == 1 
       end
       it 'should create a questions_user_node for the question and node and all and node' do
         context_node = ContextNode.create(:user=>@user, :question=>@question, :title => 'Title')
@@ -204,11 +204,11 @@ describe ContextNode do
           }.to change(Node::UserNode, :count).by(-1)
         end
         it 'should destroy the question node' do
-          gn = Node::QuestionNode.where(:title=>'Title', :question_id=>@question.id)[0]
-          gn.should_not be_nil
+          qn = Node::QuestionNode.where(:title=>'Title', :question_id=>@question.id)[0]
+          qn.should_not be_nil
           ContextNode.where(:user_id=>@user.id, :title=>'Title', :question_id=>@question.id)[0].destroy
-          gn = Node::QuestionNode.where(:title=>'Title', :question_id=>@question.id)[0]
-          gn.should be_nil
+          qn = Node::QuestionNode.where(:title=>'Title', :question_id=>@question.id)[0]
+          qn.should be_nil
         end
         it 'should destroy the node user' do
           ContextNode.where(:user_id=>@user.id, :title=>'Title', :question_id=>@question.id)[0].destroy
@@ -250,13 +250,15 @@ describe ContextNode do
             }.to change(Node::UserNode, :count).by(-1)
           end
           it 'should update the caches' do
-            gn = Node::QuestionNode.where(:title=>'Title', :question_id=>@question.id)[0]
-            gn.should_not be_nil
+            qn = Node::QuestionNode.where(:title=>'Title', :question_id=>@question.id)[0]
+            qn.should_not be_nil
             ContextNode.where(:user_id=>@user.id, :title=>'Title', :question_id=>@question.id)[0].destroy
-            gn = Node::QuestionNode.where(:title=>'Title', :question_id=>@question.id)[0]
+            qn = Node::QuestionNode.where(:title=>'Title', :question_id=>@question.id)[0]
+            qn.should_not be_nil
+            qn.users_count.should == 1
+            gn = Node::GlobalNode.where(:title=>'Title')[0]
             gn.should_not be_nil
             gn.users_count.should == 1
-            gn.node.users_count.should == 1
           end
           it 'should destroy the node user' do
             ContextNode.where(:user_id=>@user.id, :title=>'Title', :question_id=>@question.id)[0].destroy
@@ -276,7 +278,7 @@ describe ContextNode do
             Node::QuestionNode.where(:title=>'Title', :question_id=>@question.id, :is_conclusion => true).count.should == 0
             ContextNode.where(:user_id=>@user.id, :title=>'Title', :question_id=>@question.id)[0].destroy
             Node::QuestionNode.where(:title=>'Title', :question_id=>@question.id, :is_conclusion => true)[0].should_not be_nil
-            Node.where(:title=>'Title')[0].should_not be_nil
+            Node::GlobalNode.where(:title=>'Title')[0].should_not be_nil
             ContextNode.where(:title=>'Title', :user_id => @user.id, :question_id=>@question.id)[0].should be_nil
           end
         end

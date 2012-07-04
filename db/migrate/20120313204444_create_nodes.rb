@@ -8,6 +8,9 @@ class CreateNodes < ActiveRecord::Migration
       t.integer :equivalents_count, :default=>0, :null => false
       t.integer :upvotes_count, :default=>0, :null => false
       t.integer :downvotes_count, :default=>0, :null => false
+      t.integer :related_votes_count, :default=>0, :null => false
+      t.integer :part_of_votes_count, :default=>0, :null => false
+      t.integer :conclusion_votes_count, :default=>0, :null => false
       t.boolean :is_conclusion, :default=>false
       t.float :page_rank, :default=>0
       t.integer :users_count, :default=>0, :null => false
