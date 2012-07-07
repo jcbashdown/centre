@@ -115,6 +115,7 @@ describe ContextNode do
             context_node = ContextNode.create(:user=>@user, :question=>@question, :title => 'Title', :is_conclusion => true)
             ContextNode.where(:user_id=>@user.id, :title=>'Title', :question_id=>@question.id, :is_conclusion => true).count.should == 1
             Node::UserNode.where(:user_id=>@user.id, :title=>'Title', :is_conclusion => true).count.should == 1
+            #fix is conclusion, this is fine but write and test
             Node::QuestionNode.where(:title=>'Title', :question_id=>@question.id, :is_conclusion => true).count.should == 1
           end
         end
@@ -275,8 +276,13 @@ describe ContextNode do
             ContextNode.where(:user_id=>@user_three.id, :title=>'Title', :question_id=>@question.id, :is_conclusion => true).count.should == 1
             Node::UserNode.where(:user_id=>@user_three.id, :title=>'Title', :is_conclusion => true).count.should == 1
             Node::QuestionNode.where(:title=>'Title', :question_id=>@question.id, :is_conclusion => true).count.should == 0
+            p 'here'
+            Rails.logger.info 'here'
             ContextNode.where(:user_id=>@user.id, :title=>'Title', :question_id=>@question.id)[0].destroy
             
+            Node::QuestionNode.where(:title=>'Title', :question_id=>@question.id, :is_conclusion => false)[0].users_count.should == 3
+            Rails.logger.info 'here'
+            p 'here'
             Node::QuestionNode.where(:title=>'Title', :question_id=>@question.id, :is_conclusion => true)[0].should_not be_nil
             Node::GlobalNode.where(:title=>'Title')[0].should_not be_nil
             ContextNode.where(:title=>'Title', :user_id => @user.id, :question_id=>@question.id)[0].should be_nil

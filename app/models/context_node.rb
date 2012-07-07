@@ -3,14 +3,13 @@ require "#{Rails.root}/lib/node_deletion_module.rb"
 require "#{Rails.root}/lib/activerecord_import_methods.rb"
 
 class ContextNode < ActiveRecord::Base
-  #no nested attributes as belongs to
   include ActiverecordImportMethods
   include NodeDeletionModule
   include NodeCreationModule
-  belongs_to :node_title#for title creation through nested attributes
-  belongs_to :global_node, :class_name => Node::GlobalNode, :counter_cache => :users_count#for user counts and conclusions
-  belongs_to :user_node, :class_name => Node::UserNode, :counter_cache => :users_count#for user counts and conclusions
-  belongs_to :question_node, :class_name => Node::QuestionNode, :counter_cache => :users_count#for user counts and conclusions
+  belongs_to :node_title
+  belongs_to :global_node, :class_name => Node::GlobalNode
+  belongs_to :user_node, :class_name => Node::UserNode
+  belongs_to :question_node, :class_name => Node::QuestionNode
   belongs_to :user
   belongs_to :question
 
@@ -25,16 +24,19 @@ class ContextNode < ActiveRecord::Base
     create_appropriate_nodes
   end
 
-  after_save :update_conclusion_caches
-  after_destroy :delete_appropriate_nodes, :update_conclusion_caches
+  after_save :update_caches
+  after_destroy :delete_appropriate_nodes, :update_caches
 
-  def update_conclusion_caches
-    self.global_node.conclusion_votes_count = ContextNode.count( :conditions => ["is_conclusion = true AND global_node_id = ?", self.global_node_id] )
-    self.global_node.save
-    self.question_node.conclusion_votes_count = ContextNode.count( :conditions => ["is_conclusion = true AND question_node_id = ?", self.question_node_id] )
-    self.question_node.save
-    self.user_node.conclusion_votes_count = ContextNode.count( :conditions => ["is_conclusion = true AND user_node_id = ?", self.user_node_id] )
-    self.user_node.save
+  def update_caches
+    if (gn = Node::GlobalNode.find_by_id(self.global_node_id))
+      gn.save!
+    end
+    if (qn = Node::QuestionNode.find_by_id(self.question_node_id))
+      qn.save!
+    end
+    if (un = Node::UserNode.find_by_id(self.user_node_id))
+      un.save!
+    end
   end
 
   def question?
