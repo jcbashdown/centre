@@ -5,32 +5,30 @@ class LinksController < ApplicationController
   #before_filter :set_node_limit_order
 
   def create
-    @glu = GlobalLinkUser.new(params[:link].merge(:global => @global, :user => @user))
+    @context_link = "ContextLink::#{params[:type]}".constantize.new(params[:global_link].merge(:question => @question, :user => @user))
     respond_to do |format|
-      if @glu.save
-        format.js { render :partial => 'a_link', :locals=>{:link => @glu.link, :type=>params[:type]} }
+      if @context_link.save
+        format.js { render :partial => 'a_link', :locals=>{:link => @context_link.global_link, :type=>params[:type]} }
       else
-        link_params = params[:link]
-        link_params.delete(:value)
-        blank_link = Link.new(link_params)
+        link_params = params[:global_link]
+        blank_link = GlobalLink.new(link_params)
         format.js { render :partial => 'a_link', :locals=>{:link => blank_link, :type=>params[:type]} }
       end
     end
   end
 
   def update
-    @link = Link.find(params[:id])
-    @glu = GlobalLinkUser.with_all_associations.where(:global_id => @global.id, :user_id => @user.id, :link_id => @link.id)[0]
+    @global_link = GlobalLink.find(params[:id])
+    @context_link = ContextLink.with_all_associations.where(:question_id => @question.id, :user_id => @user.id, :global_link_id => @global_link.id)[0]
     respond_to do |format|
-      if @glu.destroy && (@glu = GlobalLinkUser.create(params[:link].merge(:global => @global, :user => @user)))
-        format.js { render :partial => 'a_link', :locals=>{:link=> @glu.link, :type=>params[:type]} }
+      if @context_link.destroy && (@context_link = "ContextLink::#{params[:type]}".constantize.create(params[:global_link].merge(:question => @question, :user => @user)))
+        format.js { render :partial => 'a_link', :locals=>{:global_link=> @context_link.global_link, :type=>params[:type]} }
       else
-        unless @glu && @glu.persisted?
-          link_params = params[:link]
-          link_params.delete(:value)
-          link = Link.new(link_params)
+        unless @context_link && @context_link.persisted?
+          link_params = params[:global_link]
+          link = GlobalLink.new(link_params)
         else
-          link = @glu.link
+          link = @context_link.global_link
         end
         format.js { render :partial => 'a_link', :locals=>{:link => link, :type=>params[:type]} }
       end
@@ -38,16 +36,15 @@ class LinksController < ApplicationController
   end
 
   def destroy
-    @link = Link.find(params[:id])
-    @glu = GlobalLinkUser.with_all_associations.where(:global_id => @global.id, :user_id => @user.id, :link_id => @link.id)[0]
+    @global_link = GlobalLink.find(params[:id])
+    @context_link = ContextLink.with_all_associations.where(:question_id => @question.id, :user_id => @user.id, :link_id => @global_link.id)[0]
     respond_to do |format|
-      if @glu.destroy
-        link_params = params[:link]
-        link_params.delete(:value)
-        blank_link = Link.new(link_params)
+      if @context_link.destroy
+        link_params = params[:global_link]
+        blank_link = GlobalLink.new(link_params)
         format.js { render :partial => 'a_link', :locals=>{:link=>blank_link, :type=>params[:type]} }
       else
-        format.js { render :partial => 'a_link', :locals=>{:link=>@glu.link, :type=>params[:type]} }
+        format.js { render :partial => 'a_link', :locals=>{:link=>@context_link.global_link, :type=>params[:type]} }
       end
     end
   end

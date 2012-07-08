@@ -16,8 +16,8 @@ class CreateContextLinks < ActiveRecord::Migration
       t.integer :context_node_to_id
       t.integer :question_node_from_id
       t.integer :question_node_to_id
-      t.integer :node_user_from_id
-      t.integer :node_user_to_id
+      t.integer :user_node_from_id
+      t.integer :user_node_to_id
       #privacy, how will this work?
       t.boolean :private, :default=>false
       #to determine what vote it gives
