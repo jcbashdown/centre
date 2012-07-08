@@ -1,9 +1,8 @@
 class LinksController < ApplicationController
   before_filter :signed_in_user
   before_filter :set_node_limit
-  before_filter :set_node_order
-  before_filter :set_node_limit_order
-  before_filter :set_global, :only => [:create, :destroy, :update]
+  #before_filter :set_node_order
+  #before_filter :set_node_limit_order
 
   def create
     @glu = GlobalLinkUser.new(params[:link].merge(:global => @global, :user => @user))
@@ -53,10 +52,4 @@ class LinksController < ApplicationController
     end
   end
   
-  protected
-
-  def set_global
-    @global = (@question.name == 'All') ? Global.find_by_name('Unclassified') : @question
-  end
-
 end
