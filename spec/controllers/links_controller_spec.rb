@@ -15,7 +15,7 @@ describe LinksController do
       @node_one = @cn1.global_node
       @cn2 = ContextNode.create(:user=>@user, :title=>'test', :question=>@question)
       @node_two = @cn2.global_node
-      @params_one = {"global_link"=>{"global_node_from_id"=>@node_one.id.to_s, "global_node_to_id"=>@node_two.id.to_s}}
+      @params_one = {"global_link"=>{"node_from_id"=>@node_one.id.to_s, "node_to_id"=>@node_two.id.to_s}}
       @context_link = ContextLink::PositiveContextLink.create(@params_one["global_link"].merge(:question => @question, :user => @user))
       @user_two = FactoryGirl.create(:user, :email => "user2@test.com")
       @context_linkser2 = ContextLink::PositiveContextLink.create(@params_one["global_link"].merge(:question => @question, :user => @user_two))
@@ -24,7 +24,7 @@ describe LinksController do
     context 'when ajax request' do
       context 'with valid params' do
         before do
-          @params = {"type" => "NegativeContextLink", "global_link"=>{"global_node_from_id"=>@node_one.id.to_s, "global_node_to_id"=>@node_two.id.to_s}, "id" =>@context_link.global_link.id, "question" => @question.id}
+          @params = {"type" => "NegativeContextLink", "global_link"=>{"node_from_id"=>@node_one.id.to_s, "node_to_id"=>@node_two.id.to_s}, "id" =>@context_link.global_link.id, "question" => @question.id}
           @mock_cn = mock('context_link')
           @mock_cn_2 = mock('context_link')
           @mock_global_link = mock('global_link')
@@ -46,14 +46,14 @@ describe LinksController do
           xhr :put, :update, @params
         end
         it 'increment the caches' do
-          GlobalLink.where(@params["global_link"]).first.should be_nil
+          Link::GlobalLink.where(@params["global_link"]).first.should be_nil
           global_link = GlobalLink.where(@params_one["link"]).first
           global_link.users_count.should == 2
-          UserLink.count.should == 2
+          Link::UserLink.count.should == 2
           xhr :post, :update, @params
-          global_link = GlobalLink.where(@params["global_link"]).first
+          global_link = Link::GlobalLink.where(@params["global_link"]).first
           global_link.users_count.should == 1
-          global_link = GlobalLink.where(@params_one["link"]).first
+          global_link = Link::GlobalLink.where(@params_one["link"]).first
           global_link.users_count.should == 1
         end
         it 'should render the link partial for the newly associated link (not tested)' do
@@ -73,13 +73,13 @@ describe LinksController do
       end
       context 'when destroy or save returns false for glu' do
         before do
-          @params = {"type" => "NegativeContextLink", "global_link"=>{"global_node_from_id"=>@node_one.id.to_s, "global_node_to_id"=>@node_two.id.to_s}, "id" =>@context_link.global_link.id, :question => @question.id}
-          @new_link_params = {"global_link"=>{"global_node_from_id"=>@node_one.id.to_s, "global_node_to_id"=>@node_two.id.to_s}}
+          @params = {"type" => "NegativeContextLink", "global_link"=>{"node_from_id"=>@node_one.id.to_s, "node_to_id"=>@node_two.id.to_s}, "id" =>@context_link.global_link.id, :question => @question.id}
+          @new_link_params = {"global_link"=>{"node_from_id"=>@node_one.id.to_s, "node_to_id"=>@node_two.id.to_s}}
           ContextLink::NegativeContextLink.stub(:create).and_return false
         end
         context 'when glu destroyed but nothing new created' do
           it 'initialise a new link with the correct parameters' do
-            GlobalLink.should_receive(:new).with(@new_link_params["global_link"])
+            Link::GlobalLink.should_receive(:new).with(@new_link_params["global_link"])
             xhr :put, :update, @params
           end
         end
@@ -102,7 +102,7 @@ describe LinksController do
     context 'when ajax request' do
       context 'with valid params' do
         before do
-          @params = {"type" => "NegativeContextLink", "global_link"=>{"global_node_from_id"=>@node_one.id.to_s, "global_node_to_id"=>@node_two.id.to_s}, "question" => @question.id}
+          @params = {"type" => "NegativeContextLink", "global_link"=>{"node_from_id"=>@node_one.id.to_s, "node_to_id"=>@node_two.id.to_s}, "question" => @question.id}
           @mock_cl = mock('context_link')
           @mock_global_link = mock('global_link')
           @mock_cl.stub(:save).and_return true
@@ -137,7 +137,7 @@ describe LinksController do
       end
       context 'when save returns false for glu' do
         before do
-          @params = {"global_link"=>{"global_node_from_id"=>@node_one.id.to_s, "global_node_to_id"=>@node_two.id.to_s}}
+          @params = {"global_link"=>{"node_from_id"=>@node_one.id.to_s, "node_to_id"=>@node_two.id.to_s}}
           @mock_cl = mock('context_link')
           @mock_global_link = mock('global_link')
           @mock_cl.stub(:save).and_return false
@@ -164,11 +164,11 @@ describe LinksController do
       @node_one = @cn1.global_node
       @cn2 = ContextNode.create(:user=>@user, :title=>'test', :question=>@question)
       @node_two = @cn2.global_node
-      @params_one = {"global_link"=>{"global_node_from_id"=>@node_one.id.to_s, "value"=>1.to_s, "global_node_to_id"=>@node_two.id.to_s}}
-      @context_link = ContextLink.create(@params_one["link"].merge(:question => @question, :user => @user))
+      @params_one = {"global_link"=>{"node_from_id"=>@node_one.id.to_s, "node_to_id"=>@node_two.id.to_s}}
+      @context_link = ContextLink::PositiveContextLink.create(@params_one["link"].merge(:question => @question, :user => @user))
       @user_two = FactoryGirl.create(:user, :email => "user2@test.com")
-      @context_linkser2 = ContextLink.create!(@params_one["link"].merge(:question => @question, :user => @user_two))
-      @params_one = {"global_link"=>{"global_node_from_id"=>@node_one.id.to_s, "value"=>1.to_s, "global_node_to_id"=>@node_two.id.to_s}, :id => @context_link.global_link.id, :question => @question.id}
+      @context_linkser2 = ContextLink::PositiveContextLink.create!(@params_one["link"].merge(:question => @question, :user => @user_two))
+      @params_one = {"global_link"=>{"node_from_id"=>@node_one.id.to_s, "value"=>1.to_s, "node_to_id"=>@node_two.id.to_s}, :id => @context_link.global_link.id, :question => @question.id}
       @context_link.global_link.should == @gluser2.global_link
     end
     #update will destroy and then create as too much logic for an after save if we check if we need to to destroy question links etc.
@@ -185,17 +185,17 @@ describe LinksController do
         end
         it 'should save the glu' do
           @mock_relation.stub(:where).and_return [@mock_cl]
-          ContextLink.stub(:with_all_associations).and_return @mock_relation
+          ContextLink::PositiveContextLink.stub(:with_all_associations).and_return @mock_relation
           @mock_cl.should_receive(:destroy)
           xhr :put, :destroy, @params_one
         end
         it 'decrement the caches' do
-          global_link = GlobalLink.where(@params_one["link"]).first
+          global_link = Link::GlobalLink.where(@params_one["link"]).first
           global_link.should_not be_nil
           global_link.reload.users_count.should == 2
           global_link.users_count.should == 2 
           xhr :post, :destroy, @params_one
-          global_link = GlobalLink.where(@params_one["link"]).first
+          global_link = Link::GlobalLink.where(@params_one["link"]).first
           global_link.users_count.should == 1
           global_link.users_count.should == 1
         end
@@ -204,16 +204,16 @@ describe LinksController do
           response.should render_template(:partial => "_a_link")
         end
         it 'should assign the correct link' do
-          @new_link_params = {"global_link"=>{"global_node_from_id"=>@node_one.id.to_s, "global_node_to_id"=>@node_two.id.to_s}}
-          new_link = ContextLink.new(@new_link_params["global_link"])
-          GlobalLink.should_receive(:new).with(@new_link_params["global_link"]).and_return new_link
+          @new_link_params = {"global_link"=>{"node_from_id"=>@node_one.id.to_s, "node_to_id"=>@node_two.id.to_s}}
+          new_link = ContextLink::PositiveContextLink.new(@new_link_params["global_link"])
+          Link::GlobalLink.should_receive(:new).with(@new_link_params["global_link"]).and_return new_link
           xhr :put, :destroy, @params_one
         end
       end
       context 'when destroy or save returns false for glu' do
         before do
           @context_link.stub(:destroy).and_return false
-          ContextLink.stub(:find).and_return @context_link
+          ContextLink::PositiveContextLink.stub(:find).and_return @context_link
         end
         it 'should render the link template' do
           xhr :put, :destroy, @params_one

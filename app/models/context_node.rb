@@ -45,7 +45,7 @@ class ContextNode < ActiveRecord::Base
 
   class << self
     def with_all_associations
-      context_node.includes(:node_title, :global_node, :question_node, :user_node)
+      ContextNode.includes(:node_title, :global_node, :question_node, :user_node)
     end
   end
 end

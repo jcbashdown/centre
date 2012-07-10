@@ -28,4 +28,10 @@ class ContextLink < ActiveRecord::Base
   def link_kind
     self.type.gsub(/ContextLink::|ContextLink/, "")
   end
+
+  class << self
+    def with_all_associations
+      ContextLink.includes(:question, :user, :global_node_from, :global_node_to, :question_node_from, :question_node_to, :user_node_from, :user_node_to, :context_node_from, :context_node_to, :user_link, :global_link, :question_link)
+    end
+  end
 end

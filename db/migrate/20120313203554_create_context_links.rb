@@ -21,7 +21,7 @@ class CreateContextLinks < ActiveRecord::Migration
       #privacy, how will this work?
       t.boolean :private, :default=>false
       #to determine what vote it gives
-      t.integer :type
+      t.string :type
 
       t.timestamps
     end

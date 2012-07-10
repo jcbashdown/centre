@@ -25,10 +25,10 @@ ActiveRecord::Schema.define(:version => 20120630131231) do
     t.integer  "context_node_to_id"
     t.integer  "question_node_from_id"
     t.integer  "question_node_to_id"
-    t.integer  "node_user_from_id"
-    t.integer  "node_user_to_id"
+    t.integer  "user_node_from_id"
+    t.integer  "user_node_to_id"
     t.boolean  "private",               :default => false
-    t.integer  "type"
+    t.string   "type"
     t.datetime "created_at",                               :null => false
     t.datetime "updated_at",                               :null => false
   end
