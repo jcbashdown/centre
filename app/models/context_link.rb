@@ -17,8 +17,8 @@ class ContextLink < ActiveRecord::Base
   belongs_to :question_node_to, :class_name => Node::QuestionNode
   belongs_to :user_node_from, :class_name => Node::UserNode
   belongs_to :user_node_to, :class_name => Node::UserNode
-  belongs_to :context_node_from, :class_name => ContextNode
-  belongs_to :context_node_to, :class_name => ContextNode
+  belongs_to :context_node_from, :class_name => ContextNode, :counter_cache => :context_links_count
+  belongs_to :context_node_to, :class_name => ContextNode, :counter_cache => :context_links_count
 
   before_validation(:on => :create) do
     create_appropriate_nodes

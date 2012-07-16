@@ -19,6 +19,7 @@ class CreateContextNodes < ActiveRecord::Migration
       #for is conclusion on sub but doesn't tell us whether actually conclusion. do like private?
       t.boolean :is_conclusion, :default=>false
       t.boolean :private, :default=>false
+      t.integer :context_links_count, :default=>0, :null => false
 
       t.timestamps
     end

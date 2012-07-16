@@ -11,7 +11,7 @@ class LinksController < ApplicationController
         format.js { render :partial => 'a_link', :locals=>{:link => @context_link.global_link, :type=>params[:type]} }
       else
         link_params = params[:global_link]
-        blank_link = Link::GlobalLink.new(link_params)
+        blank_link = Link::GlobalLink.new(:node_from_id => link_params[:global_node_from_id], :node_to_id => link_params[:global_node_to_id])
         format.js { render :partial => 'a_link', :locals=>{:link => blank_link, :type=>params[:type]} }
       end
     end
@@ -37,11 +37,11 @@ class LinksController < ApplicationController
 
   def destroy
     @global_link = Link::GlobalLink.find(params[:id])
-    @context_link = ContextLink.with_all_associations.where(:question_id => @question.id, :user_id => current_user.id, :link_id => @global_link.id)[0]
+    @context_link = ContextLink.with_all_associations.where(:question_id => @question.id, :user_id => current_user.id, :global_link_id => @global_link.id)[0]
     respond_to do |format|
       if @context_link.destroy
         link_params = params[:global_link]
-        blank_link = Link::GlobalLink.new(link_params)
+        blank_link = Link::GlobalLink.new(:node_from_id => link_params[:global_node_from_id], :node_to_id => link_params[:global_node_to_id])
         format.js { render :partial => 'a_link', :locals=>{:link=>blank_link, :type=>params[:type]} }
       else
         format.js { render :partial => 'a_link', :locals=>{:link=>@context_link.global_link, :type=>params[:type]} }
