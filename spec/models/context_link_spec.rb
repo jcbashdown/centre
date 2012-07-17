@@ -264,15 +264,15 @@ describe ContextLink do
     before do
       @question = FactoryGirl.create(:question)
       @user = FactoryGirl.create(:user)
-      @gnu1 = GlobalNodeUser.create(:title => 'title', :question => @question, :user => @user)
-      @gnu2 = GlobalNodeUser.create(:title => 'test', :question => @question, :user => @user)
+      @gnu1 = ContextNode.create(:title => 'title', :question => @question, :user => @user)
+      @gnu2 = ContextNode.create(:title => 'test', :question => @question, :user => @user)
     end
     context 'when there is only this context_link' do
       before do
         @context_link = ContextLink::PositiveContextLink.create(:user=>@user, :question => @question, :global_node_from_id => @gnu1.global_node.id, :global_node_to_id => @gnu2.global_node.id)
         @context_link_attrs = @context_link.attributes
-        @lu_attrs = {:link_id => @context_link.link.id, :user_id => @user.id}
-        @gl_attrs = {:link_id => @context_link.link.id, :question_id => @question.id}
+        @lu_attrs = {:node_from_id => @context_link.user_node_from.id, :node_to_id => @context_link.user_node_to.id, :user_id => @user.id}
+        @gl_attrs = {:node_from_id => @context_link.question_node_from.id, :node_to_id => @context_link.question_node_from.id, :question_id => @question.id}
       end
       it 'should destroy the context_link' do
         ContextLink::PositiveContextLink.where(@context_link_attrs)[0].should_not be_nil
@@ -287,15 +287,15 @@ describe ContextLink do
       end
 
       it 'should destroy the gl' do
-        Link::GlobalLink.where(@gl_attrs)[0].should_not be_nil
+        Link::QuestionLink.where(@gl_attrs)[0].should_not be_nil
         @context_link.destroy
-        Link::GlobalLink.where(@gl_attrs)[0].should be_nil
+        Link::QuestionLink.where(@gl_attrs)[0].should be_nil
       end
 
       it 'should decrement the gl count by 1' do
         expect {
           @context_link.destroy
-        }.to change(Link::GlobalLink, :count).by(-1)
+        }.to change(Link::QuestionLink, :count).by(-1)
       end
 
       it 'should destroy the lu' do
