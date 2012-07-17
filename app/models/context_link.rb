@@ -20,6 +20,8 @@ class ContextLink < ActiveRecord::Base
   belongs_to :context_node_from, :class_name => ContextNode, :counter_cache => :context_links_count
   belongs_to :context_node_to, :class_name => ContextNode, :counter_cache => :context_links_count
 
+  validates_uniqueness_of :user_id, :scope => [:global_link_id, :question_id]
+
   before_validation(:on => :create) do
     create_appropriate_nodes
     create_appropriate_links
