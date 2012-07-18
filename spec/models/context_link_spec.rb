@@ -465,5 +465,18 @@ describe ContextLink do
 
     end
   end
+  describe 'something about node destroy through link' do
+    context 'when the node was created directly' do
+      pending
+    end
+    context 'when node created through link' do
+      context 'and only the cl to be destroyed supports this creation' do
+        pending
+      end
+      context 'and more than the cl to be destroyed support this creation' do
+        pending
+      end
+    end
+  end
 
 end
