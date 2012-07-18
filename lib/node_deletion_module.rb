@@ -15,10 +15,9 @@ module NodeDeletionModule
   end
 
   def delete_context_links
-    ContextLink.select(:context_node_from_id, :context_node_to_id)
-               .where('context_node_from_id = ? ||
-                       context_node_to_id =?',
-                       id
+    ContextLink.where('context_node_from_id = ? ||
+                       context_node_to_id = ?',
+                       id, id
                      ).delete_all
   end
 
