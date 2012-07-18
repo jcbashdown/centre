@@ -377,19 +377,17 @@ describe ContextLink do
         gnu_to = ContextNode.where(:question_id => @question.id, :node_title_id => @gnu2.node_title_id, :user_id => @user.id)[0]
         gn_to = Node::QuestionNode.where(:question_id => @question.id, :node_title_id => @gnu2.node_title_id)[0]
         nu_to = Node::UserNode.where(:node_title_id => @gnu2.node_title_id, :user_id => @user.id)[0]
-        node_to.upvotes_count.should == 1 
-        gnu_to.upvotes_count.should == 1
         gn_to.upvotes_count.should == 1
         nu_to.upvotes_count.should == 1 
+        node_to.upvotes_count.should == 1 
         @context_link.destroy
         node_to = Node.where(:title => @gnu2.global_node.title)[0]
         gnu_to = GlobalNodeUser.where(:question_id => @question.id, :node_title_id => @gnu2.node_title_id, :user_id => @user.id)[0]
         gn_to = Node::QuestionNode.where(:question_id => @question.id, :node_title_id => @gnu2.node_title_id)[0]
         nu_to = Node::UserNode.where(:node_title_id => @gnu2.node_title_id, :user_id => @user.id)[0]
-        node_to.reload.upvotes_count.should == 1 
-        gnu_to.upvotes_count.should == 0 
         gn_to.upvotes_count.should == 0
         nu_to.upvotes_count.should == 1 
+        node_to.reload.upvotes_count.should == 1 
       end
     end
     context 'when there is this context_link and another for a different user' do
@@ -397,11 +395,11 @@ describe ContextLink do
         @user_two = FactoryGirl.create(:user, :email => "test@user.com")
         @context_link = ContextLink::PositiveContextLink.create(:user=>@user, :question => @question, :global_node_from_id => @gnu1.global_node.id, :global_node_to_id => @gnu2.global_node.id)
         @context_link_attrs = @context_link.attributes
-        @lu_attrs = {:link_id => @context_link.link.id, :user_id => @user.id}
-        @gl_attrs = {:link_id => @context_link.link.id, :question_id => @question.id}
-        Link::GlobalLink.where(@gl_attrs)[0].users_count.should == 1 
+        @lu_attrs = {:node_from_id => @context_link.user_node_from.id, :node_to_id => @context_link.user_node_to.id, :user_id => @user.id}
+        @gl_attrs = {:node_from_id => @context_link.question_node_from.id, :node_to_id => @context_link.question_node_to.id, :question_id => @question.id}
+        Link::QuestionLink.where(@gl_attrs)[0].users_count.should == 1 
         @context_link_two = ContextLink::PositiveContextLink.create(:user=>@user_two, :question => @question, :global_node_from_id => @gnu1.global_node.id, :global_node_to_id => @gnu2.global_node.id)
-        Link::GlobalLink.where(@gl_attrs)[0].users_count.should == 2 
+        Link::QuestionLink.where(@gl_attrs)[0].users_count.should == 2 
       end
       it 'should destroy the context_link' do
         ContextLink::PositiveContextLink.where(@context_link_attrs)[0].should_not be_nil
@@ -416,9 +414,9 @@ describe ContextLink do
       end
 
       it 'should destroy the gl' do
-        Link::GlobalLink.where(@gl_attrs)[0].should_not be_nil
+        Link::QuestionLink.where(@gl_attrs)[0].should_not be_nil
         @context_link.destroy
-        Link::GlobalLink.where(@gl_attrs)[0].should_not be_nil
+        Link::QuestionLink.where(@gl_attrs)[0].should_not be_nil
       end
 
       it 'should decrement the gl count by 1' do
@@ -428,11 +426,11 @@ describe ContextLink do
       end
 
       it 'should decrement the gls context_link count by 1' do
-        Link::GlobalLink.count.should == 1
-        Link::GlobalLink.where(@gl_attrs)[0].users_count.should == 2
+        Link::QuestionLink.count.should == 1
+        Link::QuestionLink.where(@gl_attrs)[0].users_count.should == 2
         @context_link.destroy
-        Link::GlobalLink.count.should == 1
-        Link::GlobalLink.where(@gl_attrs)[0].users_count.should == 1 
+        Link::QuestionLink.count.should == 1
+        Link::QuestionLink.where(@gl_attrs)[0].users_count.should == 1 
       end
 
       it 'should not destroy the lu' do
@@ -449,20 +447,18 @@ describe ContextLink do
       
       it 'should update the caches' do
         node_to = Node::GlobalNode.where(:title => @gnu2.global_node.title)[0]
-        gnu_to = GlobalNodeUser.where(:question_id => @question.id, :node_title_id => @gnu2.node_title_id, :user_id => @user.id)[0]
+        gnu_to = ContextNode.where(:question_id => @question.id, :node_title_id => @gnu2.node_title_id, :user_id => @user.id)[0]
         gn_to = Node::QuestionNode.where(:question_id => @question.id, :node_title_id => @gnu2.node_title_id)[0]
         nu_to = Node::UserNode.where(:node_title_id => @gnu2.node_title_id, :user_id => @user.id)[0]
         node_to.upvotes_count.should == 2
-        gnu_to.upvotes_count.should == 1
         gn_to.upvotes_count.should == 2
         nu_to.upvotes_count.should == 1
         @context_link.destroy
-        node_to = Node.where(:title => @gnu2.global_node.title)[0]
-        gnu_to = GlobalNodeUser.where(:question_id => @question.id, :node_title_id => @gnu2.node_title_id, :user_id => @user.id)[0]
+        node_to = Node::GlobalNode.where(:title => @gnu2.global_node.title)[0]
+        gnu_to = ContextNode.where(:question_id => @question.id, :node_title_id => @gnu2.node_title_id, :user_id => @user.id)[0]
         gn_to = Node::QuestionNode.where(:question_id => @question.id, :node_title_id => @gnu2.node_title_id)[0]
         nu_to = Node::UserNode.where(:node_title_id => @gnu2.node_title_id, :user_id => @user.id)[0]
         node_to.reload.upvotes_count.should == 1 
-        gnu_to.upvotes_count.should == 0 
         gn_to.upvotes_count.should == 1
         nu_to.upvotes_count.should == 0 
       end
