@@ -272,7 +272,7 @@ describe ContextLink do
         @context_link = ContextLink::PositiveContextLink.create(:user=>@user, :question => @question, :global_node_from_id => @gnu1.global_node.id, :global_node_to_id => @gnu2.global_node.id)
         @context_link_attrs = @context_link.attributes
         @lu_attrs = {:node_from_id => @context_link.user_node_from.id, :node_to_id => @context_link.user_node_to.id, :user_id => @user.id}
-        @gl_attrs = {:node_from_id => @context_link.question_node_from.id, :node_to_id => @context_link.question_node_from.id, :question_id => @question.id}
+        @gl_attrs = {:node_from_id => @context_link.question_node_from.id, :node_to_id => @context_link.question_node_to.id, :question_id => @question.id}
       end
       it 'should destroy the context_link' do
         ContextLink::PositiveContextLink.where(@context_link_attrs)[0].should_not be_nil
@@ -321,8 +321,8 @@ describe ContextLink do
         @question_two = FactoryGirl.create(:question, :name => 'test global')
         @context_link = ContextLink::PositiveContextLink.create(:user=>@user, :question => @question, :global_node_from_id => @gnu1.global_node.id, :global_node_to_id => @gnu2.global_node.id)
         @context_link_attrs = @context_link.attributes
-        @lu_attrs = {:link_id => @context_link.link.id, :user_id => @user.id}
-        @gl_attrs = {:link_id => @context_link.link.id, :question_id => @question.id}
+        @lu_attrs = {:node_from_id => @context_link.user_node_from.id, :node_to_id => @context_link.user_node_to.id, :user_id => @user.id}
+        @gl_attrs = {:node_from_id => @context_link.question_node_from.id, :node_to_id => @context_link.question_node_to.id, :question_id => @question.id}
         Link::UserLink.where(@lu_attrs)[0].users_count.should == 1 
         @context_link_two = ContextLink::PositiveContextLink.create(:user=>@user, :question => @question_two, :global_node_from_id => @gnu1.global_node.id, :global_node_to_id => @gnu2.global_node.id)
         Link::UserLink.count.should == 1
@@ -341,15 +341,15 @@ describe ContextLink do
       end
 
       it 'should destroy the gl' do
-        Link::GlobalLink.where(@gl_attrs)[0].should_not be_nil
+        Link::QuestionLink.where(@gl_attrs)[0].should_not be_nil
         @context_link.destroy
-        Link::GlobalLink.where(@gl_attrs)[0].should be_nil
+        Link::QuestionLink.where(@gl_attrs)[0].should be_nil
       end
 
       it 'should decrement the gl count by 1' do
         expect {
           @context_link.destroy
-        }.to change(Link::GlobalLink, :count).by(-1)
+        }.to change(Link::QuestionLink, :count).by(-1)
       end
 
       it 'should decrement the lus context_link count by 1' do
@@ -374,7 +374,7 @@ describe ContextLink do
       
       it 'should update the caches' do
         node_to = Node::GlobalNode.where(:title => @gnu2.global_node.title)[0]
-        gnu_to = GlobalNodeUser.where(:question_id => @question.id, :node_title_id => @gnu2.node_title_id, :user_id => @user.id)[0]
+        gnu_to = ContextNode.where(:question_id => @question.id, :node_title_id => @gnu2.node_title_id, :user_id => @user.id)[0]
         gn_to = Node::QuestionNode.where(:question_id => @question.id, :node_title_id => @gnu2.node_title_id)[0]
         nu_to = Node::UserNode.where(:node_title_id => @gnu2.node_title_id, :user_id => @user.id)[0]
         node_to.upvotes_count.should == 1 
