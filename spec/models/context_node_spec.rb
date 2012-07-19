@@ -289,7 +289,7 @@ describe ContextNode do
         @context_node1 = ContextNode.create(:title => 'title', :question => @question, :user => @user)
         @context_node2 = ContextNode.create(:title => 'test', :question => @question, :user => @user)
         @context_node3 = ContextNode.create(:title => 'another', :question => @question, :user => @user)
-        @context_link = ContextLink.create(:user=>@user, :question => @question, :node_from_id => @context_node1.node.id, :node_to_id => @context_node2.node.id, :value => 1)
+        @context_link = ContextLink::PositiveContextLink.create(:user=>@user, :question => @question, :global_node_from_id => @context_node1.global_node.id, :global_node_to_id => @context_node2.global_node.id)
       end
       it 'should destroy 1 node' do
         expect {
@@ -337,20 +337,20 @@ describe ContextNode do
       end
 
       it 'update the caches' do
-        @context_node2.reload.upvotes_count.should == 1
+        #@context_node2.reload.upvotes_count.should == 1
         @context_node2.user_node.reload.upvotes_count.should == 1
         @context_node2.question_node.reload.upvotes_count.should == 1
-        @context_node2.node.reload.upvotes_count.should == 1
+        @context_node2.global_node.reload.upvotes_count.should == 1
         @context_node1.destroy
-        @context_node2.reload.upvotes_count.should == 0 
+        #@context_node2.reload.upvotes_count.should == 0 
         @context_node2.user_node.reload.upvotes_count.should == 0
         @context_node2.question_node.reload.upvotes_count.should == 0
-        @context_node2.node.reload.upvotes_count.should == 0
+        @context_node2.global_node.reload.upvotes_count.should == 0
       end
       
       context 'when another user has the link in this question' do
         before do
-          @context_link2 = ContextLink.create(:user=>@user_two, :question => @question, :node_from_id => @context_node1.node.id, :node_to_id => @context_node2.node.id, :value => 1)
+          @context_link2 = ContextLink::PositiveContextLink.create(:user=>@user_two, :question => @question, :global_node_from_id => @context_node1.global_node.id, :global_node_to_id => @context_node2.global_node.id)
         end
         it 'should destroy 0 node' do
           expect {
@@ -398,21 +398,21 @@ describe ContextNode do
         end
   
         it 'update the caches' do
-          @context_node2.reload.upvotes_count.should == 1
+          #@context_node2.reload.upvotes_count.should == 1
           @context_node2.user_node.reload.upvotes_count.should == 1
           @context_node2.question_node.reload.upvotes_count.should == 2
-          @context_node2.node.reload.upvotes_count.should == 2
+          @context_node2.global_node.reload.upvotes_count.should == 2
           @context_node1.destroy
-          @context_node2.reload.upvotes_count.should == 0 
+          #@context_node2.reload.upvotes_count.should == 0 
           @context_node2.user_node.reload.upvotes_count.should == 0
           @context_node2.question_node.reload.upvotes_count.should == 1
-          @context_node2.node.reload.upvotes_count.should == 1
+          @context_node2.global_node.reload.upvotes_count.should == 1
         end
       end
   
       context 'when another user has another link in this question which uses the same node from' do
         before do
-          @context_link2 = ContextLink.create(:user=>@user_two, :question => @question, :node_from_id => @context_node1.node.id, :node_to_id => @context_node3.node.id, :value => 1)
+          @context_link2 = ContextLink::PositiveContextLink.create(:user=>@user_two, :question => @question, :global_node_from_id => @context_node1.global_node.id, :global_node_to_id => @context_node3.global_node.id)
         end
         it 'should destroy 0 node (due to shared node from and diff users)' do
           expect {
@@ -460,21 +460,21 @@ describe ContextNode do
         end
   
         it 'update the caches' do
-          @context_node2.reload.upvotes_count.should == 1
+          #@context_node2.reload.upvotes_count.should == 1
           @context_node2.user_node.reload.upvotes_count.should == 1
           @context_node2.question_node.reload.upvotes_count.should == 1
-          @context_node2.node.reload.upvotes_count.should == 1
+          @context_node2.global_node.reload.upvotes_count.should == 1
           @context_node1.destroy
-          @context_node2.reload.upvotes_count.should == 0 
+          #@context_node2.reload.upvotes_count.should == 0 
           @context_node2.user_node.reload.upvotes_count.should == 0
           @context_node2.question_node.reload.upvotes_count.should == 0
-          @context_node2.node.reload.upvotes_count.should == 0
+          @context_node2.global_node.reload.upvotes_count.should == 0
         end
       end
   
       context 'when another user has the link in another question' do
         before do
-          @context_link2 = ContextLink.create(:user=>@user_two, :question => @question2, :node_from_id => @context_node1.node.id, :node_to_id => @context_node2.node.id, :value => 1)
+          @context_link2 = ContextLink::PositiveContextLink.create(:user=>@user_two, :question => @question2, :global_node_from_id => @context_node1.global_node.id, :global_node_to_id => @context_node2.global_node.id)
         end
         it 'should destroy 0 node' do
           expect {
@@ -522,21 +522,21 @@ describe ContextNode do
         end
   
         it 'update the caches' do
-          @context_node2.reload.upvotes_count.should == 1
+          #@context_node2.reload.upvotes_count.should == 1
           @context_node2.user_node.reload.upvotes_count.should == 1
           @context_node2.question_node.reload.upvotes_count.should == 1
-          @context_node2.node.reload.upvotes_count.should == 2
+          @context_node2.global_node.reload.upvotes_count.should == 2
           @context_node1.destroy
-          @context_node2.reload.upvotes_count.should == 0 
+          #@context_node2.reload.upvotes_count.should == 0 
           @context_node2.user_node.reload.upvotes_count.should == 0
           @context_node2.question_node.reload.upvotes_count.should == 0
-          @context_node2.node.reload.upvotes_count.should == 1
+          @context_node2.global_node.reload.upvotes_count.should == 1
         end
       end
   
       context 'when the user has the link in another question' do
         before do
-          @context_link2 = ContextLink.create(:user=>@user, :question => @question2, :node_from_id => @context_node1.node.id, :node_to_id => @context_node2.node.id, :value => 1)
+          @context_link2 = ContextLink::PositiveContextLink.create(:user=>@user, :question => @question2, :global_node_from_id => @context_node1.global_node.id, :global_node_to_id => @context_node2.global_node.id)
         end
         it 'should destroy 0 node' do
           expect {
@@ -584,21 +584,21 @@ describe ContextNode do
         end
   
         it 'update the caches' do
-          @context_node2.reload.upvotes_count.should == 1
+          #@context_node2.reload.upvotes_count.should == 1
           @context_node2.user_node.reload.upvotes_count.should == 1
           @context_node2.question_node.reload.upvotes_count.should == 1
-          @context_node2.node.reload.upvotes_count.should == 1
+          @context_node2.global_node.reload.upvotes_count.should == 1
           @context_node1.destroy
-          @context_node2.reload.upvotes_count.should == 0 
+          #@context_node2.reload.upvotes_count.should == 0 
           @context_node2.user_node.reload.upvotes_count.should == 1
           @context_node2.question_node.reload.upvotes_count.should == 0
-          @context_node2.node.reload.upvotes_count.should == 1
+          @context_node2.global_node.reload.upvotes_count.should == 1
         end
       end
 
       context 'when the user has another link in this question where the links share a node from' do
         before do
-          @context_link2 = ContextLink.create(:user=>@user, :question => @question, :node_from_id => @context_node1.node.id, :node_to_id => @context_node3.node.id, :value => 1)
+          @context_link2 = ContextLink::PositiveContextLink.create(:user=>@user, :question => @question, :global_node_from_id => @context_node1.global_node.id, :global_node_to_id => @context_node3.global_node.id)
         end
         it 'should destroy 1 node (despite shared node from -- all on user)' do
           expect {
@@ -646,23 +646,23 @@ describe ContextNode do
         end
   
         it 'update the caches' do
-          @context_node2.reload.upvotes_count.should == 1
+          #@context_node2.reload.upvotes_count.should == 1
           @context_node2.user_node.reload.upvotes_count.should == 1
           @context_node2.question_node.reload.upvotes_count.should == 1
-          @context_node2.node.reload.upvotes_count.should == 1
-          @context_node3.reload.upvotes_count.should == 1
+          @context_node2.global_node.reload.upvotes_count.should == 1
+          #@context_node3.reload.upvotes_count.should == 1
           @context_node3.user_node.reload.upvotes_count.should == 1
           @context_node3.question_node.reload.upvotes_count.should == 1
-          @context_node3.node.reload.upvotes_count.should == 1
+          @context_node3.global_node.reload.upvotes_count.should == 1
           @context_node1.destroy
-          @context_node2.reload.upvotes_count.should == 0 
+          #@context_node2.reload.upvotes_count.should == 0 
           @context_node2.user_node.reload.upvotes_count.should == 0
           @context_node2.question_node.reload.upvotes_count.should == 0
-          @context_node2.node.reload.upvotes_count.should == 0
-          @context_node3.reload.upvotes_count.should == 0 
+          @context_node2.global_node.reload.upvotes_count.should == 0
+          #@context_node3.reload.upvotes_count.should == 0 
           @context_node3.user_node.reload.upvotes_count.should == 0
           @context_node3.question_node.reload.upvotes_count.should == 0
-          @context_node3.node.reload.upvotes_count.should == 0
+          @context_node3.global_node.reload.upvotes_count.should == 0
         end
       end
     end

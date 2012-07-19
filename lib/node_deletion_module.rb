@@ -18,7 +18,7 @@ module NodeDeletionModule
     ContextLink.where('context_node_from_id = ? ||
                        context_node_to_id = ?',
                        id, id
-                     ).delete_all
+                     ).destroy_all
   end
 
 end
