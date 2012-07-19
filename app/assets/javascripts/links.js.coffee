@@ -7,13 +7,13 @@ $(document).ready ->
     link_id = target_id.match(/^\d+/)[0]
     $('#link_'+link_id).ajaxLoader()
     data_hash = {}
-    data_hash["type"] = $("#link_"+link_id).attr("class")
+    data_hash["direction"] = $("#link_"+link_id).attr("class")
     if link_id.length < 16
       data_hash["id"] = link_id
     from = $("#"+link_id+"_node_from").attr("value")
     to = $("#"+link_id+"_node_to").attr("value")
-    value = $(event.target).attr("value")
-    data_hash["link"] = {"node_from_id":from, "value":value, "node_to_id":to}
+    data_hash["type"] = $(event.target).attr("value")
+    data_hash["link"] = {"node_from_id":from, "node_to_id":to}
     if value == "_destroy"
       url = "/links/"+link_id
       method = "DELETE"
