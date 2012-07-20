@@ -39,7 +39,7 @@ describe ContextLink do
         context_link = ContextLink::PositiveContextLink.create(:user=>@user, :question => @question, :global_node_from_id => @gnu1.global_node.id, :global_node_to_id => @gnu2.global_node.id)
         context_link.user_link.should be_persisted
         context_link.user_link.should be_a(Link::UserLink::PositiveUserLink)
-        context_link.user_link.reload.users_count.should == 1
+        context_link.user_link.reload.users_count.should == 0
       end
       it 'should create an l' do
         expect {
@@ -91,54 +91,54 @@ describe ContextLink do
         before do
           ContextLink::PositiveContextLink.create(:user=>@user, :question => @question, :global_node_from_id => @gnu1.global_node.id, :global_node_to_id => @gnu2.global_node.id)
         end
-        it 'should create a context_link' do
+        it 'should not create a context_link' do
           expect {
             ContextLink::PositiveContextLink.create(:user=>@user, :question => @question, :global_node_from_id => @gnu1.global_node.id, :global_node_to_id => @gnu2.global_node.id)
           }.to change(ContextLink, :count).by(0)
         end
-        it 'should create the context_link' do
+        it 'should not create the context_link' do
           ContextLink::PositiveContextLink.create(:user=>@user, :question => @question, :global_node_from_id => @gnu1.global_node.id, :global_node_to_id => @gnu2.global_node.id)
           context_link = ContextLink::PositiveContextLink.where(:user_id=>@user.id, :question_id => @question.id, :global_node_from_id => @gnu1.global_node.id, :global_node_to_id => @gnu2.global_node.id)[0]
           context_link.should be_persisted
           context_link = ContextLink::PositiveContextLink.where(:user_id=>@user.id, :global_node_from_id => @gnu1.global_node.id, :global_node_to_id => @gnu2.global_node.id, :question_id=>@question.id).count .should == 1
         end
-        it 'should create a gl' do
+        it 'should not create a ql' do
+          expect {
+            ContextLink::PositiveContextLink.create(:user=>@user, :question => @question, :global_node_from_id => @gnu1.global_node.id, :global_node_to_id => @gnu2.global_node.id)
+          }.to change(Link::QuestionLink, :count).by(0)
+        end
+        it 'should not create the ql' do
+          ContextLink::PositiveContextLink.create(:user=>@user, :question => @question, :global_node_from_id => @gnu1.global_node.id, :global_node_to_id => @gnu2.global_node.id)
+          context_link = ContextLink::PositiveContextLink.where(:user_id=>@user.id, :question_id => @question.id, :global_node_from_id => @gnu1.global_node.id, :global_node_to_id => @gnu2.global_node.id)[0]
+          context_link.question_link.should be_persisted
+          context_link.question_link.should be_a(Link::QuestionLink)
+          context_link.question_link.reload.users_count.should == 1
+        end
+        it 'should not create an lu' do
+          expect {
+            ContextLink::PositiveContextLink.create(:user=>@user, :question => @question, :global_node_from_id => @gnu1.global_node.id, :global_node_to_id => @gnu2.global_node.id)
+          }.to change(Link::UserLink, :count).by(0)
+        end
+        it 'should not create the lu' do
+          ContextLink::PositiveContextLink.create(:user=>@user, :question => @question, :global_node_from_id => @gnu1.global_node.id, :global_node_to_id => @gnu2.global_node.id)
+          context_link = ContextLink::PositiveContextLink.where(:user_id=>@user.id, :question_id => @question.id, :global_node_from_id => @gnu1.global_node.id, :global_node_to_id => @gnu2.global_node.id)[0]
+          context_link.user_link.should be_persisted
+          context_link.user_link.should be_a(Link::UserLink)
+          context_link.user_link.reload.users_count.should == 0
+        end
+        it 'should not create an l' do
           expect {
             ContextLink::PositiveContextLink.create(:user=>@user, :question => @question, :global_node_from_id => @gnu1.global_node.id, :global_node_to_id => @gnu2.global_node.id)
           }.to change(Link::GlobalLink, :count).by(0)
         end
-        it 'should create the gl' do
+        it 'should not create the l' do
           ContextLink::PositiveContextLink.create(:user=>@user, :question => @question, :global_node_from_id => @gnu1.global_node.id, :global_node_to_id => @gnu2.global_node.id)
           context_link = ContextLink::PositiveContextLink.where(:user_id=>@user.id, :question_id => @question.id, :global_node_from_id => @gnu1.global_node.id, :global_node_to_id => @gnu2.global_node.id)[0]
           context_link.global_link.should be_persisted
           context_link.global_link.should be_a(Link::GlobalLink)
           context_link.global_link.reload.users_count.should == 1
         end
-        it 'should create an lu' do
-          expect {
-            ContextLink::PositiveContextLink.create(:user=>@user, :question => @question, :global_node_from_id => @gnu1.global_node.id, :global_node_to_id => @gnu2.global_node.id)
-          }.to change(Link::UserLink, :count).by(0)
-        end
-        it 'should create the lu' do
-          ContextLink::PositiveContextLink.create(:user=>@user, :question => @question, :global_node_from_id => @gnu1.global_node.id, :global_node_to_id => @gnu2.global_node.id)
-          context_link = ContextLink::PositiveContextLink.where(:user_id=>@user.id, :question_id => @question.id, :global_node_from_id => @gnu1.global_node.id, :global_node_to_id => @gnu2.global_node.id)[0]
-          context_link.user_link.should be_persisted
-          context_link.user_link.should be_a(Link::UserLink)
-          context_link.user_link.reload.users_count.should == 1
-        end
-        it 'should create an l' do
-          expect {
-            ContextLink::PositiveContextLink.create(:user=>@user, :question => @question, :global_node_from_id => @gnu1.global_node.id, :global_node_to_id => @gnu2.global_node.id)
-          }.to change(Link, :count).by(0)
-        end
-        it 'should create the l' do
-          ContextLink::PositiveContextLink.create(:user=>@user, :question => @question, :global_node_from_id => @gnu1.global_node.id, :global_node_to_id => @gnu2.global_node.id)
-          context_link = ContextLink::PositiveContextLink.where(:user_id=>@user.id, :question_id => @question.id, :global_node_from_id => @gnu1.global_node.id, :global_node_to_id => @gnu2.global_node.id)[0]
-          context_link.global_link.should be_persisted
-          context_link.global_link.should be_a(Link)
-          context_link.global_link.reload.users_count.should == 1
-        end
-        it 'should create the gnus and increment the votes' do
+        it 'should not create the gnus and increment the votes' do
           ContextLink::PositiveContextLink.create(:user=>@user, :question => @question, :global_node_from_id => @gnu1.global_node.id, :global_node_to_id => @gnu2.global_node.id)
           context_link = ContextLink::PositiveContextLink.where(:user_id=>@user.id, :question_id => @question.id, :global_node_from_id => @gnu1.global_node.id, :global_node_to_id => @gnu2.global_node.id)[0]
           context_link.context_node_from.should be_persisted
@@ -148,7 +148,7 @@ describe ContextLink do
           context_link.context_node_to.should be_a(ContextNode)
           context_link.context_node_to.reload.context_links_count.should == 1
         end
-        it 'should increment the votes on the n' do
+        it 'should not increment the votes on the n' do
           ContextLink::PositiveContextLink.create(:user=>@user, :question => @question, :global_node_from_id => @gnu1.global_node.id, :global_node_to_id => @gnu2.global_node.id)
           node_to = Node::GlobalNode.where(:id => @gnu2.global_node.id)[0]
           node_to.upvotes_count.should == 1
@@ -156,7 +156,7 @@ describe ContextLink do
           node_from.should_not be_nil
           node_from.upvotes_count.should == 0 
         end
-        it 'should increment the votes on the gn' do
+        it 'should not increment the votes on the gn' do
           ContextLink::PositiveContextLink.create(:user=>@user, :question => @question, :global_node_from_id => @gnu1.global_node.id, :global_node_to_id => @gnu2.global_node.id)
           node_to = Node::QuestionNode.where(:node_title_id => @gnu2.node_title_id, :question_id => @question.id)[0]
           node_to.upvotes_count.should == 1
@@ -164,8 +164,95 @@ describe ContextLink do
           node_from.should_not be_nil
           node_from.upvotes_count.should == 0
         end
-        it 'should register the vote on nu' do
+        it 'should not register the vote on nu' do
           ContextLink::PositiveContextLink.create(:user=>@user, :question => @question, :global_node_from_id => @gnu1.global_node.id, :global_node_to_id => @gnu2.global_node.id)
+          node_to = Node::UserNode.where(:node_title_id => @gnu2.node_title_id, :user_id => @user.id)[0]
+          node_to.upvotes_count.should == 1
+          node_from = Node::UserNode.where(:node_title_id => @gnu1.node_title_id, :user_id => @user.id)[0]
+          node_from.should_not be_nil
+          node_from.upvotes_count.should == 0 
+        end
+      end
+      context 'when creating a context_link in a different question' do
+        before do
+          @question2 = FactoryGirl.create(:question, :name => 'new question')
+          ContextLink::PositiveContextLink.create(:user=>@user, :question => @question, :global_node_from_id => @gnu1.global_node.id, :global_node_to_id => @gnu2.global_node.id)
+        end
+        it 'should create a context_link' do
+          expect {
+            ContextLink::PositiveContextLink.create(:user=>@user, :question => @question2, :global_node_from_id => @gnu1.global_node.id, :global_node_to_id => @gnu2.global_node.id)
+          }.to change(ContextLink, :count).by(1)
+        end
+        it 'should create the context_link' do
+          ContextLink::PositiveContextLink.create(:user=>@user, :question => @question2, :global_node_from_id => @gnu1.global_node.id, :global_node_to_id => @gnu2.global_node.id)
+          context_link = ContextLink::PositiveContextLink.where(:user_id=>@user.id, :question_id => @question2.id, :global_node_from_id => @gnu1.global_node.id, :global_node_to_id => @gnu2.global_node.id)[0]
+          context_link.should be_persisted
+          context_link = ContextLink::PositiveContextLink.where(:user_id=>@user.id, :global_node_from_id => @gnu1.global_node.id, :global_node_to_id => @gnu2.global_node.id, :question_id=>@question2.id).count .should == 1
+        end
+        it 'should create a ql' do
+          expect {
+            ContextLink::PositiveContextLink.create(:user=>@user, :question => @question2, :global_node_from_id => @gnu1.global_node.id, :global_node_to_id => @gnu2.global_node.id)
+          }.to change(Link::QuestionLink, :count).by(1)
+        end
+        it 'should create the ql' do
+          ContextLink::PositiveContextLink.create(:user=>@user, :question => @question2, :global_node_from_id => @gnu1.global_node.id, :global_node_to_id => @gnu2.global_node.id)
+          context_link = ContextLink::PositiveContextLink.where(:user_id=>@user.id, :question_id => @question2.id, :global_node_from_id => @gnu1.global_node.id, :global_node_to_id => @gnu2.global_node.id)[0]
+          context_link.question_link.should be_persisted
+          context_link.question_link.should be_a(Link::QuestionLink)
+          context_link.question_link.reload.users_count.should == 1
+        end
+        it 'should not create an lu' do
+          expect {
+            ContextLink::PositiveContextLink.create(:user=>@user, :question => @question2, :global_node_from_id => @gnu1.global_node.id, :global_node_to_id => @gnu2.global_node.id)
+          }.to change(Link::UserLink, :count).by(0)
+        end
+        it 'should not create the lu' do
+          ContextLink::PositiveContextLink.create(:user=>@user, :question => @question2, :global_node_from_id => @gnu1.global_node.id, :global_node_to_id => @gnu2.global_node.id)
+          context_link = ContextLink::PositiveContextLink.where(:user_id=>@user.id, :question_id => @question2.id, :global_node_from_id => @gnu1.global_node.id, :global_node_to_id => @gnu2.global_node.id)[0]
+          context_link.user_link.should be_persisted
+          context_link.user_link.should be_a(Link::UserLink)
+          context_link.user_link.reload.users_count.should == 0
+        end
+        it 'should not create an l' do
+          expect {
+            ContextLink::PositiveContextLink.create(:user=>@user, :question => @question2, :global_node_from_id => @gnu1.global_node.id, :global_node_to_id => @gnu2.global_node.id)
+          }.to change(Link::GlobalLink, :count).by(0)
+        end
+        it 'should not create the l' do
+          ContextLink::PositiveContextLink.create(:user=>@user, :question => @question2, :global_node_from_id => @gnu1.global_node.id, :global_node_to_id => @gnu2.global_node.id)
+          context_link = ContextLink::PositiveContextLink.where(:user_id=>@user.id, :question_id => @question2.id, :global_node_from_id => @gnu1.global_node.id, :global_node_to_id => @gnu2.global_node.id)[0]
+          context_link.global_link.should be_persisted
+          context_link.global_link.should be_a(Link)
+          context_link.global_link.reload.users_count.should == 2
+        end
+        it 'should not create the gnus and increment the votes' do
+          ContextLink::PositiveContextLink.create(:user=>@user, :question => @question2, :global_node_from_id => @gnu1.global_node.id, :global_node_to_id => @gnu2.global_node.id)
+          context_link = ContextLink::PositiveContextLink.where(:user_id=>@user.id, :question_id => @question2.id, :global_node_from_id => @gnu1.global_node.id, :global_node_to_id => @gnu2.global_node.id)[0]
+          context_link.context_node_from.should be_persisted
+          context_link.context_node_from.should be_a(ContextNode)
+          context_link.context_node_from.reload.context_links_count.should == 1
+          context_link.context_node_to.should be_persisted
+          context_link.context_node_to.should be_a(ContextNode)
+          context_link.context_node_to.reload.context_links_count.should == 1
+        end
+        it 'should not increment the votes on the n' do
+          ContextLink::PositiveContextLink.create(:user=>@user, :question => @question2, :global_node_from_id => @gnu1.global_node.id, :global_node_to_id => @gnu2.global_node.id)
+          node_to = Node::GlobalNode.where(:id => @gnu2.global_node.id)[0]
+          node_to.upvotes_count.should == 1
+          node_from = Node::GlobalNode.where(:id => @gnu1.global_node.id)[0]
+          node_from.should_not be_nil
+          node_from.upvotes_count.should == 0 
+        end
+        it 'should not increment the votes on the gn' do
+          ContextLink::PositiveContextLink.create(:user=>@user, :question => @question2, :global_node_from_id => @gnu1.global_node.id, :global_node_to_id => @gnu2.global_node.id)
+          node_to = Node::QuestionNode.where(:node_title_id => @gnu2.node_title_id, :question_id => @question2.id)[0]
+          node_to.upvotes_count.should == 1
+          node_from = Node::QuestionNode.where(:node_title_id => @gnu1.node_title_id, :question_id => @question2.id)[0]
+          node_from.should_not be_nil
+          node_from.upvotes_count.should == 0
+        end
+        it 'should not register the vote on nu' do
+          ContextLink::PositiveContextLink.create(:user=>@user, :question => @question2, :global_node_from_id => @gnu1.global_node.id, :global_node_to_id => @gnu2.global_node.id)
           node_to = Node::UserNode.where(:node_title_id => @gnu2.node_title_id, :user_id => @user.id)[0]
           node_to.upvotes_count.should == 1
           node_from = Node::UserNode.where(:node_title_id => @gnu1.node_title_id, :user_id => @user.id)[0]
@@ -178,8 +265,8 @@ describe ContextLink do
       before do
         @question = FactoryGirl.create(:question)
         @user = FactoryGirl.create(:user)
-        @gnu1 = ContextNode.create(:title => 'title', :question => @question, :user => @user)
-        @gnu2 = ContextNode.create(:title => 'test', :question => @question, :user => @user)
+        @gnu1 = ContextNode.create(:title => 'title', :question => @question2, :user => @user)
+        @gnu2 = ContextNode.create(:title => 'test', :question => @question2, :user => @user)
       end
       it 'should create a context_link' do
         expect {
@@ -211,7 +298,7 @@ describe ContextLink do
         context_link = ContextLink::EquivalentContextLink.create(:user=>@user, :question => @question, :global_node_from_id => @gnu1.global_node.id, :global_node_to_id => @gnu2.global_node.id)
         context_link.user_link.should be_persisted
         context_link.user_link.should be_a(Link::UserLink)
-        context_link.user_link.reload.users_count.should == 1
+        context_link.user_link.reload.users_count.should == 0
       end
       it 'should create an l' do
         expect {
@@ -323,10 +410,7 @@ describe ContextLink do
         @context_link_attrs = @context_link.attributes
         @lu_attrs = {:node_from_id => @context_link.user_node_from.id, :node_to_id => @context_link.user_node_to.id, :user_id => @user.id}
         @gl_attrs = {:node_from_id => @context_link.question_node_from.id, :node_to_id => @context_link.question_node_to.id, :question_id => @question.id}
-        Link::UserLink.where(@lu_attrs)[0].users_count.should == 1 
         @context_link_two = ContextLink::PositiveContextLink.create(:user=>@user, :question => @question_two, :global_node_from_id => @gnu1.global_node.id, :global_node_to_id => @gnu2.global_node.id)
-        Link::UserLink.count.should == 1
-        Link::UserLink.where(@lu_attrs)[0].users_count.should == 2 
       end
       it 'should destroy the context_link' do
         ContextLink::PositiveContextLink.where(@context_link_attrs)[0].should_not be_nil
@@ -354,22 +438,22 @@ describe ContextLink do
 
       it 'should decrement the lus context_link count by 1' do
         Link::UserLink.count.should == 1
-        Link::UserLink.where(@lu_attrs)[0].users_count.should == 2
+        Link::UserLink.where(@lu_attrs)[0].users_count.should == 0
         @context_link.destroy
         Link::UserLink.count.should == 1
-        Link::UserLink.where(@lu_attrs)[0].users_count.should == 1 
+        Link::UserLink.where(@lu_attrs)[0].users_count.should == 0 
       end
 
-      it 'should not destroy the lu' do
+      it 'should destroy the lu' do
         Link::UserLink.where(@lu_attrs)[0].should_not be_nil
         @context_link.destroy
-        Link::UserLink.where(@lu_attrs)[0].should_not be_nil
+        Link::UserLink.where(@lu_attrs)[0].should be_nil
       end
 
       it 'should not decrement the lu count' do
         expect {
           @context_link.destroy
-        }.to change(Link::UserLink, :count).by(0)
+        }.to change(Link::UserLink, :count).by(-1)
       end
       
       it 'should update the caches' do

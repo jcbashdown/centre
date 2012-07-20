@@ -577,10 +577,10 @@ describe ContextNode do
           }.to change(Link::QuestionLink, :count).by(-1)
         end
   
-        it 'should destroy 0 lu' do
+        it 'should destroy 1 lu' do
           expect {
             @context_node1.destroy
-          }.to change(Link::UserLink, :count).by(0)
+          }.to change(Link::UserLink, :count).by(-1)
         end
   
         it 'update the caches' do
