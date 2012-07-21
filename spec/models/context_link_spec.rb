@@ -466,7 +466,7 @@ describe ContextLink do
         node_to.upvotes_count.should == 1 
         @context_link.destroy
         node_to = Node.where(:title => @gnu2.global_node.title)[0]
-        gnu_to = GlobalNodeUser.where(:question_id => @question.id, :node_title_id => @gnu2.node_title_id, :user_id => @user.id)[0]
+        gnu_to = ContextNode.where(:question_id => @question.id, :node_title_id => @gnu2.node_title_id, :user_id => @user.id)[0]
         gn_to = Node::QuestionNode.where(:question_id => @question.id, :node_title_id => @gnu2.node_title_id)[0]
         nu_to = Node::UserNode.where(:node_title_id => @gnu2.node_title_id, :user_id => @user.id)[0]
         gn_to.upvotes_count.should == 0

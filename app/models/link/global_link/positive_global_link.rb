@@ -1,6 +1,6 @@
 class Link::GlobalLink::PositiveGlobalLink < Link::GlobalLink
 
-  def negative?
+  def positive?
     true
   end 
 

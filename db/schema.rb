@@ -53,6 +53,7 @@ ActiveRecord::Schema.define(:version => 20120630131231) do
     t.integer  "node_title_id"
     t.boolean  "is_conclusion",            :default => false
     t.boolean  "private",                  :default => false
+    t.boolean  "direct_creation",          :default => false
     t.integer  "context_links_count",      :default => 0,     :null => false
     t.datetime "created_at",                                  :null => false
     t.datetime "updated_at",                                  :null => false
@@ -68,17 +69,23 @@ ActiveRecord::Schema.define(:version => 20120630131231) do
   create_table "links", :force => true do |t|
     t.integer  "user_id"
     t.integer  "question_id"
+    t.integer  "global_link_id"
+    t.integer  "global_node_from_id"
+    t.integer  "global_node_to_id"
     t.integer  "node_from_id"
     t.integer  "node_to_id"
-    t.integer  "users_count",  :default => 0,     :null => false
-    t.boolean  "active",       :default => false
-    t.boolean  "private",      :default => false
+    t.integer  "users_count",         :default => 0,     :null => false
+    t.boolean  "active",              :default => false
+    t.boolean  "private",             :default => false
     t.string   "type"
-    t.datetime "created_at",                      :null => false
-    t.datetime "updated_at",                      :null => false
+    t.datetime "created_at",                             :null => false
+    t.datetime "updated_at",                             :null => false
   end
 
   add_index "links", ["active"], :name => "index_links_on_active"
+  add_index "links", ["global_link_id"], :name => "index_links_on_global_link_id"
+  add_index "links", ["global_node_from_id"], :name => "index_links_on_global_node_from_id"
+  add_index "links", ["global_node_to_id"], :name => "index_links_on_global_node_to_id"
   add_index "links", ["node_from_id"], :name => "index_links_on_node_from_id"
   add_index "links", ["node_to_id"], :name => "index_links_on_node_to_id"
   add_index "links", ["question_id"], :name => "index_links_on_question_id"
