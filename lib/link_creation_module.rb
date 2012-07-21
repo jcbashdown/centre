@@ -30,7 +30,7 @@ module LinkCreationModule
       end
     end
     attributes = new_links_hash.merge(@existing_links_hash)
-    attributes[:user_link_id] = find_or_create_user_link.id
+    attributes[:user_link_id] = find_or_create_user_link(attributes).id
     self.attributes = attributes
   end
 
@@ -51,7 +51,7 @@ module LinkCreationModule
     end
   end
 
-  def find_or_create_user_link
-    "Link::UserLink::#{self.link_kind}UserLink".constantize.where({:user_id => user_id, :node_from_id => self.user_node_from_id, :node_to_id => self.user_node_to_id})[0] || "Link::UserLink::#{self.link_kind}UserLink".constantize.create!({:user_id => user_id, :node_from_id => self.user_node_from_id, :node_to_id => self.user_node_to_id, :global_node_from_id => self.global_node_from_id, :global_node_to_id => self.global_node_to_id, :global_link_id => attributes[:global_link_id]})
+  def find_or_create_user_link(attributes)
+    Link::UserLink.where({:user_id => user_id, :node_from_id => self.user_node_from_id, :node_to_id => self.user_node_to_id})[0] || "Link::UserLink::#{self.link_kind}UserLink".constantize.create!({:user_id => user_id, :node_from_id => self.user_node_from_id, :node_to_id => self.user_node_to_id, :global_node_from_id => self.global_node_from_id, :global_node_to_id => self.global_node_to_id, :global_link_id => attributes[:global_link_id]})
   end
 end

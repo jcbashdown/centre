@@ -404,9 +404,9 @@ describe ContextLink do
         @gnu2.question_node.reload.upvotes_count.should == 1
         @context_link.destroy
         Link::UserLink.count.should == 0
-        @gnu2.question_node.reload.upvotes_count.should == 0
-        @gnu2.user_node.reload.upvotes_count.should == 0
         @gnu2.global_node.reload.upvotes_count.should == 0
+        @gnu2.user_node.reload.upvotes_count.should == 0
+        @gnu2.question_node.reload.upvotes_count.should == 0
       end
     end
     context 'when there is this context_link and another for a different global' do

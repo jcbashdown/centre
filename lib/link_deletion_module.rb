@@ -8,7 +8,7 @@ module LinkDeletionModule
                  id = ? ||
                  id = ?
                 )', global_link_id, question_link_id, user_link_id)
-              .delete_all
+              .destroy_all
   end
 
 end
