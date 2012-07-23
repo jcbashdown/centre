@@ -9,7 +9,47 @@ describe ContextLink do
         @user = FactoryGirl.create(:user)
         @gnu1 = ContextNode.create(:title => 'title', :question => @question, :user => @user)
         @gnu2 = ContextNode.create(:title => 'test', :question => @question, :user => @user)
+        @state_hash = {
+                        :context_link => {:number_created => 1},
+                        :global_link => {
+                                          :number_created => 1,
+                                          :users_count => 1,
+                                          :activation => true
+                                        },
+                        :question_link => {
+                                            :number_created => 1,
+                                            :users_count => 1,
+                                            :activation => true
+                                          },
+                        :user_link => {
+                                        :number_created => 1,
+                                        :users_count => 0,
+                                        :activation => true
+                                      },
+                        :context_node => {
+                                           :number_created => 2
+                                         },
+                        :new_global_node_to => {
+                                          :upvotes_count=> 1
+                                        },
+                        :new_global_node_from => {
+                                          :upvotes_count=> 0
+                                        },
+                        :new_question_node_to => {
+                                            :upvotes_count => 1
+                                          },
+                        :new_question_node_from => {
+                                            :upvotes_count => 0
+                                          },
+                        :new_user_node_to => {
+                                        :upvotes_count => 1
+                                      },
+                        :new_user_node_from => {
+                                        :upvotes_count => 0
+                                      }
+                      }
       end
+      it_should_behave_like 'a context link creating links', "Positive"
       it 'should create a context_link' do
         expect {
           ContextLink::PositiveContextLink.create(:user=>@user, :question => @question, :global_node_from_id => @gnu1.global_node.id, :global_node_to_id => @gnu2.global_node.id)
