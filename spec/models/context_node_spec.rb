@@ -667,4 +667,9 @@ describe ContextNode do
       end
     end
   end
+  describe 'it should not delete the links for other questions - do not delete cl, delete ugl? or uql down..?' do
+    it 'should be sensible' do
+      pending
+    end
+  end
 end
