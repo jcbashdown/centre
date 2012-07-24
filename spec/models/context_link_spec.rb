@@ -402,7 +402,44 @@ describe ContextLink do
         @context_link_attrs = @context_link.attributes
         @lu_attrs = {:node_from_id => @context_link.user_node_from.id, :node_to_id => @context_link.user_node_to.id, :user_id => @user.id}
         @gl_attrs = {:node_from_id => @context_link.question_node_from.id, :node_to_id => @context_link.question_node_to.id, :question_id => @question.id}
+        @state_hash = {
+                        :context_link => {:number_destroyed => -1},
+                        :global_link => {
+                                          :number_destroyed => -1,
+                                          :users_count => nil,
+                                          :activation => nil
+                                        },
+                        :question_link => {
+                                            :number_destroyed => -1,
+                                            :users_count => nil,
+                                            :activation => nil
+                                          },
+                        :user_link => {
+                                        :number_destroyed => -1,
+                                        :users_count => nil,
+                                        :activation => nil
+                                      },
+                        :new_global_node_to => {
+                                          :upvotes_count=> 0
+                                        },
+                        :new_global_node_from => {
+                                          :upvotes_count=> 0
+                                        },
+                        :new_question_node_to => {
+                                            :upvotes_count => 0
+                                          },
+                        :new_question_node_from => {
+                                            :upvotes_count => 0
+                                          },
+                        :new_user_node_to => {
+                                        :upvotes_count => 0
+                                      },
+                        :new_user_node_from => {
+                                        :upvotes_count => 0
+                                      }
+                      }
       end
+      it_should_behave_like 'a @context_link deleting links', "Positive"
       it 'should destroy the context_link' do
         ContextLink::PositiveContextLink.where(@context_link_attrs)[0].should_not be_nil
         @context_link.destroy
