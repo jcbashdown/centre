@@ -64,8 +64,13 @@ shared_examples_for 'a context link creating links' do |type|
     context_link.global_link.reload.active.should == @state_hash[:global_link][:activation]
   end
   it 'should create the correct number of context nodes' do
-    ContextNode.should_receive(:find_or_create_by_user_id_and_question_id_and_title).exactly(@state_hash[:context_node][:number_created]).times.and_return @gnu1
+    ContextNode.should_receive(:find_or_create_by_user_id_and_question_id_and_title).exactly(@state_hash[:context_node][:find_or_create_calls]).times.and_return @gnu1
     "ContextLink::#{type}ContextLink".constantize.create(:user=>@user, :question => @question, :global_node_from_id => @gnu1.global_node.id, :global_node_to_id => @gnu2.global_node.id)
+  end
+  it 'should create the correct number of context nodes' do
+    expect {
+      "ContextLink::#{type}ContextLink".constantize.create(:user=>@user, :question => @question, :global_node_from_id => @gnu1.global_node.id, :global_node_to_id => @gnu2.global_node.id)
+    }.to change(ContextNode, :count).by(@state_hash[:context_node][:number_created])
   end
   it 'should have persisted gnus to and from' do
     context_link = "ContextLink::#{type}ContextLink".constantize.create(:user=>@user, :question => @question, :global_node_from_id => @gnu1.global_node.id, :global_node_to_id => @gnu2.global_node.id)
