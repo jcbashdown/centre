@@ -181,28 +181,28 @@ shared_examples_for 'a @context_link deleting links' do |type|
   it 'should have the correct votes on the gns' do
     @context_link.destroy
     @state_hash[:new_global_node_to].each do |key, value|
-      "Link::GlobalLink::#{type}GlobalLink".constantize.where(@gl_attrs)[0].try(:global_node_to).try(key).should == value
+      @context_link.try(:global_node_to).try(key).should == value
     end
     @state_hash[:new_global_node_from].each do |key, value|
-      "Link::GlobalLink::#{type}GlobalLink".constantize.where(@gl_attrs)[0].try(:global_node_from).try(key).should == value
+      @context_link.try(:global_node_from).try(key).should == value
     end
   end
   it 'should have the correct votes on the qns' do
     @context_link.destroy
     @state_hash[:new_question_node_to].each do |key, value|
-      "Link::QuestionLink::#{type}QuestionLink".constantize.where(@ql_attrs)[0].try(:question_node_to).try(key).should == value
+      @context_link.try(:question_node_to).try(key).should == value
     end
     @state_hash[:new_question_node_from].each do |key, value|
-      "Link::QuestionLink::#{type}QuestionLink".constantize.where(@ql_attrs)[0].try(:question_node_from).try(key).should == value
+      @context_link.try(:question_node_from).try(key).should == value
     end
   end
   it 'should have the correct votes on the uns' do
     @context_link.destroy
     @state_hash[:new_user_node_to].each do |key, value|
-      "Link::UserLink::#{type}UserLink".constantize.where(@ul_attrs)[0].try(:user_node_to).try(key).should == value
+      @context_link.try(:user_node_to).try(key).should == value
     end
     @state_hash[:new_user_node_from].each do |key, value|
-      "Link::UserLink::#{type}UserLink".constantize.where(@ul_attrs)[0].try(:user_node_from).try(key).should == value
+      @context_link.try(:user_node_from).try(key).should == value
     end
   end
 end

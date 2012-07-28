@@ -145,89 +145,56 @@ describe ContextLink do
         end
         it_should_behave_like 'a context link creating links', "Positive"
       end
-    end
-    context 'when creating equivalents' do
-      before do
-        @question = FactoryGirl.create(:question)
-        @user = FactoryGirl.create(:user)
-        @gnu1 = ContextNode.create(:title => 'title', :question => @question2, :user => @user)
-        @gnu2 = ContextNode.create(:title => 'test', :question => @question2, :user => @user)
-      end
-      it 'should create a context_link' do
-        expect {
-          ContextLink::EquivalentContextLink.create(:user=>@user, :question => @question, :global_node_from_id => @gnu1.global_node.id, :global_node_to_id => @gnu2.global_node.id)
-        }.to change(ContextLink, :count).by(1)
-      end
-      it 'should create the context_link' do
-        context_link = ContextLink::EquivalentContextLink.create(:user=>@user, :question => @question, :global_node_from_id => @gnu1.global_node.id, :global_node_to_id => @gnu2.global_node.id)
-        context_link.should be_persisted
-        context_link = ContextLink::EquivalentContextLink.where(:user_id=>@user.id, :global_node_from_id => @gnu1.global_node.id, :global_node_to_id => @gnu2.global_node.id, :question_id=>@question.id).count .should == 1
-      end
-      it 'should create a gl' do
-        expect {
-          ContextLink::EquivalentContextLink.create(:user=>@user, :question => @question, :global_node_from_id => @gnu1.global_node.id, :global_node_to_id => @gnu2.global_node.id)
-        }.to change(Link::GlobalLink, :count).by(1)
-      end
-      it 'should create the gl' do
-        context_link = ContextLink::EquivalentContextLink.create(:user=>@user, :question => @question, :global_node_from_id => @gnu1.global_node.id, :global_node_to_id => @gnu2.global_node.id)
-        context_link.global_link.should be_persisted
-        context_link.global_link.should be_a(Link::GlobalLink)
-        context_link.global_link.reload.users_count.should == 1
-      end
-      it 'should create an lu' do
-        expect {
-          ContextLink::EquivalentContextLink.create(:user=>@user, :question => @question, :global_node_from_id => @gnu1.global_node.id, :global_node_to_id => @gnu2.global_node.id)
-        }.to change(Link::UserLink, :count).by(1)
-      end
-      it 'should create the lu' do
-        context_link = ContextLink::EquivalentContextLink.create(:user=>@user, :question => @question, :global_node_from_id => @gnu1.global_node.id, :global_node_to_id => @gnu2.global_node.id)
-        context_link.user_link.should be_persisted
-        context_link.user_link.should be_a(Link::UserLink)
-        context_link.user_link.reload.users_count.should == 0
-      end
-      it 'should create an l' do
-        expect {
-          ContextLink::EquivalentContextLink.create(:user=>@user, :question => @question, :global_node_from_id => @gnu1.global_node.id, :global_node_to_id => @gnu2.global_node.id)
-        }.to change(Link::GlobalLink, :count).by(1)
-      end
-      it 'should create the l' do
-        context_link = ContextLink::EquivalentContextLink.create(:user=>@user, :question => @question, :global_node_from_id => @gnu1.global_node.id, :global_node_to_id => @gnu2.global_node.id)
-        context_link.global_link.should be_persisted
-        context_link.global_link.should be_a(Link::GlobalLink)
-        context_link.global_link.reload.users_count.should == 1
-      end
-      it 'should create the gnus and increment the votes' do
-        context_link = ContextLink::EquivalentContextLink.create(:user=>@user, :question => @question, :global_node_from_id => @gnu1.global_node.id, :global_node_to_id => @gnu2.global_node.id)
-        context_link.context_node_from.should be_persisted
-        context_link.context_node_from.should be_a(ContextNode)
-        context_link.context_node_from.reload.context_links_count.should == 1
-        context_link.context_node_to.should be_persisted
-        context_link.context_node_to.should be_a(ContextNode)
-        context_link.context_node_to.reload.context_links_count.should == 1
-      end
-      it 'should increment the votes on the n' do
-        ContextLink::EquivalentContextLink.create(:user=>@user, :question => @question, :global_node_from_id => @gnu1.global_node.id, :global_node_to_id => @gnu2.global_node.id)
-        node_to = Node::GlobalNode.where(:id => @gnu2.global_node.id)[0]
-        #node_to.equivalents_count.should == 1
-        node_from = Node::GlobalNode.where(:id => @gnu1.global_node.id)[0]
-        node_from.should_not be_nil
-        #node_from.equivalents_count.should == 1
-      end
-      it 'should increment the votes on the gn' do
-        ContextLink::EquivalentContextLink.create(:user=>@user, :question => @question, :global_node_from_id => @gnu1.global_node.id, :global_node_to_id => @gnu2.global_node.id)
-        node_to = Node::QuestionNode.where(:node_title_id => @gnu2.node_title_id, :question_id => @question.id)[0]
-        #node_to.equivalents_count.should == 1
-        node_from = Node::QuestionNode.where(:node_title_id => @gnu1.node_title_id, :question_id => @question.id)[0]
-        node_from.should_not be_nil
-        #node_from.equivalents_count.should == 1
-      end
-      it 'should register the vote on nu' do
-        ContextLink::EquivalentContextLink.create(:user=>@user, :question => @question, :global_node_from_id => @gnu1.global_node.id, :global_node_to_id => @gnu2.global_node.id)
-        node_to = Node::UserNode.where(:node_title_id => @gnu2.node_title_id, :user_id => @user.id)[0]
-        #node_to.equivalents_count.should == 1
-        node_from = Node::UserNode.where(:node_title_id => @gnu1.node_title_id, :user_id => @user.id)[0]
-        node_from.should_not be_nil
-        #node_from.equivalents_count.should == 1
+      context 'when creating equivalents' do
+        before do
+          @state_hash = {
+                          :context_link => {:number_created => 1},
+                          :global_link => {
+                                            :number_created => 1,
+                                            :users_count => 1,
+                                            :activation => true
+                                          },
+                          :question_link => {
+                                              :number_created => 1,
+                                              :users_count => 1,
+                                              :activation => true
+                                            },
+                          :user_link => {
+                                          :number_created => 1,
+                                          :users_count => 0,
+                                          :activation => true
+                                        },
+                          :context_node => {
+                                             :number_created => 0,
+                                             :find_or_create_calls => 2 
+                                           },
+                          :new_global_node_to => {
+                                            :upvotes_count=> 0,
+                                            :equivalents_count=> 0
+                                          },
+                          :new_global_node_from => {
+                                            :upvotes_count=> 0,
+                                            :equivalents_count=> 0
+                                          },
+                          :new_question_node_to => {
+                                              :upvotes_count => 0,
+                                              :equivalents_count=> 0
+                                            },
+                          :new_question_node_from => {
+                                              :upvotes_count => 0,
+                                              :equivalents_count=> 0
+                                            },
+                          :new_user_node_to => {
+                                          :upvotes_count => 0,
+                                          :equivalents_count=> 0
+                                        },
+                          :new_user_node_from => {
+                                          :upvotes_count => 0,
+                                          :equivalents_count=> 0
+                                        }
+                        }
+        end
+        it_should_behave_like 'a context link creating links', "Equivalent"
       end
     end
   end
