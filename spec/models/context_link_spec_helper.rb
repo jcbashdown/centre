@@ -213,88 +213,90 @@ shared_examples_for 'a @context_link updating links' do |new_type, old_type|
     @ql_attrs = {:node_from_id => @context_link.question_node_from.id, :node_to_id => @context_link.question_node_to.id, :question_id => @question.id}
   end
   it 'should update the correct number of context links' do
-    #ContextLink.any_instance.should_receive(:update_attributes!).with("ContextLink::#{new_type}ContextLink").exactly(@state_hash[:context_link][:extras_updated]).times
-    @context_link.update_attribute(:type, "ContextLink::#{new_type}ContextLink")
-    @context_link.should be_a ContextLink::NegativeContextLink
-    p 789
-    p new_type
-    p ContextLink.find @context_link.id
+    old_cls = []
+    # use collect
+    ContextLink.where(:user_link_id => self.user_link_id).each do |cl|
+      old_cls << cl
+    end
+    @context_link.update_type(new_type)
+    old_cls.each do cl
+       cl.should_not be_persisted
+      "ContexLink::#{new_type}ContextLink".constantize.where({:user => cl.user, :question => cl.question, :global_node_from_id => cl.global_node_from_id, :global_node_to_id => cl.global_node_to_id})[0].should be_persisted
+    end
   end
   it 'should destroy the correct number of question links' do
     expect {
-      @context_link.update_attributes(:type => "ContextLink::#{new_type}ContextLink")
+      @context_link.update_type(new_type)
     }.to change(Link::QuestionLink, :count).by(@state_hash[:question_link][:number_destroyed]+@state_hash[:question_link][:number_created])
   end
   it 'should destroy the correct number of the old question links' do
     expect {
-      @context_link.update_attributes(:type => "ContextLink::#{new_type}ContextLink")
+      @context_link.update_type(new_type)
     }.to change("Link::QuestionLink::#{old_type}QuestionLink".constantize, :count).by(@state_hash[:question_link][:number_destroyed])
   end
   it 'should create the correct number of the new question links' do
     expect {
-      @context_link.update_attributes(:type => "ContextLink::#{new_type}ContextLink")
+      @context_link.update_type(new_type)
     }.to change("Link::QuestionLink::#{new_type}QuestionLink".constantize, :count).by(@state_hash[:question_link][:number_created])
   end
   it 'should destroy the old ql with the correct counts' do
-    @context_link.update_attributes(:type => "ContextLink::#{new_type}ContextLink")
+    @context_link.update_type(new_type)
     "Link::QuestionLink::#{old_type}QuestionLink".constantize.where(@ql_attrs)[0].try(:users_count).should == @state_hash[:old_question_link][:users_count]
-    p 456
-    p new_type
-    p @context_link
   end
   it 'should destroy the old ql with the correct activation' do
-    @context_link.update_attributes(:type => "ContextLink::#{new_type}ContextLink")
+    @context_link.update_type(new_type)
     "Link::QuestionLink::#{old_type}QuestionLink".constantize.where(@ql_attrs)[0].try(:active).should == @state_hash[:old_question_link][:activation]
   end
   it 'should create the new ql with the correct counts' do
-    @context_link.update_attributes(:type => "ContextLink::#{new_type}ContextLink")
+    @context_link.update_type(new_type)
     "Link::QuestionLink::#{new_type}QuestionLink".constantize.where(@ql_attrs)[0].try(:users_count).should == @state_hash[:new_question_link][:users_count]
   end
   it 'should create the new ql with the correct activation' do
-    @context_link.update_attributes(:type => "ContextLink::#{new_type}ContextLink")
+    @context_link.update_type(new_type)
     "Link::QuestionLink::#{new_type}QuestionLink".constantize.where(@ql_attrs)[0].try(:active).should == @state_hash[:new_question_link][:activation]
   end
   it 'should update the correct number of uls' do
-    "Link::UserLink::#{old_type}UserLink".constantize.any_instance.should_receive(:update_attributes!).with("Link::UserLink::#{new_type}UserLink").exactly(@state_hash[:user_link][:number_updated]).times
-    @context_link.update_attributes(:type => "ContextLink::#{new_type}ContextLink")
+    @context_link.update_type(new_type)
+    Link::UserLink.where(:user => @context_link.user, :node_from_id => @context_link.user_node_from_id, :node_to_id => @context_link.user_node_to_id).count.should == 1
+    Link::UserLink.where(:user => @context_link.user, :node_from_id => @context_link.user_node_from_id, :node_to_id => @context_link.user_node_to_id).class.should == "Link::UserLink::#{new_type}UserLink".constantize
   end
   it 'should update the ul to the correct counts' do
-    @context_link.update_attributes(:type => "ContextLink::#{new_type}ContextLink")
+    @context_link.update_type(new_type)
     "Link::UserLink::#{new_type}UserLink".constantize.where(@ul_attrs)[0].try(:users_count).should == @state_hash[:user_link][:users_count]
   end
   it 'should update the ul to the correct activation' do
-    @context_link.update_attributes(:type => "ContextLink::#{new_type}ContextLink")
+    @context_link.update_type(new_type)
     "Link::UserLink::#{new_type}UserLink".constantize.where(@ul_attrs)[0].try(:active).should == @state_hash[:user_link][:activation]
   end
   it 'should destroy the correct number of gls' do
     expect {
-      @context_link.update_attributes(:type => "ContextLink::#{new_type}ContextLink")
+      @context_link.update_type(new_type)
     }.to change(Link::GlobalLink, :count).by(@state_hash[:global_link][:number_destroyed]+@state_hash[:global_link][:number_created])
   end
   it 'should destroy the correct number of the old gls' do
     expect {
-      @context_link.update_attributes(:type => "ContextLink::#{new_type}ContextLink")
+      @context_link.update_type(new_type)
     }.to change("Link::GlobalLink::#{old_type}GlobalLink".constantize, :count).by(@state_hash[:global_link][:number_destroyed])
   end
   it 'should create the correct number of the new gls' do
     expect {
-      @context_link.update_attributes(:type => "ContextLink::#{new_type}ContextLink")
+      @context_link.update_type(new_type)
     }.to change("Link::GlobalLink::#{new_type}GlobalLink".constantize, :count).by(@state_hash[:global_link][:number_created])
   end
   it 'should destroy the old gl with the correct counts' do
-    @context_link.update_attributes(:type => "ContextLink::#{new_type}ContextLink")
+    @context_link.update_type(new_type)
     "Link::GlobalLink::#{old_type}GlobalLink".constantize.where(@gl_attrs)[0].try(:users_count).should == @state_hash[:old_global_link][:users_count]
   end
   it 'should destroy the old gl with the correct activation' do
-    @context_link.update_attributes(:type => "ContextLink::#{new_type}ContextLink")
+    @context_link.update_type(new_type)
     "Link::GlobalLink::#{old_type}GlobalLink".constantize.where(@gl_attrs)[0].try(:active).should == @state_hash[:old_global_link][:activation]
   end
   it 'should create the new gl with the correct counts' do
-    @context_link.update_attributes(:type => "ContextLink::#{new_type}ContextLink")
+    @context_link.update_type(new_type)
     "Link::GlobalLink::#{new_type}GlobalLink".constantize.where(@gl_attrs)[0].try(:users_count).should == @state_hash[:new_global_link][:users_count]
   end
   it 'should create the new gl with the correct activation' do
-    @context_link.update_attributes(:type => "ContextLink::#{new_type}ContextLink")
+    @context_link.update_type(new_type)
     "Link::GlobalLink::#{new_type}GlobalLink".constantize.where(@gl_attrs)[0].try(:active).should == @state_hash[:new_global_link][:activation]
   end
   it 'should have the correct votes on the gns' do
@@ -304,7 +306,7 @@ shared_examples_for 'a @context_link updating links' do |new_type, old_type|
     @state_hash[:old_global_node_from].each do |key, value|
       @context_link.try(:global_node_from).try(:reload).try(key).should == value
     end
-    @context_link.update_attributes(:type => "ContextLink::#{new_type}ContextLink")
+    @context_link.update_type(new_type)
     @state_hash[:new_global_node_to].each do |key, value|
       @context_link.try(:global_node_to).try(:reload).try(key).should == value
     end
@@ -319,7 +321,7 @@ shared_examples_for 'a @context_link updating links' do |new_type, old_type|
     @state_hash[:old_question_node_from].each do |key, value|
       @context_link.try(:question_node_from).try(:reload).try(key).should == value
     end
-    @context_link.update_attributes(:type => "ContextLink::#{new_type}ContextLink")
+    @context_link.update_type(new_type)
     @state_hash[:new_question_node_to].each do |key, value|
       @context_link.try(:question_node_to).try(:reload).try(key).should == value
     end
@@ -334,7 +336,7 @@ shared_examples_for 'a @context_link updating links' do |new_type, old_type|
     @state_hash[:old_user_node_from].each do |key, value|
       @context_link.try(:user_node_from).try(:reload).try(key).should == value
     end
-    @context_link.update_attributes(:type => "ContextLink::#{new_type}ContextLink")
+    @context_link.update_type(new_type)
     @state_hash[:new_user_node_to].each do |key, value|
       @context_link.try(:user_node_to).try(:reload).try(key).should == value
     end

@@ -33,6 +33,17 @@ class ContextLink < ActiveRecord::Base
 
   #before_update :update_sublinks
   #after_update :update_appropriate_links
+  #attr_accessor :new_type, :no_other_context_links
+
+  def update_type(type)
+    ContextLink.where(:user_link_id => self.user_link_id).each do |cl|
+      #unless cl.id == self.id
+        attributes = {:user => cl.user, :question => cl.question, :global_node_from_id => cl.global_node_from_id, :global_node_to_id => cl.global_node_to_id}
+        cl.destroy
+        "ContextLink::#{type}ContextLink".constantize.create!(attributes)
+      #end
+    end
+  end
 
   def link_kind
     self.type.gsub(/ContextLink::|ContextLink/, "")
