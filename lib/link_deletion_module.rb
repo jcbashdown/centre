@@ -3,8 +3,14 @@ module LinkDeletionModule
   end
 
   def delete_appropriate_links
-    delete_user_links
+    delete_user_link
     delete_non_user_links
+    delete_context_links_for_user_link
+  end
+
+  def delete_context_links_for_user_link
+    ContextLink.where('user_link_id = ?', user_link_id)
+                     .destroy_all
   end
   
   def delete_non_user_links
@@ -15,9 +21,8 @@ module LinkDeletionModule
               .destroy_all
   end
 
-  def delete_user_links
-    Link.where('(id = ? )', user_link_id)
-              .destroy_all
+  def delete_user_link
+    self.user_link.try(:destroy)
   end
 
 end

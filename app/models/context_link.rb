@@ -1,11 +1,13 @@
 require "#{Rails.root}/lib/link_creation_module.rb"
 require "#{Rails.root}/lib/link_deletion_module.rb"
+require "#{Rails.root}/lib/link_update_module.rb"
 require "#{Rails.root}/lib/activerecord_import_methods.rb"
 
 class ContextLink < ActiveRecord::Base
   include ActiverecordImportMethods
   include LinkCreationModule
   include LinkDeletionModule
+  include LinkUpdateModule
   belongs_to :question
   belongs_to :user
   belongs_to :global_link, :class_name => Link::GlobalLink
@@ -28,6 +30,9 @@ class ContextLink < ActiveRecord::Base
   end
 
   after_destroy :delete_appropriate_links
+
+  #before_update :update_sublinks
+  #after_update :update_appropriate_links
 
   def link_kind
     self.type.gsub(/ContextLink::|ContextLink/, "")

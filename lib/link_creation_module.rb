@@ -30,7 +30,9 @@ module LinkCreationModule
       end
     end
     attributes = new_links_hash.merge(@existing_links_hash)
-    attributes[:user_link_id] = find_or_create_user_link(attributes).id
+    unless user_link_id
+      attributes[:user_link_id] = find_or_create_user_link(attributes).id
+    end
     self.attributes = attributes
   end
 
