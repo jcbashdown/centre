@@ -36,7 +36,7 @@ describe LinksController do
         it 'should destroy the glu' do
           @mock_relation.stub(:where).and_return [@mock_cn]
           ContextLink.stub(:with_all_associations).and_return @mock_relation
-          @mock_cn.should_receive(:destroy)
+          @mock_cn.should_receive(:update_type)
           xhr :put, :update, @params
         end
         it 'should save the glu' do
@@ -66,8 +66,9 @@ describe LinksController do
           assigns(:context_link).should == new_link
         end
         it 'should create a link with the correct parameters' do
-          @context_link = ContextLink::NegativeContextLink.create(@params["global_link"].merge("question" => @question, "user" => @user))
-          ContextLink::NegativeContextLink.should_receive(:create).with(@params["global_link"].merge("question" => @question, "user" => @user)).and_return @context_link
+          @mock_cn.should_receive(:update_type).with @params["type"]
+          @mock_relation.stub(:where).and_return [@mock_cn]
+          ContextLink.stub(:with_all_associations).and_return @mock_relation
           xhr :post, :update, @params
         end
       end

@@ -562,19 +562,19 @@ describe ContextNode do
         it 'should destroy 0 link' do
           expect {
             @context_node1.destroy
-          }.to change(Link::GlobalLink, :count).by(0)
+          }.to change(Link::GlobalLink, :count).by(-1)
         end
   
         it 'should destroy 1 context_link' do
           expect {
             @context_node1.destroy
-          }.to change(ContextLink, :count).by(-1)
+          }.to change(ContextLink, :count).by(-2)
         end
   
         it 'should destroy 1 gl' do
           expect {
             @context_node1.destroy
-          }.to change(Link::QuestionLink, :count).by(-1)
+          }.to change(Link::QuestionLink, :count).by(-2)
         end
   
         it 'should destroy 1 lu' do
@@ -590,9 +590,9 @@ describe ContextNode do
           @context_node2.global_node.reload.upvotes_count.should == 1
           @context_node1.destroy
           #@context_node2.reload.upvotes_count.should == 0 
-          @context_node2.user_node.reload.upvotes_count.should == 1
+          @context_node2.user_node.reload.upvotes_count.should == 0
           @context_node2.question_node.reload.upvotes_count.should == 0
-          @context_node2.global_node.reload.upvotes_count.should == 1
+          @context_node2.global_node.reload.upvotes_count.should == 0
         end
       end
 

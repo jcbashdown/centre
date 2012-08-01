@@ -21,7 +21,7 @@ class LinksController < ApplicationController
     @global_link = Link::GlobalLink.find(params[:id])
     @context_link = ContextLink.with_all_associations.where(:question_id => @question.id, :user_id => current_user.id, :global_link_id => @global_link.id)[0]
     respond_to do |format|
-      if @context_link.destroy && (@context_link = "ContextLink::#{params[:type]}ContextLink".constantize.create(params[:global_link].merge(:question => @question, :user => current_user)))
+      if @context_link = @context_link.update_type(params[:type])
         format.js { render :partial => 'a_link', :locals=>{:global_link=> @context_link.global_link, :direction=>params[:direction]} }
       else
         unless @context_link && @context_link.persisted?

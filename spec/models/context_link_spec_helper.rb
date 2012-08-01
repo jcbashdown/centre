@@ -213,11 +213,7 @@ shared_examples_for 'a @context_link updating links' do |new_type, old_type|
     @ql_attrs = {:node_from_id => @context_link.question_node_from.id, :node_to_id => @context_link.question_node_to.id, :question_id => @question.id}
   end
   it 'should update the correct number of context links' do
-    old_cls = []
-    # use collect
-    ContextLink.where(:user_link_id => self.user_link_id).each do |cl|
-      old_cls << cl
-    end
+    old_cls = ContextLink.where(:user_link_id => @context_link.user_link_id)
     @context_link.update_type(new_type)
     old_cls.each do cl
        cl.should_not be_persisted
@@ -257,8 +253,8 @@ shared_examples_for 'a @context_link updating links' do |new_type, old_type|
   end
   it 'should update the correct number of uls' do
     @context_link.update_type(new_type)
-    Link::UserLink.where(:user => @context_link.user, :node_from_id => @context_link.user_node_from_id, :node_to_id => @context_link.user_node_to_id).count.should == 1
-    Link::UserLink.where(:user => @context_link.user, :node_from_id => @context_link.user_node_from_id, :node_to_id => @context_link.user_node_to_id).class.should == "Link::UserLink::#{new_type}UserLink".constantize
+    Link::UserLink.where(@ul_attrs).count.should == 1
+    Link::UserLink.where(@ul_attrs)[0].class.should == "Link::UserLink::#{new_type}UserLink".constantize
   end
   it 'should update the ul to the correct counts' do
     @context_link.update_type(new_type)
@@ -306,7 +302,7 @@ shared_examples_for 'a @context_link updating links' do |new_type, old_type|
     @state_hash[:old_global_node_from].each do |key, value|
       @context_link.try(:global_node_from).try(:reload).try(key).should == value
     end
-    @context_link.update_type(new_type)
+    @context_link = @context_link.update_type(new_type)
     @state_hash[:new_global_node_to].each do |key, value|
       @context_link.try(:global_node_to).try(:reload).try(key).should == value
     end
@@ -321,7 +317,7 @@ shared_examples_for 'a @context_link updating links' do |new_type, old_type|
     @state_hash[:old_question_node_from].each do |key, value|
       @context_link.try(:question_node_from).try(:reload).try(key).should == value
     end
-    @context_link.update_type(new_type)
+    @context_link = @context_link.update_type(new_type)
     @state_hash[:new_question_node_to].each do |key, value|
       @context_link.try(:question_node_to).try(:reload).try(key).should == value
     end
@@ -336,7 +332,7 @@ shared_examples_for 'a @context_link updating links' do |new_type, old_type|
     @state_hash[:old_user_node_from].each do |key, value|
       @context_link.try(:user_node_from).try(:reload).try(key).should == value
     end
-    @context_link.update_type(new_type)
+    @context_link = @context_link.update_type(new_type)
     @state_hash[:new_user_node_to].each do |key, value|
       @context_link.try(:user_node_to).try(:reload).try(key).should == value
     end
