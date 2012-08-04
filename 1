@@ -61,7 +61,7 @@ class ContextLink < ActiveRecord::Base
   protected
 
   def update_active_links
-    Link::GlobalLink.update_active
-    Link::QuestionLink.update_active(self.question)
+    self.global_link.update_active
+    self.question_link.update_active
   end
 end

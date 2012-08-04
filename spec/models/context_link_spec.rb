@@ -23,8 +23,7 @@ describe ContextLink do
                                           },
                         :user_link => {
                                         :number_created => 1,
-                                        :users_count => 0,
-                                        :activation => true
+                                        :users_count => 0
                                       },
                         :context_node => {
                                            :number_created => 0,
@@ -68,8 +67,7 @@ describe ContextLink do
                                             },
                           :user_link => {
                                           :number_created => 0,
-                                          :users_count => 0,
-                                          :activation => true
+                                          :users_count => 0
                                         },
                           :context_node => {
                                              :number_created => 0,
@@ -115,8 +113,7 @@ describe ContextLink do
                                             },
                           :user_link => {
                                           :number_created => 0,
-                                          :users_count => 0,
-                                          :activation => true
+                                          :users_count => 0
                                         },
                           :context_node => {
                                              :number_created => 2,
@@ -161,8 +158,7 @@ describe ContextLink do
                                             },
                           :user_link => {
                                           :number_created => 1,
-                                          :users_count => 0,
-                                          :activation => true
+                                          :users_count => 0
                                         },
                           :context_node => {
                                              :number_created => 0,
@@ -237,8 +233,7 @@ describe ContextLink do
                                           },
                         :user_link => {
                                         :number_updated => 1,
-                                        :users_count => 0,
-                                        :activation => true
+                                        :users_count => 0
                                       },
                         :new_global_node_to => {
                                           :upvotes_count=> 0,
@@ -318,8 +313,7 @@ describe ContextLink do
                                           },
                         :user_link => {
                                         :number_destroyed => -1,
-                                        :users_count => nil,
-                                        :activation => nil
+                                        :users_count => nil
                                       },
                         :new_global_node_to => {
                                           :upvotes_count=> 0
@@ -362,8 +356,7 @@ describe ContextLink do
                                           },
                         :user_link => {
                                         :number_destroyed => -1,
-                                        :users_count => nil,
-                                        :activation => nil
+                                        :users_count => nil
                                       },
                         :new_global_node_to => {
                                           :upvotes_count=> 0
@@ -406,8 +399,7 @@ describe ContextLink do
                                           },
                         :user_link => {
                                         :number_destroyed => -1,
-                                        :users_count => nil,
-                                        :activation => nil
+                                        :users_count => nil
                                       },
                         :new_global_node_to => {
                                           :upvotes_count=> 1

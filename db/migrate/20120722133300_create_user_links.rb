@@ -1,7 +1,8 @@
-class CreateLinks < ActiveRecord::Migration
+class CreateUserLinks < ActiveRecord::Migration
   def change
-    create_table :links do |t|
+    create_table :user_links do |t|
       t.references :user
+      t.references :question
       t.integer :other_link_id
       t.integer :other_node_from_id
       t.integer :other_node_to_id
@@ -12,14 +13,13 @@ class CreateLinks < ActiveRecord::Migration
 
       t.timestamps
     end
-    add_index :links, :global_node_from_id
-    add_index :links, :global_node_to_id
-    add_index :links, :node_from_id
-    add_index :links, :node_to_id
-    add_index :links, :type
-    add_index :links, :active
-    add_index :links, :user_id
-    add_index :links, :question_id
-    add_index :links, :global_link_id
+    add_index :user_links, :other_node_from_id
+    add_index :user_links, :other_node_to_id
+    add_index :user_links, :node_from_id
+    add_index :user_links, :node_to_id
+    add_index :user_links, :type
+    add_index :user_links, :user_id
+    add_index :user_links, :question_id
+    add_index :user_links, :other_link_id
   end
 end

@@ -41,9 +41,9 @@ shared_examples_for 'a context link creating links' do |type|
     context_link = "ContextLink::#{type}ContextLink".constantize.create(:user=>@user, :question => @question, :global_node_from_id => @gnu1.global_node.id, :global_node_to_id => @gnu2.global_node.id)
     context_link.user_link.reload.users_count.should == @state_hash[:user_link][:users_count]
   end
-  it 'should create the ul with the correct activation' do
+  it 'should maintain a single ul for this user link combination only' do
     context_link = "ContextLink::#{type}ContextLink".constantize.create(:user=>@user, :question => @question, :global_node_from_id => @gnu1.global_node.id, :global_node_to_id => @gnu2.global_node.id)
-    context_link.user_link.reload.active.should == @state_hash[:user_link][:activation]
+    Link::UserLink.where(:user_id => @user.id, :global_link_id => context_link.global_link_id).count.should == 1
   end
   it 'should create the correct number of gls' do
     expect {
@@ -260,9 +260,9 @@ shared_examples_for 'a @context_link updating links' do |new_type, old_type|
     @context_link.update_type(new_type)
     "Link::UserLink::#{new_type}UserLink".constantize.where(@ul_attrs)[0].try(:users_count).should == @state_hash[:user_link][:users_count]
   end
-  it 'should update the ul to the correct activation' do
-    @context_link.update_type(new_type)
-    "Link::UserLink::#{new_type}UserLink".constantize.where(@ul_attrs)[0].try(:active).should == @state_hash[:user_link][:activation]
+  it 'should maintain a single ul for this user link combination only' do
+    @context_link = @context_link.update_type(new_type)
+    Link::UserLink.where(:user_id => @user.id, :global_link_id => @context_link.global_link_id).count.should == 1
   end
   it 'should destroy the correct number of gls' do
     expect {
