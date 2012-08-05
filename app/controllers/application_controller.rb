@@ -2,6 +2,7 @@ class ApplicationController < ActionController::Base
   protect_from_forgery
 
   before_filter :set_questions
+  before_filter :update_view_configuration
 
 #  def set_node_order
 #    @order = params[:order]
@@ -51,26 +52,19 @@ class ApplicationController < ActionController::Base
     end
   end
   
-#  def update_session
-#    if params[:change_view] && decoded = JSON.parse((params[:change_view]))
-#      session[:view_configuration] = {
-#                                       :nodes => {
-#                                                   :question => decoded[:nodes][:question] ? decoded[:nodes][:question] : nil
-#                                                   :user => decoded[:nodes][:user] ? decoded[:nodes][:user] : nil
-#                                                   :order => decoded[:nodes][:order] ? decoded[:nodes][:order] : nil
-#                                                   :query => decoded[:nodes][:query] ? decoded[:nodes][:query] : nil
-#                                                 }
-#                                       :argument => {
-#                                                      :user =>
-#                                                      :question => 
-#                                                    }
-#                                       :link => {
-#                                                   :question => 
-#                                                   :user => 
-#                                                   :order => 
-#                                                   :query => 
-#                                                }
-#                                     }
+  def update_view_configuration
+    cookies[:nodes_question] = {:value => params[:view_configuration][:nodes_question]} if params[:view_configuration] && params[:view_configuration][:nodes_question]
+    cookies[:nodes_user] = {:value => params[:view_configuration][:nodes_user]} if params[:view_configuration] && params[:view_configuration][:nodes_user]
+    cookies[:nodes_query] = {:value => params[:view_configuration][:nodes_query]} if params[:view_configuration] && params[:view_configuration][:nodes_query]
+    cookies[:argument_user] = {:value => params[:view_configuration][:argument_user]} if params[:view_configuration] && params[:view_configuration][:argument_user]
+    cookies[:argument_question] = {:value => params[:view_configuration][:argument_question]} if params[:view_configuration] && params[:view_configuration][:argument_question]
+    cookies[:links_question] = {:value => params[:view_configuration][:links_question]} if params[:view_configuration] && params[:view_configuration][:links_question]
+    cookies[:links_user] = {:value => params[:view_configuration][:links_user]} if params[:view_configuration] && params[:view_configuration][:links_user]
+    cookies[:links_query] = {:value => params[:view_configuration][:links_query]} if params[:view_configuration] && params[:view_configuration][:links_query]
+#    if params[:view_configuration]
+#      params[:view_configuration].each do |key, value|
+#        cookies[key] = {:value => value} if value
+#      end
 #    end
-#  end
+  end
 end
