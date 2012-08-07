@@ -154,5 +154,17 @@ describe ApplicationController do
   describe 'set_argument' do
 
   end
+###These three may want to go to sub controllers, merge with show in arg case? do this so don't do all setting through callbacks for these actions
+  describe 'reload nodes section' do
 
+  end
+
+  describe 'reload links section' do
+
+  end
+
+  describe 'reload argument section' do
+
+  end
+###
 end
