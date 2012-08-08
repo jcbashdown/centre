@@ -143,7 +143,32 @@ describe ApplicationController do
   
   describe 'set_nodes' do
     context 'when the question is set' do
-
+      it 'should call get nodes for the question' do
+      end
+      context 'when the user is set' do
+        it 'should call get nodes for the question and user' do
+        end
+        context 'when the query is set' do
+          it 'should call get nodes for the question and user and query' do
+          end
+        end
+      end
+      context 'when the query is set' do
+        it 'should call get nodes for the question and user and query' do
+        end
+      end
+    end
+    context 'when the user is set' do
+      it 'should call get nodes for the user' do
+      end
+      context 'when the query is set' do
+        it 'should call get nodes for the question and user and query' do
+        end
+      end
+    end
+    context 'when the query is set' do
+      it 'should call get nodes for the query' do
+      end
     end
   end
 

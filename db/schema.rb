@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120722133300) do
+ActiveRecord::Schema.define(:version => 20120630131231) do
 
   create_table "context_links", :force => true do |t|
     t.integer  "question_id"
@@ -98,14 +98,8 @@ ActiveRecord::Schema.define(:version => 20120722133300) do
     t.datetime "updated_at", :null => false
   end
 
-  create_table "node_titles", :force => true do |t|
-    t.text     "title"
-    t.datetime "created_at", :null => false
-    t.datetime "updated_at", :null => false
-  end
-
   create_table "nodes", :force => true do |t|
-    t.integer  "node_title_id"
+    t.integer  "global_node_id"
     t.integer  "user_id"
     t.integer  "question_id"
     t.text     "title"
@@ -124,7 +118,6 @@ ActiveRecord::Schema.define(:version => 20120722133300) do
     t.datetime "updated_at",                                :null => false
   end
 
-  add_index "nodes", ["node_title_id"], :name => "index_nodes_on_node_title_id"
   add_index "nodes", ["question_id"], :name => "index_nodes_on_question_id"
   add_index "nodes", ["type"], :name => "index_nodes_on_type"
   add_index "nodes", ["user_id"], :name => "index_nodes_on_user_id"
@@ -142,29 +135,6 @@ ActiveRecord::Schema.define(:version => 20120722133300) do
     t.datetime "created_at", :null => false
     t.datetime "updated_at", :null => false
   end
-
-  create_table "user_links", :force => true do |t|
-    t.integer  "user_id"
-    t.integer  "question_id"
-    t.integer  "other_link_id"
-    t.integer  "other_node_from_id"
-    t.integer  "other_node_to_id"
-    t.integer  "node_from_id"
-    t.integer  "node_to_id"
-    t.boolean  "private",            :default => false
-    t.string   "type"
-    t.datetime "created_at",                            :null => false
-    t.datetime "updated_at",                            :null => false
-  end
-
-  add_index "user_links", ["node_from_id"], :name => "index_user_links_on_node_from_id"
-  add_index "user_links", ["node_to_id"], :name => "index_user_links_on_node_to_id"
-  add_index "user_links", ["other_link_id"], :name => "index_user_links_on_other_link_id"
-  add_index "user_links", ["other_node_from_id"], :name => "index_user_links_on_other_node_from_id"
-  add_index "user_links", ["other_node_to_id"], :name => "index_user_links_on_other_node_to_id"
-  add_index "user_links", ["question_id"], :name => "index_user_links_on_question_id"
-  add_index "user_links", ["type"], :name => "index_user_links_on_type"
-  add_index "user_links", ["user_id"], :name => "index_user_links_on_user_id"
 
   create_table "users", :force => true do |t|
     t.string   "email",                                 :default => "", :null => false

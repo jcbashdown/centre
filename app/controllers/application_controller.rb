@@ -61,10 +61,5 @@ class ApplicationController < ActionController::Base
     cookies[:links_question] = {:value => params[:view_configuration][:links_question]} if params[:view_configuration] && params[:view_configuration][:links_question]
     cookies[:links_user] = {:value => params[:view_configuration][:links_user]} if params[:view_configuration] && params[:view_configuration][:links_user]
     cookies[:links_query] = {:value => params[:view_configuration][:links_query]} if params[:view_configuration] && params[:view_configuration][:links_query]
-#    if params[:view_configuration]
-#      params[:view_configuration].each do |key, value|
-#        cookies[key] = {:value => value} if value
-#      end
-#    end
   end
 end

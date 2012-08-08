@@ -5,10 +5,8 @@ class Node::GlobalNode < Node
     double :page_rank
     time :created_at
   end
-  belongs_to :node_title
 
   validates :title, :presence => true
   validates_uniqueness_of :title
-  validates_uniqueness_of :node_title_id
 
 end
