@@ -3,6 +3,12 @@ require "#{Rails.root}/lib/node_deletion_module.rb"
 require "#{Rails.root}/lib/activerecord_import_methods.rb"
 
 class ContextNode < ActiveRecord::Base
+  searchable do
+    text :title
+    integer :id
+    integer :question_id
+    integer :user_id
+  end
   include ActiverecordImportMethods
   include NodeDeletionModule
   include NodeCreationModule

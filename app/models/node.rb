@@ -10,5 +10,31 @@ class Node < ActiveRecord::Base
     end
     nil
   end
+
+  self << class
+    def get_class conditions
+      if conditions[:question_id] && conditions[:user_id]
+        ContextNode
+      elsif conditions[:question_id]
+        Node::QuestionNode
+      elsif conditions[:user_id]
+        Node::UserNode
+      else
+        Node::GlobalNode
+      end
+    end
+    
+    def search conditions, query = nil
+      klass = get_class
+      klass.search do
+        fulltext query if query
+        with :question_id, conditions[:question_id] if conditions[:question_id]
+        with :user_id, conditions[:user_id] if conditions[:user_id]
+        order_by(:id, :asc)
+        paginate(:page => params[:page], :per_page => 15)
+      end.results
+    end
+    
+  end
 end
 
