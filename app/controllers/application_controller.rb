@@ -62,4 +62,8 @@ class ApplicationController < ActionController::Base
     cookies[:links_user] = {:value => params[:view_configuration][:links_user]} if params[:view_configuration] && params[:view_configuration][:links_user]
     cookies[:links_query] = {:value => params[:view_configuration][:links_query]} if params[:view_configuration] && params[:view_configuration][:links_query]
   end
+  
+  def set_nodes
+    Node.search :nodes_question => cookies[:nodes_question], :nodes_user => cookies[:nodes_user], :nodes_query => cookies[:nodes_query]
+  end
 end

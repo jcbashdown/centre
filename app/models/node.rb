@@ -11,7 +11,7 @@ class Node < ActiveRecord::Base
     nil
   end
 
-  self << class
+  class << self
     def get_class conditions
       if conditions[:question_id] && conditions[:user_id]
         ContextNode
@@ -24,10 +24,10 @@ class Node < ActiveRecord::Base
       end
     end
     
-    def search conditions, query = nil
+    def search conditions
       klass = get_class
       klass.search do
-        fulltext query if query
+        fulltext conditions[:query] if conditions[:query]
         with :question_id, conditions[:question_id] if conditions[:question_id]
         with :user_id, conditions[:user_id] if conditions[:user_id]
         order_by(:id, :asc)
