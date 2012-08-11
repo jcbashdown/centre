@@ -27,9 +27,9 @@ class Node < ActiveRecord::Base
     def search conditions
       klass = get_class
       klass.search do
-        fulltext conditions[:query] if conditions[:query]
-        with :question_id, conditions[:question_id] if conditions[:question_id]
-        with :user_id, conditions[:user_id] if conditions[:user_id]
+        fulltext conditions[:query] if conditions[:query].present?
+        with :question_id, conditions[:question_id] if conditions[:question_id].present?
+        with :user_id, conditions[:user_id] if conditions[:user_id].present?
         order_by(:id, :asc)
         paginate(:page => params[:page], :per_page => 15)
       end.results

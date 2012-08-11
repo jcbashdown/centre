@@ -64,6 +64,8 @@ class ApplicationController < ActionController::Base
   end
   
   def set_nodes
-    Node.search :nodes_question => cookies[:nodes_question], :nodes_user => cookies[:nodes_user], :nodes_query => cookies[:nodes_query]
+    nodes_question = cookies[:nodes_question].present? ? cookies[:nodes_question].to_i : nil
+    nodes_user = cookies[:nodes_user].present? ? cookies[:nodes_user].to_i : nil
+    Node.search(:nodes_question => nodes_question, :nodes_user => nodes_user, :nodes_query => cookies[:nodes_query])
   end
 end

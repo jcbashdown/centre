@@ -30,7 +30,7 @@ describe ApplicationController do
       it 'should set the correct view configuration' do
         get :index, @params
         @view_configuration.each do |key, value|
-          response.cookies[key.to_s].should == value.to_s
+          request.cookie_jar[key].should == value.to_s
         end
       end
       it 'should set the correct defaults when nothing is set' do
@@ -70,13 +70,14 @@ describe ApplicationController do
         it 'should override the existing configuration if overridden' do
           get :index, @params
           @new_view_configuration.each do |key, value|
-            request.cookie_jar[key.to_s].should == value.to_s
+            request.cookie_jar[key].should == value.to_s
           end
         end
         it 'should maintain the existing configuration if not overridden' do
+          #unset are nil but set as nil is ""
           get :index, @params
           @unchanged_view_configuration.each do |key, value|
-            request.cookie_jar[key.to_s].should == value
+            request.cookie_jar[key].should == value
           end
         end
         it 'should set the correct defaults when nothing is set' do
@@ -117,7 +118,7 @@ describe ApplicationController do
         it 'should override the existing configuration if overridden' do
           get :index, @params
           @new_view_configuration.each do |key, value|
-            request.cookie_jar[key.to_s].should == value.to_s
+            request.cookie_jar[key].should == value.to_s
           end
         end
         it 'should set the correct defaults when nothing is set' do
@@ -161,7 +162,9 @@ describe ApplicationController do
                                          :nodes_query => nil 
                                        }
         @existing_view_configuration.each do |key, value|
-          request.cookies[key] = value.to_s
+          if value
+            request.cookies[key] = value.to_s
+          end
         end
       end
       it 'should call search on the nodes for the question' do
@@ -172,7 +175,9 @@ describe ApplicationController do
         before do
           @existing_view_configuration.merge!(:nodes_user => @user.id)
           @existing_view_configuration.each do |key, value|
-            request.cookies[key] = value.to_s
+            if value
+              request.cookies[key] = value.to_s
+            end
           end
         end
         it 'should call search on the nodes for the question and user' do
@@ -183,7 +188,9 @@ describe ApplicationController do
           before do
             @existing_view_configuration.merge!(:nodes_query => @query)
             @existing_view_configuration.each do |key, value|
-              request.cookies[key] = value.to_s
+              if value
+                request.cookies[key] = value.to_s
+              end
             end
           end
           it 'should call search on the nodes for the question and user and query' do
@@ -196,7 +203,9 @@ describe ApplicationController do
         before do
           @existing_view_configuration.merge!(:nodes_query => @query)
           @existing_view_configuration.each do |key, value|
-            request.cookies[key] = value.to_s
+            if value
+              request.cookies[key] = value.to_s
+            end
           end
         end
         it 'should call search on the nodes for the question and user and query' do
@@ -213,7 +222,9 @@ describe ApplicationController do
                                          :nodes_query => nil,
                                        }
         @existing_view_configuration.each do |key, value|
-          request.cookies[key] = value.to_s
+          if value
+            request.cookies[key] = value.to_s
+          end
         end
       end
       it 'should call search on the nodes for the user' do
@@ -224,7 +235,9 @@ describe ApplicationController do
         before do
           @existing_view_configuration.merge!(:nodes_query => @query)
           @existing_view_configuration.each do |key, value|
-            request.cookies[key] = value.to_s
+            if value
+              request.cookies[key] = value.to_s
+            end
           end
         end
         it 'should call search on the nodes for the question and user and query' do
@@ -241,7 +254,9 @@ describe ApplicationController do
                                          :nodes_user => nil,
                                        }
         @existing_view_configuration.each do |key, value|
-          request.cookies[key] = value.to_s
+          if value
+            request.cookies[key] = value.to_s
+          end
         end
       end
       it 'should call search on the nodes for the query' do
@@ -252,23 +267,33 @@ describe ApplicationController do
   end
 
   describe 'set_links' do
-
+    it 'should call set links with the correct params' do
+      pending
+    end
   end
 
   describe 'set_argument' do
-
+    it 'should call set argument with the correct params' do
+      pending
+    end
   end
 ###These three may want to go to sub controllers, merge with show in arg case? do this so don't do all setting through callbacks for these actions
   describe 'reload nodes section' do
-
+    it 'should call set nodes only and render the correct response' do
+      pending
+    end
   end
 
   describe 'reload links section' do
-
+    it 'should call set links only and render the correct response' do
+      pending
+    end
   end
 
   describe 'reload argument section' do
-
+    it 'should call set argument only and render the correct response' do
+      pending
+    end
   end
 ###
 end
