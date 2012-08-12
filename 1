@@ -155,7 +155,7 @@ describe ApplicationController do
       @query = "Part of a node title"
     end
     it_should_behave_like 'a controller setting nodes or links for the view', "node", nil
-    it_should_behave_like 'a controller setting nodes or links for the view', "node", "3"
+    it_should_behave_like 'a controller setting nodes or links for the view', "node", 3
   end
   describe 'set_links' do
     it 'should call set links with the correct params' do

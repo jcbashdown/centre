@@ -1,15 +1,21 @@
+require 'spec_helper'
+
 describe Node do
-  describe 'set_nodes' do
-    controller do
-      before_filter :set_nodes
-      def index 
-        render :nothing => true
-      end
-    end
+  describe 'search' do
     before do
       @user = FactoryGirl.create(:user)
+      @user2 = FactoryGirl.create(:user, :email=>"another@test.com")
       @question = FactoryGirl.create(:question)
+      @question2 = FactoryGirl.create(:question, :name => 'Aaa')
       @query = "Part of a node title"
+      @context_node1 = ContextNode.create(:user=>@user, :question=>@question, :title => "Part of a node title, here it is!")
+      @context_node2 = ContextNode.create(:user=>@user2, :question=>@question2, :title => 'Title')
+      @context_node3 = ContextNode.create(:user=>@user2, :question=>@question, :title => "And another! Part of a node title")
+      @context_node4 = ContextNode.create(:user=>@user, :question=>@question2, :title => 'Title')
+      Node::GlobalNode.reindex
+      Node::QuestionNode.reindex
+      Node::UserNode.reindex
+      ContextNode.reindex
     end
     context 'when the question is set' do
       before do
@@ -18,56 +24,32 @@ describe Node do
                                          :nodes_user => nil,
                                          :nodes_query => nil 
                                        }
-        @existing_view_configuration.each do |key, value|
-          if value
-            request.cookies[key] = value.to_s
-          end
-        end
       end
-      it 'should call search on the nodes for the question' do
-        Node.should_receive(:search).with @existing_view_configuration
-        get :index
+      it 'should return the correct question nodes' do
+        Node.find_by_context(@existing_view_configuration).should == [@context_node1.question_node, @context_node3.question_node]
       end
       context 'when the user is set' do
         before do
           @existing_view_configuration.merge!(:nodes_user => @user.id)
-          @existing_view_configuration.each do |key, value|
-            if value
-              request.cookies[key] = value.to_s
-            end
-          end
         end
-        it 'should call search on the nodes for the question and user' do
-          Node.should_receive(:search).with @existing_view_configuration
-          get :index
+        it 'should return the correct context nodes' do
+          Node.find_by_context(@existing_view_configuration).should == [@context_node1]
         end
         context 'when the query is set' do
           before do
             @existing_view_configuration.merge!(:nodes_query => @query)
-            @existing_view_configuration.each do |key, value|
-              if value
-                request.cookies[key] = value.to_s
-              end
-            end
           end
-          it 'should call search on the nodes for the question and user and query' do
-            Node.should_receive(:search).with @existing_view_configuration
-            get :index
+          it 'should return the correct context nodes' do
+            Node.find_by_context(@existing_view_configuration).should == [@context_node1]
           end
         end
       end
       context 'when the query is set' do
         before do
           @existing_view_configuration.merge!(:nodes_query => @query)
-          @existing_view_configuration.each do |key, value|
-            if value
-              request.cookies[key] = value.to_s
-            end
-          end
         end
-        it 'should call search on the nodes for the question and user and query' do
-          Node.should_receive(:search).with @existing_view_configuration
-          get :index
+        it 'should return the correct question nodes' do
+          Node.find_by_context(@existing_view_configuration).should == [@context_node1.question_node, @context_node3.question_node]
         end
       end
     end
@@ -76,30 +58,18 @@ describe Node do
         @existing_view_configuration = {
                                          :nodes_user => @user.id,
                                          :nodes_question => nil,
-                                         :nodes_query => nil,
+                                         :nodes_query => nil
                                        }
-        @existing_view_configuration.each do |key, value|
-          if value
-            request.cookies[key] = value.to_s
-          end
-        end
       end
-      it 'should call search on the nodes for the user' do
-        Node.should_receive(:search).with @existing_view_configuration
-        get :index
+      it 'should return the correct user nodes' do
+        Node.find_by_context(@existing_view_configuration).should == [@context_node1.user_node, @context_node4.user_node]
       end
       context 'when the query is set' do
         before do
           @existing_view_configuration.merge!(:nodes_query => @query)
-          @existing_view_configuration.each do |key, value|
-            if value
-              request.cookies[key] = value.to_s
-            end
-          end
         end
-        it 'should call search on the nodes for the question and user and query' do
-          Node.should_receive(:search).with @existing_view_configuration
-          get :index
+        it 'should return the correct user nodes' do
+          Node.find_by_context(@existing_view_configuration).should == [@context_node1.user_node]
         end
       end
     end
@@ -108,17 +78,11 @@ describe Node do
         @existing_view_configuration = {
 					 :nodes_query => @query,
                                          :nodes_question => nil,
-                                         :nodes_user => nil,
+                                         :nodes_user => nil
                                        }
-        @existing_view_configuration.each do |key, value|
-          if value
-            request.cookies[key] = value.to_s
-          end
-        end
       end
-      it 'should call search on the nodes for the query' do
-        Node.should_receive(:search).with @existing_view_configuration
-        get :index
+      it 'should return the correct global nodes' do
+        Node.find_by_context(@existing_view_configuration).should == [@context_node1.global_node, @context_node3.global_node]
       end
     end
   end
