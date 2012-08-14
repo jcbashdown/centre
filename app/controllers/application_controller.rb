@@ -61,6 +61,7 @@ class ApplicationController < ActionController::Base
     cookies[:links_question] = {:value => params[:view_configuration][:links_question]} if params[:view_configuration] && params[:view_configuration][:links_question]
     cookies[:links_user] = {:value => params[:view_configuration][:links_user]} if params[:view_configuration] && params[:view_configuration][:links_user]
     cookies[:links_query] = {:value => params[:view_configuration][:links_query]} if params[:view_configuration] && params[:view_configuration][:links_query]
+    cookies[:current_node] = {:value => params[:view_configuration][:current_node]}
   end
   
   def set_nodes
@@ -73,7 +74,12 @@ class ApplicationController < ActionController::Base
     links_question = cookies[:links_question].present? ? cookies[:links_question].to_i : nil
     links_user = cookies[:links_user].present? ? cookies[:links_user].to_i : nil
     @links_to = @node.find_view_links_to_by_context(:links_question => links_question, :links_user => links_user, :links_query => cookies[:links_query], :page => params[:page])
+    #@node.global_node?
+    #each node type has method on - type is actually useful?
+    #from to should be a link type - then do from class passing in node?
+    #do do general method which takes direct whatever - dry for each direction
   end
+
   def set_links_from
     links_question = cookies[:links_question].present? ? cookies[:links_question].to_i : nil
     links_user = cookies[:links_user].present? ? cookies[:links_user].to_i : nil
