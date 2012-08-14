@@ -142,30 +142,62 @@ describe ApplicationController do
     end
   end
   
-  describe 'set_nodes' do
-    controller do
-      before_filter :set_nodes
-      def index 
-        render :nothing => true
-      end
-    end
+  describe 'setting view resources' do
     before do
       @user = FactoryGirl.create(:user)
       @question = FactoryGirl.create(:question)
       @query = "Part of a node title"
     end
-    it_should_behave_like 'a controller setting nodes or links for the view', "node", nil
-    it_should_behave_like 'a controller setting nodes or links for the view', "node", "3"
-  end
-  describe 'set_links' do
-    it 'should call set links with the correct params' do
-      pending
+    describe 'set_nodes' do
+      controller do
+        before_filter :set_nodes
+        def index 
+          render :nothing => true
+        end
+      end
+      it_should_behave_like 'a controller setting nodes for the view', "node", nil
+      it_should_behave_like 'a controller setting nodes for the view', "node", "3"
     end
-  end
-
-  describe 'set_argument' do
-    it 'should call set argument with the correct params' do
-      pending
+    describe 'setting links' do
+      before do
+        @current_node = mock('node')
+        @current_node.stub(:find_view_links_from_by_context)
+        @current_node.stub(:find_view_links_to_by_context)
+        Node.stub(:find).and_return @current_node
+      end
+      describe 'set_links_to' do
+        controller do
+          before_filter :set_node
+          before_filter :set_links_to
+          def index 
+            render :nothing => true
+          end
+          def set_node
+            @node = Node.find params[:node_id]
+          end
+        end
+        it_should_behave_like 'a controller setting links for the view', "to", "link", nil
+        it_should_behave_like 'a controller setting links for the view', "to", "link", "3"
+      end
+      describe 'set_links_from' do
+        controller do
+          before_filter :set_node
+          before_filter :set_links_from
+          def index 
+            render :nothing => true
+          end
+          def set_node
+            @node = Node.find params[:node_id]
+          end
+        end
+        it_should_behave_like 'a controller setting links for the view', "from", "link", nil
+        it_should_behave_like 'a controller setting links for the view', "from", "link", "3"
+      end
+    end
+    describe 'set_argument' do
+      it 'should call set argument with the correct params' do
+        pending
+      end
     end
   end
 ###These three may want to go to sub controllers, merge with show in arg case? do this so don't do all setting through callbacks for these actions

@@ -66,6 +66,17 @@ class ApplicationController < ActionController::Base
   def set_nodes
     nodes_question = cookies[:nodes_question].present? ? cookies[:nodes_question].to_i : nil
     nodes_user = cookies[:nodes_user].present? ? cookies[:nodes_user].to_i : nil
-    Node.find_by_context(:nodes_question => nodes_question, :nodes_user => nodes_user, :nodes_query => cookies[:nodes_query], :page => params[:page])
+    @nodes = Node.find_by_context(:nodes_question => nodes_question, :nodes_user => nodes_user, :nodes_query => cookies[:nodes_query], :page => params[:page])
+  end
+
+  def set_links_to
+    links_question = cookies[:links_question].present? ? cookies[:links_question].to_i : nil
+    links_user = cookies[:links_user].present? ? cookies[:links_user].to_i : nil
+    @links_to = @node.find_view_links_to_by_context(:links_question => links_question, :links_user => links_user, :links_query => cookies[:links_query], :page => params[:page])
+  end
+  def set_links_from
+    links_question = cookies[:links_question].present? ? cookies[:links_question].to_i : nil
+    links_user = cookies[:links_user].present? ? cookies[:links_user].to_i : nil
+    @links_from = @node.find_view_links_from_by_context(:links_question => links_question, :links_user => links_user, :links_query => cookies[:links_query], :page => params[:page])
   end
 end
