@@ -81,6 +81,6 @@ class ApplicationController < ActionController::Base
   end
   
   def set_node
-    @node = Node::GlobalNode.find params[:node_id]
+    @node = Node::GlobalNode.find cookies[:node_id]
   end
 end

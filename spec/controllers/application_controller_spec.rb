@@ -12,10 +12,13 @@ describe ApplicationController do
     before do
       @user = FactoryGirl.create(:user)
       @question = FactoryGirl.create(:question)
+      @node = mock('node')
+      @node.stub(:id).and_return 1
     end
     context 'when there is no existing configuration' do
       before do
         @view_configuration = {
+                                :current_node => @node.id,
                                 :nodes_question => @question.id,
                                 :nodes_user => @user.id,
                                 :nodes_query => "A node",
@@ -46,6 +49,7 @@ describe ApplicationController do
           @user_two = FactoryGirl.create(:user, :email => "new@test.com")
           @existing_view_configuration = 
                                {
+                                  :current_node => @node.id,
                                   :nodes_question => @question.id,
                                   :nodes_user => @user.id,
                                   :links_to_question => @question.id,
@@ -59,11 +63,15 @@ describe ApplicationController do
                                 }
           @unchanged_view_configuration = 
                                {
+                                  :current_node => @node.id,
                                   :nodes_question => @question.id.to_s,
                                   :nodes_user => @user.id.to_s,
                                   :argument_question => nil,
                                   :links_to_question => @question.id.to_s,
-                                  :links_to_query => nil
+                                  :links_to_query => nil,
+                                  :links_from_question => nil,
+                                  :links_from_user => nil,
+                                  :links_from_query => nil
                                 }
           @params = {:view_configuration => @new_view_configuration}
           @existing_view_configuration.each do |key, value|
@@ -93,6 +101,7 @@ describe ApplicationController do
           @question_two = FactoryGirl.create(:question, :name => "new name")
           @existing_view_configuration = 
                                {
+                                :current_node => @node.id,
                                 :nodes_question => @question.id,
                                 :nodes_user => @user.id,
                                 :nodes_query => "A node",
@@ -107,6 +116,7 @@ describe ApplicationController do
                                }
           @new_view_configuration = 
                                {
+                                :current_node => @node.id,
                                 :nodes_question => @question_two.id,
                                 :nodes_user => @user_two.id,
                                 :nodes_query => "Another node",
