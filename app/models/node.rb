@@ -32,7 +32,7 @@ class Node < ActiveRecord::Base
         with :user_id, conditions[:nodes_user] if conditions[:nodes_user]
         order_by(:id, :asc)
         paginate(:page => conditions[:page], :per_page => 15) if conditions[:page]
-      end.results
+      end.results.map(&:global_node)
     end
     
   end

@@ -21,9 +21,12 @@ describe ApplicationController do
                                 :nodes_query => "A node",
                                 :argument_user => @question.id,
                                 :argument_question => @user.id,
-                                :links_question => @question.id,
-                                :links_user => @user.id,
-                                :links_query => "A node"
+                                :links_to_question => @question.id,
+                                :links_to_user => @user.id,
+                                :links_to_query => "A node",
+                                :links_from_question => @question.id,
+                                :links_from_user => @user.id,
+                                :links_from_query => "A node"
                               }
         @params = {:view_configuration => @view_configuration}
       end
@@ -45,22 +48,22 @@ describe ApplicationController do
                                {
                                   :nodes_question => @question.id,
                                   :nodes_user => @user.id,
-                                  :links_question => @question.id,
-                                  :links_user => @user.id
+                                  :links_to_question => @question.id,
+                                  :links_to_user => @user.id
                                 }
           @new_view_configuration = 
                                {
                                   :nodes_query => "A node",
                                   :argument_user => @user_two.id,
-                                  :links_user => @user_two.id
+                                  :links_to_user => @user_two.id
                                 }
           @unchanged_view_configuration = 
                                {
                                   :nodes_question => @question.id.to_s,
                                   :nodes_user => @user.id.to_s,
                                   :argument_question => nil,
-                                  :links_question => @question.id.to_s,
-                                  :links_query => nil
+                                  :links_to_question => @question.id.to_s,
+                                  :links_to_query => nil
                                 }
           @params = {:view_configuration => @new_view_configuration}
           @existing_view_configuration.each do |key, value|
@@ -95,9 +98,12 @@ describe ApplicationController do
                                 :nodes_query => "A node",
                                 :argument_user => @question.id,
                                 :argument_question => @user.id,
-                                :links_question => @question.id,
-                                :links_user => @user.id,
-                                :links_query => "A node"
+                                :links_to_question => @question.id,
+                                :links_to_user => @user.id,
+                                :links_to_query => "A node",
+                                :links_from_question => @question.id,
+                                :links_from_user => @user.id,
+                                :links_from_query => "A node"
                                }
           @new_view_configuration = 
                                {
@@ -106,9 +112,12 @@ describe ApplicationController do
                                 :nodes_query => "Another node",
                                 :argument_user => @question_two.id,
                                 :argument_question => @user_two.id,
-                                :links_question => @question_two.id,
-                                :links_user => @user_two.id,
-                                :links_query => "Another node"
+                                :links_to_question => @question_two.id,
+                                :links_to_user => @user_two.id,
+                                :links_to_query => "Another node",
+                                :links_from_question => @question_two.id,
+                                :links_from_user => @user_two.id,
+                                :links_from_query => "Another node"
                                }
           @params = {:view_configuration => @new_view_configuration}
           @existing_view_configuration.each do |key, value|
@@ -163,7 +172,7 @@ describe ApplicationController do
         @current_node = mock('node')
         @current_node.stub(:find_view_links_from_by_context)
         @current_node.stub(:find_view_links_to_by_context)
-        Node.stub(:find).and_return @current_node
+        Node::GlobalNode.stub(:find).and_return @current_node
       end
       describe 'set_links_to' do
         controller do
@@ -171,9 +180,6 @@ describe ApplicationController do
           before_filter :set_links_to
           def index 
             render :nothing => true
-          end
-          def set_node
-            @node = Node.find params[:node_id]
           end
         end
         it_should_behave_like 'a controller setting links for the view', "to", "link", nil
@@ -185,9 +191,6 @@ describe ApplicationController do
           before_filter :set_links_from
           def index 
             render :nothing => true
-          end
-          def set_node
-            @node = Node.find params[:node_id]
           end
         end
         it_should_behave_like 'a controller setting links for the view', "from", "link", nil

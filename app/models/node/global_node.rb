@@ -3,6 +3,9 @@ class Node::GlobalNode < Node
     text :title
     integer :id
   end
+  def global_node
+    self
+  end
 
   validates :title, :presence => true
   validates_uniqueness_of :title
