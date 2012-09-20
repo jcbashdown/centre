@@ -63,13 +63,13 @@ class ApplicationController < ActionController::Base
   def set_nodes
     nodes_question = cookies[:nodes_question].present? ? cookies[:nodes_question].to_i : nil
     nodes_user = cookies[:nodes_user].present? ? cookies[:nodes_user].to_i : nil
-    @nodes = Node.find_by_context(:nodes_question => nodes_question, :nodes_user => nodes_user, :nodes_query => cookies[:nodes_query], :page => params[:page])
+    @nodes = Node.find_by_context(:question => nodes_question, :user => nodes_user, :query => cookies[:nodes_query], :page => params[:page])
   end
 
   def set_links_to
     links_question = cookies[:links_to_question].present? ? cookies[:links_to_question].to_i : nil
     links_user = cookies[:links_to_user].present? ? cookies[:links_to_user].to_i : nil
-    @links_to = @node.find_view_links_to_by_context(:links_to_question => links_question, :links_to_user => links_user, :links_to_query => cookies[:links_to_query], :page => params[:page])
+    @links_to = @node.find_view_links_to_by_context(:question => links_question, :user => links_user, :query => cookies[:links_to_query], :page => params[:page])
     #all view nodes are global nodes, no links represented, just global nodes - if this what created with
     #do do general method which takes direct whatever - dry for each direction
   end
@@ -77,7 +77,7 @@ class ApplicationController < ActionController::Base
   def set_links_from
     links_question = cookies[:links_from_question].present? ? cookies[:links_from_question].to_i : nil
     links_user = cookies[:links_from_user].present? ? cookies[:links_from_user].to_i : nil
-    @links_from = @node.find_view_links_from_by_context(:links_from_question => links_question, :links_from_user => links_user, :links_from_query => cookies[:links_from_query], :page => params[:page])
+    @links_from = @node.find_view_links_from_by_context(:question => links_question, :user => links_user, :query => cookies[:links_from_query], :page => params[:page])
   end
   
   def set_node
