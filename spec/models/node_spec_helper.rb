@@ -1,70 +1,28 @@
-shared_examples_for 'a node finding directed links' do |direction|
+shared_examples_for 'a node finding directed links' do |direction, this_node|
   context 'when the question is set' do
     before do
-      @existing_view_configuration = {
-                                       :question => @question.id,
-                                       :user => nil,
-                                       :query => nil 
-                                     }
-    end
-    it 'should return the correct question nodes' do
-      Node.find_by_context(@existing_view_configuration).should == [@context_node1.global_node, @context_node3.global_node]
-    end
-    context 'when the user is set' do
-      before do
-        @existing_view_configuration.merge!(:user => @user.id)
-      end
-      it 'should return the correct context nodes' do
-        Node.find_by_context(@existing_view_configuration).should == [@context_node1.global_node]
-      end
-      context 'when the query is set' do
-        before do
-          @existing_view_configuration.merge!(:query => @query)
-        end
-        it 'should return the correct context nodes' do
-          Node.find_by_context(@existing_view_configuration).should == [@context_node1.global_node]
+      @links = {}
+      @users.each_with_index do |user, iu|
+        @questions.each_with_index do |question, iq|
+          @context_nodes.each do |cn|
+            @queries.each do |query|
+              if cn.title =~ Regexp.new(query)
+                @links[:"user#{iu}_question#{iq}_#{query}"] = 
+                  ContextLink::PositiveContextLink.create(:user=>user, :question => question, :"global_node_#{direction}_id" => cn.global_node.id, :"global_node_#{this_node}_id" => @node.id).global_link        
+              end
+            end
+          end
         end
       end
     end
-    context 'when the query is set' do
-      before do
-        @existing_view_configuration.merge!(:query => @query)
+    it 'should find the correct links for each context' do
+      @users.each_with_index do |user, iu|
+        @questions.each_with_index do |question, iq|
+          @queries.each do |query|
+            @node.find_view_links_by_context(direction, this_node, {:user => user.id, :question => question.id, :query => query}).should == [@links["user#{iu}_question#{iq}_#{query}"]]
+          end
+        end
       end
-      it 'should return the correct question nodes' do
-        Node.find_by_context(@existing_view_configuration).should == [@context_node1.global_node, @context_node3.global_node]
-      end
-    end
-  end
-  context 'when the user is set' do
-    before do
-      @existing_view_configuration = {
-                                       :user => @user.id,
-                                       :question => nil,
-                                       :query => nil
-                                     }
-    end
-    it 'should return the correct user nodes' do
-      Node.find_by_context(@existing_view_configuration).should == [@context_node1.global_node, @context_node4.global_node]
-    end
-    context 'when the query is set' do
-      before do
-        @existing_view_configuration.merge!(:query => @query)
-      end
-      it 'should return the correct user nodes' do
-        Node.find_by_context(@existing_view_configuration).should == [@context_node1.global_node]
-      end
-    end
-  end
-  context 'when the query is set' do
-    before do
-      @existing_view_configuration = {
-					 :query => @query,
-                                       :question => nil,
-                                       :user => nil
-                                     }
-    end
-    it 'should return the correct global nodes' do
-      Node.find_by_context(@existing_view_configuration).should == [@context_node1.global_node, @context_node3.global_node]
     end
   end
 end

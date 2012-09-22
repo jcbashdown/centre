@@ -13,7 +13,7 @@ class Node < ActiveRecord::Base
 
   # can change all to question, user, query etc but how to do cookies or translate
   def find_view_links_from_by_context context
-    find_view_links_by_context :from, context
+    find_view_links_by_context "from", "to", context
     #find nodes meeting criteria as below
     #for each node that isn't self, find or construct link
     #--
@@ -22,16 +22,21 @@ class Node < ActiveRecord::Base
   end
 
   def find_view_links_to_by_context context
-    find_view_links_by_context :to, context
-    
+    find_view_links_by_context "to", "from", context
   end
 
-  def find_view_links_by_context direction, context
+  def find_view_links_by_context direction, this_node, context
     nodes = Node.find_by_context(context)
     links = []
     nodes.each do |node|
-      
+      global_link_attrs = {:"global_node_#{direction}_id" => node.id, :"global_node_#{this_node}_id" => self.id}
+      if link = Link.get_klass(context).where(global_link_attrs.merge(:question_id => context[:question], :user_id => context[:user], :active => true))[0]
+        links << link
+      else
+        links << Link::GlobalLink.new(global_link_attrs)
+      end
     end
+    links
   end
 
   class << self

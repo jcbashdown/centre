@@ -1,43 +1,51 @@
 require 'spec_helper'
-require 'models/node_spec_helper.rb'
+require 'models/node_spec_helper'
 
 describe Node do
   describe 'finding links' do
     before do
-      context_node = ContextNode.create(:user=>@user, :question=>@question, :title => "Part of a node title, here it is!")
+      @user0 = FactoryGirl.create(:user)
+      @question0 = FactoryGirl.create(:question)
+      context_node = ContextNode.create!(:user=>@user0, :question=>@question0, :title => "First Node")
       @node = context_node.global_node
       @params = {}
+      @nodes = []
     end
     describe 'find_view_links_from_by_context' do
       it 'should call find_view_links_by_context' do
-        @node.should_receive(:find_view_links_by_context).with(:from, @params)
+        @node.should_receive(:find_view_links_by_context).with("from", "to", @params)
         @node.find_view_links_from_by_context @params
       end
     end
     describe 'find_view_links_from_by_context' do
       it 'should call find_view_links_by_context' do
-        @node.should_receive(:find_view_links_by_context).with(:to, @params)
+        @node.should_receive(:find_view_links_by_context).with("to", "from", @params)
         @node.find_view_links_to_by_context @params
       end
     end
     describe 'find_view_links_by_context' do
       before do
-        @user = FactoryGirl.create(:user)
-        @user2 = FactoryGirl.create(:user, :email=>"another@test.com")
-        @question = FactoryGirl.create(:question)
-        @question2 = FactoryGirl.create(:question, :name => 'Aaa')
-        @query = "Part of a node title"
-        @context_node1 = ContextNode.create(:user=>@user, :question=>@question, :title => "Part of a node title, here it is!")
-        @context_node2 = ContextNode.create(:user=>@user2, :question=>@question2, :title => 'Title')
-        @context_node3 = ContextNode.create(:user=>@user2, :question=>@question, :title => "And another! Part of a node title")
-        @context_node4 = ContextNode.create(:user=>@user, :question=>@question2, :title => 'Title')
+        @users = []
+        @users << @user0
+        @users << @user1 = FactoryGirl.create(:user, :email=>"another@test.com")
+        @questions = []
+        @questions << @question0
+        @questions << @question1 = FactoryGirl.create(:question, :name => 'Aaa')
+        @queries = []
+        @queries << @query0 = "Part of a node title"
+        @queries << @query1 = "Title"
+        @context_nodes = []
+        @context_nodes << @context_node0 = ContextNode.create(:user=>@user0, :question=>@question0, :title => "Part of a node title, here it is!")
+        @context_nodes << @context_node1 = ContextNode.create(:user=>@user1, :question=>@question1, :title => 'Title')
+        @context_nodes << @context_node2 = ContextNode.create(:user=>@user1, :question=>@question0, :title => "And another! Part of a node title")
+        @context_nodes << @context_node3 = ContextNode.create(:user=>@user0, :question=>@question1, :title => 'Title')
         Node::GlobalNode.reindex
         Node::QuestionNode.reindex
         Node::UserNode.reindex
         ContextNode.reindex
       end
       context 'when the direction is to' do
-
+        it_should_behave_like 'a node finding directed links', "to", "from"
       end
       context 'when the direction is from' do
 
