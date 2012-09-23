@@ -14,12 +14,14 @@ shared_examples_for 'a node finding directed links' do |direction, this_node|
           end
         end
       end
+      @users << nil
+      @questions << nil
     end
     it 'should find the correct links for each context' do
       @users.each_with_index do |user, iu|
         @questions.each_with_index do |question, iq|
           @queries.each do |query|
-            @node.find_view_links_by_context(direction, this_node, {:user => user.id, :question => question.id, :query => query}).should == [@links["user#{iu}_question#{iq}_#{query}"]]
+            @node.find_view_links_by_context(direction, this_node, {:user => user.id, :question => question.id, :query => query}).should == [@links[:"user#{iu}_question#{iq}_#{query}"]]
           end
         end
       end

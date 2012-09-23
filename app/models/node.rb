@@ -29,9 +29,11 @@ class Node < ActiveRecord::Base
     nodes = Node.find_by_context(context)
     links = []
     nodes.each do |node|
+      klass = Link.get_klass(context)
       global_link_attrs = {:"global_node_#{direction}_id" => node.id, :"global_node_#{this_node}_id" => self.id}
-      if link = Link.get_klass(context).where(global_link_attrs.merge(:question_id => context[:question], :user_id => context[:user], :active => true))[0]
-        links << link
+      global_link_attrs.merge!({:active => true}) if (klass == Link::GlobalLink || klass == Link::QuestionLink)
+      if link = Link.get_klass(context).where(global_link_attrs.merge(:question_id => context[:question], :user_id => context[:user]))[0]
+        links << link.global_link
       else
         links << Link::GlobalLink.new(global_link_attrs)
       end
