@@ -17,6 +17,8 @@ shared_examples_for 'a node finding directed links' do |direction, this_node|
                   end
                 end
                 question_key = :"question#{iq}_#{query}"
+                p question_key
+                p new_gn
                 if new_gn
                   if @links[question_key]
                     @links[question_key][new_gn.id] = new_gn
@@ -42,6 +44,8 @@ shared_examples_for 'a node finding directed links' do |direction, this_node|
       @questions << nil
     end
     it 'should find the correct links for each context' do
+      p @links
+      @links.each {|k,v| v.each {|k,v| p k}}
       @users.each_with_index do |user, iu|
         @questions.each_with_index do |question, iq|
           @queries.each do |query|
@@ -51,6 +55,10 @@ shared_examples_for 'a node finding directed links' do |direction, this_node|
               elsif user
                 @links[:"user#{iu}_#{query}"][gn.id].should == gn
               elsif question
+                p :"question#{iq}_#{query}"
+                p gn
+                p @links[:"question#{iq}_#{query}"]
+                p @node.find_view_links_by_context(direction, this_node, {:user => user.try(:id), :question => question.try(:id), :query => query})
                 @links[:"question#{iq}_#{query}"][gn.id].should == gn 
               end
             end

@@ -39,12 +39,12 @@ class Node < ActiveRecord::Base
       elsif klass == Link::UserLink
         link = klass.where(global_link_attrs.merge(:user_id => context[:user]))[0].try(:global_link)
       else
-        link = klass.where(global_link_attrs)[0]
+        link = klass.where({:"node_#{direction}_id" => node.id, :"node_#{this_node}_id" => self.id})[0]
       end
       if link
         links << link
       else
-        links << Link::GlobalLink.new(global_link_attrs)
+        links << Link::GlobalLink.new({:"node_#{direction}_id" => node.id, :"node_#{this_node}_id" => self.id})
       end
     end
     links
