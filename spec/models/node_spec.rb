@@ -38,7 +38,7 @@ describe Node do
         @context_nodes << @context_node0 = ContextNode.create(:user=>@user0, :question=>@question0, :title => "Part of a node title, here it is!")
         @context_nodes << @context_node1 = ContextNode.create(:user=>@user1, :question=>@question1, :title => 'Title')
         @context_nodes << @context_node2 = ContextNode.create(:user=>@user1, :question=>@question0, :title => "And another! Part of a node title")
-        @context_nodes << @context_node3 = ContextNode.create(:user=>@user0, :question=>@question1, :title => 'Title')
+        @context_nodes << @context_node3 = ContextNode.create(:user=>@user0, :question=>@question1, :title => 'A Title')
         Node::GlobalNode.reindex
         Node::QuestionNode.reindex
         Node::UserNode.reindex

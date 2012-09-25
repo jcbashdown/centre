@@ -22,6 +22,7 @@ class ContextLink < ActiveRecord::Base
   belongs_to :context_node_from, :class_name => ContextNode
   belongs_to :context_node_to, :class_name => ContextNode
 
+  #dont need question? or includes uniq on nil for question?
   validates_uniqueness_of :user_id, :scope => [:global_link_id, :question_id]
 
   before_validation(:on => :create) do
