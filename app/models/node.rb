@@ -25,7 +25,10 @@ class Node < ActiveRecord::Base
     find_view_links_by_context "to", "from", context
   end
 
-  def find_view_links_by_context direction, this_node, context
+  def find_view_links_by_context direction, this_node, context, pry=false
+    if pry
+      binding.pry
+    end
     nodes = Node.find_by_context(context)
     links = []
     nodes.each do |node|

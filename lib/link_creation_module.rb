@@ -14,6 +14,7 @@ module LinkCreationModule
   end
   
   def create_appropriate_links
+    self.global_link_id = find_or_create_global_link.id
     @new_links = []
     @existing_links_hash = {}
     new_links_hash = {}
@@ -37,9 +38,8 @@ module LinkCreationModule
   end
 
   def find_or_initialise_links
-    find_or_initialise("Link::GlobalLink::#{self.link_kind}GlobalLink".constantize, {:node_from_id => self.global_node_from_id, :node_to_id => self.global_node_to_id})
     if question
-      find_or_initialise("Link::QuestionLink::#{link_kind}QuestionLink".constantize, {:question_id => question_id, :node_from_id => self.question_node_from_id, :node_to_id => self.question_node_to_id})
+      find_or_initialise("Link::QuestionLink::#{link_kind}QuestionLink".constantize, {:question_id => question_id, :node_from_id => self.question_node_from_id, :node_to_id => self.question_node_to_id, :global_node_from_id => self.global_node_from_id, :global_node_to_id => self.global_node_to_id, :global_link_id => self.global_link_id})
     end
   end  
 
@@ -54,6 +54,12 @@ module LinkCreationModule
   end
 
   def find_or_create_user_link(attributes)
-    Link::UserLink.where({:user_id => user_id, :node_from_id => self.user_node_from_id, :node_to_id => self.user_node_to_id})[0] || "Link::UserLink::#{self.link_kind}UserLink".constantize.create!({:user_id => user_id, :node_from_id => self.user_node_from_id, :node_to_id => self.user_node_to_id, :global_node_from_id => self.global_node_from_id, :global_node_to_id => self.global_node_to_id, :global_link_id => attributes[:global_link_id]})
+    params = {:user_id => user_id, :node_from_id => self.user_node_from_id, :node_to_id => self.user_node_to_id, :global_node_from_id => self.global_node_from_id, :global_node_to_id => self.global_node_to_id, :global_link_id => self.global_link_id}
+    Link::UserLink.where(params)[0] || "Link::UserLink::#{self.link_kind}UserLink".constantize.create!(params)
+  end
+
+  def find_or_create_global_link
+    params = {:node_from_id => self.global_node_from_id, :node_to_id => self.global_node_to_id}
+    link = "Link::GlobalLink::#{self.link_kind}GlobalLink".constantize.where(params)[0] || "Link::GlobalLink::#{self.link_kind}GlobalLink".constantize.create!(params)
   end
 end
