@@ -48,7 +48,7 @@ describe Node do
         it_should_behave_like 'a node finding directed links', "to", "from"
       end
       context 'when the direction is from' do
-
+        it_should_behave_like 'a node finding directed links', "from", "to"
       end
     end
   end
