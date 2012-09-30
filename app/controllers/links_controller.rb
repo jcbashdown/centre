@@ -1,8 +1,7 @@
 class LinksController < ApplicationController
   before_filter :signed_in_user
-  before_filter :set_node_limit
-  #before_filter :set_node_order
-  #before_filter :set_node_limit_order
+  before_filter :update_view_configuration
+  before_filter :set_node_question
 
   def create
     @context_link = "ContextLink::#{params[:type]}ContextLink".constantize.new(params[:global_link].merge(:question => @question, :user => current_user))

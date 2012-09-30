@@ -4,42 +4,14 @@ class ApplicationController < ActionController::Base
   before_filter :set_questions
   before_filter :update_view_configuration
 
-#  def set_node_order
-#    @order = params[:order]
-#    unless @order
-#      @order = 'older'
-#    end
-#    if @order == "strongest"
-#      @order_query = [:page_rank, :desc]
-#      @order_query_all = 'page_rank desc'
-#    elsif @order == "weakest"
-#      @order_query = [:page_rank, :asc]
-#      @order_query_all = 'page_rank asc'
-#    elsif @order == "newer"
-#      @order_query = [:created_at, :desc]
-#      @order_query_all = 'created_at desc'
-#    elsif @order == "older"
-#      @order_query = [:created_at, :asc]
-#      @order_query_all = 'created_at asc'
-#    else
-#      @order_query = [:id, :asc]
-#      @order_query_all = 'id asc'
-#    end
-#  end
-
-  def set_node_limit
-    question_id = params[:question]
-    if question_id
+  def set_node_question
+    if question_id = cookies[:nodes_question] 
       @question = Question.find(question_id)
     else
       @question = nil
     end
   end
   
-  #def set_node_limit_order
-  #  @limit_order = {:question => @question.id, :order => @order}
-  #end
-
   def set_questions
     @questions = Question.all.map { |question| [question.name, question.id] }
     @questions << ['New/Search For Question', '#new']
@@ -70,8 +42,6 @@ class ApplicationController < ActionController::Base
     links_question = cookies[:links_to_question].present? ? cookies[:links_to_question].to_i : nil
     links_user = cookies[:links_to_user].present? ? cookies[:links_to_user].to_i : nil
     @links_to = @node.find_view_links_to_by_context(:question => links_question, :user => links_user, :query => cookies[:links_to_query], :page => params[:page])
-    #all view nodes are global nodes, no links represented, just global nodes - if this what created with
-    #do do general method which takes direct whatever - dry for each direction
   end
 
   def set_links_from

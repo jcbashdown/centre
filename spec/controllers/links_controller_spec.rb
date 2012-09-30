@@ -24,7 +24,7 @@ describe LinksController do
     context 'when ajax request' do
       context 'with valid params' do
         before do
-          @params = {"type" => "Negative", "global_link"=>{"global_node_from_id"=>@node_one.id.to_s, "global_node_to_id"=>@node_two.id.to_s}, "id" =>@context_link.global_link.id, "question" => @question.id}
+          @params = {"type" => "Negative", "global_link"=>{"global_node_from_id"=>@node_one.id.to_s, "global_node_to_id"=>@node_two.id.to_s}, "id" =>@context_link.global_link.id, "links_question" => @question.id}
           @mock_cn = mock('context_link')
           @mock_cn_2 = mock('context_link')
           @mock_global_link = mock('global_link')

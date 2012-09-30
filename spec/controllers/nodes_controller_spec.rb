@@ -7,7 +7,7 @@ describe NodesController do
   end
 
   def valid_attributes
-    {:node => {:title => 'title'}, :question => @question}
+    {:node => {:title => 'title'}, :nodes_question => @question}
   end
   
 #  describe 'set nodes' do

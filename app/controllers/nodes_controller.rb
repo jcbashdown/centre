@@ -1,6 +1,7 @@
 class NodesController < ApplicationController
   before_filter :signed_in_user, :except => [:show, :index]
-  before_filter :set_node_limit
+  before_filter :update_view_configuration
+  before_filter :set_node_question
   before_filter :set_nodes, :only => [:index, :show]
   before_filter :set_node, :only => [:show]
   before_filter :set_links, :only => [:show]
