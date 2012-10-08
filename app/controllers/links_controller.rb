@@ -1,10 +1,9 @@
 class LinksController < ApplicationController
-  before_filter :signed_in_user
-  before_filter :update_view_configuration
-  before_filter :set_node_question
+  prepend_before_filter :signed_in_user
+  before_filter :set_link_question
 
   def create
-    @context_link = "ContextLink::#{params[:type]}ContextLink".constantize.new(params[:global_link].merge(:question => @question, :user => current_user))
+    @context_link = "ContextLink::#{params[:type]}ContextLink".constantize.new(params[:global_link].merge(:question => @link_question, :user => current_user))
     respond_to do |format|
       if @context_link.save
         format.js { render :partial => 'a_link', :locals=>{:link => @context_link.global_link, :direction=>params[:direction]} }
@@ -18,7 +17,7 @@ class LinksController < ApplicationController
 
   def update
     @global_link = Link::GlobalLink.find(params[:id])
-    @context_link = ContextLink.with_all_associations.where(:question_id => @question.id, :user_id => current_user.id, :global_link_id => @global_link.id)[0]
+    @context_link = ContextLink.with_all_associations.where(:question_id => @link_question, :user_id => current_user.id, :global_link_id => @global_link.id)[0]
     respond_to do |format|
       if @context_link = @context_link.update_type(params[:type])
         format.js { render :partial => 'a_link', :locals=>{:global_link=> @context_link.global_link, :direction=>params[:direction]} }
@@ -36,7 +35,7 @@ class LinksController < ApplicationController
 
   def destroy
     @global_link = Link::GlobalLink.find(params[:id])
-    @context_link = ContextLink.with_all_associations.where(:question_id => @question.id, :user_id => current_user.id, :global_link_id => @global_link.id)[0]
+    @context_link = ContextLink.with_all_associations.where(:question_id => @link_question, :user_id => current_user.id, :global_link_id => @global_link.id)[0]
     respond_to do |format|
       if @context_link.destroy
         link_params = params[:global_link]

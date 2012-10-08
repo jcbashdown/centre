@@ -1,7 +1,5 @@
 class NodesController < ApplicationController
   before_filter :signed_in_user, :except => [:show, :index]
-  before_filter :update_view_configuration
-  before_filter :set_node_question
   before_filter :set_nodes, :only => [:index, :show]
   before_filter :set_node, :only => [:show]
   before_filter :set_links, :only => [:show]
@@ -13,18 +11,18 @@ class NodesController < ApplicationController
 
   def set_links
     if current_user
-      @links_to = current_user.user_from_node_links(@node, @question)
-      @links_in = current_user.user_to_node_links(@node, @question)
+      @links_to = current_user.user_from_node_links(@node, @node_question)
+      @links_in = current_user.user_to_node_links(@node, @node_question)
     else
-      @links_to = @question.global_from_node_links(@node)
-      @links_in = @question.global_to_node_links(@node)
+      @links_to = @node_question.global_from_node_links(@node)
+      @links_in = @node_question.global_to_node_links(@node)
     end
   end
   
   def set_nodes
     if params[:find]
-      unless @question.name == "All"
-        question_id =  @question.try(:id)
+      unless @node_question.name == "All"
+        question_id =  @node_question.try(:id)
         type = GlobalNode
         @nodes = search_for_nodes(type, question_id)
       else
@@ -32,8 +30,8 @@ class NodesController < ApplicationController
         @nodes = search_for_nodes(type)
       end
     else
-      unless @question.name == "All"
-        @nodes = @question.nodes.page.page(params[:page]).per(15).order(@order_query_all)
+      unless @node_question.name == "All"
+        @nodes = @node_question.nodes.page.page(params[:page]).per(15).order(@order_query_all)
       else
         @nodes = Node.order(@order_query_all).page(params[:page]).per(15)
       end
@@ -51,7 +49,7 @@ class NodesController < ApplicationController
 
   def show
     if current_user
-      @gnu = GlobalNodeUser.where(:user_id=>current_user.id, :node_id=>@node.id, :question_id=>@question.try(:id))[0]
+      @gnu = GlobalNodeUser.where(:user_id=>current_user.id, :node_id=>@node.id, :question_id=>@node_question.try(:id))[0]
     end
     @new_node = Node.new
     if request.xhr?
@@ -62,7 +60,7 @@ class NodesController < ApplicationController
   end
 
   def create
-    context_node = ContextNode.new({:user_id => current_user.id, :question_id => @question.try(:id)}.merge(params[:node]))
+    context_node = ContextNode.new({:user_id => current_user.id, :question_id => @node_question}.merge(params[:node]))
     respond_to do |format|
       if context_node.save
         if context_node.question_node
@@ -78,7 +76,7 @@ class NodesController < ApplicationController
   end
 
   def destroy
-    context_node = ContextNode.with_all_associations.where(:user_id => current_user.id, :node_title_id=>params[:id], :question_id=>@question.try(:id))[0]
+    context_node = ContextNode.with_all_associations.where(:user_id => current_user.id, :node_title_id=>params[:id], :question_id=>@node_question.try(:id))[0]
     if context_node.destroy
       respond_to do |format|
         format.html { redirect_to nodes_path }
@@ -95,7 +93,7 @@ class NodesController < ApplicationController
   protected
 
   def redirect_if_new_exists
-    @context_node = ContextNode.where({:user_id => current_user.id, :question_id => @question.try(:id), :title => params[:node][:title]})[0]
+    @context_node = ContextNode.where({:user_id => current_user.id, :question_id => @node_question, :title => params[:node][:title]})[0]
     if @context_node
       redirect_to node_path(@context_node.global_node)
     end

@@ -7,7 +7,7 @@ describe NodesController do
   end
 
   def valid_attributes
-    {:node => {:title => 'title'}, :nodes_question => @question}
+    {:node => {:title => 'title'}, :view_configuration => {:nodes_question => @question.try(:id)}}
   end
   
 #  describe 'set nodes' do

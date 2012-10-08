@@ -3,15 +3,32 @@ class ApplicationController < ActionController::Base
 
   before_filter :set_questions
   before_filter :update_view_configuration
+  before_filter :set_node_question
 
   def set_node_question
-    if question_id = cookies[:nodes_question] 
-      @question = Question.find(question_id)
+    if question_id = cookies[:nodes_question]
+      @node_question = question_id.to_i
     else
-      @question = nil
+      @node_question = nil
     end
   end
   
+  def set_link_question
+    case cookies[:active_links]
+    when "from"
+      question_id = cookies[:links_from_question]
+    when "to"
+      question_id = cookies[:links_to_question]
+    when nil
+      question_id = cookies[:links_from_question]
+    end
+    if question_id
+      @link_question = question_id.to_i
+    else
+      @link_question = nil
+    end
+  end
+
   def set_questions
     @questions = Question.all.map { |question| [question.name, question.id] }
     @questions << ['New/Search For Question', '#new']
