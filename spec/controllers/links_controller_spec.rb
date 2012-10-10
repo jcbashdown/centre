@@ -103,7 +103,7 @@ describe LinksController do
     context 'when ajax request' do
       context 'with valid params' do
         before do
-          @params = {"type" => "Negative", "global_link"=>{"global_node_from_id"=>@node_one.id.to_s, "global_node_to_id"=>@node_two.id.to_s}, "question" => @question.id}
+          @params = {"type" => "Negative", "global_link"=>{"global_node_from_id"=>@node_one.id.to_s, "global_node_to_id"=>@node_two.id.to_s}, "view_configuration" => {"links_from_question" => @question.id}}
           @mock_cl = mock('context_link')
           @mock_global_link = mock('global_link')
           @mock_cl.stub(:save).and_return true
@@ -169,7 +169,7 @@ describe LinksController do
       @context_link = ContextLink::PositiveContextLink.create(@params_one["global_link"].merge(:question => @question, :user => @user))
       @user_two = FactoryGirl.create(:user, :email => "user2@test.com")
       @context_linkuser2 = ContextLink::PositiveContextLink.create!(@params_one["global_link"].merge(:question => @question, :user => @user_two))
-      @params_one = {"type" => "Positive", "global_link"=>{"global_node_from_id"=>@node_one.id.to_s, "global_node_to_id"=>@node_two.id.to_s}, :id => @context_link.global_link.id, :question => @question.id}
+      @params_one = {"type" => "Positive", "global_link"=>{"global_node_from_id"=>@node_one.id.to_s, "global_node_to_id"=>@node_two.id.to_s}, :id => @context_link.global_link.id, :view_configuration => {:links_from_question => @question.id}}
       @context_link.global_link.should == @context_linkuser2.global_link
     end
     #update will destroy and then create as too much logic for an after save if we check if we need to to destroy question links etc.

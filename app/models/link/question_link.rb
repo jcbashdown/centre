@@ -12,7 +12,7 @@ class Link::QuestionLink < Link
     end
   
     def active_by_votes(question)
-      where(:question_id => question.id).order(:users_count).last
+      where(:question_id => question).order(:users_count).last
     end
     def active(question)
       where(:active => true, :question_id => question).last
