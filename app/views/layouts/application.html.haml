@@ -19,7 +19,7 @@
       #main{:role => "main"}
         .row-fluid
           .span3
-            #global_id.hidden= @question.id
+            #global_id.hidden= @question.id if @question
             -if @user
               = render 'new_form'
             #current_nodes

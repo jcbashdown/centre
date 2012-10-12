@@ -1,6 +1,7 @@
+###
 $(document).ready ->
   value = $("#question").val()
-  $("#limit_order").change ->
+  $("#limit_order").live "change", (event) ->
     new_value = $("#question").val()
     if value != new_value && new_value == "#new"
       form = $(this)
@@ -10,3 +11,4 @@ $(document).ready ->
       $(this).submit()
     return true
   return true
+###

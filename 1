@@ -30,7 +30,6 @@ class ApplicationController < ActionController::Base
   end
 
   def set_questions
-    @new_question = Question.new
     @questions = Question.all.map { |question| [question.name, question.id] }
     @questions << ['New/Search For Question', '#new']
   end
@@ -51,6 +50,9 @@ class ApplicationController < ActionController::Base
   end
   
   def set_nodes
+    p "PAGE"
+    p params[:page]
+    p "PAGE"
     nodes_question = cookies[:nodes_question].present? ? cookies[:nodes_question].to_i : nil
     nodes_user = cookies[:nodes_user].present? ? cookies[:nodes_user].to_i : nil
     @nodes = Node.find_by_context(:question => nodes_question, :user => nodes_user, :query => cookies[:nodes_query], :page => params[:page])

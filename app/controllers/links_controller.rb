@@ -3,7 +3,7 @@ class LinksController < ApplicationController
   before_filter :set_link_question
 
   def create
-    @context_link = "ContextLink::#{params[:type]}ContextLink".constantize.new(params[:global_link].merge(:question => @link_question, :user => current_user))
+    @context_link = "ContextLink::#{params[:type]}ContextLink".constantize.new(params[:global_link].merge(:question_id => @link_question, :user => current_user))
     respond_to do |format|
       if @context_link.save
         format.js { render :partial => 'a_link', :locals=>{:link => @context_link.global_link, :direction=>params[:direction]} }

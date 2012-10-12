@@ -19,25 +19,6 @@ class NodesController < ApplicationController
     end
   end
   
-  def set_nodes
-    if params[:find]
-      unless @node_question.name == "All"
-        question_id =  @node_question.try(:id)
-        type = GlobalNode
-        @nodes = search_for_nodes(type, question_id)
-      else
-        type = Node
-        @nodes = search_for_nodes(type)
-      end
-    else
-      unless @node_question.name == "All"
-        @nodes = @node_question.nodes.page.page(params[:page]).per(15).order(@order_query_all)
-      else
-        @nodes = Node.order(@order_query_all).page(params[:page]).per(15)
-      end
-    end
-  end
-
   def index
     @new_node = Node.new
     respond_to do |format|

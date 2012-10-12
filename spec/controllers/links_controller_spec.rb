@@ -132,7 +132,7 @@ describe LinksController do
           assigns(:context_link).should == new_link
         end
         it 'initialise a new link with the correct parameters' do
-          ContextLink::NegativeContextLink.should_receive(:new).with(@params["global_link"].merge("question" => @question, "user" => @user)).and_return @mock_cl
+          ContextLink::NegativeContextLink.should_receive(:new).with(@params["global_link"].merge("question_id" => @question.id, "user" => @user)).and_return @mock_cl
           xhr :post, :create, @params
         end
       end

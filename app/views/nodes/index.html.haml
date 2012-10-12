@@ -3,7 +3,7 @@
     .span8.main_content
       .tabbable
         %ul.nav.nav-pills.right
-          - unless @question.name == 'All'
+          - if @question
             %li#menu2.dropdown.active
               %a.dropdown-toggle{"data-toggle" => "dropdown", :href => "#menu2"}
                 Topic 

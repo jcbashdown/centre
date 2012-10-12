@@ -4,7 +4,7 @@
       %a.brand{:href => nodes_path(@limit_order)} Centre
       .nav-collapse
         %ul.nav
-          = render 'shared/limit_order_form'
+          = render :partial => 'questions/new'
         %ul.nav.pull-right
           - if user_signed_in?
             %li

@@ -65,13 +65,13 @@ class Node < ActiveRecord::Base
     
     def find_by_context conditions
       klass = self.get_klass conditions
-      klass.search do
+      results = klass.search do
         fulltext conditions[:query] if conditions[:query]
         with :question_id, conditions[:question] if conditions[:question]
         with :user_id, conditions[:user] if conditions[:user]
         order_by(:id, :asc)
-        paginate(:page => conditions[:page], :per_page => 15) if conditions[:page]
       end.results.map(&:global_node)
+      Node::GlobalNode.where(:id => results).page(conditions[:page]).per(15)
     end
     
   end

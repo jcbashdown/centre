@@ -1,7 +1,7 @@
 Centre::Application.routes.draw do
 
   resources :nodes, :except => [:new, :edit]
-  resources :globals
+  resources :questions
   resources :links
   resources :user_arguments, :only => [:show, :index]
   resources :global_arguments, :only => [:show, :index]
