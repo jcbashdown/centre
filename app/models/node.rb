@@ -50,6 +50,14 @@ class Node < ActiveRecord::Base
     links
   end
 
+  def positive_cn_tos
+
+  end
+
+  def negative_cn_tos
+
+  end
+
   class << self
     def get_klass conditions
       if conditions[:question] && conditions[:user]

@@ -1,0 +1,43 @@
+.tabbable
+  %ul.nav.nav-pills.right
+    %li#menu1.dropdown{:class => "#{current_user ? 'active' : ''}"}
+      %a.dropdown-toggle{"data-toggle" => "dropdown", :href => "#menu1"}
+        Node
+        %b.caret
+      %ul.dropdown-menu
+        - if current_user && @gnu
+          %li.arg-option.active
+            %a{"data-toggle" => "tab", "data-target" => "#me", :href => user_argument_path(@gnu.id, {:path => "me", :original => @gnu}), "data-remote" => true} My Node
+        %li.divider
+        - User.all.each do |user|
+          - if @gnu == user.context_nodes.where(:question_id => @question.try(:id), :global_node_id => @node.id)[0]
+            %li.arg-option
+              %a{"data-toggle" => "tab", "data-target" => "#other_user", :href => user_argument_path(@gnu.id, {:path => "other_user", :original => @gnu.id}), "data-remote" => true}= user.name
+    - if @question
+      %li#menu2.dropdown{:class => "#{current_user ? '' : 'active'}"}
+        %a.dropdown-toggle{"data-toggle" => "dropdown", :href => "#menu2"}
+          Topic 
+          %b.caret
+        %ul.dropdown-menu
+          - if current_user
+            %li.arg-option
+              %a{"data-toggle" => "tab", "data-target" => "#my_topic", :href => user_arguments_path(:global_id => @question.id, :path => "my_topic"), "data-remote" => true} My Topic
+          %li.divider
+            %li{:class => "arg-option #{current_user ? '' : 'active'}"}
+              %a{"data-toggle" => "tab", "data-target" => "#everyones_topic", :href => global_arguments_path(:global_id => @question.id, :path => "everyones_topic"), "data-remote" => true} Everyone's topic
+          %li.divider
+            - User.all.each do |user|
+              %li.arg-option
+                %a{"data-toggle" => "tab", "data-target" => "#other_user_topic", :href => user_arguments_path(:global_id => @question.id, :user_id => user.id, :path => "other_user_topic"), "data-remote" => true}= user.name 
+  .tab-content
+    -if current_user && @gnu
+      #me.tab-pane.active
+        = render(:partial => 'user_arguments/show', :locals => {:node => @gnu, :previous => "me", :original => @gnu.id})
+      #my_topic.tab-pane
+        Loading...
+    #other_user.tab-pane
+      Loading...
+    #other_user_topic.tab-pane
+      Loading...
+    #everyones_topic{:class => "tab-pane #{current_user ? '' : 'active'}"}
+      = render(:partial => 'global_arguments/index', :locals => {:previous => "everyones_topic", :question => @question})

@@ -15,7 +15,7 @@
           %th = 
           %th - 
           %th Title
-        - @links_to.each do |link|
+        - @links_from.each do |link|
           -link_id = link.new_record? ? "#{rand(Time.now.to_i)}#{Time.now.to_i}" : link.id
           %tr{:id => "link_#{link_id}", :class=>"link_tos"} 
             %td
@@ -39,7 +39,7 @@
           %th = 
           %th - 
           %th Title
-        - @links_in.each do |link|
+        - @links_to.each do |link|
           -link_id = link.new_record? ? "#{rand(Time.now.to_i)}#{Time.now.to_i}" : link.id
           %tr{:id => "link_#{link_id}", :class=>"link_ins"} 
             %td

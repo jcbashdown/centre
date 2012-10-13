@@ -2,23 +2,12 @@ class NodesController < ApplicationController
   before_filter :signed_in_user, :except => [:show, :index]
   before_filter :set_nodes, :only => [:index, :show]
   before_filter :set_node, :only => [:show]
-  before_filter :set_links, :only => [:show]
   before_filter :redirect_if_new_exists, :only => [:create]
 
   def set_node
     @node = Node.find(params[:id])
   end
 
-  def set_links
-    if current_user
-      @links_to = current_user.user_from_node_links(@node, @node_question)
-      @links_in = current_user.user_to_node_links(@node, @node_question)
-    else
-      @links_to = @node_question.global_from_node_links(@node)
-      @links_in = @node_question.global_to_node_links(@node)
-    end
-  end
-  
   def index
     @new_node = Node.new
     respond_to do |format|
@@ -30,7 +19,7 @@ class NodesController < ApplicationController
 
   def show
     if current_user
-      @gnu = GlobalNodeUser.where(:user_id=>current_user.id, :node_id=>@node.id, :question_id=>@node_question.try(:id))[0]
+      @gnu = ContextNode.where(:user_id=>current_user.id, :global_node_id=>@node.id, :question_id=>@node_question.try(:id))[0]
     end
     @new_node = Node.new
     if request.xhr?
@@ -57,7 +46,7 @@ class NodesController < ApplicationController
   end
 
   def destroy
-    context_node = ContextNode.with_all_associations.where(:user_id => current_user.id, :node_title_id=>params[:id], :question_id=>@node_question.try(:id))[0]
+    context_node = ContextNode.with_all_associations.where(:user_id => current_user.id, :title=>params[:title], :question_id=>@node_question.try(:id))[0]
     if context_node.destroy
       respond_to do |format|
         format.html { redirect_to nodes_path }
