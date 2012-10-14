@@ -14,12 +14,9 @@ class ApplicationController < ActionController::Base
   end
   
   def set_link_question
-    case cookies[:active_links]
-    when "from"
-      question_id = cookies[:links_from_question]
-    when "to"
+    if cookies[:active_links] == "to"
       question_id = cookies[:links_to_question]
-    when nil
+    else
       question_id = cookies[:links_from_question]
     end
     if question_id
@@ -60,12 +57,16 @@ class ApplicationController < ActionController::Base
     links_question = cookies[:links_to_question].present? ? cookies[:links_to_question].to_i : nil
     links_user = cookies[:links_to_user].present? ? cookies[:links_to_user].to_i : nil
     @links_to = @node.find_view_links_to_by_context(:question => links_question, :user => links_user, :query => cookies[:links_to_query], :page => params[:page])
+    p "TO"
+    p @links_to
   end
 
   def set_links_from
     links_question = cookies[:links_from_question].present? ? cookies[:links_from_question].to_i : nil
     links_user = cookies[:links_from_user].present? ? cookies[:links_from_user].to_i : nil
     @links_from = @node.find_view_links_from_by_context(:question => links_question, :user => links_user, :query => cookies[:links_from_query], :page => params[:page])
+    p "FROM"
+    p @links_from
   end
   
   def set_node

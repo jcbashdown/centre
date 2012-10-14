@@ -12,6 +12,6 @@
           &nbsp;
           NODE BODY
           - if current_user
-            %a.right.accordion-toggle-override{"data-confirm" => "Are you sure?", "data-method" => "delete", :href => node_path(:title => node.title), :rel => "nofollow"}
+            %a.right.accordion-toggle-override{"data-confirm" => "Are you sure?", "data-method" => "delete", :href => node_path(node), :rel => "nofollow"}
               %i.icon-remove.right
 = paginate nodes
