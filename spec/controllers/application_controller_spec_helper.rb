@@ -11,7 +11,7 @@ shared_examples_for 'a controller setting nodes for the view' do |type, page|
                                      }
       @existing_view_configuration.each do |key, value|
         if value
-          request.cookies[key] = value.to_s
+          session[key] = value.to_s
         end
       end
     end
@@ -28,7 +28,7 @@ shared_examples_for 'a controller setting nodes for the view' do |type, page|
         @existing_view_configuration.merge!(:"#{type}s_user" => @user.id)
         @existing_view_configuration.each do |key, value|
           if value
-            request.cookies[key] = value.to_s
+            session[key] = value.to_s
           end
         end
       end
@@ -45,7 +45,7 @@ shared_examples_for 'a controller setting nodes for the view' do |type, page|
           @existing_view_configuration.merge!(:"#{type}s_query" => @query)
           @existing_view_configuration.each do |key, value|
             if value
-              request.cookies[key] = value.to_s
+              session[key] = value.to_s
             end
           end
         end
@@ -64,7 +64,7 @@ shared_examples_for 'a controller setting nodes for the view' do |type, page|
         @existing_view_configuration.merge!(:"#{type}s_query" => @query)
         @existing_view_configuration.each do |key, value|
           if value
-            request.cookies[key] = value.to_s
+            session[key] = value.to_s
           end
         end
       end
@@ -87,7 +87,7 @@ shared_examples_for 'a controller setting nodes for the view' do |type, page|
                                      }
       @existing_view_configuration.each do |key, value|
         if value
-          request.cookies[key] = value.to_s
+          session[key] = value.to_s
         end
       end
     end
@@ -104,7 +104,7 @@ shared_examples_for 'a controller setting nodes for the view' do |type, page|
         @existing_view_configuration.merge!(:"#{type}s_query" => @query)
         @existing_view_configuration.each do |key, value|
           if value
-            request.cookies[key] = value.to_s
+            session[key] = value.to_s
           end
         end
       end
@@ -127,7 +127,7 @@ shared_examples_for 'a controller setting nodes for the view' do |type, page|
                                      }
       @existing_view_configuration.each do |key, value|
         if value
-          request.cookies[key] = value.to_s
+          session[key] = value.to_s
         end
       end
     end
@@ -151,7 +151,7 @@ shared_examples_for 'a controller setting links for the view' do |direction, typ
                                      }
       @existing_view_configuration.each do |key, value|
         if value
-          request.cookies[key] = value.to_s
+          session[key] = value.to_s
         end
       end
     end
@@ -168,7 +168,7 @@ shared_examples_for 'a controller setting links for the view' do |direction, typ
         @existing_view_configuration.merge!(:"#{type}s_#{direction}_#{direction}_user" => @user.id)
         @existing_view_configuration.each do |key, value|
           if value
-            request.cookies[key] = value.to_s
+            session[key] = value.to_s
           end
         end
       end
@@ -185,7 +185,7 @@ shared_examples_for 'a controller setting links for the view' do |direction, typ
           @existing_view_configuration.merge!(:"#{type}s_#{direction}_#{direction}_query" => @query)
           @existing_view_configuration.each do |key, value|
             if value
-              request.cookies[key] = value.to_s
+              session[key] = value.to_s
             end
           end
         end
@@ -204,7 +204,7 @@ shared_examples_for 'a controller setting links for the view' do |direction, typ
         @existing_view_configuration.merge!(:"#{type}s_#{direction}_#{direction}_query" => @query)
         @existing_view_configuration.each do |key, value|
           if value
-            request.cookies[key] = value.to_s
+            session[key] = value.to_s
           end
         end
       end
@@ -227,7 +227,7 @@ shared_examples_for 'a controller setting links for the view' do |direction, typ
                                      }
       @existing_view_configuration.each do |key, value|
         if value
-          request.cookies[key] = value.to_s
+          session[key] = value.to_s
         end
       end
     end
@@ -244,7 +244,7 @@ shared_examples_for 'a controller setting links for the view' do |direction, typ
         @existing_view_configuration.merge!(:"#{type}s_#{direction}_#{direction}_query" => @query)
         @existing_view_configuration.each do |key, value|
           if value
-            request.cookies[key] = value.to_s
+            session[key] = value.to_s
           end
         end
       end
@@ -267,7 +267,7 @@ shared_examples_for 'a controller setting links for the view' do |direction, typ
                                      }
       @existing_view_configuration.each do |key, value|
         if value
-          request.cookies[key] = value.to_s
+          session[key] = value.to_s
         end
       end
     end

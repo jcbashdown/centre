@@ -36,7 +36,7 @@ describe ApplicationController do
       it 'should set the correct view configuration' do
         get :index, @params
         @view_configuration.each do |key, value|
-          request.cookie_jar[key].should == value.to_s
+          session[key].should == value.to_s
         end
       end
       it 'should set the correct defaults when nothing is set' do
@@ -75,20 +75,20 @@ describe ApplicationController do
                                 }
           @params = {:view_configuration => @new_view_configuration}
           @existing_view_configuration.each do |key, value|
-            request.cookies[key] = value.to_s
+            session[key] = value.to_s
           end
         end
         it 'should override the existing configuration if overridden' do
           get :index, @params
           @new_view_configuration.each do |key, value|
-            request.cookie_jar[key].should == value.to_s
+            session[key].should == value.to_s
           end
         end
         it 'should maintain the existing configuration if not overridden' do
           #unset are nil but set as nil is ""
           get :index, @params
           @unchanged_view_configuration.each do |key, value|
-            request.cookie_jar[key].should == value
+            session[key].should == value
           end
         end
         it 'should set the correct defaults when nothing is set' do
@@ -131,13 +131,13 @@ describe ApplicationController do
                                }
           @params = {:view_configuration => @new_view_configuration}
           @existing_view_configuration.each do |key, value|
-            request.cookies[key] = value.to_s
+            session[key] = value.to_s
           end
         end
         it 'should override the existing configuration if overridden' do
           get :index, @params
           @new_view_configuration.each do |key, value|
-            request.cookie_jar[key].should == value.to_s
+            session[key].should == value.to_s
           end
         end
         it 'should set the correct defaults when nothing is set' do
