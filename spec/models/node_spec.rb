@@ -11,18 +11,6 @@ describe Node do
       @params = {}
       @nodes = []
     end
-    describe 'find_view_links_from_by_context' do
-      it 'should call find_view_links_by_context' do
-        @node.should_receive(:find_view_links_by_context).with("from", "to", @params)
-        @node.find_view_links_from_by_context @params
-      end
-    end
-    describe 'find_view_links_from_by_context' do
-      it 'should call find_view_links_by_context' do
-        @node.should_receive(:find_view_links_by_context).with("to", "from", @params)
-        @node.find_view_links_to_by_context @params
-      end
-    end
     describe 'find_view_links_by_context' do
       before do
         @users = []
@@ -45,10 +33,10 @@ describe Node do
         ContextNode.reindex
       end
       context 'when the direction is to' do
-        it_should_behave_like 'a node finding directed links', "to", "from"
+        it_should_behave_like 'a node finding directed links', "to"
       end
       context 'when the direction is from' do
-        it_should_behave_like 'a node finding directed links', "from", "to"
+        it_should_behave_like 'a node finding directed links', "from"
       end
     end
   end

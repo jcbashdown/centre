@@ -11,21 +11,17 @@ class Node < ActiveRecord::Base
     nil
   end
 
-  # can change all to question, user, query etc but how to do cookies or translate
-  def find_view_links_from_by_context context
-    find_view_links_by_context "from", "to", context
-    #find nodes meeting criteria as below
-    #for each node that isn't self, find or construct link
-    #--
-    #alt would be find all links from ids of nodes, map ids of subset of nodes there are links for
-    #from result, delete ids from nodes map and construct for rest, slightly more db efficient as group find?
+  def opposite_direction
+    {"to" => "from", "from" => "to"}
   end
 
-  def find_view_links_to_by_context context
-    find_view_links_by_context "to", "from", context
-  end
-
-  def find_view_links_by_context direction, other_node, context
+  #find nodes meeting criteria as below
+  #for each node that isn't self, find or construct link
+  #--
+  #alt would be find all links from ids of nodes, map ids of subset of nodes there are links for
+  #from result, delete ids from nodes map and construct for rest, slightly more db efficient as group find?
+  def find_view_links_by_context direction, context
+    other_node = opposite_direction[direction]
     nodes = Node.find_by_context(context)
     links = []
     nodes.each do |node|

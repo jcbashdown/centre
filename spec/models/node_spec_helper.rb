@@ -1,6 +1,7 @@
-shared_examples_for 'a node finding directed links' do |direction, this_node|
+shared_examples_for 'a node finding directed links' do |node_is|
   context 'when the question is set' do
     before do
+      @other_node_is = @node.opposite_direction[node_is]
       @links = {}
       @users.each_with_index do |user, iu|
         @questions.each_with_index do |question, iq|
@@ -8,7 +9,7 @@ shared_examples_for 'a node finding directed links' do |direction, this_node|
             @queries.each do |query|
               if cn.title =~ Regexp.new(query, true)
                 all_key = :"user#{iu}_question#{iq}_#{query}"
-                params = {:user_id =>user.id, :question_id => question.id, :"global_node_#{direction}_id" => cn.global_node.id, :"global_node_#{this_node}_id" => @node.id}
+                params = {:user_id =>user.id, :question_id => question.id, :"global_node_#{@other_node_is}_id" => cn.global_node.id, :"global_node_#{node_is}_id" => @node.id}
                 new_gn = ContextLink::PositiveContextLink.where(params)[0].try(:global_link) || ContextLink::PositiveContextLink.create!(params).global_link
                 if new_gn
                   if @links[all_key]
@@ -46,7 +47,7 @@ shared_examples_for 'a node finding directed links' do |direction, this_node|
       @users.each_with_index do |user, iu|
         @questions.each_with_index do |question, iq|
           @queries.each do |query|
-            @node.find_view_links_by_context(direction, this_node, {:user => user.try(:id), :question => question.try(:id), :query => query}).each do |gn|
+            @node.find_view_links_by_context(node_is, {:user => user.try(:id), :question => question.try(:id), :query => query}).each do |gn|
               if user && question
                 @links[:"user#{iu}_question#{iq}_#{query}"][gn.id].should == gn 
               elsif user
@@ -56,7 +57,7 @@ shared_examples_for 'a node finding directed links' do |direction, this_node|
                   link.should == gn
                 else
                   gn.should be_a Link::GlobalLink
-                  gn.send(:"node_#{this_node}_id").should == @node.id
+                  gn.send(:"node_#{node_is}_id").should == @node.id
                 end
               end
             end

@@ -36,7 +36,7 @@ describe ApplicationController do
       it 'should set the correct view configuration' do
         get :index, @params
         @view_configuration.each do |key, value|
-          session[key].should == value.to_s
+          session[key].should == value
         end
       end
       it 'should set the correct defaults when nothing is set' do
@@ -64,10 +64,10 @@ describe ApplicationController do
           @unchanged_view_configuration = 
                                {
                                   :current_node => @node.id,
-                                  :nodes_question => @question.id.to_s,
-                                  :nodes_user => @user.id.to_s,
+                                  :nodes_question => @question.id,
+                                  :nodes_user => @user.id,
                                   :argument_question => nil,
-                                  :links_to_question => @question.id.to_s,
+                                  :links_to_question => @question.id,
                                   :links_to_query => nil,
                                   :links_from_question => nil,
                                   :links_from_user => nil,
@@ -75,13 +75,13 @@ describe ApplicationController do
                                 }
           @params = {:view_configuration => @new_view_configuration}
           @existing_view_configuration.each do |key, value|
-            session[key] = value.to_s
+            session[key] = value
           end
         end
         it 'should override the existing configuration if overridden' do
           get :index, @params
           @new_view_configuration.each do |key, value|
-            session[key].should == value.to_s
+            session[key].should == value
           end
         end
         it 'should maintain the existing configuration if not overridden' do
@@ -131,13 +131,13 @@ describe ApplicationController do
                                }
           @params = {:view_configuration => @new_view_configuration}
           @existing_view_configuration.each do |key, value|
-            session[key] = value.to_s
+            session[key] = value
           end
         end
         it 'should override the existing configuration if overridden' do
           get :index, @params
           @new_view_configuration.each do |key, value|
-            session[key].should == value.to_s
+            session[key].should == value
           end
         end
         it 'should set the correct defaults when nothing is set' do
