@@ -63,7 +63,7 @@ class ApplicationController < ActionController::Base
   end
 
   def set_links_from
-    @links_to = set_links "from" 
+    @links_from = set_links "from" 
   end
 
   def set_links direction
