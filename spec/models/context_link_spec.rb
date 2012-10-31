@@ -3,6 +3,11 @@ require 'models/context_link_spec_helper'
 
 describe ContextLink do
   describe 'create' do
+    context 'when it is a self link' do
+      it 'should not be valid' do
+        pending
+      end
+    end
     context 'when there is no existing context_link' do
       before do
         @question = FactoryGirl.create(:question)

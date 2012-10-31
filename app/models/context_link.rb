@@ -26,8 +26,11 @@ class ContextLink < ActiveRecord::Base
   validates_uniqueness_of :user_id, :scope => [:global_link_id, :question_id]
 
   before_validation(:on => :create) do
+    #if validation will return true
     create_appropriate_nodes
     create_appropriate_links
+    # end
+    # then actual validation will happen whatever
   end
 
   after_destroy :delete_appropriate_links, :update_active_links
