@@ -1,26 +1,83 @@
 class Node < ActiveRecord::Base
-  searchable do
-    text :title
-    integer :id
-    double :page_rank
-    time :created_at
+  before_save :set_caches_and_conclusion
+  def set_caches_and_conclusion
+    self.users_count = ContextNode.count( :conditions => ["#{self.type.gsub("Node::", "").underscore}_id = ?", self.id] )
+    self.conclusion_votes_count = ContextNode.count( :conditions => ["is_conclusion = true AND #{self.type.gsub("Node::", "").underscore}_id = ?", self.id] )
+    if self.conclusion_votes_count > (self.users_count/2)
+      self.is_conclusion = true
+    else
+      self.is_conclusion = false
+    end
+    nil
   end
-  has_many :global_nodes, :class_name=>'GlobalNode'
-  has_many :globals, :through => :global_nodes
-  has_many :global_node_users
-  has_many :node_users
-  has_many :users, :through => :node_users
 
-  has_many :link_ins, :foreign_key => "node_to_id", :class_name => "Link"
-  has_many :link_tos, :foreign_key => "node_from_id", :class_name => "Link"
+  def opposite_direction
+    {"to" => "from", "from" => "to"}
+  end
 
-  has_many :node_tos, :through => :link_tos, :class_name => "Node", :foreign_key => "node_to_id", :source=>:node_to
-  has_many :node_froms, :through => :link_ins, :class_name => "Node", :foreign_key => "node_from_id", :source=>:node_from
+  #find nodes meeting criteria as below
+  #for each node that isn't self, find or construct link
+  #--
+  #alt would be find all links from ids of nodes, map ids of subset of nodes there are links for
+  #from result, delete ids from nodes map and construct for rest, slightly more db efficient as group find?
+  def find_view_links_by_context direction, context
+    other_node = opposite_direction[direction]
+    nodes = Node.find_by_context(context)
+    links = []
+    nodes.each do |node|
+      klass = Link.get_klass(context)
+      global_link_attrs = {:"global_node_#{direction}_id" => self.id, :"global_node_#{other_node}_id" => node.id}
+      global_link_attrs.merge!({:active => true}) if (klass == Link::GlobalLink || klass == Link::QuestionLink)
+      if klass == ContextLink
+        link = klass.where(global_link_attrs.merge(:question_id => context[:question], :user_id => context[:user]))[0].try(:global_link)
+      elsif klass == Link::QuestionLink 
+        link = klass.where(global_link_attrs.merge(:question_id => context[:question]))[0].try(:global_link)
+      elsif klass == Link::UserLink
+        link = klass.where(global_link_attrs.merge(:user_id => context[:user]))[0].try(:global_link)
+      else
+        link = klass.where({:"node_#{direction}_id" => self.id, :"node_#{other_node}_id" => node.id})[0]
+      end
+      if link
+        links << link
+      else
+        links << Link::GlobalLink.new({:"node_#{direction}_id" => self.id, :"node_#{other_node}_id" => node.id})
+      end
+    end
+    links
+  end
 
-  validates_uniqueness_of :title
-  validates :title, :presence => true
+  def positive_cn_tos
 
-  def node_hash
-    {:title => self.title, :body=> self.body}
+  end
+
+  def negative_cn_tos
+
+  end
+
+  class << self
+    def get_klass conditions
+      if conditions[:question] && conditions[:user]
+        ContextNode
+      elsif conditions[:question]
+        Node::QuestionNode
+      elsif conditions[:user]
+        Node::UserNode
+      else
+        Node::GlobalNode
+      end
+    end
+    
+    def find_by_context conditions
+      klass = self.get_klass conditions
+      results = klass.search do
+        fulltext conditions[:query] if conditions[:query]
+        with :question_id, conditions[:question] if conditions[:question]
+        with :user_id, conditions[:user] if conditions[:user]
+        order_by(:id, :asc)
+      end.results.map(&:global_node)
+      Node::GlobalNode.where(:id => results).page(conditions[:page]).per(15)
+    end
+    
   end
 end
+

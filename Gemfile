@@ -17,7 +17,7 @@ gem "haml", ">= 3.1.2"
 gem "haml-rails", ">= 0.3.4", :group => :development
 gem "rspec-rails", ">= 2.6.1", :group => [:development, :test]
 gem "factory_girl_rails", ">= 1.2.0", :group => :test
-gem "cucumber-rails", ">= 1.1.1", :group => :test
+gem "cucumber-rails", ">= 1.1.1", :group => :test, :require => false
 gem "capybara", ">= 1.1.1", :group => :test
 gem "database_cleaner", ">= 0.6.7", :group => :test
 gem "launchy", ">= 2.0.5", :group => :test
@@ -46,4 +46,4 @@ gem "nokogiri"
 gem 'sunspot_rails'
 gem 'sunspot_solr'
 gem 'pry'#, :group => :test
-gem 'morph'
+gem "activerecord-import"

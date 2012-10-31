@@ -18,11 +18,18 @@
           = content_tag :div, msg, :id => "flash_#{name}" if msg.is_a?(String)
       #main{:role => "main"}
         .row-fluid
-          .span3
-            #global_id.hidden= @question.id
-            -if @user
+          .span4
+            %h2= @nodes_question ? @nodes_question.name : "All"
+            #global_id.hidden= @question.id if @question
+            -if current_user
               = render 'new_form'
             #current_nodes
               =render :partial => 'current_nodes', :locals => {:nodes => @nodes}
-          =yield 
+          .span8
+            .row-fluid
+              .span8.main_content
+                =yield 
+              .span4.right_content
+              - if @links_from && @links_to
+                = render 'links'
       %footer

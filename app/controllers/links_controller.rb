@@ -1,62 +1,50 @@
 class LinksController < ApplicationController
-  before_filter :signed_in_user
-  before_filter :set_node_limit
-  before_filter :set_node_order
-  before_filter :set_node_limit_order
-  before_filter :set_global, :only => [:create, :destroy, :update]
+  prepend_before_filter :signed_in_user
+  before_filter :set_link_question
 
   def create
-    @glu = GlobalLinkUser.new(params[:link].merge(:global => @global, :user => @user))
+    @context_link = "ContextLink::#{params[:type]}ContextLink".constantize.new(params[:global_link].merge(:question_id => @link_question, :user => current_user))
     respond_to do |format|
-      if @glu.save
-        format.js { render :partial => 'a_link', :locals=>{:link => @glu.link, :type=>params[:type]} }
+      if @context_link.save
+        format.js { render :partial => 'a_link', :locals=>{:link => @context_link.global_link, :direction=>params[:direction]} }
       else
-        link_params = params[:link]
-        link_params.delete(:value)
-        blank_link = Link.new(link_params)
-        format.js { render :partial => 'a_link', :locals=>{:link => blank_link, :type=>params[:type]} }
+        link_params = params[:global_link]
+        blank_link = Link::GlobalLink.new(:node_from_id => link_params[:global_node_from_id], :node_to_id => link_params[:global_node_to_id])
+        format.js { render :partial => 'a_link', :locals=>{:link => blank_link, :direction=>params[:direction]} }
       end
     end
   end
 
   def update
-    @link = Link.find(params[:id])
-    @glu = GlobalLinkUser.with_all_associations.where(:global_id => @global.id, :user_id => @user.id, :link_id => @link.id)[0]
+    @global_link = Link::GlobalLink.find(params[:id])
+    @context_link = ContextLink.with_all_associations.where(:question_id => @link_question, :user_id => current_user.id, :global_link_id => @global_link.id)[0]
     respond_to do |format|
-      if @glu.destroy && (@glu = GlobalLinkUser.create(params[:link].merge(:global => @global, :user => @user)))
-        format.js { render :partial => 'a_link', :locals=>{:link=> @glu.link, :type=>params[:type]} }
+      if @context_link = @context_link.update_type(params[:type])
+        format.js { render :partial => 'a_link', :locals=>{:global_link=> @context_link.global_link, :direction=>params[:direction]} }
       else
-        unless @glu && @glu.persisted?
-          link_params = params[:link]
-          link_params.delete(:value)
-          link = Link.new(link_params)
+        unless @context_link && @context_link.persisted?
+          link_params = params[:global_link]
+          link = Link::GlobalLink.new(:node_from_id => link_params[:global_node_from_id], :node_to_id => link_params[:global_node_to_id])
         else
-          link = @glu.link
+          link = @context_link.global_link
         end
-        format.js { render :partial => 'a_link', :locals=>{:link => link, :type=>params[:type]} }
+        format.js { render :partial => 'a_link', :locals=>{:link => link, :direction=>params[:direction]} }
       end
     end
   end
 
   def destroy
-    @link = Link.find(params[:id])
-    @glu = GlobalLinkUser.with_all_associations.where(:global_id => @global.id, :user_id => @user.id, :link_id => @link.id)[0]
+    @global_link = Link::GlobalLink.find(params[:id])
+    @context_link = ContextLink.with_all_associations.where(:question_id => @link_question, :user_id => current_user.id, :global_link_id => @global_link.id)[0]
     respond_to do |format|
-      if @glu.destroy
-        link_params = params[:link]
-        link_params.delete(:value)
-        blank_link = Link.new(link_params)
-        format.js { render :partial => 'a_link', :locals=>{:link=>blank_link, :type=>params[:type]} }
+      if @context_link.destroy
+        link_params = params[:global_link]
+        blank_link = Link::GlobalLink.new(:node_from_id => link_params[:global_node_from_id], :node_to_id => link_params[:global_node_to_id])
+        format.js { render :partial => 'a_link', :locals=>{:link=>blank_link, :direction=>params[:direction]} }
       else
-        format.js { render :partial => 'a_link', :locals=>{:link=>@glu.link, :type=>params[:type]} }
+        format.js { render :partial => 'a_link', :locals=>{:link=>@context_link.global_link, :direction=>params[:direction]} }
       end
     end
   end
   
-  protected
-
-  def set_global
-    @global = (@question.name == 'All') ? Global.find_by_name('Unclassified') : @question
-  end
-
 end

@@ -1,10 +1,10 @@
--froms_positive = node.positive_global_node_user_froms
--froms_negative = node.negative_global_node_user_froms
+-tos_positive = node.positive_cn_tos
+-tos_negative = node.negative_cn_tos
 %div{:id => "#{previous}#{node.id}"}
   - if node.id == original.to_i
     %h5 Argument For
   %ul.positive
-    -froms_positive.each do |from|
+    -tos_positive.each do |from|
       %li
         %i{:class => "icon-plus"}
         %a{:href => node_path(from, @limit_order)}
@@ -17,7 +17,7 @@
   - if node.id == original.to_i
     %h5 Argument Against
   %ul.positive
-    -froms_negative.each do |from|
+    -tos_negative.each do |from|
       %li
         %i{:class => "icon-minus"}
         %a{:href => node_path(from, @limit_order)}

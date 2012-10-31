@@ -1,11 +1,17 @@
-require "#{Rails.root}/lib/link_mixin.rb"
-
 class Link < ActiveRecord::Base
-  include LinkMixin
 
-  has_many :link_users
-  has_many :users, :through => :link_users
-  has_many :global_link_users
+  class << self
+    def get_klass conditions
+      if conditions[:question] && conditions[:user]
+        ContextLink
+      elsif conditions[:question]
+        Link::QuestionLink
+      elsif conditions[:user]
+        Link::UserLink
+      else
+        Link::GlobalLink
+      end
+    end
+  end
 
-  validates_uniqueness_of :value, :scope => [:node_from_id, :node_to_id]
 end

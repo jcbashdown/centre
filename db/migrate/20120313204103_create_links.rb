@@ -1,13 +1,28 @@
 class CreateLinks < ActiveRecord::Migration
   def change
     create_table :links do |t|
+      t.references :user
+      t.references :question
+      t.references :global_link
       t.integer :node_from_id
       t.integer :node_to_id
-      t.integer :global_link_users_count, :default=>0, :null => false
-      t.integer :link_users_count, :default=>0, :null => false
-      t.integer :value
+      t.integer :global_node_from_id
+      t.integer :global_node_to_id
+      t.integer :users_count, :default=>0, :null => false
+      t.boolean :active, :default=>false
+      t.boolean :private, :default=>false
+      t.string :type
 
       t.timestamps
     end
+    add_index :links, :global_node_from_id
+    add_index :links, :global_node_to_id
+    add_index :links, :node_from_id
+    add_index :links, :node_to_id
+    add_index :links, :type
+    add_index :links, :active
+    add_index :links, :user_id
+    add_index :links, :question_id
+    add_index :links, :global_link_id
   end
 end
