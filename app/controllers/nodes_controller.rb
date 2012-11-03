@@ -32,7 +32,7 @@ class NodesController < ApplicationController
   end
 
   def create
-    context_node = ContextNode.new({:user_id => current_user.id, :question_id => @node_question}.merge(params[:node]))
+    context_node = ContextNode.new({:user_id => current_user.id, :question_id => @node_question.try(:id)}.merge(params[:node]))
     respond_to do |format|
       if context_node.save
         @node = context_node.global_node
@@ -61,7 +61,7 @@ class NodesController < ApplicationController
   protected
 
   def redirect_if_new_exists
-    @context_node = ContextNode.where({:user_id => current_user.id, :question_id => @node_question, :title => params[:node][:title]})[0]
+    @context_node = ContextNode.where({:user_id => current_user.id, :question_id => @node_question.try(:id), :title => params[:node][:title]})[0]
     if @context_node
       redirect_to node_path(@context_node.global_node)
     end

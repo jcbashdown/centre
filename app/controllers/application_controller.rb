@@ -9,7 +9,7 @@ class ApplicationController < ActionController::Base
 
   def set_node_question
     if question_id = session[:nodes_question]
-      @node_question = question_id.to_i
+      @node_question = Question.find_by_id question_id
     else
       @node_question = nil
     end
@@ -30,7 +30,8 @@ class ApplicationController < ActionController::Base
 
   def set_questions
     @new_question = Question.new
-    @questions = Question.all.map { |question| [question.name, question.id] }
+    @questions = [['All', nil]]
+    @questions += Question.all.map { |question| [question.name, question.id] }
     @questions << ['New/Search For Question', '#new']
   end
 
@@ -44,12 +45,17 @@ class ApplicationController < ActionController::Base
   def update_view_configuration
     if params[:view_configuration]
       params[:view_configuration].each do |key, value|
-        session[key] = value if (value && accepted_options[key])
+        session[key] = (value.present? ?  value : nil) if (value && accepted_options[key])
       end
     end
   end
   
   def set_nodes
+    x = {:question => session[:nodes_question],
+       :user => session[:nodes_user], 
+       :query => session[:nodes_query], 
+       :page => params[:page]}
+    p x
     @nodes = Node.find_by_context({
                                     :question => session[:nodes_question],
                                     :user => session[:nodes_user], 

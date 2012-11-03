@@ -1,8 +1,4 @@
 class QuestionsController < ApplicationController
-  def new
-    @question = Question.new
-    render :new, :layout => false
-  end
 
   def create
     @question = Question.new(params[:question])
