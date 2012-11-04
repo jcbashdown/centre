@@ -22,7 +22,7 @@ class ApplicationController < ActionController::Base
       question_id = session[:links_from_question]
     end
     if question_id
-      @link_question = question_id.to_i
+      @link_question = Question.find_by_id question_id
     else
       @link_question = nil
     end
@@ -45,17 +45,12 @@ class ApplicationController < ActionController::Base
   def update_view_configuration
     if params[:view_configuration]
       params[:view_configuration].each do |key, value|
-        session[key] = (value.present? ?  value : nil) if (value && accepted_options[key])
+        session[key] = (value.present? ?  value : nil) if accepted_options[key]
       end
     end
   end
   
   def set_nodes
-    x = {:question => session[:nodes_question],
-       :user => session[:nodes_user], 
-       :query => session[:nodes_query], 
-       :page => params[:page]}
-    p x
     @nodes = Node.find_by_context({
                                     :question => session[:nodes_question],
                                     :user => session[:nodes_user], 

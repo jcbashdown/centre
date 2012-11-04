@@ -1,13 +1,16 @@
 class QuestionsController < ApplicationController
 
   def create
-    @question = Question.new(params[:question])
-    if @question.save
-      flash[:notice]=@question.name+" created"
+    @question = Question.where(params[:question])[0] || Question.new(params[:question])
+    if @question.persisted?
+      flash[:notice] = "Redirected to #{@question.name}"
+    elsif @question.save
+      flash[:notice] = @question.name+" created"
     else
       flash[:alert] = "Cannot create a blank question"
     end
-    redirect_to nodes_path(:question=>@question.id)
+    session[:nodes_question] = @question.try(:id)
+    redirect_to nodes_path
   end
 
 end

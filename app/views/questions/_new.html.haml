@@ -1,5 +1,5 @@
 .select-form
-  =form_tag nodes_path, :method => :get, :html => {:class => 'navbar-form'} do
+  =form_tag nodes_path, :method => :get, :class => 'navbar-form' do
     =select :view_configuration, :nodes_question, @questions, :selected => (@node_question ? @node_question.try(:id) : nil), :class => "span2", :id => "question"
 .new-form.hidden
   =form_for @new_question, :html => {:class => 'navbar-form'} do |g|
