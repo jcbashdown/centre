@@ -65,3 +65,10 @@ ul.positive {
 .positive li{
     height: 24px;
 }
+
+.accordion-heading-override.selected {
+  background-color: #0088CC;
+}
+.selected a {
+  color: white;
+}

@@ -143,7 +143,7 @@ describe ContextLink do
                                           :upvotes_count => 0
                                         }
                         }
-          @question = FactoryGirl.create(:question, :name => 'new question')
+          @question = FactoryGirl.create(:question, :name => 'another new question')
         end
         it_should_behave_like 'a context link creating links', "Positive"
       end

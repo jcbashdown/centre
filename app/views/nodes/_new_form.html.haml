@@ -5,14 +5,13 @@
       %ul
         - @new_node.errors.full_messages.each do |msg|
           %li= msg
-  .input-append
-    = f.text_field :title, :placeholder=>"Node Title", :class=>"typeahead", :autocomplete => "off"
-    = f.submit 'Add/View', :class => 'btn'
   .row-fluid
     .span12
-      %br
+      .input-append
+        = f.text_field :title, :placeholder=>"Node Title", :class=>"typeahead", :autocomplete => "off"
+        = f.submit 'Add/View', :class => 'btn'
       %label.checkbox.right
         Conclusion?&nbsp;
-        = f.check_box :is_conclusion, :class => 'right'
+      = f.check_box :is_conclusion, :class => 'right'
   - if @question
     %input{:style => 'display:none;', :value => @question.id, :name => "question"}

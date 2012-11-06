@@ -10,6 +10,8 @@ class QuestionsController < ApplicationController
       flash[:alert] = "Cannot create a blank question"
     end
     session[:nodes_question] = @question.try(:id)
+    session[:links_to_question] = @question.try(:id)
+    session[:links_from_question] = @question.try(:id)
     redirect_to nodes_path
   end
 
