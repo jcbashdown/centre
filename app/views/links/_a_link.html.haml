@@ -5,15 +5,13 @@
   %td
     = radio_button link_id, :value, "Positive", {:checked => (link.positive? ? true : false), :class=>"submitter #{link_id}"}
   %td
-    = radio_button link_id, :value, "Equivalent", {:checked => (link.equivalent? ? true : false), :class=>"submitter #{link_id}"}
-  %td
     = radio_button link_id, :value, "Negative", {:checked => (link.negative? ? true : false), :class=>"submitter #{link_id}"}
   %td
-    = hidden_field link_id, :node_from, {:value=>link.node_from_id, :class=>"node_from #{link_id}"}
-    = hidden_field link_id, :node_to, {:value=>link.node_to_id, :class=>"node_to #{link_id}"}
+    = hidden_field link_id, :node_from, {:value=>link.global_node_from.id, :class=>"node_from #{link_id}"}
+    = hidden_field link_id, :node_to, {:value=>link.global_node_to.id, :class=>"node_to #{link_id}"}
     - if direction == "link_tos"
-      %a{:href => node_path(link.node_to, @limit_order)}
-        = link.node_to.title
+      %a{:href => node_path(link.global_node_to, @limit_order)}
+        = link.global_node_to.title
     - if direction == "link_ins"
-      %a{:href => node_path(link.node_from, @limit_order)}
-        = link.node_from.title
+      %a{:href => node_path(link.global_node_from, @limit_order)}
+        = link.global_node_from.title

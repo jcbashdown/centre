@@ -20,7 +20,7 @@ class LinksController < ApplicationController
     @context_link = ContextLink.with_all_associations.where(:question_id => @link_question.try(:id), :user_id => current_user.id, :global_link_id => @global_link.id)[0]
     respond_to do |format|
       if @context_link = @context_link.update_type(params[:type])
-        format.js { render :partial => 'a_link', :locals=>{:global_link=> @context_link.global_link, :direction=>params[:direction]} }
+        format.js { render :partial => 'a_link', :locals=>{:link=> @context_link.global_link, :direction=>params[:direction]} }
       else
         unless @context_link && @context_link.persisted?
           link_params = params[:global_link]
@@ -37,7 +37,7 @@ class LinksController < ApplicationController
     @global_link = Link::GlobalLink.find(params[:id])
     @context_link = ContextLink.with_all_associations.where(:question_id => @link_question.try(:id), :user_id => current_user.id, :global_link_id => @global_link.id)[0]
     respond_to do |format|
-      if @context_link.destroy
+      if @context_link.destroy_all_for_user_link
         link_params = params[:global_link]
         blank_link = Link::GlobalLink.new(:node_from_id => link_params[:global_node_from_id], :node_to_id => link_params[:global_node_to_id])
         format.js { render :partial => 'a_link', :locals=>{:link=>blank_link, :direction=>params[:direction]} }

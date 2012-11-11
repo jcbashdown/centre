@@ -1,13 +1,11 @@
 require "#{Rails.root}/lib/link_creation_module.rb"
 require "#{Rails.root}/lib/link_deletion_module.rb"
-require "#{Rails.root}/lib/link_update_module.rb"
 require "#{Rails.root}/lib/activerecord_import_methods.rb"
 
 class ContextLink < ActiveRecord::Base
   include ActiverecordImportMethods
   include LinkCreationModule
   include LinkDeletionModule
-  include LinkUpdateModule
   belongs_to :question
   belongs_to :user
   belongs_to :global_link, :class_name => Link::GlobalLink
@@ -36,10 +34,12 @@ class ContextLink < ActiveRecord::Base
   after_destroy :delete_appropriate_links, :update_active_links
   after_create :update_active_links
 
-  #before_update :update_sublinks
-  #after_update :update_appropriate_links
-  #attr_accessor :new_type, :no_other_context_links
-  #need in accessible as well for mass assign
+  def destroy_all_for_user_link
+    ContextLink.where('user_link_id = ?', self.user_link_id).each do |cl|
+      attributes = {:user => cl.user, :question => cl.question, :global_node_from_id => cl.global_node_from_id, :global_node_to_id => cl.global_node_to_id}
+      cl.destroy
+    end
+  end
 
   def update_type(type)
     ContextLink.where('user_link_id = ? AND id != ?', self.user_link_id, self.id).each do |cl|

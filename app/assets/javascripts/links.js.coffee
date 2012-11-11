@@ -13,8 +13,8 @@ $(document).ready ->
     from = $("#"+link_id+"_node_from").attr("value")
     to = $("#"+link_id+"_node_to").attr("value")
     data_hash["type"] = $(event.target).attr("value")
-    data_hash["link"] = {"node_from_id":from, "node_to_id":to}
-    if value == "_destroy"
+    data_hash["global_link"] = {"global_node_from_id":from, "global_node_to_id":to}
+    if data_hash["type"] == "_destroy"
       url = "/links/"+link_id
       method = "DELETE"
     else if link_id >= 16
