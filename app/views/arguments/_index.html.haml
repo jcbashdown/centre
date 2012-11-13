@@ -1,0 +1,26 @@
+.tabbable
+  %ul.nav.nav-pills.right
+    - if @node_question
+      %li#menu2.dropdown.active
+        %a.dropdown-toggle{"data-toggle" => "dropdown", :href => "#menu2"}
+          Topic 
+          %b.caret
+        %ul.dropdown-menu
+          - if current_user
+            %li.arg-option
+              %a{"data-toggle" => "tab", "data-target" => "#my_topic", :href => user_arguments_path(:view_configuration => {:nodes_question => @node_question.id}, :path => "my_topic"), "data-remote" => true} My Topic
+          %li.divider
+            %li.arg-option.active
+              %a{"data-toggle" => "tab", "data-target" => "#everyones_topic", :href => global_arguments_path(:view_configuration => {:nodes_question => @node_question.id}, :path => "everyones_topic"), "data-remote" => true} Everyone's topic
+          %li.divider
+            - User.all.each do |user|
+              %li.arg-option
+                %a{"data-toggle" => "tab", "data-target" => "#other_user_topic", :href => user_arguments_path(:view_configuration => {:nodes_question => @node_question.id}, :user_id => user.id, :path => "other_user_topic"), "data-remote" => true}= user.name 
+  .tab-content
+    -if current_user
+      #my_topic.tab-pane
+        Loading...
+    #other_user_topic.tab-pane
+      Loading...
+    #everyones_topic.tab-pane.active
+      = render(:partial => 'global_arguments/index', :locals => {:previous => "everyones_topic", :nodes_question => @node_question.id})

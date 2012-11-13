@@ -15,7 +15,7 @@ module NodeDeletionModule
   end
 
   def delete_context_links
-    ContextLink.where('context_node_from_id = ? || context_node_to_id = ?', id, id).first.destroy_all_for_user_link
+    ContextLink.where('context_node_from_id = ? || context_node_to_id = ?', id, id).each {|cl| cl.destroy_all_for_user_link}
   end
 
 end

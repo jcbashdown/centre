@@ -181,13 +181,13 @@ describe LinksController do
           @mock_global_link = mock('global_link')
           @mock_cl_2.stub(:save).and_return true
           @mock_cl_2.stub(:link).and_return @mock_global_link
-          @mock_cl.stub(:destroy).and_return true
+          @mock_cl.stub(:destroy_all_for_user_link).and_return true
           @mock_relation = mock('relation')
         end
         it 'should save the glu' do
           @mock_relation.stub(:where).and_return [@mock_cl]
           ContextLink.stub(:with_all_associations).and_return @mock_relation
-          @mock_cl.should_receive(:destroy)
+          @mock_cl.should_receive(:destroy_all_for_user_link)
           xhr :put, :destroy, @params_one
         end
         it 'decrement the caches' do
@@ -213,7 +213,7 @@ describe LinksController do
       end
       context 'when destroy or save returns false for glu' do
         before do
-          @context_link.stub(:destroy).and_return false
+          @context_link.stub(:destroy_all_for_user_link).and_return false
           ContextLink::PositiveContextLink.stub(:find).and_return @context_link
         end
         it 'should render the link template' do

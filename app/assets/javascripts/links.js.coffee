@@ -17,7 +17,7 @@ $(document).ready ->
     if data_hash["type"] == "_destroy"
       url = "/links/"+link_id
       method = "DELETE"
-    else if link_id >= 16
+    else if link_id.length >= 16
       url = "/links"
       method = "POST"
     else

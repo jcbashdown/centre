@@ -30,6 +30,6 @@
               .span8.main_content
                 =yield 
               .span4.right_content
-              - if @links_from && @links_to
-                = render 'links'
+                - if @links_from && @links_to
+                  = render 'links'
       %footer

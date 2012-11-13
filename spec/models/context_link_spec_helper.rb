@@ -116,70 +116,70 @@ shared_examples_for 'a @context_link deleting links' do |type|
   end
   it 'should destroy the correct number of context links' do
     expect {
-      @context_link.destroy
+      @context_link.destroy_all_for_user_link
     }.to change(ContextLink, :count).by(@state_hash[:context_link][:number_destroyed])
   end
   it 'should destroy the correct number of the correct context links' do
     expect {
-      @context_link.destroy
+      @context_link.destroy_all_for_user_link
     }.to change("ContextLink::#{type}ContextLink".constantize, :count).by(@state_hash[:context_link][:number_destroyed])
   end
   it 'should destroy the correct number of question links' do
     expect {
-      @context_link.destroy
+      @context_link.destroy_all_for_user_link
     }.to change(Link::QuestionLink, :count).by(@state_hash[:question_link][:number_destroyed])
   end
   it 'should destroy the correct number of the correct question links' do
     expect {
-      @context_link.destroy
+      @context_link.destroy_all_for_user_link
     }.to change("Link::QuestionLink::#{type}QuestionLink".constantize, :count).by(@state_hash[:question_link][:number_destroyed])
   end
   it 'should destroy the ql with the correct counts' do
-    @context_link.destroy
+    @context_link.destroy_all_for_user_link
     "Link::QuestionLink::#{type}QuestionLink".constantize.where(@ql_attrs)[0].try(:users_count).should == @state_hash[:question_link][:users_count]
   end
   it 'should destroy the ql with the correct activation' do
-    @context_link.destroy
+    @context_link.destroy_all_for_user_link
     "Link::QuestionLink::#{type}QuestionLink".constantize.where(@ql_attrs)[0].try(:active).should == @state_hash[:question_link][:activation]
   end
   it 'should destroy the correct number of uls' do
     expect {
-      @context_link.destroy
+      @context_link.destroy_all_for_user_link
     }.to change(Link::UserLink, :count).by(@state_hash[:user_link][:number_destroyed])
   end
   it 'should destroy the correct number of the correct uls' do
     expect {
-      @context_link.destroy
+      @context_link.destroy_all_for_user_link
     }.to change("Link::UserLink::#{type}UserLink".constantize, :count).by(@state_hash[:user_link][:number_destroyed])
   end
   it 'should destroy the ul with the correct counts' do
-    @context_link.destroy
+    @context_link.destroy_all_for_user_link
     "Link::UserLink::#{type}UserLink".constantize.where(@ul_attrs)[0].try(:users_count).should == @state_hash[:user_link][:users_count]
   end
   it 'should destroy the ul with the correct activation' do
-    @context_link.destroy
+    @context_link.destroy_all_for_user_link
     "Link::UserLink::#{type}UserLink".constantize.where(@ul_attrs)[0].try(:active).should == @state_hash[:user_link][:activation]
   end
   it 'should destroy the correct number of gls' do
     expect {
-      @context_link.destroy
+      @context_link.destroy_all_for_user_link
     }.to change(Link::GlobalLink, :count).by(@state_hash[:global_link][:number_destroyed])
   end
   it 'should destroy the correct number of the correct gls' do
     expect {
-      @context_link.destroy
+      @context_link.destroy_all_for_user_link
     }.to change("Link::GlobalLink::#{type}GlobalLink".constantize, :count).by(@state_hash[:global_link][:number_destroyed])
   end
   it 'should destroy the gl with the correct counts' do
-    @context_link.destroy
+    @context_link.destroy_all_for_user_link
     "Link::GlobalLink::#{type}GlobalLink".constantize.where(@gl_attrs)[0].try(:users_count).should == @state_hash[:global_link][:users_count]
   end
   it 'should destroy the gl with the correct activation' do
-    @context_link.destroy
+    @context_link.destroy_all_for_user_link
     "Link::GlobalLink::#{type}GlobalLink".constantize.where(@gl_attrs)[0].try(:active).should == @state_hash[:global_link][:activation]
   end
   it 'should have the correct votes on the gns' do
-    @context_link.destroy
+    @context_link.destroy_all_for_user_link
     @state_hash[:new_global_node_to].each do |key, value|
       @context_link.try(:global_node_to).try(:reload).try(key).should == value
     end
@@ -188,7 +188,7 @@ shared_examples_for 'a @context_link deleting links' do |type|
     end
   end
   it 'should have the correct votes on the qns' do
-    @context_link.destroy
+    @context_link.destroy_all_for_user_link
     @state_hash[:new_question_node_to].each do |key, value|
       @context_link.try(:question_node_to).try(:reload).try(key).should == value
     end
@@ -197,7 +197,7 @@ shared_examples_for 'a @context_link deleting links' do |type|
     end
   end
   it 'should have the correct votes on the uns' do
-    @context_link.destroy
+    @context_link.destroy_all_for_user_link
     @state_hash[:new_user_node_to].each do |key, value|
       @context_link.try(:user_node_to).try(:reload).try(key).should == value
     end
