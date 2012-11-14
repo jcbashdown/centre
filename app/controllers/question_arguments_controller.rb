@@ -1,4 +1,4 @@
-class GlobalArgumentsController < ActionController::Base
+class QuestionArgumentsController < ActionController::Base
   
   def show
     @node = GlobalNode.find(params[:id])
