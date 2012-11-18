@@ -63,3 +63,4 @@ tmp/*
 
 # vim artifacts
 **.swp
+**.swo
