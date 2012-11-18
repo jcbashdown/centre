@@ -4,7 +4,7 @@ Centre::Application.routes.draw do
   resources :questions
   resources :links
   resources :user_arguments, :only => [:show, :index]
-  resources :global_arguments, :only => [:show, :index]
+  resources :question_arguments, :only => [:show, :index]
   resources :arguments, :only => [:show, :index]
 
   root :to => "nodes#index"

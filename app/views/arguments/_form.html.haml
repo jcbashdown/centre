@@ -1,6 +1,6 @@
 .tabbable
   %ul.nav.nav-pills.right
-    - if @node_question
+    - if @argument_question
       %li#menu2.dropdown.active
         %a.dropdown-toggle{"data-toggle" => "dropdown", :href => "#menu2"}
           Topic 
@@ -23,4 +23,4 @@
     #other_user_topic.tab-pane
       Loading...
     #everyones_topic.tab-pane.active
-      = render(:partial => 'question_arguments/index', :locals => {:previous => "everyones_topic"})
+      = render(:partial => 'question_arguments/index', :locals => {:previous => "everyones_topic", :question => @argument_question})

@@ -6,12 +6,21 @@ class ApplicationController < ActionController::Base
   before_filter :set_questions
   before_filter :update_view_configuration
   before_filter :set_node_question
+  before_filter :set_argument_question
 
   def set_node_question
     if question_id = session[:nodes_question]
       @node_question = Question.find_by_id question_id
     else
       @node_question = nil
+    end
+  end
+
+  def set_argument_question
+    if question_id = session[:arguments_question]
+      @argument_question = Question.find_by_id question_id
+    else
+      @argument_question = nil
     end
   end
   
@@ -46,6 +55,12 @@ class ApplicationController < ActionController::Base
     if params[:view_configuration]
       params[:view_configuration].each do |key, value|
         session[key] = (value.present? ?  value : nil) if accepted_options[key]
+      end
+      #temporary
+      if session[:nodes_question]
+        session[:links_to_question] = session[:nodes_question]
+        session[:links_from_question] = session[:nodes_question]
+        session[:arguments_question] = session[:nodes_question]
       end
     end
   end

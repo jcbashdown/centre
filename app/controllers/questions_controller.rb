@@ -12,6 +12,7 @@ class QuestionsController < ApplicationController
     session[:nodes_question] = @question.try(:id)
     session[:links_to_question] = @question.try(:id)
     session[:links_from_question] = @question.try(:id)
+    session[:arguments_question] = @question.try(:id)
     redirect_to nodes_path
   end
 
