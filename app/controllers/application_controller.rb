@@ -56,12 +56,16 @@ class ApplicationController < ActionController::Base
       params[:view_configuration].each do |key, value|
         session[key] = (value.present? ?  value : nil) if accepted_options[key]
       end
-      #temporary
-      if session[:nodes_question]
-        session[:links_to_question] = session[:nodes_question]
-        session[:links_from_question] = session[:nodes_question]
-        session[:arguments_question] = session[:nodes_question]
-      end
+    end
+    session[:nodes_user] ||= current_user.id 
+    session[:links_to_user] ||= current_user.id 
+    session[:links_from_user] ||= current_user.id 
+    session[:arguments_user] ||= current_user.id 
+    #temporary
+    if session[:nodes_question]
+      session[:links_to_question] = session[:nodes_question]
+      session[:links_from_question] = session[:nodes_question]
+      session[:arguments_question] = session[:nodes_question]
     end
   end
   
@@ -76,10 +80,12 @@ class ApplicationController < ActionController::Base
 
   def set_links_to
     @links_to = set_links "to"
+    p @links_to
   end
 
   def set_links_from
     @links_from = set_links "from" 
+    p @links_from
   end
 
   def set_links direction
@@ -89,6 +95,7 @@ class ApplicationController < ActionController::Base
                 :query => session[:"links_#{direction}_query"], 
                 :page => params[:page]
               })
+    p context
     @node.find_view_links_by_context direction, context
   end
 

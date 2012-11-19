@@ -1,14 +1,15 @@
 class QuestionArgumentsController < ActionController::Base
   
   def show
-    @node = GlobalNode.find(params[:id])
-    if @node.global_node_froms
-      @previous = params[:path]
-      @original= params[:original]
-      respond_to do |format|
-        format.js {}
-        format.html {render(:partial => 'global_arguments/show', :locals => {:node => @node, :previous => @previous, :original => @original})}
-      end
+    @node = Node::QuestionNode.find(params[:id])
+p @node.positive_node_froms
+p @node.negative_node_froms
+p session
+    @previous = params[:path]
+    @original= params[:original]
+    respond_to do |format|
+      format.js {}
+      format.html {render(:partial => 'question_arguments/show', :locals => {:node => @node, :previous => @previous, :original => @original})}
     end
   end 
  
