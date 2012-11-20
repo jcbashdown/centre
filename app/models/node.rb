@@ -31,7 +31,6 @@ class Node < ActiveRecord::Base
         global_link_attrs.merge!({:active => true}) if (klass == Link::GlobalLink || klass == Link::QuestionLink)
         if klass == ContextLink
           link = klass.where(global_link_attrs.merge(:question_id => context[:question], :user_id => context[:user]))[0].try(:global_link)
-          p link
         elsif klass == Link::QuestionLink 
           link = klass.where(global_link_attrs.merge(:question_id => context[:question]))[0].try(:global_link)
         elsif klass == Link::UserLink

@@ -2,9 +2,6 @@ class QuestionArgumentsController < ActionController::Base
   
   def show
     @node = Node::QuestionNode.find(params[:id])
-p @node.positive_node_froms
-p @node.negative_node_froms
-p session
     @previous = params[:path]
     @original= params[:original]
     respond_to do |format|

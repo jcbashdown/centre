@@ -8,7 +8,7 @@ class ContextLink < ActiveRecord::Base
   include LinkDeletionModule
   belongs_to :question
   belongs_to :user
-  belongs_to :global_link, :class_name => Link::GlobalLink
+  belongs_to :global_link, :class_name => Link
   belongs_to :question_link, :class_name => Link::QuestionLink, :counter_cache => :users_count
   belongs_to :user_link, :class_name => Link::UserLink
   belongs_to :global_node_from, :class_name => Node::GlobalNode
@@ -65,7 +65,7 @@ class ContextLink < ActiveRecord::Base
   protected
 
   def update_active_links
-    Link::GlobalLink.update_active
-    Link::QuestionLink.update_active(self.question_id)
+    Link::GlobalLink.update_active(self.global_node_from_id, self.global_node_to_id)
+    Link::QuestionLink.update_active(self.global_node_from_id, self.global_node_to_id, self.question_id)
   end
 end

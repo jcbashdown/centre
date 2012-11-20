@@ -4,18 +4,19 @@ class Link::QuestionLink < Link
   belongs_to :global_link
 
   class << self
-    def update_active(question)
-      unless (current_active = active(question)) == (by_votes = active_by_votes(question))
+    def update_active(gn_from, gn_to, question)
+      p "UPDATING ACTIVE"
+      unless (current_active = active(gn_from, gn_to, question)) == (by_votes = active_by_votes(gn_from, gn_to, question))
         current_active.update_attributes(:active => false) if current_active
         by_votes.update_attributes(:active => true)
       end
     end
   
-    def active_by_votes(question)
-      where(:question_id => question).order(:users_count).last
+    def active_by_votes(gn_from, gn_to, question)
+      where(:global_node_from_id => gn_from, :global_node_to_id => gn_to, :question_id => question).order(:users_count).last
     end
-    def active(question)
-      where(:active => true, :question_id => question).last
+    def active(gn_from, gn_to, question)
+      where(:global_node_from_id => gn_from, :global_node_to_id => gn_to, :active => true, :question_id => question).last
     end
   end
 end

@@ -14,18 +14,18 @@ class Link::GlobalLink < Link
   end
 
   class << self
-    def update_active
-      unless active == active_by_votes
-        active.update_attributes(:active => false) if active
-        active_by_votes.update_attributes(:active => true)
+    def update_active(n_from, n_to)
+      unless (current_active = active(n_from, n_to)) == (by_votes = active_by_votes(n_from, n_to))
+        current_active.update_attributes(:active => false) if current_active
+        by_votes.update_attributes(:active => true)
       end
     end
 
-    def active_by_votes
-      order(:users_count).last
+    def active_by_votes(n_from, n_to)
+      where(:node_from_id => n_from, :node_to_id => n_to).order(:users_count).last
     end
-    def active
-      where(:active => true).last
+    def active(n_from, n_to)
+      where(:node_from_id => n_from, :node_to_id => n_to, :active => true).last
     end
   end
 
