@@ -10,6 +10,5 @@ Centre::Application.routes.draw do
   root :to => "nodes#index"
 
   devise_for :users, :controllers => {:registrations => "registrations", :sessions => "sessions"}
-  resources :users, :only => :show
 end
 

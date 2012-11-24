@@ -64,11 +64,9 @@ class ApplicationController < ActionController::Base
       session[:arguments_user] ||= current_user.id 
     end
     #temporary
-    if session[:nodes_question]
-      session[:links_to_question] = session[:nodes_question]
-      session[:links_from_question] = session[:nodes_question]
-      session[:arguments_question] = session[:nodes_question]
-    end
+    session[:links_to_question] = session[:nodes_question]
+    session[:links_from_question] = session[:nodes_question]
+    session[:arguments_question] = session[:nodes_question]
   end
   
   def set_nodes

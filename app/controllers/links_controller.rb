@@ -35,7 +35,7 @@ class LinksController < ApplicationController
 
   def destroy
     @global_link = Link::GlobalLink.find(params[:id])
-    @context_link = ContextLink.with_all_associations.where(:question_id => @link_question.try(:id), :user_id => current_user.id, :global_link_id => @global_link.id)[0]
+    @context_link = ContextLink.with_all_associations.where(:user_id => current_user.id, :global_link_id => @global_link.id)[0]
     respond_to do |format|
       if @context_link.destroy_all_for_user_link
         link_params = params[:global_link]

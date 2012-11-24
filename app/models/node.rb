@@ -15,9 +15,6 @@ class Node < ActiveRecord::Base
     {"to" => "from", "from" => "to"}
   end
 
-  #find nodes meeting criteria as below
-  #for each node that isn't self, find or construct link
-  #--
   #alt would be find all links from ids of nodes, map ids of subset of nodes there are links for
   #from result, delete ids from nodes map and construct for rest, slightly more db efficient as group find?
   def find_view_links_by_context direction, context
@@ -28,15 +25,12 @@ class Node < ActiveRecord::Base
       unless node == self
         klass = Link.get_klass(context)
         global_link_attrs = {:"global_node_#{direction}_id" => self.id, :"global_node_#{other_node}_id" => node.id}
-        global_link_attrs.merge!({:active => true}) if (klass == Link::GlobalLink || klass == Link::QuestionLink)
+        #not necessary currently for just the links form - wouldn't break setting for user
+        #global_link_attrs.merge!({:active => true}) if (klass == Link::GlobalLink || klass == Link::QuestionLink)
         if klass == ContextLink
           link = klass.where(global_link_attrs.merge(:question_id => context[:question], :user_id => context[:user]))[0].try(:global_link)
-        elsif klass == Link::QuestionLink 
-          link = klass.where(global_link_attrs.merge(:question_id => context[:question]))[0].try(:global_link)
         elsif klass == Link::UserLink
           link = klass.where(global_link_attrs.merge(:user_id => context[:user]))[0].try(:global_link)
-        else
-          link = klass.where({:"node_#{direction}_id" => self.id, :"node_#{other_node}_id" => node.id})[0]
         end
         if link
           links << link

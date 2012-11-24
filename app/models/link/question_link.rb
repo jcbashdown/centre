@@ -5,7 +5,6 @@ class Link::QuestionLink < Link
 
   class << self
     def update_active(gn_from, gn_to, question)
-      p "UPDATING ACTIVE"
       unless (current_active = active(gn_from, gn_to, question)) == (by_votes = active_by_votes(gn_from, gn_to, question))
         current_active.update_attributes(:active => false) if current_active
         by_votes.update_attributes(:active => true)
