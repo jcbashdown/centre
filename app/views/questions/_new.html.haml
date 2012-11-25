@@ -1,7 +1,13 @@
 .select-form
-  =form_tag nodes_path, :method => :get, :class => 'navbar-form' do
-    =select :view_configuration, :nodes_question, @questions, :selected => (@node_question ? @node_question.try(:id) : nil), :class => "span2", :id => "question"
-.new-form.hidden
   =form_for @new_question, :html => {:class => 'navbar-form'} do |g|
-    =g.text_field :name, :class => "span2"
-    =g.submit "Add Question", :class => "span2"
+    .input-append
+      %input#appendedInput.span2{:placeholder => "Question", :type => "text", :id =>"question_id", :name => "question[name]"}
+      %span.add-on 
+        .dropdown
+          %a{:href => "#", :"data-toggle"=>"dropdown"}
+            Select question
+          %ul.dropdown-menu{"aria-labelledby" => "dLabel", :role => "menu"}
+            - @questions.each do |question|
+              %li
+                %a{:href => question_path(:id => (question.id ? question.id : 0)), :tabindex => "-1"}
+                  = question.name

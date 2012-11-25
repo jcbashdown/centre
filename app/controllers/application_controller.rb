@@ -39,9 +39,8 @@ class ApplicationController < ActionController::Base
 
   def set_questions
     @new_question = Question.new
-    @questions = [['All', nil]]
-    @questions += Question.all.map { |question| [question.name, question.id] }
-    @questions << ['New/Search For Question', '#new']
+    @questions = [Question.new(:name => 'All')]
+    @questions += Question.all
   end
 
   def signed_in_user
@@ -63,10 +62,6 @@ class ApplicationController < ActionController::Base
       session[:links_from_user] ||= current_user.id 
       session[:arguments_user] ||= current_user.id 
     end
-    #temporary
-    session[:links_to_question] = session[:nodes_question]
-    session[:links_from_question] = session[:nodes_question]
-    session[:arguments_question] = session[:nodes_question]
   end
   
   def set_nodes

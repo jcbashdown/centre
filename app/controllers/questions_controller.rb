@@ -16,4 +16,15 @@ class QuestionsController < ApplicationController
     redirect_to nodes_path
   end
 
+  def show
+    p params
+    @question = Question.find_by_id(params[:id])
+    p @question
+    session[:nodes_question] = @question.try(:id)
+    session[:links_to_question] = @question.try(:id)
+    session[:links_from_question] = @question.try(:id)
+    session[:arguments_question] = @question.try(:id)
+    redirect_to nodes_path
+  end
+
 end

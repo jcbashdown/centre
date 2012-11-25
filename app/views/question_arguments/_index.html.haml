@@ -1,5 +1,6 @@
 -question ||=nil
 - if question
   - question.concluding_nodes.each do |node| 
-    %h3= node.title
+    %h3
+      =link_to node.title, node_path(node.global_node)
     = render :partial => 'question_arguments/show', :locals => {:node => node, :previous => previous, :original => node.id}
