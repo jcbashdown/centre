@@ -23,15 +23,8 @@ class Node < ActiveRecord::Base
     links = []
     nodes.each do |node|
       unless node == self
-        klass = Link.get_klass(context)
         global_link_attrs = {:"global_node_#{direction}_id" => self.id, :"global_node_#{other_node}_id" => node.id}
-        #not necessary currently for just the links form - wouldn't break setting for user
-        #global_link_attrs.merge!({:active => true}) if (klass == Link::GlobalLink || klass == Link::QuestionLink)
-        if klass == ContextLink
-          link = klass.where(global_link_attrs.merge(:question_id => context[:question], :user_id => context[:user]))[0].try(:global_link)
-        elsif klass == Link::UserLink
-          link = klass.where(global_link_attrs.merge(:user_id => context[:user]))[0].try(:global_link)
-        end
+        link = Link::UserLink.where(global_link_attrs.merge(:user_id => context[:user]))[0].try(:global_link)
         if link
           links << link
         else

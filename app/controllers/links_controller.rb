@@ -17,7 +17,7 @@ class LinksController < ApplicationController
 
   def update
     @global_link = Link::GlobalLink.find(params[:id])
-    @context_link = ContextLink.with_all_associations.where(:question_id => @link_question.try(:id), :user_id => current_user.id, :global_link_id => @global_link.id)[0]
+    @context_link = ContextLink.with_all_associations.where(:user_id => current_user.id, :global_link_id => @global_link.id)[0]
     respond_to do |format|
       if @context_link = @context_link.update_type(params[:type])
         format.js { render :partial => 'a_link', :locals=>{:link=> @context_link.global_link, :direction=>params[:direction]} }
