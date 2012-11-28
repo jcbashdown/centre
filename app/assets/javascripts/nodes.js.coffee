@@ -16,7 +16,7 @@ $(document).ready ->
           $('#current_nodes').html(data)
           url = "/nodes.json"
           method = "GET"
-          data_hash = {"find":query, "question":question}
+          data_hash = {"view_configuration":{"nodes_query":query}}
           $.ajax(
             url: url
             type: method  
