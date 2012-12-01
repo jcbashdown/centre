@@ -8,7 +8,7 @@
   .row-fluid
     .span12
       .input-append
-        = f.text_field :title, :placeholder=>"Node Title", :class=>"typeahead", :autocomplete => "off"
+        = f.text_field :title, :placeholder=>"Node Title", :class=>"typeahead", :autocomplete => "off", :value =>(session["nodes_query"] ? session["nodes_query"] : "")
         = f.submit 'Add/View', :class => 'btn'
       %label.checkbox.right
         Conclusion?&nbsp;
