@@ -65,12 +65,16 @@ class ApplicationController < ActionController::Base
   end
   
   def set_nodes
-    @nodes = Node.find_by_context({
-                                    :question => session[:nodes_question],
-                                    :user => session[:nodes_user], 
-                                    :query => session[:nodes_query], 
-                                    :page => params[:page]
-                                 })
+    context = {
+                :question => session[:nodes_question],
+                :user => session[:nodes_user], 
+                :query => session[:nodes_query], 
+                :page => params[:page]
+              }
+    @nodes = Node.find_by_context(context)
+    unless @nodes.try(:any?)
+      @nodes = Node.find_by_context(context.delete_if {|k,v| k == :query})
+    end
   end
 
   def set_links_to
@@ -88,7 +92,11 @@ class ApplicationController < ActionController::Base
                 :query => session[:"links_#{direction}_query"], 
                 :page => params[:page]
               })
-    @node.find_view_links_by_context direction, context
+    nodes = @node.find_view_links_by_context(direction, context)
+    unless nodes.try(:any?)
+      nodes = @node.find_view_links_by_context(direction, context.delete_if {|k,v| k == :query})
+    end
+    nodes
   end
 
   def set_node
