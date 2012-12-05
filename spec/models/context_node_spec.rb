@@ -175,6 +175,68 @@ describe ContextNode do
       end
     end
   end
+  describe 'updating conclusion' do
+    describe 'updating with no other context_nodes for qn' do
+      before do
+        @context_node = ContextNode.create(:user=>@user, :question=>@question, :title => 'Title', :is_conclusion => false)
+      end
+      it "should update the is conclusion status in all locations" do
+        @context_node.set_conclusion! true
+        @context_node.question_node.is_conclusion.should == true
+      end
+    end
+    describe 'updating with other context_nodes for qn' do
+      before do
+        @user2 = FactoryGirl.create(:user, :email=>"another@test.com")
+        @context_node = ContextNode.create(:user=>@user, :question=>@question, :title => 'Title', :is_conclusion => false)
+        @context_node2 = ContextNode.create(:user=>@user2, :question=>@question, :title => 'Title', :is_conclusion => true)
+      end
+      it "should update the is conclusion status in all locations" do
+        @context_node2.question_node.is_conclusion.should == false
+        @context_node.question_node.is_conclusion.should == false
+        @context_node2.set_conclusion! true
+        @context_node.question_node.is_conclusion.should == false
+        @context_node2.question_node.is_conclusion.should == false
+        @context_node.set_conclusion! true
+        @context_node.question_node.is_conclusion.should == true
+        @context_node2.question_node.is_conclusion.should == true
+      end
+    end
+    describe 'updating with another context node for another qn' do
+      before do
+        @context_node = ContextNode.create(:user=>@user, :question=>@question, :title => 'Title', :is_conclusion => false)
+        @context_node2 = ContextNode.create(:user=>@user, :question=>@question2, :title => 'Title', :is_conclusion => true)
+      end
+      context 'when existing nu' do
+        it "should update the is conclusion status in all locations" do
+          @context_node.question_node.is_conclusion.should == false
+          @context_node2.question_node.is_conclusion.should == true
+          @context_node2.set_conclusion! true
+          @context_node.question_node.is_conclusion.should == false
+          @context_node2.question_node.is_conclusion.should == true
+          @context_node.set_conclusion! true
+          @context_node.question_node.is_conclusion.should == true
+          @context_node2.question_node.is_conclusion.should == true
+        end
+      end
+      context 'when no existing nu' do
+        before do
+          @user2 = FactoryGirl.create(:user, :email=>"another@test.com")
+          @context_node3 = ContextNode.create(:user=>@user2, :question=>@question2, :title => 'Title', :is_conclusion => false)
+        end
+        it "should update the is conclusion status in all locations" do
+          @context_node3.question_node.is_conclusion.should == true
+          @context_node2.question_node.is_conclusion.should == true
+          @context_node3.set_conclusion! true
+          @context_node3.question_node.is_conclusion.should == true
+          @context_node2.question_node.is_conclusion.should == true
+          @context_node2.set_conclusion! false
+          @context_node3.question_node.is_conclusion.should == false
+          @context_node2.question_node.is_conclusion.should == false
+        end
+      end
+    end
+  end
   describe 'deletion' do
     context 'when there are no associated links' do
       describe 'when the question nodes question node user count is less than two (when there is only this user)' do

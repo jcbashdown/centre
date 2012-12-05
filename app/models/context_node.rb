@@ -45,6 +45,10 @@ class ContextNode < ActiveRecord::Base
     end
   end
 
+  def set_conclusion! value
+    update_attributes(:is_conclusion =>  value)
+  end 
+
   def question?
     question_id.present?
   end
