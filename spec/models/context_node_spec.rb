@@ -181,8 +181,9 @@ describe ContextNode do
         @context_node = ContextNode.create(:user=>@user, :question=>@question, :title => 'Title', :is_conclusion => false)
       end
       it "should update the is conclusion status in all locations" do
+        @context_node.question_node.is_conclusion.should == false
         @context_node.set_conclusion! true
-        @context_node.question_node.is_conclusion.should == true
+        @context_node.question_node.reload.is_conclusion.should == true
       end
     end
     describe 'updating with other context_nodes for qn' do
@@ -195,11 +196,11 @@ describe ContextNode do
         @context_node2.question_node.is_conclusion.should == false
         @context_node.question_node.is_conclusion.should == false
         @context_node2.set_conclusion! true
-        @context_node.question_node.is_conclusion.should == false
-        @context_node2.question_node.is_conclusion.should == false
+        @context_node.question_node.reload.is_conclusion.should == false
+        @context_node2.question_node.reload.is_conclusion.should == false
         @context_node.set_conclusion! true
-        @context_node.question_node.is_conclusion.should == true
-        @context_node2.question_node.is_conclusion.should == true
+        @context_node.question_node.reload.is_conclusion.should == true
+        @context_node2.question_node.reload.is_conclusion.should == true
       end
     end
     describe 'updating with another context node for another qn' do
@@ -212,11 +213,11 @@ describe ContextNode do
           @context_node.question_node.is_conclusion.should == false
           @context_node2.question_node.is_conclusion.should == true
           @context_node2.set_conclusion! true
-          @context_node.question_node.is_conclusion.should == false
-          @context_node2.question_node.is_conclusion.should == true
+          @context_node.question_node.reload.is_conclusion.should == false
+          @context_node2.question_node.reload.is_conclusion.should == true
           @context_node.set_conclusion! true
-          @context_node.question_node.is_conclusion.should == true
-          @context_node2.question_node.is_conclusion.should == true
+          @context_node.question_node.reload.is_conclusion.should == true
+          @context_node2.question_node.reload.is_conclusion.should == true
         end
       end
       context 'when no existing nu' do
@@ -225,14 +226,11 @@ describe ContextNode do
           @context_node3 = ContextNode.create(:user=>@user2, :question=>@question2, :title => 'Title', :is_conclusion => false)
         end
         it "should update the is conclusion status in all locations" do
-          @context_node3.question_node.is_conclusion.should == true
-          @context_node2.question_node.is_conclusion.should == true
-          @context_node3.set_conclusion! true
-          @context_node3.question_node.is_conclusion.should == true
-          @context_node2.question_node.is_conclusion.should == true
-          @context_node2.set_conclusion! false
-          @context_node3.question_node.is_conclusion.should == false
           @context_node2.question_node.is_conclusion.should == false
+          @context_node3.question_node.is_conclusion.should == false
+          @context_node3.set_conclusion! true
+          @context_node3.question_node.reload.is_conclusion.should == true
+          @context_node2.question_node.reload.is_conclusion.should == true
         end
       end
     end

@@ -46,7 +46,7 @@ class ContextNode < ActiveRecord::Base
   end
 
   def set_conclusion! value
-    update_attributes(:is_conclusion =>  value)
+    update_attributes(:is_conclusion => value)
   end 
 
   def question?
