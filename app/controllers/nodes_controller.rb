@@ -43,6 +43,10 @@ class NodesController < ApplicationController
     end
   end
 
+  def update
+
+  end
+
   def destroy
     context_node = ContextNode.with_all_associations.where(:user_id => current_user.id, :global_node_id => @node.id, :question_id => @node_question.try(:id))[0]
     if context_node.destroy

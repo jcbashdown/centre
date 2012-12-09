@@ -1,0 +1,18 @@
+= form_for node, :as => :node, :url => node_path(node), :method => :put, :remote => true, :html => {:class => 'form-inline'} do |n|
+  -if node.errors.any?
+    #error_explanation
+      %h2= "#{pluralize(node.errors.count, "error")} prohibited this node from being saved:"
+      %ul
+        - node.errors.full_messages.each do |msg|
+          %li= msg
+  %h6.right
+    Conclusion?&nbsp;
+  %label.checkbox.right
+    No&nbsp;
+  = n.radio_button :is_conclusion, false, :class => 'right'
+  %label.checkbox.right
+    No opinion&nbsp;
+  = n.radio_button :is_conclusion, "", :class => 'right', :checked => true
+  %label.checkbox.right
+    Yes&nbsp;
+  = n.radio_button :is_conclusion, true, :class => 'right'
