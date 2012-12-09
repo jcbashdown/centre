@@ -13,12 +13,50 @@ describe ContextNode do
       before do
         @conclusion_status = false
         @context_node = ContextNode.create(:user=>@user, :question=>@question, :title => 'Title', :is_conclusion => @conclusion_status)
+        @context_node_one = @context_node
       end
       it 'should create the sub nodes as false' do
         @context_node.reload.is_conclusion.should == @conclusion_status
         @context_node.question_node.reload.is_conclusion.should == @conclusion_status
         @context_node.global_node.reload.is_conclusion.should == @conclusion_status
         @context_node.user_node.reload.is_conclusion.should == @conclusion_status
+      end
+      context 'when a new context node for the qn is created as true' do
+        before do
+          @user = Factory(:user)
+          @new_conclusion_status = true
+          @context_node = ContextNode.create(:user=>@user, :question=>@question, :title => 'Title', :is_conclusion => @new_conclusion_status)
+        end
+        it 'the sub nodes apart from user_node should still be false' do
+          @context_node.reload.is_conclusion.should == @new_conclusion_status
+          @context_node.question_node.reload.is_conclusion.should == @conclusion_status
+          @context_node.global_node.reload.is_conclusion.should == @conclusion_status
+          @context_node.user_node.reload.is_conclusion.should == @new_conclusion_status
+        end
+        context 'when the first node is destroyed' do
+          before do
+            @context_node_one.destroy
+          end
+          it 'the sub nodes should still be false' do
+            @context_node.reload.is_conclusion.should == @new_conclusion_status
+            @context_node.question_node.reload.is_conclusion.should == @new_conclusion_status
+            @context_node.global_node.reload.is_conclusion.should == @new_conclusion_status
+            @context_node.user_node.reload.is_conclusion.should == @new_conclusion_status
+          end
+        end
+        context 'when another new context node for the qn is created as true' do
+          before do
+            @user = Factory(:user)
+            @new_conclusion_status = true
+            @context_node = ContextNode.create(:user=>@user, :question=>@question, :title => 'Title', :is_conclusion => @new_conclusion_status)
+          end
+          it 'the sub nodes should be false' do
+            @context_node.reload.is_conclusion.should == @new_conclusion_status
+            @context_node.question_node.reload.is_conclusion.should == @new_conclusion_status
+            @context_node.global_node.reload.is_conclusion.should == @new_conclusion_status
+            @context_node.user_node.reload.is_conclusion.should == @new_conclusion_status
+          end
+        end
       end
     end
     context 'when the context node is created as true' do
@@ -26,23 +64,49 @@ describe ContextNode do
         @conclusion_status = true
         @context_node = ContextNode.create(:user=>@user, :question=>@question, :title => 'Title', :is_conclusion => @conclusion_status)
       end
-      it 'should create the sub nodes as false' do
+      it 'should create the sub nodes as true' do
         @context_node.reload.is_conclusion.should == @conclusion_status
         @context_node.question_node.reload.is_conclusion.should == @conclusion_status
         @context_node.global_node.reload.is_conclusion.should == @conclusion_status
         @context_node.user_node.reload.is_conclusion.should == @conclusion_status
       end
+      context 'when a new context node for the qn is created as false' do
+        before do
+          @user = Factory(:user)
+          @new_conclusion_status = false
+          @context_node = ContextNode.create(:user=>@user, :question=>@question, :title => 'Title', :is_conclusion => @new_conclusion_status)
+        end
+        it 'the sub nodes should become false' do
+          @context_node.reload.is_conclusion.should == @new_conclusion_status
+          @context_node.question_node.reload.is_conclusion.should == @new_conclusion_status
+          @context_node.global_node.reload.is_conclusion.should == @new_conclusion_status
+          @context_node.user_node.reload.is_conclusion.should == @new_conclusion_status
+        end
+      end
     end
     context 'when the context node is created as nil' do
       before do
         @conclusion_status = nil
-        @context_node = ContextNode.create(:user=>@user, :question=>@question, :title => 'Title', :is_conclusion => @conclusion_status)
+        @context_node = ContextNode.create(:user=>@user, :question=>@question, :title => 'Title', :is_conclusion => "")
       end
       it 'should create the sub nodes as false' do
         @context_node.reload.is_conclusion.should == @conclusion_status
         @context_node.question_node.reload.is_conclusion.should == false
         @context_node.global_node.reload.is_conclusion.should == false
         @context_node.user_node.reload.is_conclusion.should == false
+      end
+      context 'when a new context node for the qn is created as true' do
+        before do
+          @user = Factory(:user)
+          @new_conclusion_status = true
+          @context_node = ContextNode.create(:user=>@user, :question=>@question, :title => 'Title', :is_conclusion => @new_conclusion_status)
+        end
+        it 'the sub nodes should become true' do
+          @context_node.reload.is_conclusion.should == @new_conclusion_status
+          @context_node.question_node.reload.is_conclusion.should == @new_conclusion_status
+          @context_node.global_node.reload.is_conclusion.should == @new_conclusion_status
+          @context_node.user_node.reload.is_conclusion.should == @new_conclusion_status
+        end
       end
     end
   end

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20121207221943) do
+ActiveRecord::Schema.define(:version => 20121209173031) do
 
   create_table "context_links", :force => true do |t|
     t.integer  "question_id"
@@ -51,7 +51,7 @@ ActiveRecord::Schema.define(:version => 20121207221943) do
     t.integer  "private_user_node_id"
     t.integer  "private_question_node_id"
     t.integer  "node_title_id"
-    t.boolean  "is_conclusion",            :default => false
+    t.boolean  "is_conclusion"
     t.boolean  "private",                  :default => false
     t.boolean  "direct_creation",          :default => false
     t.integer  "context_links_count",      :default => 0,     :null => false
@@ -109,7 +109,7 @@ ActiveRecord::Schema.define(:version => 20121207221943) do
     t.integer  "related_votes_count",        :default => 0,     :null => false
     t.integer  "part_of_votes_count",        :default => 0,     :null => false
     t.integer  "conclusion_votes_count",     :default => 0,     :null => false
-    t.boolean  "is_conclusion",              :default => false
+    t.boolean  "is_conclusion"
     t.float    "page_rank",                  :default => 0.0
     t.integer  "users_count",                :default => 0,     :null => false
     t.boolean  "private",                    :default => false

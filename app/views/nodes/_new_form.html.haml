@@ -10,8 +10,16 @@
       .input-append
         = f.text_field :title, :placeholder=>"Node Title", :class=>"typeahead", :autocomplete => "off", :value =>(session["nodes_query"] ? session["nodes_query"] : "")
         = f.submit 'Add/View', :class => 'btn'
-      %label.checkbox.right
+      %h6.right
         Conclusion?&nbsp;
-      = f.check_box :is_conclusion, :class => 'right'
+      %label.checkbox.right
+        No&nbsp;
+      = f.radio_button :is_conclusion, false, :class => 'right'
+      %label.checkbox.right
+        No opinion&nbsp;
+      = f.radio_button :is_conclusion, "", :class => 'right', :checked => true
+      %label.checkbox.right
+        Yes&nbsp;
+      = f.radio_button :is_conclusion, true, :class => 'right'
   - if @question
     %input{:style => 'display:none;', :value => @question.id, :name => "question"}
