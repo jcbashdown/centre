@@ -40,5 +40,10 @@ $(document).ready ->
     $('#'+id_from_class).html("")
     $('#'+id_from_class).hide()
     return false 
-  return false
+
+  $('form.node-edit').live "change", (event) ->
+    id = $(this).attr('id')
+    $("#"+id).submit()
+    return false 
     
+  return false

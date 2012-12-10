@@ -23,6 +23,7 @@ module Centre
       g.view_specs false
       g.helper_specs false
       g.template_engine :haml
+      g.fixture_replacement :factory_girl, :dir => 'spec/factories'
     end
 
     # Settings in config/environments/* take precedence over those specified here.

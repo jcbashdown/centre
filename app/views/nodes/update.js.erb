@@ -1,0 +1,2 @@
+var j = '<%= j render(:partial => 'edit_form', :locals => {:node => @global_node}) %>';
+$('#<%= @global_node.id %>').replaceWith(j);

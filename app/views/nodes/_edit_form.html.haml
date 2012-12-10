@@ -1,4 +1,4 @@
-= form_for node, :as => :node, :url => node_path(node), :method => :put, :remote => true, :html => {:class => 'form-inline'} do |n|
+= form_for node, :as => :node, :url => node_path(node), :method => :put, :remote => true, :html => {:class => 'form-inline node-edit', :id => node.id} do |n|
   -if node.errors.any?
     #error_explanation
       %h2= "#{pluralize(node.errors.count, "error")} prohibited this node from being saved:"

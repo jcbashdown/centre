@@ -287,6 +287,8 @@ describe ContextNode do
         @context_node.question_node.is_conclusion.should == false
         @context_node.set_conclusion! true
         @context_node.question_node.reload.is_conclusion.should == true
+        @context_node.set_conclusion! ''
+        @context_node.question_node.reload.is_conclusion.should == false
       end
     end
     describe 'updating with other context_nodes for qn' do
@@ -299,6 +301,12 @@ describe ContextNode do
         @context_node2.question_node.is_conclusion.should == false
         @context_node.question_node.is_conclusion.should == false
         @context_node2.set_conclusion! true
+        @context_node.question_node.reload.is_conclusion.should == false
+        @context_node2.question_node.reload.is_conclusion.should == false
+        @context_node.set_conclusion! ''
+        @context_node.question_node.reload.is_conclusion.should == true
+        @context_node2.question_node.reload.is_conclusion.should == true
+        @context_node.set_conclusion! false
         @context_node.question_node.reload.is_conclusion.should == false
         @context_node2.question_node.reload.is_conclusion.should == false
         @context_node.set_conclusion! true

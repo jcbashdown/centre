@@ -277,6 +277,52 @@ describe NodesController do
       end
     end
   end
+  
+  describe 'PUT update' do
+    before do
+      @context_node = Factory(:context_node)
+      @global_node_id = @context_node.global_node_id
+      @question_id = @context_node.question_id
+      @user_id = @context_node.user_id
+      controller.stub(:current_user).and_return @context_node.user
+      ContextNode.stub(:where).and_return [@context_node]
+      Node::GlobalNode.stub(:find).and_return @context_node.global_node
+    end
+    let(:is_conclusion) {false}
+    let(:params) {{:id => @global_node_id, :node => {:is_conclusion => is_conclusion}, :view_configuration => {:nodes_question => @question_id}}}
+
+    it "should find the correct global_node for id" do
+      Node::GlobalNode.should_receive(:find).with(@global_node_id.to_s)
+      xhr :put, :update, params
+    end
+    
+    it 'should assign the global_node' do
+      xhr :put, :update, params
+      assigns(:global_node).should == @context_node.global_node
+    end
+
+    it 'should find the correct context node' do
+      ContextNode.should_receive(:where).with(:question_id => @question_id, :user_id => @user_id, :global_node_id => @global_node_id.to_s)
+      xhr :put, :update, params
+    end
+
+    context "when is conclusion is false" do
+      it 'should call set_conclusion! with the is_conclusion status' do
+        @context_node.should_receive(:set_conclusion!).with(is_conclusion)
+        xhr :put, :update, params
+      end
+    end
+    
+    context "when is conclusion is ''" do
+      let(:is_conclusion) {''}
+      before {params[:node][:is_conclusion] = is_conclusion}
+      it 'should call set_conclusion! with the is_conclusion status' do
+        @context_node.should_receive(:set_conclusion!).with(is_conclusion)
+        xhr :put, :update, params
+      end
+    end
+    
+  end
 
   describe "DELETE destroy" do
     context 'when there is a question' do
