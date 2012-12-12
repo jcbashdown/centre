@@ -1,5 +1,6 @@
 -question ||=nil
 - if question
+  %p QUESTION ARG
   - question.concluding_nodes.each do |node| 
     %h3
       =link_to node.title, node_path(node.global_node)

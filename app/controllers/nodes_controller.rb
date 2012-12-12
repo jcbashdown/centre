@@ -45,8 +45,8 @@ class NodesController < ApplicationController
 
   def update
     @global_node = Node::GlobalNode.find params[:id]
-    context_node = ContextNode.where(:user_id => current_user.id, :question_id => @node_question.try(:id), :global_node_id => params[:id])[0]
-    context_node.set_conclusion! params[:node][:is_conclusion]
+    @context_node = ContextNode.where(:user_id => current_user.id, :question_id => @node_question.try(:id), :global_node_id => params[:id])[0]
+    @context_node.set_conclusion! params[:node][:is_conclusion]
   end
 
   def destroy

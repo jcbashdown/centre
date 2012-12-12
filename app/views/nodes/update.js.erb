@@ -1,13 +1,22 @@
-var j = '<%= j render(:partial => 'edit_form', :locals => {:node => @global_node}) %>';
-$('#<%= @global_node.id %>').replaceWith(j);
-var active_argument = $('.tab-pane.active').attr("id")
+var conclusion = '<%= j render(:partial => 'edit_form', :locals => {:node => @global_node, :context_node => @context_node}) %>';
+$('#<%= @global_node.id %>').replaceWith(conclusion);
+var active_argument = $('.tab-pane.active').attr("id");
+var argument;
 if(active_argument == 'everyones_topic'){
-  var j = '<%= j render(:partial => 'question_arguments/index', :locals => {:previous => "everyones_topic", :question => @argument_question}) %>';
+  $.get("/question_arguments", { path: "everyones_object" },
+     function(data){
+       argument = data;
+     });
 }else if(active_argument == 'other_user_topic'){
-  var user_id = $(".user_argument").attr("id")
-
-  var j = '<%= j render(:partial => 'user_arguments/index', :locals => {:previous => "other_user_topic", :user => @user, :question => @argument_question}) %>';
+  var user_id = $(".user_argument").attr("id");
+  $.get("/user_arguments", { user_id: user_id, path: "other_user_topic" },
+     function(data){
+       argument = data;
+     });
 }else{
-  var j = '<%= j render(:partial => 'user_arguments/index', :locals => {:previous => "my_topic", :user => current_user, :question => @argument_question}) %>';
+  $.get("/user_arguments", { user_id: '<%= current_user.id %>', path: "my_topic" },
+     function(data){
+       argument = data;
+     });
 }
-$('#'+active_argument).html(j);
+$('#'+active_argument).html(argument);

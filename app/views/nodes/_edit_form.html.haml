@@ -1,3 +1,4 @@
+-context_node ||= nil
 = form_for node, :as => :node, :url => node_path(node), :method => :put, :remote => true, :html => {:class => 'form-inline node-edit', :id => node.id} do |n|
   -if node.errors.any?
     #error_explanation
@@ -9,10 +10,10 @@
     Conclusion?&nbsp;
   %label.checkbox.right
     No&nbsp;
-  = n.radio_button :is_conclusion, false, :class => 'right'
+  = n.radio_button :is_conclusion, false, :class => 'right', :checked => (context_node && context_node.is_conclusion == false ? true : false)
   %label.checkbox.right
     No opinion&nbsp;
-  = n.radio_button :is_conclusion, "", :class => 'right', :checked => true
+  = n.radio_button :is_conclusion, "", :class => 'right', :checked => (context_node.nil? || context_node.is_conclusion.nil? ? true : false)
   %label.checkbox.right
     Yes&nbsp;
-  = n.radio_button :is_conclusion, true, :class => 'right'
+  = n.radio_button :is_conclusion, true, :class => 'right', :checked => (context_node && context_node.is_conclusion ? true : false)

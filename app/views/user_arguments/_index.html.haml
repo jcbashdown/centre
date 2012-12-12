@@ -1,5 +1,6 @@
 -question ||=nil
 - if question
+  %p USER ARG
   %div{:class => "user_argument", :id => user.id}
   - user.concluding_nodes(question).each do |node| 
     %h3
