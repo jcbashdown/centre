@@ -1,4 +1,4 @@
-class QuestionArgumentsController < ActionController::Base
+class QuestionArgumentsController < ApplicationController
   
   def show
     @node = Node::QuestionNode.find(params[:id])
@@ -11,13 +11,10 @@ class QuestionArgumentsController < ActionController::Base
   end 
  
   def index
-    unless params[:global_id] && @question = Global.find(params[:global_id])
-      @question = Global.find_by_name("All")
-    end
     @previous = params[:path]
     respond_to do |format|
       format.js {}
-      format.html { render(:partial => 'global_arguments/index', :locals => {:previous => @previous, :question => @question}) }
+      format.html { render(:partial => 'question_arguments/index', :locals => {:previous => @previous, :question => @argument_question}) }
     end
   end
  

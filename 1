@@ -1,4 +1,4 @@
-class UserArgumentsController < ApplicationController
+class UserArgumentsController < ActionController::Base
   
   def show
     @node = ContextNode.find(params[:id])
@@ -15,6 +15,9 @@ class UserArgumentsController < ApplicationController
       @user = current_user
     end
     @previous = params[:path]
+    p @user
+    p @previous
+    p @argument_question
     respond_to do |format|
       format.js {}
       format.html { render(:partial => 'user_arguments/index', :locals => {:previous => @previous, :question => @argument_question}) }

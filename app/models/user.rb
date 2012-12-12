@@ -7,4 +7,8 @@ class User < ActiveRecord::Base
 
   has_many :context_nodes
 
+  def concluding_nodes(question)
+    ContextNode.where(:user_id => self.id, :question_id => question.id, :is_conclusion => true)#.collect(&:global_node_id)
+    #Node::GlobalNode.where('id IN (?)', gn_ids)
+  end
 end

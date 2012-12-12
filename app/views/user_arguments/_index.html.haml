@@ -1,4 +1,7 @@
-- unless question.name == 'All'
+-question ||=nil
+- if question
+  %div{:class => "user_argument", :id => user.id}
   - user.concluding_nodes(question).each do |node| 
-    %h3= node.title
+    %h3
+      =link_to node.title, node_path(node.global_node)
     = render :partial => 'user_arguments/show', :locals => {:node => node, :previous => previous, :original => node.id}

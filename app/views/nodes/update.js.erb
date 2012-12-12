@@ -1,2 +1,13 @@
 var j = '<%= j render(:partial => 'edit_form', :locals => {:node => @global_node}) %>';
 $('#<%= @global_node.id %>').replaceWith(j);
+var active_argument = $('.tab-pane.active').attr("id")
+if(active_argument == 'everyones_topic'){
+  var j = '<%= j render(:partial => 'question_arguments/index', :locals => {:previous => "everyones_topic", :question => @argument_question}) %>';
+}else if(active_argument == 'other_user_topic'){
+  var user_id = $(".user_argument").attr("id")
+
+  var j = '<%= j render(:partial => 'user_arguments/index', :locals => {:previous => "other_user_topic", :user => @user, :question => @argument_question}) %>';
+}else{
+  var j = '<%= j render(:partial => 'user_arguments/index', :locals => {:previous => "my_topic", :user => current_user, :question => @argument_question}) %>';
+}
+$('#'+active_argument).html(j);
