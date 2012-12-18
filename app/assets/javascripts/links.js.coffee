@@ -1,6 +1,3 @@
-# Place all the behaviors and hooks related to the matching controller here.
-# All this logic will automatically be available in application.js.
-# You can use CoffeeScript in this file: http://jashkenas.github.com/coffee-script/
 $(document).ready ->
   $('input.submitter').live "click", (event) ->
     target_id = $(event.target).attr('id')
@@ -34,17 +31,7 @@ $(document).ready ->
       success: (data, textStatus, XMLHttpRequest) ->
         $("#link_"+link_id).ajaxLoaderRemove()
         $("#link_"+link_id).replaceWith(data)
-        visible = $("li.arg-option.active > a")
-        path = visible.attr("href")
-        active_panel = visible.attr("data-target")
-        $.ajax   
-          url: path
-          type: "get"
-          dataType: "html"
-          success: (data, textStatus, XMLHttpRequest) ->
-            $(active_panel).html(data)
-            return false
-          # not working as within js - either eval returned js or replace data target with html and request html - either way, need success
+        centre.refreshArgument();
         return true
     return true
   return false
