@@ -20,7 +20,7 @@ class Node < ActiveRecord::Base
   #from result, delete ids from nodes map and construct for rest, slightly more db efficient as group find?
   def find_view_links_by_context direction, context
     other_node = opposite_direction[direction]
-    nodes = Node.find_by_context(context)
+    nodes = Node.find_by_context(context.except(:user))
     links = []
     nodes.each do |node|
       unless node == self

@@ -67,7 +67,7 @@ class ApplicationController < ActionController::Base
   def set_nodes
     context = {
                 :question => session[:nodes_question],
-                :user => session[:nodes_user], 
+                #:user => session[:nodes_user], 
                 :query => session[:nodes_query], 
                 :page => params[:page]
               }

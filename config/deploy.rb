@@ -13,8 +13,6 @@ set :scm, :git
 set :repository, "git@bitbucket.org:jcbashdown/centre.git"
 set :deploy_to, "/www/wikistorm.org"
 
-# set :scm, :git # You can set :scm explicitly or Capistrano will make an intelligent guess based on known version control directory names
-# Or: `accurev`, `bzr`, `cvs`, `darcs`, `git`, `mercurial`, `perforce`, `subversion` or `none`
 #server "your.server", :app, :web, :db, :primary => true
 role :web, "wikistorm.org"                          # Your HTTP server, Apache/etc
 role :app, "wikistorm.org"                          # This may be the same as your `Web` server
