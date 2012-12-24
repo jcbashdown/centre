@@ -38,7 +38,7 @@ module NodeCreationModule
   end
 
   def find_or_create_global_node
-    Node::GlobalNode.where(:title => self.title)[0] || Node::GlobalNode.create!({:title => self.title, :is_conclusion => self.is_conclusion})
+    Node::GlobalNode.where(:title => self.title)[0] || Node::GlobalNode.create({:title => self.title, :is_conclusion => self.is_conclusion})
   end
 end
 

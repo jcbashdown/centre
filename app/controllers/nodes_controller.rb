@@ -38,7 +38,7 @@ class NodesController < ApplicationController
         @node = context_node.global_node
         format.html { redirect_to node_path(@node), notice: 'Node was successfully created.' }
       else
-        format.html { redirect_to nodes_path, notice: 'That Title has already been taken. Please use the existing node' }
+        format.html { redirect_to nodes_path, notice: 'The Title was blank or already taken.' }
       end
     end
   end
