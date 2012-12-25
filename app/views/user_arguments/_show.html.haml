@@ -20,7 +20,7 @@
     -froms_negative.each do |from|
       %li
         %i{:class => "icon-minus"}
-        %a{:href => node_path(from.global, @limit_order)}
+        %a{:href => node_path(from.global_node, @limit_order)}
           = from.title
         %a{:href => "#"}
           %i{:class => "icon-minus-sign #{previous}minus#{from.id}", :style => "display:none;"}
