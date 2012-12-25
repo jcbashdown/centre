@@ -6,6 +6,11 @@
  *= require twitter/bootstrap
  *= require jquery.ajaxLoader.css
 */ 
+
+.input-append .add-on, .input-append .btn {
+  margin-top: 2px;
+}
+
 header nav ul {
   list-style: none;
   margin: 0 0 .5em;

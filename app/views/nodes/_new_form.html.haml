@@ -6,20 +6,29 @@
         - @new_node.errors.full_messages.each do |msg|
           %li= msg
   .row-fluid
+    .input-append.span12
+      .row-fluid
+        = f.text_field :title, :placeholder=>"Node Title", :class=>"typeahead span9", :autocomplete => "off", :value =>(session["nodes_query"] ? session["nodes_query"] : "")
+        = f.submit 'Add/View', :class => 'btn span3'
+  .row-fluid
     .span12
-      .input-append
-        = f.text_field :title, :placeholder=>"Node Title", :class=>"typeahead", :autocomplete => "off", :value =>(session["nodes_query"] ? session["nodes_query"] : "")
-        = f.submit 'Add/View', :class => 'btn'
-      %h6.right
-        Conclusion?&nbsp;
-      %label.checkbox.right
-        No&nbsp;
-      = f.radio_button :is_conclusion, false, :class => 'right'
-      %label.checkbox.right
-        No opinion&nbsp;
-      = f.radio_button :is_conclusion, "", :class => 'right', :checked => true
-      %label.checkbox.right
-        Yes&nbsp;
-      = f.radio_button :is_conclusion, true, :class => 'right'
+      &nbsp;
+  .row-fluid
+    .span12
+      .well.well-small{:style => "margin-bottom:0px;"}
+        .row-fluid
+          .span3
+            %h4
+              Conclusion?:
+          .span9
+            %label.checkbox.inline
+              No&nbsp;
+              = f.radio_button :is_conclusion, false
+            %label.checkbox.inline
+              No opinion&nbsp;
+              = f.radio_button :is_conclusion, "", :checked => true
+            %label.checkbox.inline
+              Yes&nbsp;
+              = f.radio_button :is_conclusion, true
   - if @question
     %input{:style => 'display:none;', :value => @question.id, :name => "question"}
