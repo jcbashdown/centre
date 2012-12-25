@@ -9,13 +9,13 @@
     = javascript_include_tag :application
     = csrf_meta_tags
   %body{:class => params[:controller]}
+    %header
+      %nav
+        %ul.hmenu
+          = render 'shared/navigation'
     #container.container-fluid
-      %header
-        %nav
-          %ul.hmenu
-            = render 'shared/navigation'
-        - flash.each do |name, msg|
-          = content_tag :div, msg, :id => "flash_#{name}" if msg.is_a?(String)
+      - flash.each do |name, msg|
+        = content_tag :div, msg, :id => "flash_#{name}" if msg.is_a?(String)
       #main{:role => "main"}
         .row-fluid
           .span4

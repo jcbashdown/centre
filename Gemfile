@@ -10,8 +10,9 @@ end
 gem 'kaminari'
 gem 'mysql2'
 gem 'jquery-rails'
+gem 'libv8', '~> 3.11.8'
 if HOST_OS =~ /linux/i
-  gem 'therubyracer', '>= 0.8.2'
+  gem 'therubyracer'
 end
 gem "haml", ">= 3.1.2"
 gem "haml-rails", ">= 0.3.4", :group => :development
