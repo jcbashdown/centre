@@ -22,10 +22,11 @@ role :db,  "wikistorm.org"
 
 task :before_update_code do
 #stop solr:
-run "cd #{current_path} && rake sunspot:solr:stop RAILS_ENV=#{rails_env}"
+  run "cd #{current_path} && rake sunspot:solr:stop RAILS_ENV=#{rails_env}"
 end
-after "deploy:update_crontab", "deploy:solr:symlink"
 
+before "deploy:update_code", "before_update_code"
+after "deploy:update_code", "solr:symlink"
 after 'bundle:install', 'deploy:link_db'
 after "deploy:restart", "deploy:cleanup" 
 after 'deploy:link_db', 'deploy:migrate'
@@ -49,8 +50,9 @@ namespace :solr do
     Symlink in-progress deployment to a shared Solr index.
   DESC
   task :symlink, :except => { :no_release => true } do
-    run "ln -nfs #{shared_path}/solr #{current_path}/solr"
-    run "ls -al #{current_path}/solr/pids/"
-    run "cd #{current_path} && rake sunspot:solr:start RAILS_ENV=#{rails_env}"
+    run "cp -R #{release_path}/solr/conf #{shared_path}/solr/conf"
+    run "rm -rf #{release_path}/solr"
+    run "ln -nfs #{shared_path}/solr #{release_path}/solr"
+    run "cd #{release_path} && rake sunspot:solr:start RAILS_ENV=#{rails_env}"
   end
 end
