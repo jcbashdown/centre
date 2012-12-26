@@ -1,7 +1,7 @@
 .select-form
   =form_for @new_question, :html => {:class => 'navbar-form'} do |g|
     .input-append
-      %input#appendedInput.span2{:placeholder => "Question", :type => "text", :id =>"question_id", :name => "question[name]"}
+      %input#appendedInput.span2{:placeholder => "New Question", :type => "text", :id =>"question_id", :name => "question[name]"}
       %span.add-on 
         .dropdown
           %a{:href => "#", :"data-toggle"=>"dropdown"}
