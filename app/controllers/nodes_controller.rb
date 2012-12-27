@@ -73,13 +73,4 @@ class NodesController < ApplicationController
     end
   end
 
-  def search_for_nodes type, question_id=nil
-    nodes = type.search do
-                     fulltext params[:find]
-                     with :question_id, question_id if question_id
-                     order_by(:id, :asc)
-                     paginate(:page => params[:page], :per_page => 15)
-                   end.results
-  end
-
 end

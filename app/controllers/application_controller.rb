@@ -73,7 +73,7 @@ class ApplicationController < ActionController::Base
               }
     @nodes = Node.find_by_context(context)
     unless @nodes.try(:any?)
-      @nodes = Node.find_by_context(context.delete_if {|k,v| k == :query})
+      @nodes = Node.find_by_context(context.except(:query))
     end
   end
 
@@ -90,7 +90,7 @@ class ApplicationController < ActionController::Base
                 :question => session[:"links_#{direction}_question"], 
                 :user => session[:"links_#{direction}_user"], 
                 :query => session[:"links_#{direction}_query"], 
-                :page => params[:page]
+                :page => params[:links_page]
               })
     nodes = @node.find_view_links_by_context(direction, context)
     unless nodes.try(:any?)

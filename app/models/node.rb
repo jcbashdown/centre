@@ -65,7 +65,7 @@ class Node < ActiveRecord::Base
         with :user_id, conditions[:user] if conditions[:user]
         order_by(:id, :asc)
       end.results.map(&:global_node)
-      Node::GlobalNode.where(:id => results).page(conditions[:page]).per(15)
+      Node::GlobalNode.where(:id => results).page(conditions[:page]).per(10)
     end
     
   end
