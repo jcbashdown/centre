@@ -9,4 +9,4 @@
 - unless page.current?
   - url = url.gsub(".js", "")
 %li{:class => "page#{' active' if page.current?}"}
-  = link_to page, url, {:remote => remote, :rel => page.next? ? 'next' : page.prev? ? 'prev' : nil}
+  = link_to page, format_url_for_pagination(url, param_name, page), {:remote => remote, :rel => page.next? ? 'next' : page.prev? ? 'prev' : nil}

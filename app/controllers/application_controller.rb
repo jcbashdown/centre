@@ -69,7 +69,7 @@ class ApplicationController < ActionController::Base
                 :question => session[:nodes_question],
                 #:user => session[:nodes_user], 
                 :query => session[:nodes_query], 
-                :page => params[:page]
+                :page => params[:nodes_page] ? params[:nodes_page] : 1
               }
     @nodes = Node.find_by_context(context)
     unless @nodes.try(:any?)
@@ -78,23 +78,23 @@ class ApplicationController < ActionController::Base
   end
 
   def set_links_to
-    @links_to = set_links "to"
+    @links_to = set_links "to", page = params[:links_to_page]
   end
 
   def set_links_from
-    @links_from = set_links "from" 
+    @links_from = set_links "from", page = params[:links_from_page] 
   end
 
-  def set_links direction
+  def set_links direction, page
     context = ({
                 :question => session[:"links_#{direction}_question"], 
                 :user => session[:"links_#{direction}_user"], 
                 :query => session[:"links_#{direction}_query"], 
-                :page => params[:links_page]
+                :page => page
               })
     nodes = @node.find_view_links_by_context(direction, context)
     unless nodes.try(:any?)
-      nodes = @node.find_view_links_by_context(direction, context.delete_if {|k,v| k == :query})
+      nodes = @node.find_view_links_by_context(direction, context.except(:query))
     end
     nodes
   end

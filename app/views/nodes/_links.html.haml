@@ -28,6 +28,7 @@
               = hidden_field link_id, :node_to, {:value=>link.global_node_to.id, :class=>"node_to #{link_id}"}
               %a{:href => node_path(link.global_node_to, @limit_order)}
                 = link.global_node_to.title
+      = paginate @links_from, :param_name => :links_from_page 
     #links_ins_edit.tab-pane
       %table.table-striped.table-condensed.table
         %tr
@@ -49,3 +50,4 @@
               = hidden_field link_id, :node_to, {:value=>link.global_node_to.id, :class=>"node_to #{link_id}"}
               %a{:href => node_path(link.global_node_from, @limit_order)}
                 = link.global_node_from.title
+      = paginate @links_to, :param_name => :links_to_page 

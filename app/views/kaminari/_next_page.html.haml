@@ -7,4 +7,4 @@
 -#    remote:        data-remote
 - url = url.gsub(".js", "")
 %li.next
-  = link_to_unless current_page.last?, raw(t 'views.pagination.next'), url, :rel => 'next', :remote => remote
+  = link_to_unless current_page.last?, raw(t 'views.pagination.next'), format_url_for_pagination(url, param_name, current_page.to_i + 1), :rel => 'next', :remote => remote

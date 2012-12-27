@@ -20,7 +20,7 @@ class Node < ActiveRecord::Base
   #from result, delete ids from nodes map and construct for rest, slightly more db efficient as group find?
   def find_view_links_by_context direction, context
     other_node = opposite_direction[direction]
-    nodes = Node.find_by_context(context.except(:user))
+    nodes = Node.find_by_context(context.except(:user, :page))
     links = []
     nodes.each do |node|
       unless node == self
@@ -33,7 +33,7 @@ class Node < ActiveRecord::Base
         end
       end
     end
-    links
+    Kaminari.paginate_array(links).page(context[:page]).per(10)
   end
 
   def positive_cn_tos
@@ -64,8 +64,12 @@ class Node < ActiveRecord::Base
         with :question_id, conditions[:question] if conditions[:question]
         with :user_id, conditions[:user] if conditions[:user]
         order_by(:id, :asc)
-      end.results.map(&:global_node)
-      Node::GlobalNode.where(:id => results).page(conditions[:page]).per(10)
+      end.results.map(&:global_node) 
+      if conditions[:page]
+        Node::GlobalNode.where(:id => results).page(conditions[:page]).per(10)
+      else
+        Node::GlobalNode.where(:id => results)
+      end
     end
     
   end

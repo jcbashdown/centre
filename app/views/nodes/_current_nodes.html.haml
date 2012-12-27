@@ -16,4 +16,4 @@
               =render :partial => 'edit_form', :locals => {:node => node}
             %a.right.accordion-toggle-override{"data-confirm" => "Are you sure?", "data-method" => "delete", :href => node_path(node), :rel => "nofollow"}
               %i.icon-remove.right
-= paginate nodes
+= paginate nodes, :param_name => :nodes_page 
