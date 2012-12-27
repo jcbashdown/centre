@@ -36,7 +36,7 @@ describe ApplicationController do
       it 'should set the correct view configuration' do
         get :index, @params
         @view_configuration.each do |key, value|
-          session[key].should == value
+          session[key].should == value.to_s
         end
       end
       it 'should set the correct defaults when nothing is set' do
@@ -81,7 +81,7 @@ describe ApplicationController do
         it 'should override the existing configuration if overridden' do
           get :index, @params
           @new_view_configuration.each do |key, value|
-            session[key].should == value
+            session[key].should == value.to_s
           end
         end
         it 'should maintain the existing configuration if not overridden' do
@@ -137,7 +137,7 @@ describe ApplicationController do
         it 'should override the existing configuration if overridden' do
           get :index, @params
           @new_view_configuration.each do |key, value|
-            session[key].should == value
+            session[key].should == value.to_s
           end
         end
         it 'should set the correct defaults when nothing is set' do
