@@ -1,4 +1,5 @@
 class QuestionsController < ApplicationController
+  before_filter :signed_in_user, :only => :create
 
   def create
     @question = Question.where(params[:question])[0] || Question.new(params[:question])
@@ -17,9 +18,7 @@ class QuestionsController < ApplicationController
   end
 
   def show
-    p params
     @question = Question.find_by_id(params[:id])
-    p @question
     session[:nodes_question] = @question.try(:id)
     session[:links_to_question] = @question.try(:id)
     session[:links_from_question] = @question.try(:id)
