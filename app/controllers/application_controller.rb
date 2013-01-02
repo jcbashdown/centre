@@ -39,8 +39,7 @@ class ApplicationController < ActionController::Base
 
   def set_questions
     @new_question = Question.new
-    @questions = [Question.new(:name => 'All')]
-    @questions += Question.all
+    @questions = Question.all
   end
 
   def signed_in_user
