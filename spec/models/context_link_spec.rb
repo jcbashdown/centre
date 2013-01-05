@@ -3,6 +3,57 @@ require 'models/context_link_spec_helper'
 
 describe ContextLink do
   describe 'create' do
+    context 'creating context nodes through context links' do
+      context 'when there is no existing context_link' do
+        before do
+          @question = FactoryGirl.create(:question)
+          @user = FactoryGirl.create(:user)
+          @gnu1 = ContextNode.create(:title => 'title', :question => @question, :user => @user)
+          @state_hash = {
+                          :context_link => {:number_created => 1},
+                          :global_link => {
+                                            :number_created => 1,
+                                            :users_count => 1,
+                                            :activation => true
+                                          },
+                          :question_link => {
+                                              :number_created => 1,
+                                              :users_count => 1,
+                                              :activation => true
+                                            },
+                          :user_link => {
+                                          :number_created => 1,
+                                          :users_count => 0
+                                        },
+                          :context_node => {
+                                             :number_created => 0,
+                                             :find_or_create_calls => 2 
+                                           },
+                          :new_global_node_to => {
+                                            :upvotes_count=> 1
+                                          },
+                          :new_global_node_from => {
+                                            :upvotes_count=> 0
+                                          },
+                          :new_question_node_to => {
+                                              :upvotes_count => 1
+                                            },
+                          :new_question_node_from => {
+                                              :upvotes_count => 0
+                                            },
+                          :new_user_node_to => {
+                                          :upvotes_count => 1
+                                        },
+                          :new_user_node_from => {
+                                          :upvotes_count => 0
+                                        }
+                        }
+          @params = {:user=>@user, :question => @question, :global_node_to_id => @gnu1.global_node.id, :context_node_from => {:user => @user, :question => @question, :title => 'Title'}} 
+        end
+        it_should_behave_like 'a context link creating links', "Positive"
+        #it_should_behave_like 'context node creating nodes'
+      end
+    end
     context 'when it is a self link' do
       it 'should not be valid' do
         pending
@@ -53,6 +104,7 @@ describe ContextLink do
                                         :upvotes_count => 0
                                       }
                       }
+        @params = {:user=>@user, :question => @question, :global_node_from_id => @gnu1.global_node.id, :global_node_to_id => @gnu2.global_node.id} 
       end
       it_should_behave_like 'a context link creating links', "Positive"
       context 'when creating a duplicate context_link' do
@@ -97,6 +149,7 @@ describe ContextLink do
                                           :upvotes_count => 0
                                         }
                         }
+          @params = {:user=>@user, :question => @question, :global_node_from_id => @gnu1.global_node.id, :global_node_to_id => @gnu2.global_node.id} 
         end
         it_should_behave_like 'a context link creating links', "Positive"
       end
@@ -144,6 +197,7 @@ describe ContextLink do
                                         }
                         }
           @question = FactoryGirl.create(:question, :name => 'another new question')
+          @params = {:user=>@user, :question => @question, :global_node_from_id => @gnu1.global_node.id, :global_node_to_id => @gnu2.global_node.id} 
         end
         it_should_behave_like 'a context link creating links', "Positive"
       end
@@ -194,6 +248,7 @@ describe ContextLink do
                                           :equivalents_count=> 0
                                         }
                         }
+          @params = {:user=>@user, :question => @question, :global_node_from_id => @gnu1.global_node.id, :global_node_to_id => @gnu2.global_node.id} 
         end
         it_should_behave_like 'a context link creating links', "Equivalent"
       end
