@@ -49,7 +49,7 @@ describe ContextLink do
                                           :upvotes_count => 0
                                         }
                         }
-          @params = {:user=>@user, :question => @question, :global_node_to_id => @gnu1.global_node.id, :context_node_from => {:user => @user, :question => @question, :title => 'Title'}} 
+          @params = {:user=>@user, :question => @question, :global_node_to_id => @gnu1.global_node.id, :context_node_from_attributes => {:user => @user, :question => @question, :title => 'Title'}} 
         end
         it_should_behave_like 'a context link creating links', "Positive"
         #it_should_behave_like 'context node creating nodes'
