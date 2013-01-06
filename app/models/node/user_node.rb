@@ -6,4 +6,8 @@ class Node::UserNode < Node
     integer :id
     integer :user_id
   end
+  
+  def set_caches_and_conclusion
+    self.users_count = ContextNode.count( :conditions => ["#{self.type.gsub("Node::", "").underscore}_id = ?", self.id] )
+  end
 end

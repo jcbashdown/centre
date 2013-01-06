@@ -1,5 +1,6 @@
 class Node < ActiveRecord::Base
   before_save :set_caches_and_conclusion
+
   def set_caches_and_conclusion
     self.users_count = ContextNode.count( :conditions => ["#{self.type.gsub("Node::", "").underscore}_id = ?", self.id] )
     self.not_conclusion_votes_count = ContextNode.count( :conditions => ["is_conclusion = false AND #{self.type.gsub("Node::", "").underscore}_id = ?", self.id] )

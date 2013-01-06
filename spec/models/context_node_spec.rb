@@ -1,4 +1,5 @@
 require 'spec_helper'
+require 'models/context_node_spec_helper'
 
 describe ContextNode do
   before do
@@ -93,7 +94,6 @@ describe ContextNode do
         @context_node.reload.is_conclusion.should == @conclusion_status
         @context_node.question_node.reload.is_conclusion.should == false
         @context_node.global_node.reload.is_conclusion.should == false
-        @context_node.user_node.reload.is_conclusion.should == false
       end
       context 'when a new context node for the qn is created as true' do
         before do
@@ -112,6 +112,166 @@ describe ContextNode do
   end
 
   describe 'creation' do
+    context 'when there is no existing node with title for question and user' do
+      before do
+        conclusion_status = true
+        @node_state_hash = {
+                             :context_node => {
+                                                :number_created => 1
+                                              },
+                             :global_node => {
+                                               :number_created => 1,
+                                               :number_existing => 1,
+                                               :users_count => 1,
+                                               :is_conclusion => true
+                                             },
+                             :question_node => {
+                                                 :number_created => 1,
+                                                 :number_existing => 1,
+                                                 :users_count => 1,
+                                                 :is_conclusion => true
+                                               },
+                             :user_node => {
+                                             :number_created => 1,
+                                             :number_existing => 1,
+                                             :users_count => 1
+                                           }
+                           }
+        @params = {:user=>@user, :question=>@question, :title => 'Title', :is_conclusion => conclusion_status}
+      end 
+      it_should_behave_like 'context node creating nodes'
+    end
+    context 'when there is an existing node for different question and user' do
+      before do
+        conclusion_status = true
+        @params = {:user=>@user, :question=>@question, :title => 'Title', :is_conclusion => conclusion_status}
+        ContextNode.create(@params)
+        @node_state_hash = {
+                             :context_node => {
+                                                :number_created => 1
+                                              },
+                             :global_node => {
+                                               :number_created => 0,
+                                               :number_existing => 1,
+                                               :users_count => 2,
+                                               :is_conclusion => true
+                                             },
+                             :question_node => {
+                                                 :number_created => 1,
+                                                 :number_existing => 2,
+                                                 :users_count => 1,
+                                                 :is_conclusion => true
+                                               },
+                             :user_node => {
+                                             :number_created => 1,
+                                             :number_existing => 2,
+                                             :users_count => 1
+                                           }
+                           }
+        @user = FactoryGirl.create(:user, :email=>"another@test.com")
+        @question = FactoryGirl.create(:question, :name => 'Alex is pretty')
+        @params = {:user=>@user, :question=>@question, :title => 'Title', :is_conclusion => conclusion_status}
+      end 
+      it_should_behave_like 'context node creating nodes'
+    end
+    context 'when there is an existing node for user but different question' do
+      before do
+        conclusion_status = true
+        @params = {:user=>@user, :question=>@question, :title => 'Title', :is_conclusion => conclusion_status}
+        ContextNode.create(@params)
+        @node_state_hash = {
+                             :context_node => {
+                                                :number_created => 1
+                                              },
+                             :global_node => {
+                                               :number_created => 0,
+                                               :number_existing => 1,
+                                               :users_count => 2,
+                                               :is_conclusion => true
+                                             },
+                             :question_node => {
+                                                 :number_created => 1,
+                                                 :number_existing => 2,
+                                                 :users_count => 1,
+                                                 :is_conclusion => true
+                                               },
+                             :user_node => {
+                                             :number_created => 0,
+                                             :number_existing => 1,
+                                             :users_count => 2
+                                           }
+                           }
+        @question = FactoryGirl.create(:question, :name => 'Alex is pretty')
+        @params = {:user=>@user, :question=>@question, :title => 'Title', :is_conclusion => conclusion_status}
+      end 
+      it_should_behave_like 'context node creating nodes'
+    end
+    context 'when there is an existing node for question where is conclusion is false but different user and is_conclusion is true' do
+      before do
+        conclusion_status = false
+        @params = {:user=>@user, :question=>@question, :title => 'Title', :is_conclusion => conclusion_status}
+        ContextNode.create(@params)
+        new_conclusion_status = true
+        @node_state_hash = {
+                             :context_node => {
+                                                :number_created => 1
+                                              },
+                             :global_node => {
+                                               :number_created => 0,
+                                               :number_existing => 1,
+                                               :users_count => 2,
+                                               :is_conclusion => conclusion_status
+                                             },
+                             :question_node => {
+                                                 :number_created => 0,
+                                                 :number_existing => 1,
+                                                 :users_count => 2,
+                                                 :is_conclusion => conclusion_status
+                                               },
+                             :user_node => {
+                                             :number_created => 1,
+                                             :number_existing => 2,
+                                             :users_count => 1
+                                           }
+                           }
+        @user = FactoryGirl.create(:user, :email=>"another@test.com")
+        @params = {:user=>@user, :question=>@question, :title => 'Title', :is_conclusion => new_conclusion_status}
+      end 
+      it_should_behave_like 'context node creating nodes'
+      context 'when there is a further existing node for the question but a different user who thinks the conclusion status is true' do
+        before do
+          conclusion_status = true
+          @params = {:user=>@user, :question=>@question, :title => 'Title', :is_conclusion => conclusion_status}
+          ContextNode.create(@params)
+          new_conclusion_status = true
+          @node_state_hash = {
+                               :context_node => {
+                                                  :number_created => 1
+                                                },
+                               :global_node => {
+                                                 :number_created => 0,
+                                                 :number_existing => 1,
+                                                 :users_count => 3,
+                                                 :is_conclusion =>new_conclusion_status 
+                                               },
+                               :question_node => {
+                                                   :number_created => 0,
+                                                   :number_existing => 1,
+                                                   :users_count => 3,
+                                                   :is_conclusion =>new_conclusion_status 
+                                                 },
+                               :user_node => {
+                                               :number_created => 1,
+                                               :number_existing => 3,
+                                               :users_count => 1
+                                             }
+                             }
+          @user = FactoryGirl.create(:user, :email=>"new@test.com")
+          @params = {:user=>@user, :question=>@question, :title => 'Title', :is_conclusion => new_conclusion_status}
+        end 
+        it_should_behave_like 'context node creating nodes'
+      end
+    end
     describe 'creation with no existing inclusion in qns context_nodes' do
       it 'should create 2 questions_nodes' do
         expect {

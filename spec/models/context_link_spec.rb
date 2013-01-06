@@ -1,5 +1,6 @@
 require 'spec_helper'
 require 'models/context_link_spec_helper'
+require 'models/context_node_spec_helper'
 
 describe ContextLink do
   describe 'create' do
