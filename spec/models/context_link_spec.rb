@@ -4,6 +4,11 @@ require 'models/context_node_spec_helper'
 
 describe ContextLink do
   describe 'create' do
+    context 'when validations fail' do
+      it 'should not create all the associated nodes' do
+        pending
+      end
+    end
     context 'creating context nodes through context links' do
       context 'when there is no existing context_link' do
         before do
@@ -49,10 +54,34 @@ describe ContextLink do
                                           :upvotes_count => 0
                                         }
                         }
-          @params = {:user=>@user, :question => @question, :global_node_to_id => @gnu1.global_node.id, :context_node_from_attributes => {:user => @user, :question => @question, :title => 'Title'}} 
+        @node_state_hash = {
+                             :context_node => {
+                                                :number_created => 1
+                                              },
+                             :global_node => {
+                                               :number_created => 1,
+                                               :number_existing => 1,
+                                               :users_count => 1,
+                                               :is_conclusion => false
+                                             },
+                             :question_node => {
+                                                 :number_created => 1,
+                                                 :number_existing => 1,
+                                                 :users_count => 1,
+                                                 :is_conclusion => false
+                                               },
+                             :user_node => {
+                                             :number_created => 1,
+                                             :number_existing => 1,
+                                             :users_count => 1
+                                           }
+                           }
+          #do we need a conclusion status?
+          @params = {:user=>@user, :question => @question, :global_node_to_id => @gnu1.global_node.id, :context_node_from_title => 'Title'}
+          @perform = "ContextLink::PositiveContextLink.create(@params)"
         end
         it_should_behave_like 'a context link creating links', "Positive"
-        #it_should_behave_like 'context node creating nodes'
+        it_should_behave_like 'context node creating nodes'
       end
     end
     context 'when it is a self link' do
