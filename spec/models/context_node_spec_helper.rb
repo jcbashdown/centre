@@ -25,6 +25,7 @@ shared_examples_for 'context node creating nodes' do
   end
   it 'should create the correct question node with the correct users count' do
     cn = eval(@perform)
+    cn = (cn.is_a?(ContextNode) ? cn : cn.context_node_from)
     qn = Node::QuestionNode.where(:title => 'Title', :question_id => @question.id, :users_count => @state_hash[:question_node][:users_count], :is_conclusion => @state_hash[:question_node][:is_conclusion])
     qn.count.should == 1
     qn[0].id.should == cn.question_node_id
@@ -32,6 +33,7 @@ shared_examples_for 'context node creating nodes' do
   end
   it 'should create the correct user node with the correct users count' do
     cn = eval(@perform)
+    cn = (cn.is_a?(ContextNode) ? cn : cn.context_node_from)
     un = Node::UserNode.where(:title => 'Title', :user_id => @user.id, :users_count => @state_hash[:user_node][:users_count])
     un.count.should == 1
     un[0].id.should == cn.user_node_id
@@ -39,6 +41,7 @@ shared_examples_for 'context node creating nodes' do
   end
   it 'should create the correct global node with the correct users count' do
     cn = eval(@perform)
+    cn = (cn.is_a?(ContextNode) ? cn : cn.context_node_from)
     gn = Node::GlobalNode.where(:title => 'Title', :users_count => @state_hash[:global_node][:users_count], :is_conclusion => @state_hash[:global_node][:is_conclusion])
     gn.count.should == 1
     gn[0].id.should == cn.global_node_id

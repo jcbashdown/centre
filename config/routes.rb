@@ -5,7 +5,7 @@ Centre::Application.routes.draw do
   resources :links
   resources :user_arguments, :only => [:show, :index]
   resources :question_arguments, :only => [:show, :index]
-  resources :arguments, :only => [:show, :index]
+  resources :arguments, :only => [:show]
 
   root :to => "homepage#index"
 

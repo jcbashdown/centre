@@ -14,7 +14,7 @@ describe ContextLink do
         before do
           @question = FactoryGirl.create(:question)
           @user = FactoryGirl.create(:user)
-          @gnu1 = ContextNode.create(:title => 'title', :question => @question, :user => @user)
+          @gnu1 = ContextNode.create(:title => 'title one', :question => @question, :user => @user)
           @state_hash = {
                           :context_link => {:number_created => 1},
                           :global_link => {
@@ -32,7 +32,7 @@ describe ContextLink do
                                           :users_count => 0
                                         },
                           :context_node => {
-                                             :number_created => 0,
+                                             :number_created => 1,
                                              :find_or_create_calls => 2 
                                            },
                           :new_global_node_to => {
