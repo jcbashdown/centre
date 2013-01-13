@@ -101,4 +101,8 @@ class ApplicationController < ActionController::Base
   def set_node
     @node = Node::GlobalNode.find session[:node_id]
   end
+
+  def set_new_node
+    @new_node = Node.new
+  end
 end

@@ -1,4 +1,5 @@
 class NodesController < ApplicationController
+  before_filter :set_new_node, :only => [:index, :show]
   before_filter :signed_in_user, :except => [:show, :index]
   before_filter :set_nodes, :only => [:index, :show]
   before_filter :set_node, :only => [:show, :destroy]
@@ -11,7 +12,6 @@ class NodesController < ApplicationController
   end
 
   def index
-    @new_node = Node.new
     respond_to do |format|
       format.js { render :partial => 'current_nodes', :locals => {:nodes => @nodes}}
       format.json { render json: @nodes.to_json(:only => [:id, :title]) }
@@ -23,7 +23,6 @@ class NodesController < ApplicationController
     if current_user
       @gnu = ContextNode.where(:user_id=>current_user.id, :global_node_id=>@node.id, :question_id=>@node_question.try(:id))[0]
     end
-    @new_node = Node.new
     if request.xhr?
       render :show, :layout => false
     else
@@ -36,8 +35,10 @@ class NodesController < ApplicationController
     respond_to do |format|
       if context_node.save
         @node = context_node.global_node
+        format.json {render @node.to_json}
         format.html { redirect_to node_path(@node), notice: 'Node was successfully created.' }
       else
+        format.json {render false.to_json}
         format.html { redirect_to nodes_path, notice: 'The Title was blank or already taken.' }
       end
     end
@@ -72,5 +73,4 @@ class NodesController < ApplicationController
       redirect_to node_path(@context_node.global_node)
     end
   end
-
 end

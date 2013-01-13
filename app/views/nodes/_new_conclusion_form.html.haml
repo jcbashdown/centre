@@ -1,0 +1,13 @@
+= form_for @new_node, :html => {:class => 'form-inline'} do |f|
+  -if @new_node.errors.any?
+    #error_explanation
+      %h2= "#{pluralize(@new_node.errors.count, "error")} prohibited this point from being saved:"
+      %ul
+        - @new_node.errors.full_messages.each do |msg|
+          %li= msg
+  .row-fluid
+    .input-append.span12
+      .row-fluid
+        = f.text_field :title, :placeholder=>"New Conclusion", :class=>"typeahead span9", :autocomplete => "off", :value =>(session["nodes_query"] ? session["nodes_query"] : "")
+        = f.hidden_field :is_conclusion, :value => true
+        = f.submit 'Add', :class => 'btn span3'
