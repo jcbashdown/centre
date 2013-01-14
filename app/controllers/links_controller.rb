@@ -1,6 +1,20 @@
 class LinksController < ApplicationController
+  prepend_before_filter :update_view_configuration
   prepend_before_filter :signed_in_user
   before_filter :set_link_question
+
+  def set_link_question
+    if session[:active_links] == "to"
+      question_id = session[:links_to_question]
+    else
+      question_id = session[:links_from_question]
+    end
+    if question_id
+      @link_question = Question.find_by_id question_id
+    else
+      @link_question = nil
+    end
+  end
 
   def create
     @context_link = "ContextLink::#{params[:type]}ContextLink".constantize.new(params[:global_link].merge(:question_id => @link_question.try(:id), :user => current_user))

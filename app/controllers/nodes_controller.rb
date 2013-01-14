@@ -1,6 +1,7 @@
 class NodesController < ApplicationController
+  prepend_before_filter :update_view_configuration
+  prepend_before_filter :signed_in_user, :except => [:show, :index]
   before_filter :set_new_node, :only => [:index, :show]
-  before_filter :signed_in_user, :except => [:show, :index]
   before_filter :set_nodes, :only => [:index, :show]
   before_filter :set_node, :only => [:show, :destroy]
   before_filter :set_links_from, :only => [:show]
@@ -71,6 +72,28 @@ class NodesController < ApplicationController
     @context_node = ContextNode.where({:user_id => current_user.id, :question_id => @node_question.try(:id), :title => params[:node][:title]})[0]
     if @context_node
       redirect_to node_path(@context_node.global_node)
+    end
+  end
+  
+  def update_view_configuration
+    super
+    set_node_question
+    set_argument_question
+  end
+
+  def set_node_question
+    if question_id = session[:nodes_question]
+      @node_question = Question.find_by_id question_id
+    else
+      @node_question = nil
+    end
+  end
+
+  def set_argument_question
+    if question_id = session[:arguments_question]
+      @argument_question = Question.find_by_id question_id
+    else
+      @argument_question = nil
     end
   end
 end

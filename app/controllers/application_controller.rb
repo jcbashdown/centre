@@ -4,38 +4,6 @@ class ApplicationController < ActionController::Base
   protect_from_forgery
 
   before_filter :set_questions
-  before_filter :update_view_configuration
-  before_filter :set_node_question
-  before_filter :set_argument_question
-
-  def set_node_question
-    if question_id = session[:nodes_question]
-      @node_question = Question.find_by_id question_id
-    else
-      @node_question = nil
-    end
-  end
-
-  def set_argument_question
-    if question_id = session[:arguments_question]
-      @argument_question = Question.find_by_id question_id
-    else
-      @argument_question = nil
-    end
-  end
-  
-  def set_link_question
-    if session[:active_links] == "to"
-      question_id = session[:links_to_question]
-    else
-      question_id = session[:links_from_question]
-    end
-    if question_id
-      @link_question = Question.find_by_id question_id
-    else
-      @link_question = nil
-    end
-  end
 
   def set_questions
     @new_question = Question.new
@@ -98,11 +66,8 @@ class ApplicationController < ActionController::Base
     nodes
   end
 
-  def set_node
-    @node = Node::GlobalNode.find session[:node_id]
-  end
-
   def set_new_node
     @new_node = Node.new
   end
+  
 end
