@@ -81,19 +81,4 @@ class NodesController < ApplicationController
     set_argument_question
   end
 
-  def set_node_question
-    if question_id = session[:nodes_question]
-      @node_question = Question.find_by_id question_id
-    else
-      @node_question = nil
-    end
-  end
-
-  def set_argument_question
-    if question_id = session[:arguments_question]
-      @argument_question = Question.find_by_id question_id
-    else
-      @argument_question = nil
-    end
-  end
 end

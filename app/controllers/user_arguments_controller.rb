@@ -1,4 +1,5 @@
 class UserArgumentsController < ApplicationController
+  prepend_before_filter :update_view_configuration
   
   def show
     @node = ContextNode.find(params[:id])
@@ -21,4 +22,9 @@ class UserArgumentsController < ApplicationController
     end
   end
  
+  def update_view_configuration
+    super
+    set_node_question
+    set_argument_question
+  end
 end
