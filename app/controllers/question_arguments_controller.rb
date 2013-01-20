@@ -1,5 +1,4 @@
 class QuestionArgumentsController < ApplicationController
-  prepend_before_filter :update_view_configuration
   
   def show
     @node = Node::QuestionNode.find(params[:id])

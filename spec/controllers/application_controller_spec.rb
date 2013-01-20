@@ -177,36 +177,6 @@ describe ApplicationController do
       it_should_behave_like 'a controller setting nodes for the view', "node", nil
       it_should_behave_like 'a controller setting nodes for the view', "node", "3"
     end
-    describe 'setting links' do
-      before do
-        @current_node = mock('node')
-        @current_node.stub(:find_view_links_from_by_context)
-        @current_node.stub(:find_view_links_to_by_context)
-        Node::GlobalNode.stub(:find).and_return @current_node
-      end
-      describe 'set_links_to' do
-        controller do
-          before_filter :set_node
-          before_filter :set_links_to
-          def index 
-            render :nothing => true
-          end
-        end
-        it_should_behave_like 'a controller setting links for the view', "to", "link", nil
-        it_should_behave_like 'a controller setting links for the view', "to", "link", "3"
-      end
-      describe 'set_links_from' do
-        controller do
-          before_filter :set_node
-          before_filter :set_links_from
-          def index 
-            render :nothing => true
-          end
-        end
-        it_should_behave_like 'a controller setting links for the view', "from", "link", nil
-        it_should_behave_like 'a controller setting links for the view', "from", "link", "3"
-      end
-    end
     describe 'set_argument' do
       it 'should call set argument with the correct params' do
         pending

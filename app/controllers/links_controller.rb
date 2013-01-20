@@ -1,5 +1,4 @@
 class LinksController < ApplicationController
-  prepend_before_filter :update_view_configuration
   prepend_before_filter :signed_in_user
   before_filter :set_link_question
 

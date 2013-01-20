@@ -1,5 +1,4 @@
 class QuestionsController < ApplicationController
-  prepend_before_filter :update_view_configuration, :only => [:show]
   prepend_before_filter :signed_in_user, :only => [:create]
   before_filter :set_new_node, :only => [:show]
   before_filter :set_nodes, :only => [:show]

@@ -1,5 +1,6 @@
 require "#{Rails.root}/lib/view_configuration"
 class ApplicationController < ActionController::Base
+  prepend_before_filter :update_view_configuration
   include ViewConfiguration
   protect_from_forgery
 
@@ -42,28 +43,6 @@ class ApplicationController < ActionController::Base
     unless @nodes.try(:any?)
       @nodes = Node.find_by_context(context.except(:query))
     end
-  end
-
-  def set_links_to
-    @links_to = set_links "to", page = params[:links_to_page]
-  end
-
-  def set_links_from
-    @links_from = set_links "from", page = params[:links_from_page] 
-  end
-
-  def set_links direction, page
-    context = ({
-                :question => session[:"links_#{direction}_question"], 
-                :user => session[:"links_#{direction}_user"], 
-                :query => session[:"links_#{direction}_query"], 
-                :page => page
-              })
-    nodes = @node.find_view_links_by_context(direction, context)
-    unless nodes.try(:any?)
-      nodes = @node.find_view_links_by_context(direction, context.except(:query))
-    end
-    nodes
   end
 
   def set_new_node

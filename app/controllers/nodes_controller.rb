@@ -1,9 +1,8 @@
 class NodesController < ApplicationController
-  prepend_before_filter :update_view_configuration
   prepend_before_filter :signed_in_user, :except => [:show, :index]
   before_filter :set_new_node, :only => [:index, :show]
   before_filter :set_nodes, :only => [:index, :show]
-  before_filter :set_node, :only => [:show, :destroy]
+  before_filter :set_node, :only => [:show, :destroy, :update]
   before_filter :set_links_from, :only => [:show]
   before_filter :set_links_to, :only => [:show]
   before_filter :redirect_if_new_exists, :only => [:create]
@@ -46,7 +45,6 @@ class NodesController < ApplicationController
   end
 
   def update
-    @global_node = Node::GlobalNode.find params[:id]
     @context_node = ContextNode.where(:user_id => current_user.id, :question_id => @node_question.try(:id), :global_node_id => params[:id])[0]
     @context_node.set_conclusion! params[:node][:is_conclusion]
   end
@@ -81,4 +79,25 @@ class NodesController < ApplicationController
     set_argument_question
   end
 
+  def set_links_to
+    @links_to = set_links "to", page = params[:links_to_page]
+  end
+
+  def set_links_from
+    @links_from = set_links "from", page = params[:links_from_page] 
+  end
+
+  def set_links direction, page
+    context = ({
+                :question => session[:"links_#{direction}_question"], 
+                :user => session[:"links_#{direction}_user"], 
+                :query => session[:"links_#{direction}_query"], 
+                :page => page
+              })
+    nodes = @node.find_view_links_by_context(direction, context)
+    unless nodes.try(:any?)
+      nodes = @node.find_view_links_by_context(direction, context.except(:query))
+    end
+    nodes
+  end
 end

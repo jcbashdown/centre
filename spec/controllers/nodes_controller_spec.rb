@@ -1,4 +1,5 @@
 require 'spec_helper'
+require 'controllers/application_controller_spec_helper'
 
 describe NodesController do
   before do
@@ -292,13 +293,13 @@ describe NodesController do
     let(:params) {{:id => @global_node_id, :node => {:is_conclusion => is_conclusion}, :view_configuration => {:nodes_question => @question_id}}}
 
     it "should find the correct global_node for id" do
-      Node::GlobalNode.should_receive(:find).with(@global_node_id.to_s)
+      Node.should_receive(:find).with(@global_node_id.to_s)
       xhr :put, :update, params
     end
     
     it 'should assign the global_node' do
       xhr :put, :update, params
-      assigns(:global_node).should == @context_node.global_node
+      assigns(:node).should == @context_node.global_node
     end
 
     it 'should find the correct context node' do
@@ -368,6 +369,25 @@ describe NodesController do
         response.should redirect_to nodes_path
       end
 
+    end
+  end
+  describe 'setting view resources' do
+    before do
+      @question = FactoryGirl.create(:question)
+      @query = "Part of a node title"
+    end
+    describe 'setting links' do
+      before do
+        @current_node = mock('node')
+        @current_node.stub(:find_view_links_from_by_context)
+        @current_node.stub(:find_view_links_to_by_context)
+        Node.stub(:find).and_return @current_node
+      end
+      describe 'set_links_to and from' do
+        let(:action) {:show}
+        it_should_behave_like 'a controller setting links for the view', "link", nil
+        it_should_behave_like 'a controller setting links for the view', "link", "3"
+      end
     end
   end
 

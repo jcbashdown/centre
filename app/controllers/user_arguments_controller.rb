@@ -1,5 +1,4 @@
 class UserArgumentsController < ApplicationController
-  prepend_before_filter :update_view_configuration
   
   def show
     @node = ContextNode.find(params[:id])
