@@ -1,4 +1,4 @@
-= form_for @new_node, :html => {:class => 'form-inline'} do |f|
+= form_for @new_node, :html => {:class => 'form-inline remote-submit-and-refresh'} do |f|
   -if @new_node.errors.any?
     #error_explanation
       %h2= "#{pluralize(@new_node.errors.count, "error")} prohibited this point from being saved:"

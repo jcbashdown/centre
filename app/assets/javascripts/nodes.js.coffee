@@ -1,5 +1,4 @@
 $(document).ready ->
-  question = $('#global_id').text()
   $('.typeahead').typeahead(
     source: (typeahead, query) ->
       url = "/nodes.js"
@@ -44,6 +43,32 @@ $(document).ready ->
   $('form.node-edit').live "change", (event) ->
     id = $(this).attr('id')
     $("#"+id).submit()
+    return false 
+
+  $('form.remote-submit-and-refresh').submit ->
+    $.ajax
+      url: $(this).attr("action")
+      type: $(this).attr("method")
+      dataType: "json"
+      data: $(this).serialize()
+      success: (data) ->
+        centre.refreshArgument()
+        query = $(this).attr('value')
+        url = "/nodes.js"
+        method = "GET"
+        data_hash = {"view_configuration":{"nodes_query":query}}
+        $.ajax
+          url: url
+          type: method  
+          data: data_hash   
+          dataType: "html"
+          error: (XMLHttpRequest, textStatus, errorThrown) ->
+            alert errorThrown    
+          success: (data, textStatus, XMLHttpRequest) ->
+            $('#current_nodes').html(data)
+        return false 
+      error: (xhr, err) ->
+        alert "Error"
     return false 
     
   return false

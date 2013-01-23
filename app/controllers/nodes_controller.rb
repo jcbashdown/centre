@@ -35,10 +35,10 @@ class NodesController < ApplicationController
     respond_to do |format|
       if context_node.save
         @node = context_node.global_node
-        format.json {render @node.to_json}
+        format.json {render json: @node.to_json}
         format.html { redirect_to node_path(@node), notice: 'Node was successfully created.' }
       else
-        format.json {render false.to_json}
+        format.json {render json: false.to_json}
         format.html { redirect_to nodes_path, notice: 'The Title was blank or already taken.' }
       end
     end
