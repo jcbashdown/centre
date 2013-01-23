@@ -379,6 +379,7 @@ describe NodesController do
     describe 'setting links' do
       before do
         @current_node = mock('node')
+        @current_node.stub(:id)
         @current_node.stub(:find_view_links_from_by_context)
         @current_node.stub(:find_view_links_to_by_context)
         Node.stub(:find).and_return @current_node
