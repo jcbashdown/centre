@@ -9,5 +9,5 @@
 //= require jquery_ujs
 //= require links
 //= require nodes 
-//= require arguments
+//= require centre
 //= require bootstrap

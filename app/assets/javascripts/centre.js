@@ -1,5 +1,24 @@
 var centre = (centre) ? centre : {};
 
+centre.refreshNodes = function(view_configuration_data = {}) {
+  var method, url;
+  url = "/nodes.js";
+  method = "GET";
+  $.ajax({
+    url: url,
+    type: method,
+    data: view_configuration_data,
+    dataType: "html",
+    error: function(XMLHttpRequest, textStatus, errorThrown) {
+      return alert(errorThrown);
+    },
+    success: function(data, textStatus, XMLHttpRequest) {
+      return $('#current_nodes').html(data);
+    }
+  });
+  return false;
+}
+
 centre.refreshArgument = function() {
   var argument, user_id;
   var active_argument = $('.tab-pane.active').attr("id");
