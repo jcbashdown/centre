@@ -54,7 +54,7 @@ class NodesController < ApplicationController
     if context_node.destroy
       respond_to do |format|
         format.html { redirect_to nodes_path }
-        format.json { head :ok }
+        format.json {render json: true}
       end
     else
       respond_to do |format|

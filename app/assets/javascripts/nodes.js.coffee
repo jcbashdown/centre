@@ -44,6 +44,28 @@ $(document).ready ->
     id = $(this).attr('id')
     $("#"+id).submit()
     return false 
+  
+  $('a.delete-node').click ->
+    $.ajax
+      url: $(this).attr("href")
+      type: "DELETE" 
+      dataType: "json"
+      success: (data) ->
+        centre.refreshArgument()
+        url = "/nodes.js"
+        method = "GET"
+        $.ajax
+          url: url
+          type: method  
+          dataType: "js"
+          error: (XMLHttpRequest, textStatus, errorThrown) ->
+            alert errorThrown    
+          success: (data, textStatus, XMLHttpRequest) ->
+            $('#current_nodes').html(data)
+        return false 
+      error: (xhr, err) ->
+        alert "Error"
+    return false 
 
   $('form.remote-submit-and-refresh').submit ->
     $.ajax
@@ -61,7 +83,7 @@ $(document).ready ->
           url: url
           type: method  
           data: data_hash   
-          dataType: "html"
+          dataType: "js"
           error: (XMLHttpRequest, textStatus, errorThrown) ->
             alert errorThrown    
           success: (data, textStatus, XMLHttpRequest) ->
