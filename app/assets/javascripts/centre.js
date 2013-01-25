@@ -1,6 +1,7 @@
-var centre = (centre) ? centre : {};
+var centre = centre || {};
 
-centre.refreshNodes = function(view_configuration_data = {}) {
+centre.refreshNodes = function(view_configuration_data) {
+  if (typeof(view_configuration_data)==="undefined") view_configuration_data = {};
   var method, url;
   url = "/nodes.js";
   method = "GET";

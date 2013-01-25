@@ -1,0 +1,5 @@
+.row-fluid
+  .input-append.span12
+    .row-fluid
+      = f.text_field :title, :placeholder=>"Point", :class=>"typeahead span9", :autocomplete => "off", :value =>(session["nodes_query"] ? session["nodes_query"] : "")
+      = f.submit 'Add/View', :class => 'btn span3'
