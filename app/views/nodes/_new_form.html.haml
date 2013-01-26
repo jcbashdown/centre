@@ -1,5 +1,5 @@
 = form_for @new_node, :html => {:class => 'form-inline'} do |f|
-  = render :partial => "simple_new_form", :locals => {:f => f}
+  = render :partial => "nodes/form_elements/title", :locals => {:f => f}
   .row-fluid
     .span12
       &nbsp;
@@ -11,14 +11,6 @@
             %h4
               Conclusion?:
           .span8
-            %label.checkbox.inline
-              No&nbsp;
-              = f.radio_button :is_conclusion, false
-            %label.checkbox.inline
-              No opinion&nbsp;
-              = f.radio_button :is_conclusion, "", :checked => true
-            %label.checkbox.inline
-              Yes&nbsp;
-              = f.radio_button :is_conclusion, true
+            = render :partial => "nodes/form_elements/is_conclusion", :locals => {:f => f, :context_node => (context_node ||= nil)}
   - if @question
     %input{:style => 'display:none;', :value => @question.id, :name => "question"}

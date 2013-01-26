@@ -20,10 +20,12 @@ class LinksController < ApplicationController
     respond_to do |format|
       if @context_link.save
         format.js { render :partial => 'a_link', :locals=>{:link => @context_link.global_link, :direction=>params[:direction]} }
+        format.json {render json: @context_link.to_json}
       else
         link_params = params[:global_link]
         blank_link = Link::GlobalLink.new(:node_from_id => link_params[:global_node_from_id], :node_to_id => link_params[:global_node_to_id])
         format.js { render :partial => 'a_link', :locals=>{:link => blank_link, :direction=>params[:direction]} }
+        format.json {render json: false.to_json}
       end
     end
   end

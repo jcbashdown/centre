@@ -3,6 +3,7 @@
 %div{:id => "#{previous}#{node.id}"}
   - if node.id == original
     %h5 Argument For
+  = render :partial => "links/node_through_link_form", :locals => {:type => "Positive", :global_node_to_id => node.global_node_id}
   %ul.positive
     -froms_positive.each do |from|
       %li
@@ -16,6 +17,7 @@
       %div{:id => "#{previous}plus#{from.id}", :style => "display:none;"}
   - if node.id == original
     %h5 Argument Against
+  = render :partial => "links/node_through_link_form", :locals => {:type => "Negative", :global_node_to_id => node.global_node_id}
   %ul.positive
     -froms_negative.each do |from|
       %li

@@ -5,7 +5,6 @@ $(document).ready ->
       centre.refreshNodes(data_hash)
       url = "/nodes.json"
       method = "GET"
-      data_hash = {"view_configuration":{"nodes_query":query}}
       $.ajax(
         url: url
         type: method  
@@ -47,7 +46,7 @@ $(document).ready ->
         alert "Error"
     return false 
 
-  $('form.remote-submit-and-refresh').submit ->
+  $('form.remote-submit-and-refresh').live "submit", (event) ->
     $.ajax
       url: $(this).attr("action")
       type: $(this).attr("method")
