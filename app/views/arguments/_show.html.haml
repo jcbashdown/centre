@@ -10,8 +10,10 @@
           = from.title
         %a{:href => "#"}
           %i{:class => "icon-minus-sign #{previous}plus#{from.id}", :style => "display:none;"}
-        %a{:href => user_argument_path(from.id, {:path => previous+"plus", :original => original}), :'data-remote' => true}
+        =render :partial => "arguments/build_form", :locals => {:node => from, :original => original, :type => "Negative"}
+        %a{:href => send(path_method, from.id, {:path => previous+"plus", :original => original}), :'data-remote' => true}
           %i{:class => "icon-plus-sign #{previous}plus#{from.id}"}
+        =render :partial => "arguments/build_form", :locals => {:node => from, :original => original, :type => "Positive"}
       %div{:id => "#{previous}plus#{from.id}", :style => "display:none;"}
   =render :partial => "arguments/build_form", :locals => {:node => node, :original => original, :type => "Negative"}
   %ul.positive
@@ -22,6 +24,8 @@
           = from.title
         %a{:href => "#"}
           %i{:class => "icon-minus-sign #{previous}minus#{from.id}", :style => "display:none;"}
-        %a{:href => user_argument_path(from.id, {:path => previous+"minus", :original => original}), :'data-remote' => true}
+        =render :partial => "arguments/build_form", :locals => {:node => from, :original => original, :type => "Negative"}
+        %a{:href => send(path_method, from.id, {:path => previous+"minus", :original => original}), :'data-remote' => true}
           %i{:class => "icon-plus-sign #{previous}minus#{from.id}"}
+        =render :partial => "arguments/build_form", :locals => {:node => from, :original => original, :type => "Positive"}
       %div{:id => "#{previous}minus#{from.id}", :style => "display:none;"}

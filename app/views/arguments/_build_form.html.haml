@@ -6,4 +6,10 @@
       = "Show create #{type == "Positive" ? "supporting" : "opposing"} point form"
     %a.hide-node-through-link.hidden{:"data-type" => type, :"data-global-node-to-id" => global_node_to_id}
       = "Hide create #{type == "Positive" ? "supporting" : "opposing"} point form"
+- else
+  %a.show-node-through-link{:"data-type" => type, :"data-global-node-to-id" => global_node_to_id}
+    = "Show create #{type == "Positive" ? "supporting" : "opposing"} point form"
+  %a.hide-node-through-link.hidden{:"data-type" => type, :"data-global-node-to-id" => global_node_to_id}
+    = "Hide create #{type == "Positive" ? "supporting" : "opposing"} point form"
+  
 = render :partial => "links/node_through_link_form", :locals => {:type => type, :global_node_to_id => global_node_to_id}
