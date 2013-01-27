@@ -18,9 +18,6 @@
         = content_tag :div, msg, :id => "flash_#{name}" if msg.is_a?(String)
       #main{:role => "main"}
         .row-fluid
-          .span8
+          .span12
             =yield
-          .span4
-            #current_nodes
-              =render :partial => 'nodes/current_nodes', :locals => {:nodes => @nodes}
       %footer

@@ -11,15 +11,26 @@ centre.refreshNodes = function(view_configuration_data) {
     data: view_configuration_data,
     dataType: "html",
     error: function(XMLHttpRequest, textStatus, errorThrown) {
-      return alert(errorThrown);
+      alert(errorThrown);
     },
     success: function(data, textStatus, XMLHttpRequest) {
-      return $('#current_nodes').html(data);
+      if ($('#main > .row-fluid > .span12').length > 0){
+        $('#main > .row-fluid > .span12').attr('class', 'span8');
+      }
+      if($('.span4 > #current_nodes').length == 0){
+        $('#main > .row-fluid').append("<div class='span4'><div id='current_nodes'></div></div>");
+      }
+      $('#current_nodes').html(data);
     }
   });
   return false;
 }
 
+centre.hideNodes = function() {
+  $('#main > .row-fluid > .span8').attr('class', 'span12');
+  $('#main > .row-fluid > .span4').remove();
+  return false;
+}
 centre.refreshArgument = function() {
   var argument, user_id;
   var active_argument = $('.tab-pane.active').attr("id");

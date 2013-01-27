@@ -55,25 +55,28 @@ $(document).ready ->
         centre.refreshArgument()
         query = $('.nodes_query').attr('value')
         data_hash = {"view_configuration":{"nodes_query":query}}
-        centre.refreshNodes(data_hash)
+        centre.hideNodes(data_hash)
       error: (xhr, err) ->
         alert "Error"
     return false 
 
   #arg builder stuff
   $('.show-new-conclusion').live "click", (event) ->
+    centre.refreshNodes()
     $(this).hide()
     $('.hidden.new-conclusion').show()
     $('.hide-new-conclusion').show()
     return false 
 
   $('.hide-new-conclusion').live "click", (event) ->
+    centre.hideNodes()
     $(this).hide()
     $('.hidden.new-conclusion').hide()
     $('.show-new-conclusion').show()
     return false 
     
   $('.show-node-through-link').live "click", (event) ->
+    centre.refreshNodes()
     $(this).hide()
     type = $(this).attr('data-type')
     global_node_to_id = $(this).attr('data-global-node-to-id')
@@ -82,6 +85,7 @@ $(document).ready ->
     return false 
 
   $('.hide-node-through-link').live "click", (event) ->
+    centre.hideNodes()
     $(this).hide()
     type = $(this).attr('data-type')
     global_node_to_id = $(this).attr('data-global-node-to-id')
