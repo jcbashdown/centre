@@ -1,9 +1,7 @@
 -froms_positive = node.positive_node_froms
 -froms_negative = node.negative_node_froms
 %div{:id => "#{previous}#{node.id}"}
-  - if node.id == original
-    %h5 Argument For
-  = render :partial => "links/node_through_link_form", :locals => {:type => "Positive", :global_node_to_id => node.global_node_id}
+  =render :partial => "arguments/build_form", :locals => {:node => node, :original => original, :type => "Positive"}
   %ul.positive
     -froms_positive.each do |from|
       %li
@@ -15,9 +13,7 @@
         %a{:href => question_argument_path(from.id, {:path => previous+"plus", :original => original}), :'data-remote' => true}
           %i{:class => "icon-plus-sign #{previous}plus#{from.id}"}
       %div{:id => "#{previous}plus#{from.id}", :style => "display:none;"}
-  - if node.id == original
-    %h5 Argument Against
-  = render :partial => "links/node_through_link_form", :locals => {:type => "Negative", :global_node_to_id => node.global_node_id}
+  =render :partial => "arguments/build_form", :locals => {:node => node, :original => original, :type => "Negative"}
   %ul.positive
     -froms_negative.each do |from|
       %li

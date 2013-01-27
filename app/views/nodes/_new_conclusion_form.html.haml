@@ -1,2 +1,3 @@
-= form_for @new_node, :html => {:class => 'form-inline remote-submit-and-refresh'} do |f|
-  = render :partial => "nodes/form_elements/title", :locals => {:f => f, :is_conclusion => true}
+%div{:class => "hidden new-conclusion"}
+  = form_for @new_node, :html => {:class => 'form-inline remote-submit-and-refresh'} do |f|
+    = render :partial => "nodes/form_elements/title", :locals => {:f => f, :is_conclusion => true}

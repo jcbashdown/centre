@@ -3,4 +3,5 @@
   - question.concluding_nodes.each do |node| 
     %h3
       =link_to node.title, node_path(node.global_node)
+      =render :partial => 'nodes/delete_form', :locals => {:node => node.global_node}
     = render :partial => 'question_arguments/show', :locals => {:node => node, :previous => previous, :original => node.id}

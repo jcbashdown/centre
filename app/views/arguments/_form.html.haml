@@ -1,7 +1,13 @@
+- argument_builder ||= nil
 .tabbable
   .row-fluid
-    .span9
+    .span6
       %h2= @node_question ? @node_question.name : "All"
+    .span3
+      %a.show-new-conclusion
+        Add Conclusion
+      %a.hide-new-conclusion.hidden
+        Close conclusion form
     .span3
       %ul.nav.nav-pills.right
         - if @argument_question

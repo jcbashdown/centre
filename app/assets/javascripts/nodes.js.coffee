@@ -20,9 +20,8 @@ $(document).ready ->
   )
 
   $('.icon-minus-sign').live "click", (event) ->
-    target = event.target
-    $(target).hide()
-    target_class = $(target).attr('class')
+    $(this).hide()
+    target_class = $(this).attr('class')
     id_from_class = target_class.replace('icon-minus-sign ', "")
     $('.'+id_from_class).parent().show()
     $('#'+id_from_class).html("")
@@ -60,5 +59,34 @@ $(document).ready ->
       error: (xhr, err) ->
         alert "Error"
     return false 
+
+  #arg builder stuff
+  $('.show-new-conclusion').live "click", (event) ->
+    $(this).hide()
+    $('.hidden.new-conclusion').show()
+    $('.hide-new-conclusion').show()
+    return false 
+
+  $('.hide-new-conclusion').live "click", (event) ->
+    $(this).hide()
+    $('.hidden.new-conclusion').hide()
+    $('.show-new-conclusion').show()
+    return false 
     
+  $('.show-node-through-link').live "click", (event) ->
+    $(this).hide()
+    type = $(this).attr('data-type')
+    global_node_to_id = $(this).attr('data-global-node-to-id')
+    $('.hidden.node-through-link.'+type+'.'+global_node_to_id).show()
+    $('.hide-node-through-link[data-type='+type+'][data-global-node-to-id='+global_node_to_id+']').show()
+    return false 
+
+  $('.hide-node-through-link').live "click", (event) ->
+    $(this).hide()
+    type = $(this).attr('data-type')
+    global_node_to_id = $(this).attr('data-global-node-to-id')
+    $('.hidden.node-through-link.'+type+'.'+global_node_to_id).hide()
+    $('.show-node-through-link[data-type='+type+'][data-global-node-to-id='+global_node_to_id+']').show()
+    return false 
+
   return false

@@ -14,6 +14,5 @@
           - if current_user
             - if @node_question
               =render :partial => 'nodes/edit_form', :locals => {:node => node}
-            %a.right.accordion-toggle-override.delete-node{:href => node_path(node), :rel => "nofollow", "data-confirm" => "Are you sure?"}
-              %i.icon-remove.right
+            =render :partial => 'nodes/delete_form', :locals => {:node => node}
 = paginate nodes, :param_name => :nodes_page 
