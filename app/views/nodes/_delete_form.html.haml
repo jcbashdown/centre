@@ -1,2 +1,3 @@
-%a.accordion-toggle-override.delete-node{:href => node_path(node), :rel => "nofollow", "data-confirm" => "Are you sure?"}
-  %i.icon-remove
+-if current_user
+  %a.accordion-toggle-override.delete-node{:href => node_path(node), :rel => "nofollow", "data-confirm" => "Are you sure?"}
+    %i.icon-remove

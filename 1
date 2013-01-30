@@ -1,7 +1,0 @@
-%div{:class => "hidden node-through-link #{global_node_to_id}"}
-  = form_for :global_link, :url => {:action => "create", :controller => "links"}, :html => {:class => 'form-inline remote-submit-and-refresh'} do |l|
-    = hidden_field_tag :type, type
-    = l.hidden_field :global_node_to_id, :value => global_node_to_id
-    - placeholder = type == "Positive" ? "Argument for" : "Argument against"
-    = l.text_field :context_node_from_title, :placeholder=>"Point", :class=>"typeahead span9", :autocomplete => "off", :value =>(session["nodes_query"] ? session["nodes_query"] : "")
-    = l.submit 'Add/View', :class => 'btn span3'

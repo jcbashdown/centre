@@ -1,16 +1,17 @@
-= form_for @new_node, :html => {:class => 'form-inline'} do |f|
-  = render :partial => "nodes/form_elements/title", :locals => {:f => f}
-  .row-fluid
-    .span12
-      &nbsp;
-  .row-fluid
-    .span12
-      .well.well-small{:style => "margin-bottom:0px;"}
-        .row-fluid
-          .span4
-            %h4
-              Conclusion?:
-          .span8
-            = render :partial => "nodes/form_elements/is_conclusion", :locals => {:f => f, :context_node => (context_node ||= nil)}
-  - if @question
-    %input{:style => 'display:none;', :value => @question.id, :name => "question"}
+-if current_user
+  = form_for @new_node, :html => {:class => 'form-inline'} do |f|
+    = render :partial => "nodes/form_elements/title", :locals => {:f => f}
+    .row-fluid
+      .span12
+        &nbsp;
+    .row-fluid
+      .span12
+        .well.well-small{:style => "margin-bottom:0px;"}
+          .row-fluid
+            .span4
+              %h4
+                Conclusion?:
+            .span8
+              = render :partial => "nodes/form_elements/is_conclusion", :locals => {:f => f, :context_node => (context_node ||= nil)}
+    - if @question
+      %input{:style => 'display:none;', :value => @question.id, :name => "question"}
