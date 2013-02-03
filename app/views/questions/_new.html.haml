@@ -11,3 +11,5 @@
               %li
                 %a{:href => question_path(:id => (question.id ? question.id : 0)), :tabindex => "-1"}
                   = question.name
+                %a.delete-question{:id => "question#{question.id}", :href => question_path(question), :rel => "nofollow", "data-confirm" => "Are you sure?"}
+                  %i.icon-remove

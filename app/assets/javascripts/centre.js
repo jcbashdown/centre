@@ -1,5 +1,61 @@
 var centre = centre || {};
 
+centre.deleteNode = function(context) {
+  $.ajax({
+    url: $(context).attr("href"),
+    type: "DELETE",
+    dataType: "json",
+    success: function (data) {
+      centre.refreshArgument();
+      return centre.refreshNodes();
+    },
+    error: function (xhr, err) {
+      return alert("Error");
+    }
+  });
+  return false;
+}
+
+centre.deleteQuestion = function(context) {
+  $.ajax({
+    url: $(context).attr("href"),
+    type: "DELETE",
+    dataType: "json",
+    success: function (data) {
+      alert("123");
+      $("#question"+data).remove();
+    },
+    error: function (xhr, err) {
+      return alert("Error");
+    }
+  });
+  return false;
+}
+
+centre.createNodeThroughLink = function(context) {
+  $.ajax({
+    url: $(context).attr("action"),
+    type: $(context).attr("method"),
+    dataType: "json",
+    data: $(context).serialize(),
+    success: function (data) {
+      var data_hash, query;
+      centre.refreshArgument();
+      query = $('.nodes_query').attr('value');
+      data_hash = {
+        "view_configuration": {
+          "nodes_query": query
+        }
+      };
+      return centre.hideNodes(data_hash);
+    },
+    error: function (xhr, err) {
+      return alert("Error");
+    }
+  });
+  return false;
+}
+
 centre.refreshNodes = function(view_configuration_data) {
   if (typeof(view_configuration_data)==="undefined") view_configuration_data = {};
   var method, url;

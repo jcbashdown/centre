@@ -34,31 +34,10 @@ $(document).ready ->
     return false 
   
   $('a.delete-node').live "click", (event) ->
-    $.ajax
-      url: $(this).attr("href")
-      type: "DELETE" 
-      dataType: "json"
-      success: (data) ->
-        centre.refreshArgument()
-        centre.refreshNodes()
-      error: (xhr, err) ->
-        alert "Error"
-    return false 
+    centre.deleteNode(this)
 
   $('form.remote-submit-and-refresh').live "submit", (event) ->
-    $.ajax
-      url: $(this).attr("action")
-      type: $(this).attr("method")
-      dataType: "json"
-      data: $(this).serialize()
-      success: (data) ->
-        centre.refreshArgument()
-        query = $('.nodes_query').attr('value')
-        data_hash = {"view_configuration":{"nodes_query":query}}
-        centre.hideNodes(data_hash)
-      error: (xhr, err) ->
-        alert "Error"
-    return false 
+    centre.createNodeThroughLink(this)
 
   #arg builder stuff
   $('.show-new-conclusion').live "click", (event) ->
