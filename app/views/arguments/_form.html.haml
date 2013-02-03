@@ -1,4 +1,3 @@
-- argument_builder ||= nil
 .tabbable
   .row-fluid
     .span6
@@ -27,7 +26,7 @@
                 - User.all.each do |user|
                   %li.arg-option
                     %a{"data-toggle" => "tab", "data-target" => "#other_user_topic", :href => user_arguments_path(:user_id => user.id, :path => "other_user_topic"), "data-remote" => true}= user.name 
-  - if params[:controller] == "questions" && current_user
+  - if current_user
     .row-fluid
       .span12
         =render :partial => "nodes/new_conclusion_form"

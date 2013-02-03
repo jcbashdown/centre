@@ -16,7 +16,7 @@
     #container.container-fluid
       - flash.each do |name, msg|
         = content_tag :div, msg, :id => "flash_#{name}" if msg.is_a?(String)
-      #main{:role => "main"}
+      #main.argument-builder{:role => "main"}
         .row-fluid
           .span12
             =yield

@@ -18,11 +18,10 @@ class QuestionsController < ApplicationController
   end
 
   def destroy
-    @question = Question.find(params[:id])
     respond_to do |format|
       if current_user.may_destroy(@question) && @question.destroy
-        if @question.id == session[:nodes_question]
-          redirect_to "/"
+        if @question.id == session[:nodes_question].to_i
+          format.json { render json: "/".to_json }
         else
           format.json { render json: params[:id].to_json }
         end
