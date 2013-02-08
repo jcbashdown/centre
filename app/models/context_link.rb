@@ -7,14 +7,17 @@ class ContextLink < ActiveRecord::Base
   include LinkCreationModule
   include LinkDeletionModule
   belongs_to :question
+  belongs_to :group
   belongs_to :user
   belongs_to :global_link, :class_name => Link
-  belongs_to :question_link, :class_name => Link::QuestionLink, :counter_cache => :users_count
+  belongs_to :group_link, :class_name => Link::GroupLink, :counter_cache => :users_count
   belongs_to :user_link, :class_name => Link::UserLink
   belongs_to :global_node_from, :class_name => Node::GlobalNode
   belongs_to :global_node_to, :class_name => Node::GlobalNode
   belongs_to :question_node_from, :class_name => Node::QuestionNode
   belongs_to :question_node_to, :class_name => Node::QuestionNode
+  belongs_to :group_node_from, :class_name => Node::GroupNode
+  belongs_to :group_node_to, :class_name => Node::GroupNode
   belongs_to :user_node_from, :class_name => Node::UserNode
   belongs_to :user_node_to, :class_name => Node::UserNode
   belongs_to :context_node_from, :class_name => ContextNode
@@ -23,7 +26,7 @@ class ContextLink < ActiveRecord::Base
   attr_accessor :context_node_from_title
 
   #dont need question? or includes uniq on nil for question?
-  validates_uniqueness_of :user_id, :scope => [:global_link_id, :question_id]
+  validates_uniqueness_of :user_id, :scope => [:global_link_id, :question_id, :group_id]
 
   before_validation(:on => :create) do
     #if validation will return true
@@ -38,18 +41,17 @@ class ContextLink < ActiveRecord::Base
 
   def destroy_all_for_user_link
     ContextLink.where('user_link_id = ?', self.user_link_id).each do |cl|
-      attributes = {:user => cl.user, :question => cl.question, :global_node_from_id => cl.global_node_from_id, :global_node_to_id => cl.global_node_to_id}
       cl.destroy
     end
   end
 
   def update_type(type)
     ContextLink.where('user_link_id = ? AND id != ?', self.user_link_id, self.id).each do |cl|
-      attributes = {:user => cl.user, :question => cl.question, :global_node_from_id => cl.global_node_from_id, :global_node_to_id => cl.global_node_to_id}
+      attributes = {:user => cl.user, :question => cl.question, :group => cl.group, :global_node_from_id => cl.global_node_from_id, :global_node_to_id => cl.global_node_to_id}
       cl.destroy
       "ContextLink::#{type}ContextLink".constantize.create!(attributes)
     end
-    attributes = {:user => self.user, :question => self.question, :global_node_from_id => self.global_node_from_id, :global_node_to_id => self.global_node_to_id}
+    attributes = {:user => self.user, :question => self.question, :group => cl.group, :global_node_from_id => self.global_node_from_id, :global_node_to_id => self.global_node_to_id}
     self.destroy
     "ContextLink::#{type}ContextLink".constantize.create(attributes)
   end
@@ -60,7 +62,7 @@ class ContextLink < ActiveRecord::Base
 
   class << self
     def with_all_associations
-      ContextLink.includes(:question, :user, :global_node_from, :global_node_to, :question_node_from, :question_node_to, :user_node_from, :user_node_to, :context_node_from, :context_node_to, :user_link, :global_link, :question_link)
+      ContextLink.includes(:question, :user, :global_node_from, :global_node_to, :group_node_from, :group_node_to, :question_node_from, :question_node_to, :user_node_from, :user_node_to, :context_node_from, :context_node_to, :user_link, :global_link, :group_link)
     end
   end
 
@@ -68,6 +70,6 @@ class ContextLink < ActiveRecord::Base
 
   def update_active_links
     Link::GlobalLink.update_active(self.global_node_from_id, self.global_node_to_id)
-    Link::QuestionLink.update_active(self.global_node_from_id, self.global_node_to_id, self.question_id)
+    Link::GroupLink.update_active(self.global_node_from_id, self.global_node_to_id, self.group_id)
   end
 end
