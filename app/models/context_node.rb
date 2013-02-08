@@ -7,6 +7,7 @@ class ContextNode < ActiveRecord::Base
     text :title
     integer :id
     integer :question_id
+    integer :group_id
     integer :user_id
   end
   include ActiverecordImportMethods
@@ -16,8 +17,10 @@ class ContextNode < ActiveRecord::Base
   belongs_to :global_node, :class_name => Node::GlobalNode
   belongs_to :user_node, :class_name => Node::UserNode
   belongs_to :question_node, :class_name => Node::QuestionNode
+  belongs_to :group_node, :class_name => Node::GroupNode
   belongs_to :user
   belongs_to :question
+  belongs_to :group
 
   has_many :positive_link_froms, :foreign_key => "context_node_to_id", :class_name => "ContextLink::PositiveContextLink"
   has_many :positive_link_tos, :foreign_key => "context_node_from_id", :class_name => "ContextLink::PositiveContextLink"
@@ -34,7 +37,7 @@ class ContextNode < ActiveRecord::Base
   validates_presence_of :user_node
   validates_presence_of :user
 
-  validates :title, :uniqueness => {:scope => [:question_id, :user_id]}
+  validates :title, :uniqueness => {:scope => [:group_id, :question_id, :user_id]}
 
   before_validation(:on => :create) do
     create_appropriate_nodes
@@ -49,6 +52,9 @@ class ContextNode < ActiveRecord::Base
     end
     if (qn = Node::QuestionNode.find_by_id(self.question_node_id))
       qn.save!
+    end
+    if (grn = Node::GroupNode.find_by_id(self.group_node_id))
+      grn.save!
     end
     if (un = Node::UserNode.find_by_id(self.user_node_id))
       un.save!
@@ -65,7 +71,7 @@ class ContextNode < ActiveRecord::Base
 
   class << self
     def with_all_associations
-      ContextNode.includes(:node_title, :global_node, :question_node, :user_node)
+      ContextNode.includes(:node_title, :global_node, :question_node, :group_node, :user_node)
     end
   end
 end

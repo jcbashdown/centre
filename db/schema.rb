@@ -11,14 +11,13 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20121209173031) do
+ActiveRecord::Schema.define(:version => 20130208135019) do
 
   create_table "context_links", :force => true do |t|
     t.integer  "question_id"
     t.integer  "user_id"
     t.integer  "global_link_id"
     t.integer  "user_link_id"
-    t.integer  "question_link_id"
     t.integer  "global_node_from_id"
     t.integer  "global_node_to_id"
     t.integer  "context_node_from_id"
@@ -31,11 +30,18 @@ ActiveRecord::Schema.define(:version => 20121209173031) do
     t.string   "type"
     t.datetime "created_at",                               :null => false
     t.datetime "updated_at",                               :null => false
+    t.integer  "group_id"
+    t.integer  "group_link_id"
+    t.integer  "group_node_from_id"
+    t.integer  "group_node_to_id"
   end
 
   add_index "context_links", ["global_link_id"], :name => "index_context_links_on_global_link_id"
+  add_index "context_links", ["group_id"], :name => "index_context_links_on_group_id"
+  add_index "context_links", ["group_link_id"], :name => "index_context_links_on_group_link_id"
+  add_index "context_links", ["group_node_from_id"], :name => "index_context_links_on_group_node_from_id"
+  add_index "context_links", ["group_node_to_id"], :name => "index_context_links_on_group_node_to_id"
   add_index "context_links", ["question_id"], :name => "index_context_links_on_question_id"
-  add_index "context_links", ["question_link_id"], :name => "index_context_links_on_question_link_id"
   add_index "context_links", ["type"], :name => "index_context_links_on_type"
   add_index "context_links", ["user_id"], :name => "index_context_links_on_user_id"
   add_index "context_links", ["user_link_id"], :name => "index_context_links_on_user_link_id"
@@ -57,18 +63,28 @@ ActiveRecord::Schema.define(:version => 20121209173031) do
     t.integer  "context_links_count",      :default => 0,     :null => false
     t.datetime "created_at",                                  :null => false
     t.datetime "updated_at",                                  :null => false
+    t.integer  "group_id"
+    t.integer  "group_node_id"
   end
 
   add_index "context_nodes", ["global_node_id"], :name => "index_context_nodes_on_global_node_id"
+  add_index "context_nodes", ["group_id"], :name => "index_context_nodes_on_group_id"
+  add_index "context_nodes", ["group_node_id"], :name => "index_context_nodes_on_group_node_id"
   add_index "context_nodes", ["node_title_id"], :name => "index_context_nodes_on_node_title_id"
   add_index "context_nodes", ["question_id"], :name => "index_context_nodes_on_question_id"
   add_index "context_nodes", ["question_node_id"], :name => "index_context_nodes_on_question_node_id"
   add_index "context_nodes", ["user_id"], :name => "index_context_nodes_on_user_id"
   add_index "context_nodes", ["user_node_id"], :name => "index_context_nodes_on_user_node_id"
 
+  create_table "groups", :force => true do |t|
+    t.string   "title"
+    t.text     "about"
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
+  end
+
   create_table "links", :force => true do |t|
     t.integer  "user_id"
-    t.integer  "question_id"
     t.integer  "global_link_id"
     t.integer  "node_from_id"
     t.integer  "node_to_id"
@@ -80,15 +96,16 @@ ActiveRecord::Schema.define(:version => 20121209173031) do
     t.string   "type"
     t.datetime "created_at",                             :null => false
     t.datetime "updated_at",                             :null => false
+    t.integer  "group_id"
   end
 
   add_index "links", ["active"], :name => "index_links_on_active"
   add_index "links", ["global_link_id"], :name => "index_links_on_global_link_id"
   add_index "links", ["global_node_from_id"], :name => "index_links_on_global_node_from_id"
   add_index "links", ["global_node_to_id"], :name => "index_links_on_global_node_to_id"
+  add_index "links", ["group_id"], :name => "index_links_on_group_id"
   add_index "links", ["node_from_id"], :name => "index_links_on_node_from_id"
   add_index "links", ["node_to_id"], :name => "index_links_on_node_to_id"
-  add_index "links", ["question_id"], :name => "index_links_on_question_id"
   add_index "links", ["type"], :name => "index_links_on_type"
   add_index "links", ["user_id"], :name => "index_links_on_user_id"
 
@@ -117,8 +134,10 @@ ActiveRecord::Schema.define(:version => 20121209173031) do
     t.datetime "created_at",                                    :null => false
     t.datetime "updated_at",                                    :null => false
     t.integer  "not_conclusion_votes_count", :default => 0,     :null => false
+    t.integer  "group_id"
   end
 
+  add_index "nodes", ["group_id"], :name => "index_nodes_on_group_id"
   add_index "nodes", ["question_id"], :name => "index_nodes_on_question_id"
   add_index "nodes", ["type"], :name => "index_nodes_on_type"
   add_index "nodes", ["user_id"], :name => "index_nodes_on_user_id"

@@ -37,18 +37,12 @@ class Node < ActiveRecord::Base
     Kaminari.paginate_array(links).page(context[:page]).per(10)
   end
 
-  def positive_cn_tos
-
-  end
-
-  def negative_cn_tos
-
-  end
-
   class << self
     def get_klass conditions
-      if conditions[:question] && conditions[:user]
+      if conditions[:question] && conditions[:group]
         ContextNode
+      elsif conditions[:group]
+        Node::GroupNode
       elsif conditions[:question]
         Node::QuestionNode
       elsif conditions[:user]
@@ -63,6 +57,7 @@ class Node < ActiveRecord::Base
       results = klass.search do
         fulltext conditions[:query] if conditions[:query]
         with :question_id, conditions[:question] if conditions[:question]
+        with :group_id, conditions[:group] if conditions[:group]
         with :user_id, conditions[:user] if conditions[:user]
         order_by(:id, :asc)
       end.results.map(&:global_node) 

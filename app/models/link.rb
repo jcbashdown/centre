@@ -2,10 +2,10 @@ class Link < ActiveRecord::Base
 
   class << self
     def get_klass conditions
-      if conditions[:question] && conditions[:user]
+      if conditions[:group] && conditions[:user]
         ContextLink
-      elsif conditions[:question]
-        Link::QuestionLink
+      elsif conditions[:group]
+        Link::GroupLink
       elsif conditions[:user]
         Link::UserLink
       else

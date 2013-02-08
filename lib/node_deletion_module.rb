@@ -7,9 +7,10 @@ module NodeDeletionModule
     Node.where('title = ? && 
                ((users_count < 2 && user_id IS NULL && question_id IS NULL) || 
                 (users_count < 2 && user_id IS NULL && question_id = ?) ||
+                (users_count < 2 && user_id IS NULL && group_id = ?) ||
                 (users_count < 2 && user_id = ? && question_id IS NULL)
                )',
-               self.title, question_id, user_id
+               self.title, question_id, group_id, user_id
               ).delete_all
     delete_context_links
   end

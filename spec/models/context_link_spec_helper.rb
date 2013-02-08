@@ -12,12 +12,12 @@ shared_examples_for 'a context link creating links' do |type|
   it 'should create the correct number of question links' do
     expect {
       "ContextLink::#{type}ContextLink".constantize.create(@params)
-    }.to change(Link::QuestionLink, :count).by(@state_hash[:question_link][:number_created])
+    }.to change(Link::GroupLink, :count).by(@state_hash[:question_link][:number_created])
   end
   it 'should create the correct number of the correct question links' do
     expect {
       "ContextLink::#{type}ContextLink".constantize.create(@params)
-    }.to change("Link::QuestionLink::#{type}QuestionLink".constantize, :count).by(@state_hash[:question_link][:number_created])
+    }.to change("Link::GroupLink::#{type}GroupLink".constantize, :count).by(@state_hash[:question_link][:number_created])
   end
   it 'should create the ql with the correct counts' do
     context_link = "ContextLink::#{type}ContextLink".constantize.create(@params)
@@ -127,20 +127,20 @@ shared_examples_for 'a @context_link deleting links' do |type|
   it 'should destroy the correct number of question links' do
     expect {
       @context_link.destroy_all_for_user_link
-    }.to change(Link::QuestionLink, :count).by(@state_hash[:question_link][:number_destroyed])
+    }.to change(Link::GroupLink, :count).by(@state_hash[:question_link][:number_destroyed])
   end
   it 'should destroy the correct number of the correct question links' do
     expect {
       @context_link.destroy_all_for_user_link
-    }.to change("Link::QuestionLink::#{type}QuestionLink".constantize, :count).by(@state_hash[:question_link][:number_destroyed])
+    }.to change("Link::GroupLink::#{type}GroupLink".constantize, :count).by(@state_hash[:question_link][:number_destroyed])
   end
   it 'should destroy the ql with the correct counts' do
     @context_link.destroy_all_for_user_link
-    "Link::QuestionLink::#{type}QuestionLink".constantize.where(@ql_attrs)[0].try(:users_count).should == @state_hash[:question_link][:users_count]
+    "Link::GroupLink::#{type}GroupLink".constantize.where(@ql_attrs)[0].try(:users_count).should == @state_hash[:question_link][:users_count]
   end
   it 'should destroy the ql with the correct activation' do
     @context_link.destroy_all_for_user_link
-    "Link::QuestionLink::#{type}QuestionLink".constantize.where(@ql_attrs)[0].try(:active).should == @state_hash[:question_link][:activation]
+    "Link::GroupLink::#{type}GroupLink".constantize.where(@ql_attrs)[0].try(:active).should == @state_hash[:question_link][:activation]
   end
   it 'should destroy the correct number of uls' do
     expect {
@@ -223,33 +223,33 @@ shared_examples_for 'a @context_link updating links' do |new_type, old_type|
   it 'should destroy the correct number of question links' do
     expect {
       @context_link.update_type(new_type)
-    }.to change(Link::QuestionLink, :count).by(@state_hash[:question_link][:number_destroyed]+@state_hash[:question_link][:number_created])
+    }.to change(Link::GroupLink, :count).by(@state_hash[:question_link][:number_destroyed]+@state_hash[:question_link][:number_created])
   end
   it 'should destroy the correct number of the old question links' do
     expect {
       @context_link.update_type(new_type)
-    }.to change("Link::QuestionLink::#{old_type}QuestionLink".constantize, :count).by(@state_hash[:question_link][:number_destroyed])
+    }.to change("Link::GroupLink::#{old_type}GroupLink".constantize, :count).by(@state_hash[:question_link][:number_destroyed])
   end
   it 'should create the correct number of the new question links' do
     expect {
       @context_link.update_type(new_type)
-    }.to change("Link::QuestionLink::#{new_type}QuestionLink".constantize, :count).by(@state_hash[:question_link][:number_created])
+    }.to change("Link::GroupLink::#{new_type}GroupLink".constantize, :count).by(@state_hash[:question_link][:number_created])
   end
   it 'should destroy the old ql with the correct counts' do
     @context_link.update_type(new_type)
-    "Link::QuestionLink::#{old_type}QuestionLink".constantize.where(@ql_attrs)[0].try(:users_count).should == @state_hash[:old_question_link][:users_count]
+    "Link::GroupLink::#{old_type}GroupLink".constantize.where(@ql_attrs)[0].try(:users_count).should == @state_hash[:old_question_link][:users_count]
   end
   it 'should destroy the old ql with the correct activation' do
     @context_link.update_type(new_type)
-    "Link::QuestionLink::#{old_type}QuestionLink".constantize.where(@ql_attrs)[0].try(:active).should == @state_hash[:old_question_link][:activation]
+    "Link::GroupLink::#{old_type}GroupLink".constantize.where(@ql_attrs)[0].try(:active).should == @state_hash[:old_question_link][:activation]
   end
   it 'should create the new ql with the correct counts' do
     @context_link.update_type(new_type)
-    "Link::QuestionLink::#{new_type}QuestionLink".constantize.where(@ql_attrs)[0].try(:users_count).should == @state_hash[:new_question_link][:users_count]
+    "Link::GroupLink::#{new_type}GroupLink".constantize.where(@ql_attrs)[0].try(:users_count).should == @state_hash[:new_question_link][:users_count]
   end
   it 'should create the new ql with the correct activation' do
     @context_link.update_type(new_type)
-    "Link::QuestionLink::#{new_type}QuestionLink".constantize.where(@ql_attrs)[0].try(:active).should == @state_hash[:new_question_link][:activation]
+    "Link::GroupLink::#{new_type}GroupLink".constantize.where(@ql_attrs)[0].try(:active).should == @state_hash[:new_question_link][:activation]
   end
   it 'should update the correct number of uls' do
     @context_link.update_type(new_type)

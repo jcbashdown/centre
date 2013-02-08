@@ -13,7 +13,7 @@ module NodeCreationModule
       #test this properly - loading right ids?
       #even faster - composite primary key, no need to get back after insert as already know
       Node.import @new_nodes
-      @new_nodes = synchronize @new_nodes, Node, [:type, :user_id, :question_id, :global_node_id]
+      @new_nodes = synchronize @new_nodes, Node, [:type, :user_id, :question_id, :group_id, :global_node_id]
       @new_nodes.each do |node|
         new_nodes_hash[:"#{node.type.gsub("Node::", "").underscore}_id"] = node.id
       end
@@ -25,6 +25,9 @@ module NodeCreationModule
     find_or_initialise(Node::UserNode, {:user_id => user_id, :global_node_id => global_node_id})
     if question
       find_or_initialise(Node::QuestionNode, {:question_id => question_id, :global_node_id => global_node_id})
+    end
+    if group
+      find_or_initialise(Node::GroupNode, {:group_id => group_id, :global_node_id => global_node_id})
     end
   end  
 

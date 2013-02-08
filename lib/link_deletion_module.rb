@@ -11,7 +11,7 @@ module LinkDeletionModule
     Link.where('users_count = 0 && 
                 (id = ? || 
                  id = ? 
-                )', self.global_link_id, self.question_link_id,)
+                )', self.global_link_id, self.group_link_id,)
               .destroy_all
   end
 
