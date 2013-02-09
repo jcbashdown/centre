@@ -21,7 +21,10 @@ class Link::GroupLink < Link
 end
 
 class Link::GroupLink::EquivalentGroupLink < Link::GroupLink;end
-class Link::GroupLink::NegativeGroupLink < Link::GroupLink;end
+class Link::GroupLink::NegativeGroupLink < Link::GroupLink;
+  belongs_to :negative_group_node_from, :class_name => Node::GroupNode, :foreign_key => :node_from_id
+  belongs_to :negative_group_node_to, :class_name => Node::GroupNode, :foreign_key => :node_to_id, :counter_cache => :downvotes_count
+end
 class Link::GroupLink::PartOfGroupLink < Link::GroupLink;end
 class Link::GroupLink::PositiveGroupLink < Link::GroupLink;end
 class Link::GroupLink::RelatedGroupLink < Link::GroupLink;end

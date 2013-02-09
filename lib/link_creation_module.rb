@@ -37,7 +37,7 @@ module LinkCreationModule
       #test this properly - loading right ids?
       #even faster - composite primary key, no need to get back after insert as already know
       Link.import @new_links
-      @new_links = synchronize @new_links, Link, [:type, :user_id, :question_id, :group_id, :node_from_id, :node_to_id]
+      @new_links = synchronize @new_links, Link, [:type, :user_id, :group_id, :node_from_id, :node_to_id]
       @new_links.each do |link|
         subtype_matcher = /Link::(.*)::#{link_kind}/
         subtype = (subtype_matcher.match(link.type))[1]

@@ -51,7 +51,7 @@ class ContextLink < ActiveRecord::Base
       cl.destroy
       "ContextLink::#{type}ContextLink".constantize.create!(attributes)
     end
-    attributes = {:user => self.user, :question => self.question, :group => cl.group, :global_node_from_id => self.global_node_from_id, :global_node_to_id => self.global_node_to_id}
+    attributes = {:user => self.user, :question => self.question, :group => self.group, :global_node_from_id => self.global_node_from_id, :global_node_to_id => self.global_node_to_id}
     self.destroy
     "ContextLink::#{type}ContextLink".constantize.create(attributes)
   end

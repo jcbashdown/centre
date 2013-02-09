@@ -13,8 +13,9 @@ describe ContextLink do
       context 'when there is no existing context_link' do
         before do
           @question = FactoryGirl.create(:question)
+          @group = FactoryGirl.create(:group)
           @user = FactoryGirl.create(:user)
-          @gnu1 = ContextNode.create(:title => 'title one', :question => @question, :user => @user)
+          @gnu1 = ContextNode.create(:title => 'title one', :question => @question, :group => @group, :user => @user)
           @state_hash = {
                           :context_link => {:number_created => 1},
                           :global_link => {
@@ -22,7 +23,7 @@ describe ContextLink do
                                             :users_count => 1,
                                             :activation => true
                                           },
-                          :question_link => {
+                          :group_link => {
                                               :number_created => 1,
                                               :users_count => 1,
                                               :activation => true
@@ -41,10 +42,10 @@ describe ContextLink do
                           :new_global_node_from => {
                                             :upvotes_count=> 0
                                           },
-                          :new_question_node_to => {
+                          :new_group_node_to => {
                                               :upvotes_count => 1
                                             },
-                          :new_question_node_from => {
+                          :new_group_node_from => {
                                               :upvotes_count => 0
                                             },
                           :new_user_node_to => {
@@ -70,6 +71,12 @@ describe ContextLink do
                                                  :users_count => 1,
                                                  :is_conclusion => false
                                                },
+                             :group_node => {
+                                                 :number_created => 1,
+                                                 :number_existing => 1,
+                                                 :users_count => 1,
+                                                 :is_conclusion => false
+                                               },
                              :user_node => {
                                              :number_created => 1,
                                              :number_existing => 1,
@@ -77,7 +84,7 @@ describe ContextLink do
                                            }
                            }
           #do we need a conclusion status?
-          @params = {:user=>@user, :question => @question, :global_node_to_id => @gnu1.global_node.id, :context_node_from_title => 'Title'}
+          @params = {:user=>@user, :question => @question, :group => @group, :global_node_to_id => @gnu1.global_node.id, :context_node_from_title => 'Title'}
           @perform = "ContextLink::PositiveContextLink.create(@params)"
         end
         it_should_behave_like 'a context link creating links', "Positive"
@@ -92,9 +99,10 @@ describe ContextLink do
     context 'when there is no existing context_link' do
       before do
         @question = FactoryGirl.create(:question)
+        @group = FactoryGirl.create(:group)
         @user = FactoryGirl.create(:user)
-        @gnu1 = ContextNode.create(:title => 'title', :question => @question, :user => @user)
-        @gnu2 = ContextNode.create(:title => 'test', :question => @question, :user => @user)
+        @gnu1 = ContextNode.create(:title => 'title', :question => @question, :group => @group, :user => @user)
+        @gnu2 = ContextNode.create(:title => 'test', :question => @question, :group => @group, :user => @user)
         @state_hash = {
                         :context_link => {:number_created => 1},
                         :global_link => {
@@ -102,7 +110,7 @@ describe ContextLink do
                                           :users_count => 1,
                                           :activation => true
                                         },
-                        :question_link => {
+                        :group_link => {
                                             :number_created => 1,
                                             :users_count => 1,
                                             :activation => true
@@ -121,10 +129,10 @@ describe ContextLink do
                         :new_global_node_from => {
                                           :upvotes_count=> 0
                                         },
-                        :new_question_node_to => {
+                        :new_group_node_to => {
                                             :upvotes_count => 1
                                           },
-                        :new_question_node_from => {
+                        :new_group_node_from => {
                                             :upvotes_count => 0
                                           },
                         :new_user_node_to => {
@@ -134,12 +142,12 @@ describe ContextLink do
                                         :upvotes_count => 0
                                       }
                       }
-        @params = {:user=>@user, :question => @question, :global_node_from_id => @gnu1.global_node.id, :global_node_to_id => @gnu2.global_node.id} 
+        @params = {:user=>@user, :question => @question, :group => @group, :global_node_from_id => @gnu1.global_node.id, :global_node_to_id => @gnu2.global_node.id} 
       end
       it_should_behave_like 'a context link creating links', "Positive"
       context 'when creating a duplicate context_link' do
         before do
-          ContextLink::PositiveContextLink.create(:user=>@user, :question => @question, :global_node_from_id => @gnu1.global_node.id, :global_node_to_id => @gnu2.global_node.id)
+          ContextLink::PositiveContextLink.create(:user=>@user, :question => @question, :group => @group, :global_node_from_id => @gnu1.global_node.id, :global_node_to_id => @gnu2.global_node.id)
           @state_hash = {
                           :context_link => {:number_created => 0},
                           :global_link => {
@@ -147,7 +155,7 @@ describe ContextLink do
                                             :users_count => 1,
                                             :activation => true
                                           },
-                          :question_link => {
+                          :group_link => {
                                               :number_created => 0,
                                               :users_count => 1,
                                               :activation => true
@@ -166,10 +174,10 @@ describe ContextLink do
                           :new_global_node_from => {
                                             :upvotes_count=> 0
                                           },
-                          :new_question_node_to => {
+                          :new_group_node_to => {
                                               :upvotes_count => 1
                                             },
-                          :new_question_node_from => {
+                          :new_group_node_from => {
                                               :upvotes_count => 0
                                             },
                           :new_user_node_to => {
@@ -179,14 +187,15 @@ describe ContextLink do
                                           :upvotes_count => 0
                                         }
                         }
-          @params = {:user=>@user, :question => @question, :global_node_from_id => @gnu1.global_node.id, :global_node_to_id => @gnu2.global_node.id} 
+          @params = {:user=>@user, :question => @question, :group => @group, :global_node_from_id => @gnu1.global_node.id, :global_node_to_id => @gnu2.global_node.id} 
         end
         it_should_behave_like 'a context link creating links', "Positive"
       end
       context 'when creating a context_link in a different question' do
         before do
           @question2 = FactoryGirl.create(:question, :name => 'new question')
-          ContextLink::PositiveContextLink.create(:user=>@user, :question => @question, :global_node_from_id => @gnu1.global_node.id, :global_node_to_id => @gnu2.global_node.id)
+          @group2 = FactoryGirl.create(:group, :title => 'new group')
+          ContextLink::PositiveContextLink.create(:user=>@user, :question => @question2, :group => @group2, :global_node_from_id => @gnu1.global_node.id, :global_node_to_id => @gnu2.global_node.id)
           @state_hash = {
                           :context_link => {:number_created => 1},
                           :global_link => {
@@ -194,7 +203,7 @@ describe ContextLink do
                                             :users_count => 1,
                                             :activation => true
                                           },
-                          :question_link => {
+                          :group_link => {
                                               :number_created => 1,
                                               :users_count => 1,
                                               :activation => true
@@ -213,10 +222,10 @@ describe ContextLink do
                           :new_global_node_from => {
                                             :upvotes_count=> 0
                                           },
-                          :new_question_node_to => {
+                          :new_group_node_to => {
                                               :upvotes_count => 1
                                             },
-                          :new_question_node_from => {
+                          :new_group_node_from => {
                                               :upvotes_count => 0
                                             },
                           :new_user_node_to => {
@@ -227,7 +236,8 @@ describe ContextLink do
                                         }
                         }
           @question = FactoryGirl.create(:question, :name => 'another new question')
-          @params = {:user=>@user, :question => @question, :global_node_from_id => @gnu1.global_node.id, :global_node_to_id => @gnu2.global_node.id} 
+          @group = FactoryGirl.create(:group, :title => "Another group")
+          @params = {:user=>@user, :question => @question, :group => @group, :global_node_from_id => @gnu1.global_node.id, :global_node_to_id => @gnu2.global_node.id} 
         end
         it_should_behave_like 'a context link creating links', "Positive"
       end
@@ -240,7 +250,7 @@ describe ContextLink do
                                             :users_count => 1,
                                             :activation => true
                                           },
-                          :question_link => {
+                          :group_link => {
                                               :number_created => 1,
                                               :users_count => 1,
                                               :activation => true
@@ -261,11 +271,11 @@ describe ContextLink do
                                             :upvotes_count=> 0,
                                             :equivalents_count=> 0
                                           },
-                          :new_question_node_to => {
+                          :new_group_node_to => {
                                               :upvotes_count => 0,
                                               :equivalents_count=> 0
                                             },
-                          :new_question_node_from => {
+                          :new_group_node_from => {
                                               :upvotes_count => 0,
                                               :equivalents_count=> 0
                                             },
@@ -278,7 +288,7 @@ describe ContextLink do
                                           :equivalents_count=> 0
                                         }
                         }
-          @params = {:user=>@user, :question => @question, :global_node_from_id => @gnu1.global_node.id, :global_node_to_id => @gnu2.global_node.id} 
+          @params = {:user=>@user, :question => @question, :group => @group, :global_node_from_id => @gnu1.global_node.id, :global_node_to_id => @gnu2.global_node.id} 
         end
         it_should_behave_like 'a context link creating links', "Equivalent"
       end
@@ -288,13 +298,14 @@ describe ContextLink do
   describe 'update' do
     before do
       @question = FactoryGirl.create(:question)
+      @group = FactoryGirl.create(:group)
       @user = FactoryGirl.create(:user)
-      @gnu1 = ContextNode.create(:title => 'title', :question => @question, :user => @user)
-      @gnu2 = ContextNode.create(:title => 'test', :question => @question, :user => @user)
+      @gnu1 = ContextNode.create(:title => 'title', :question => @question, :group => @group, :user => @user)
+      @gnu2 = ContextNode.create(:title => 'test', :question => @question, :group => @group, :user => @user)
     end
     context 'when there is only this context_link' do
       before do
-        @context_link = ContextLink::PositiveContextLink.create(:user=>@user, :question => @question, :global_node_from_id => @gnu1.global_node.id, :global_node_to_id => @gnu2.global_node.id)
+        @context_link = ContextLink::PositiveContextLink.create(:user=>@user, :question => @question, :group => @group, :global_node_from_id => @gnu1.global_node.id, :global_node_to_id => @gnu2.global_node.id)
         @state_hash = {
                         :context_link => {:extras_updated => 1},
                         :global_link => {
@@ -309,15 +320,15 @@ describe ContextLink do
                                           :users_count => 1,
                                           :activation => true
                                         },
-                        :question_link => {
+                        :group_link => {
                                             :number_destroyed => -1,
                                             :number_created => 1,
                                           },
-                        :old_question_link => {
+                        :old_group_link => {
                                             :users_count => nil,
                                             :activation => nil
                                           },
-                        :new_question_link => {
+                        :new_group_link => {
                                             :users_count => 1,
                                             :activation => true
                                           },
@@ -341,19 +352,19 @@ describe ContextLink do
                                           :upvotes_count=> 0,
                                           :downvotes_count=> 0
                                         },
-                        :new_question_node_to => {
+                        :new_group_node_to => {
                                             :upvotes_count => 0,
                                             :downvotes_count=> 1
                                           },
-                        :old_question_node_to => {
+                        :old_group_node_to => {
                                             :upvotes_count => 1,
                                             :downvotes_count=> 0
                                           },
-                        :new_question_node_from => {
+                        :new_group_node_from => {
                                             :upvotes_count => 0,
                                             :downvotes_count=> 0
                                           },
-                        :old_question_node_from => {
+                        :old_group_node_from => {
                                             :upvotes_count => 0,
                                             :downvotes_count=> 0
                                           },
@@ -382,13 +393,14 @@ describe ContextLink do
   describe 'destroy' do
     before do
       @question = FactoryGirl.create(:question)
+      @group = FactoryGirl.create(:group)
       @user = FactoryGirl.create(:user)
-      @gnu1 = ContextNode.create(:title => 'title', :question => @question, :user => @user)
-      @gnu2 = ContextNode.create(:title => 'test', :question => @question, :user => @user)
+      @gnu1 = ContextNode.create(:title => 'title', :question => @question, :group => @group, :user => @user)
+      @gnu2 = ContextNode.create(:title => 'test', :question => @question, :group => @group, :user => @user)
     end
     context 'when there is only this context_link' do
       before do
-        @context_link = ContextLink::PositiveContextLink.create(:user=>@user, :question => @question, :global_node_from_id => @gnu1.global_node.id, :global_node_to_id => @gnu2.global_node.id)
+        @context_link = ContextLink::PositiveContextLink.create(:user=>@user, :question => @question, :group => @group, :global_node_from_id => @gnu1.global_node.id, :global_node_to_id => @gnu2.global_node.id)
         @state_hash = {
                         :context_link => {:number_destroyed => -1},
                         :global_link => {
@@ -396,7 +408,7 @@ describe ContextLink do
                                           :users_count => nil,
                                           :activation => nil
                                         },
-                        :question_link => {
+                        :group_link => {
                                             :number_destroyed => -1,
                                             :users_count => nil,
                                             :activation => nil
@@ -411,10 +423,10 @@ describe ContextLink do
                         :new_global_node_from => {
                                           :upvotes_count=> 0
                                         },
-                        :new_question_node_to => {
+                        :new_group_node_to => {
                                             :upvotes_count => 0
                                           },
-                        :new_question_node_from => {
+                        :new_group_node_from => {
                                             :upvotes_count => 0
                                           },
                         :new_user_node_to => {
@@ -429,9 +441,10 @@ describe ContextLink do
     end
     context 'when there is this context_link and another for a different global' do
       before do
-        @context_link = ContextLink::PositiveContextLink.create(:user=>@user, :question => @question, :global_node_from_id => @gnu1.global_node.id, :global_node_to_id => @gnu2.global_node.id)
+        @context_link = ContextLink::PositiveContextLink.create(:user=>@user, :question => @question, :group => @group, :global_node_from_id => @gnu1.global_node.id, :global_node_to_id => @gnu2.global_node.id)
         @question_two = FactoryGirl.create(:question, :name => 'test global')
-        @context_link_two = ContextLink::PositiveContextLink.create(:user=>@user, :question => @question_two, :global_node_from_id => @gnu1.global_node.id, :global_node_to_id => @gnu2.global_node.id)
+        @group_two = FactoryGirl.create(:group, :title => 'test group')
+        @context_link_two = ContextLink::PositiveContextLink.create(:user=>@user, :question => @question_two, :group => @group_two, :global_node_from_id => @gnu1.global_node.id, :global_node_to_id => @gnu2.global_node.id)
         @state_hash = {
                         :context_link => {:number_destroyed => -2},
                         :global_link => {
@@ -439,7 +452,7 @@ describe ContextLink do
                                           :users_count => nil,
                                           :activation => nil
                                         },
-                        :question_link => {
+                        :group_link => {
                                             :number_destroyed => -2,
                                             :users_count => nil,
                                             :activation => nil
@@ -454,10 +467,10 @@ describe ContextLink do
                         :new_global_node_from => {
                                           :upvotes_count=> 0
                                         },
-                        :new_question_node_to => {
+                        :new_group_node_to => {
                                             :upvotes_count => 0
                                           },
-                        :new_question_node_from => {
+                        :new_group_node_from => {
                                             :upvotes_count => 0
                                           },
                         :new_user_node_to => {
@@ -473,8 +486,8 @@ describe ContextLink do
     context 'when there is this context_link and another for a different user' do
       before do
         @user_two = FactoryGirl.create(:user, :email => "test@user.com")
-        @context_link = ContextLink::PositiveContextLink.create(:user=>@user, :question => @question, :global_node_from_id => @gnu1.global_node.id, :global_node_to_id => @gnu2.global_node.id)
-        @context_link_two = ContextLink::PositiveContextLink.create(:user=>@user_two, :question => @question, :global_node_from_id => @gnu1.global_node.id, :global_node_to_id => @gnu2.global_node.id)
+        @context_link = ContextLink::PositiveContextLink.create(:user=>@user, :question => @question, :group => @group, :global_node_from_id => @gnu1.global_node.id, :global_node_to_id => @gnu2.global_node.id)
+        @context_link_two = ContextLink::PositiveContextLink.create(:user=>@user_two, :question => @question, :group => @group, :global_node_from_id => @gnu1.global_node.id, :global_node_to_id => @gnu2.global_node.id)
         @state_hash = {
                         :context_link => {:number_destroyed => -1},
                         :global_link => {
@@ -482,7 +495,7 @@ describe ContextLink do
                                           :users_count => 1,
                                           :activation => true
                                         },
-                        :question_link => {
+                        :group_link => {
                                             :number_destroyed => 0,
                                             :users_count => 1,
                                             :activation => true
@@ -497,10 +510,10 @@ describe ContextLink do
                         :new_global_node_from => {
                                           :upvotes_count=> 0
                                         },
-                        :new_question_node_to => {
+                        :new_group_node_to => {
                                             :upvotes_count => 1
                                           },
-                        :new_question_node_from => {
+                        :new_group_node_from => {
                                             :upvotes_count => 0
                                           },
                         :new_user_node_to => {
