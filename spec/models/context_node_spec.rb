@@ -360,22 +360,11 @@ describe ContextNode do
           @context_node1.destroy
         }.to change(Node::GlobalNode, :count).by(-1)
       end
-      it 'should destroy 1 questions_nodes' do
-        expect {
-          @context_node1.destroy
-        }.to change(Node::QuestionNode, :count).by(-1)
-      end
       it 'should destroy 1 questions_nodes_users' do
         expect {
           @context_node1.destroy
         }.to change(ContextNode, :count).by(-1)
       end
-      it 'should destroy 1 nodes_users' do
-        expect {
-          @context_node1.destroy
-        }.to change(Node::UserNode, :count).by(-1)
-      end
-
       it 'should destroy 1 link' do
         expect {
           @context_node1.destroy
@@ -391,7 +380,7 @@ describe ContextNode do
       it 'should destroy 1 context_link' do
         expect {
           @context_node1.destroy
-        }.to change(Link::QuestionLink, :count).by(-1)
+        }.to change(Link::GroupLink, :count).by(-1)
       end
 
       it 'should destroy 1 context_link' do
@@ -402,13 +391,9 @@ describe ContextNode do
 
       it 'update the caches' do
         #@context_node2.reload.upvotes_count.should == 1
-        @context_node2.user_node.reload.upvotes_count.should == 1
-        @context_node2.question_node.reload.upvotes_count.should == 1
         @context_node2.global_node.reload.upvotes_count.should == 1
         @context_node1.destroy
         #@context_node2.reload.upvotes_count.should == 0 
-        @context_node2.user_node.reload.upvotes_count.should == 0
-        @context_node2.question_node.reload.upvotes_count.should == 0
         @context_node2.global_node.reload.upvotes_count.should == 0
       end
       
@@ -421,22 +406,11 @@ describe ContextNode do
             @context_node1.destroy
           }.to change(Node::GlobalNode, :count).by(0)
         end
-        it 'should destroy 0 questions_nodes' do
-          expect {
-            @context_node1.destroy
-          }.to change(Node::QuestionNode, :count).by(0)
-        end
         it 'should destroy 1 questions_nodes_users' do
           expect {
             @context_node1.destroy
           }.to change(ContextNode, :count).by(-1)
         end
-        it 'should destroy 1 nodes_users' do
-          expect {
-            @context_node1.destroy
-          }.to change(Node::UserNode, :count).by(-1)
-        end
-  
         it 'should destroy 0 link' do
           expect {
             @context_node1.destroy
@@ -452,7 +426,7 @@ describe ContextNode do
         it 'should destroy 0 gl' do
           expect {
             @context_node1.destroy
-          }.to change(Link::QuestionLink, :count).by(0)
+          }.to change(Link::GroupLink, :count).by(0)
         end
   
         it 'should destroy 1 lu' do
@@ -463,13 +437,9 @@ describe ContextNode do
   
         it 'update the caches' do
           #@context_node2.reload.upvotes_count.should == 1
-          @context_node2.user_node.reload.upvotes_count.should == 1
-          @context_node2.question_node.reload.upvotes_count.should == 2
           @context_node2.global_node.reload.upvotes_count.should == 2
           @context_node1.destroy
           #@context_node2.reload.upvotes_count.should == 0 
-          @context_node2.user_node.reload.upvotes_count.should == 0
-          @context_node2.question_node.reload.upvotes_count.should == 1
           @context_node2.global_node.reload.upvotes_count.should == 1
         end
       end
@@ -483,20 +453,10 @@ describe ContextNode do
             @context_node1.destroy
           }.to change(Node::GlobalNode, :count).by(0)
         end
-        it 'should destroy 0 questions_nodes' do
-          expect {
-            @context_node1.destroy
-          }.to change(Node::QuestionNode, :count).by(0)
-        end
         it 'should destroy 1 questions_nodes_users' do
           expect {
             @context_node1.destroy
           }.to change(ContextNode, :count).by(-1)
-        end
-        it 'should destroy 1 nodes_users' do
-          expect {
-            @context_node1.destroy
-          }.to change(Node::UserNode, :count).by(-1)
         end
   
         it 'should destroy 1 link' do
@@ -514,7 +474,7 @@ describe ContextNode do
         it 'should destroy 1 gl' do
           expect {
             @context_node1.destroy
-          }.to change(Link::QuestionLink, :count).by(-1)
+          }.to change(Link::GroupLink, :count).by(-1)
         end
   
         it 'should destroy 1 lu' do
@@ -525,13 +485,9 @@ describe ContextNode do
   
         it 'update the caches' do
           #@context_node2.reload.upvotes_count.should == 1
-          @context_node2.user_node.reload.upvotes_count.should == 1
-          @context_node2.question_node.reload.upvotes_count.should == 1
           @context_node2.global_node.reload.upvotes_count.should == 1
           @context_node1.destroy
           #@context_node2.reload.upvotes_count.should == 0 
-          @context_node2.user_node.reload.upvotes_count.should == 0
-          @context_node2.question_node.reload.upvotes_count.should == 0
           @context_node2.global_node.reload.upvotes_count.should == 0
         end
       end
@@ -545,20 +501,10 @@ describe ContextNode do
             @context_node1.destroy
           }.to change(Node::GlobalNode, :count).by(0)
         end
-        it 'should destroy 1 questions_nodes' do
-          expect {
-            @context_node1.destroy
-          }.to change(Node::QuestionNode, :count).by(-1)
-        end
         it 'should destroy 1 questions_nodes_users' do
           expect {
             @context_node1.destroy
           }.to change(ContextNode, :count).by(-1)
-        end
-        it 'should destroy 1 nodes_users' do
-          expect {
-            @context_node1.destroy
-          }.to change(Node::UserNode, :count).by(-1)
         end
   
         it 'should destroy 0 link' do
@@ -576,7 +522,7 @@ describe ContextNode do
         it 'should destroy 1 gl' do
           expect {
             @context_node1.destroy
-          }.to change(Link::QuestionLink, :count).by(-1)
+          }.to change(Link::GroupLink, :count).by(-1)
         end
   
         it 'should destroy 1 lu' do
@@ -587,13 +533,9 @@ describe ContextNode do
   
         it 'update the caches' do
           #@context_node2.reload.upvotes_count.should == 1
-          @context_node2.user_node.reload.upvotes_count.should == 1
-          @context_node2.question_node.reload.upvotes_count.should == 1
           @context_node2.global_node.reload.upvotes_count.should == 2
           @context_node1.destroy
           #@context_node2.reload.upvotes_count.should == 0 
-          @context_node2.user_node.reload.upvotes_count.should == 0
-          @context_node2.question_node.reload.upvotes_count.should == 0
           @context_node2.global_node.reload.upvotes_count.should == 1
         end
       end
@@ -607,20 +549,10 @@ describe ContextNode do
             @context_node1.destroy
           }.to change(Node::GlobalNode, :count).by(0)
         end
-        it 'should destroy 1 questions_nodes' do
-          expect {
-            @context_node1.destroy
-          }.to change(Node::QuestionNode, :count).by(-1)
-        end
         it 'should destroy 1 questions_nodes_users' do
           expect {
             @context_node1.destroy
           }.to change(ContextNode, :count).by(-1)
-        end
-        it 'should destroy 0 nodes_users' do
-          expect {
-            @context_node1.destroy
-          }.to change(Node::UserNode, :count).by(0)
         end
   
         it 'should destroy 0 link' do
@@ -638,7 +570,7 @@ describe ContextNode do
         it 'should destroy 1 gl' do
           expect {
             @context_node1.destroy
-          }.to change(Link::QuestionLink, :count).by(-2)
+          }.to change(Link::GroupLink, :count).by(-2)
         end
   
         it 'should destroy 1 lu' do
@@ -649,13 +581,9 @@ describe ContextNode do
   
         it 'update the caches' do
           #@context_node2.reload.upvotes_count.should == 1
-          @context_node2.user_node.reload.upvotes_count.should == 1
-          @context_node2.question_node.reload.upvotes_count.should == 1
           @context_node2.global_node.reload.upvotes_count.should == 1
           @context_node1.destroy
           #@context_node2.reload.upvotes_count.should == 0 
-          @context_node2.user_node.reload.upvotes_count.should == 0
-          @context_node2.question_node.reload.upvotes_count.should == 0
           @context_node2.global_node.reload.upvotes_count.should == 0
         end
       end
@@ -669,20 +597,10 @@ describe ContextNode do
             @context_node1.destroy
           }.to change(Node::GlobalNode, :count).by(-1)
         end
-        it 'should destroy 1 questions_nodes' do
-          expect {
-            @context_node1.destroy
-          }.to change(Node::QuestionNode, :count).by(-1)
-        end
         it 'should destroy 1 questions_nodes_users' do
           expect {
             @context_node1.destroy
           }.to change(ContextNode, :count).by(-1)
-        end
-        it 'should destroy 1 nodes_users' do
-          expect {
-            @context_node1.destroy
-          }.to change(Node::UserNode, :count).by(-1)
         end
   
         it 'should destroy 1 link' do
@@ -700,7 +618,7 @@ describe ContextNode do
         it 'should destroy 1 context_link' do
           expect {
             @context_node1.destroy
-          }.to change(Link::QuestionLink, :count).by(-2)
+          }.to change(Link::GroupLink, :count).by(-2)
         end
   
         it 'should destroy 1 context_link' do
@@ -711,21 +629,13 @@ describe ContextNode do
   
         it 'update the caches' do
           #@context_node2.reload.upvotes_count.should == 1
-          @context_node2.user_node.reload.upvotes_count.should == 1
-          @context_node2.question_node.reload.upvotes_count.should == 1
           @context_node2.global_node.reload.upvotes_count.should == 1
           #@context_node3.reload.upvotes_count.should == 1
-          @context_node3.user_node.reload.upvotes_count.should == 1
-          @context_node3.question_node.reload.upvotes_count.should == 1
           @context_node3.global_node.reload.upvotes_count.should == 1
           @context_node1.destroy
           #@context_node2.reload.upvotes_count.should == 0 
-          @context_node2.user_node.reload.upvotes_count.should == 0
-          @context_node2.question_node.reload.upvotes_count.should == 0
           @context_node2.global_node.reload.upvotes_count.should == 0
           #@context_node3.reload.upvotes_count.should == 0 
-          @context_node3.user_node.reload.upvotes_count.should == 0
-          @context_node3.question_node.reload.upvotes_count.should == 0
           @context_node3.global_node.reload.upvotes_count.should == 0
         end
       end
