@@ -77,42 +77,13 @@ shared_examples_for 'a context link creating links' do |type|
     context_link.context_node_from.should be_persisted
     context_link.context_node_to.should be_persisted
   end
-  it 'should have the correct votes on the gns' do
-    context_link = "ContextLink::#{type}ContextLink".constantize.create(@params)
-    @state_hash[:new_global_node_to].each do |key, value|
-      context_link.global_link.global_node_to.send(key).should == value
-    end
-    @state_hash[:new_global_node_from].each do |key, value|
-      context_link.global_link.global_node_from.send(key).should == value
-    end
-  end
-  it 'should have the correct votes on the grns' do
-    context_link = "ContextLink::#{type}ContextLink".constantize.create(@params)
-    @state_hash[:new_group_node_to].each do |key, value|
-      context_link.group_node_to.reload.send(key).should == value
-    end
-    @state_hash[:new_group_node_from].each do |key, value|
-      context_link.group_node_from.reload.send(key).should == value
-    end
-  end
-  it 'should have the correct votes on the uns' do
-    context_link = "ContextLink::#{type}ContextLink".constantize.create(@params)
-    @state_hash[:new_user_node_to].each do |key, value|
-      context_link.user_link.user_node_to.send(key).should == value
-    end
-    @state_hash[:new_user_node_from].each do |key, value|
-      context_link.user_link.user_node_from.send(key).should == value
-    end
-  end
 end
 #shared_examples_for 'a context_link updating links' do |type, @state_hash|
 #
 #end
 shared_examples_for 'a @context_link deleting links' do |type|
   before do
-    @ul_attrs = {:node_from_id => @context_link.user_node_from.id, :node_to_id => @context_link.user_node_to.id, :user_id => @user.id}
     @gl_attrs = {:node_from_id => @context_link.global_node_from.id, :node_to_id => @context_link.global_node_to.id}
-    @grl_attrs = {:node_from_id => @context_link.group_node_from_id, :node_to_id => @context_link.group_node_to_id, :group_id => @group.try(:id)}
   end
   it 'should destroy the correct number of context links' do
     expect {
@@ -187,30 +158,10 @@ shared_examples_for 'a @context_link deleting links' do |type|
       @context_link.try(:global_node_from).try(:reload).try(key).should == value
     end
   end
-  it 'should have the correct votes on the grns' do
-    @context_link.destroy_all_for_user_link
-    @state_hash[:new_group_node_to].each do |key, value|
-      @context_link.try(:group_node_to).try(:reload).try(key).should == value
-    end
-    @state_hash[:new_group_node_from].each do |key, value|
-      @context_link.try(:group_node_from).try(:reload).try(key).should == value
-    end
-  end
-  it 'should have the correct votes on the uns' do
-    @context_link.destroy_all_for_user_link
-    @state_hash[:new_user_node_to].each do |key, value|
-      @context_link.try(:user_node_to).try(:reload).try(key).should == value
-    end
-    @state_hash[:new_user_node_from].each do |key, value|
-      @context_link.try(:user_node_from).try(:reload).try(key).should == value
-    end
-  end
 end
 shared_examples_for 'a @context_link updating links' do |new_type, old_type|
   before do
-    @ul_attrs = {:node_from_id => @context_link.user_node_from.id, :node_to_id => @context_link.user_node_to.id, :user_id => @user.id}
     @gl_attrs = {:node_from_id => @context_link.global_node_from.id, :node_to_id => @context_link.global_node_to.id}
-    @grl_attrs = {:node_from_id => @context_link.group_node_from_id, :node_to_id => @context_link.group_node_to_id, :group_id => @group.try(:id)}
   end
   it 'should update the correct number of context links' do
     old_cls = ContextLink.where(:user_link_id => @context_link.user_link_id)
@@ -308,36 +259,6 @@ shared_examples_for 'a @context_link updating links' do |new_type, old_type|
     end
     @state_hash[:new_global_node_from].each do |key, value|
       @context_link.try(:global_node_from).try(:reload).try(key).should == value
-    end
-  end
-  it 'should have the correct votes on the grns' do
-    @state_hash[:old_group_node_to].each do |key, value|
-      @context_link.try(:group_node_to).try(:reload).try(key).should == value
-    end
-    @state_hash[:old_group_node_from].each do |key, value|
-      @context_link.try(:group_node_from).try(:reload).try(key).should == value
-    end
-    @context_link = @context_link.update_type(new_type)
-    @state_hash[:new_group_node_to].each do |key, value|
-      @context_link.try(:group_node_to).try(:reload).try(key).should == value
-    end
-    @state_hash[:new_group_node_from].each do |key, value|
-      @context_link.try(:group_node_from).try(:reload).try(key).should == value
-    end
-  end
-  it 'should have the correct votes on the uns' do
-    @state_hash[:old_user_node_to].each do |key, value|
-      @context_link.try(:user_node_to).try(:reload).try(key).should == value
-    end
-    @state_hash[:old_user_node_from].each do |key, value|
-      @context_link.try(:user_node_from).try(:reload).try(key).should == value
-    end
-    @context_link = @context_link.update_type(new_type)
-    @state_hash[:new_user_node_to].each do |key, value|
-      @context_link.try(:user_node_to).try(:reload).try(key).should == value
-    end
-    @state_hash[:new_user_node_from].each do |key, value|
-      @context_link.try(:user_node_from).try(:reload).try(key).should == value
     end
   end
 

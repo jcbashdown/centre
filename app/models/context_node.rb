@@ -15,9 +15,6 @@ class ContextNode < ActiveRecord::Base
   include NodeCreationModule
   belongs_to :node_title
   belongs_to :global_node, :class_name => Node::GlobalNode
-  belongs_to :user_node, :class_name => Node::UserNode
-  belongs_to :question_node, :class_name => Node::QuestionNode
-  belongs_to :group_node, :class_name => Node::GroupNode
   belongs_to :user
   belongs_to :question
   belongs_to :group
@@ -34,7 +31,6 @@ class ContextNode < ActiveRecord::Base
 
   validates_presence_of :title
   validates_presence_of :global_node
-  validates_presence_of :user_node
   validates_presence_of :user
 
   validates :title, :uniqueness => {:scope => [:group_id, :question_id, :user_id]}
@@ -50,15 +46,6 @@ class ContextNode < ActiveRecord::Base
     if (gn = Node::GlobalNode.find_by_id(self.global_node_id))
       gn.save!
     end
-    if (qn = Node::QuestionNode.find_by_id(self.question_node_id))
-      qn.save!
-    end
-    if (grn = Node::GroupNode.find_by_id(self.group_node_id))
-      grn.save!
-    end
-    if (un = Node::UserNode.find_by_id(self.user_node_id))
-      un.save!
-    end
   end
 
   def set_conclusion! value
@@ -71,7 +58,7 @@ class ContextNode < ActiveRecord::Base
 
   class << self
     def with_all_associations
-      ContextNode.includes(:node_title, :global_node, :question_node, :group_node, :user_node)
+      ContextNode.includes(:node_title, :global_node)
     end
   end
 end

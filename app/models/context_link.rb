@@ -14,12 +14,6 @@ class ContextLink < ActiveRecord::Base
   belongs_to :user_link, :class_name => Link::UserLink
   belongs_to :global_node_from, :class_name => Node::GlobalNode
   belongs_to :global_node_to, :class_name => Node::GlobalNode
-  belongs_to :question_node_from, :class_name => Node::QuestionNode
-  belongs_to :question_node_to, :class_name => Node::QuestionNode
-  belongs_to :group_node_from, :class_name => Node::GroupNode
-  belongs_to :group_node_to, :class_name => Node::GroupNode
-  belongs_to :user_node_from, :class_name => Node::UserNode
-  belongs_to :user_node_to, :class_name => Node::UserNode
   belongs_to :context_node_from, :class_name => ContextNode
   belongs_to :context_node_to, :class_name => ContextNode
 
@@ -62,7 +56,7 @@ class ContextLink < ActiveRecord::Base
 
   class << self
     def with_all_associations
-      ContextLink.includes(:question, :user, :global_node_from, :global_node_to, :group_node_from, :group_node_to, :question_node_from, :question_node_to, :user_node_from, :user_node_to, :context_node_from, :context_node_to, :user_link, :global_link, :group_link)
+      ContextLink.includes(:question, :user, :global_node_from, :global_node_to, :context_node_from, :context_node_to, :user_link, :global_link, :group_link)
     end
   end
 

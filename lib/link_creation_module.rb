@@ -19,12 +19,6 @@ module LinkCreationModule
   def associate_nested_nodes
     self.context_node_from ||= ContextNode.find_or_create_by_user_id_and_question_id_and_group_id_and_title(:user_id=>self.user_id, :question_id=>self.question_id, :group_id => self.group_id, :title => self.global_node_from.title)
     self.context_node_to ||= ContextNode.find_or_create_by_user_id_and_question_id_and_group_id_and_title(:user_id=>self.user_id, :question_id=>self.question_id, :group_id => self.group_id, :title => self.global_node_to.title)
-    self.user_node_from = self.context_node_from.user_node
-    self.user_node_to = self.context_node_to.user_node
-    self.question_node_from = self.context_node_from.question_node
-    self.question_node_to = self.context_node_to.question_node
-    self.group_node_from = self.context_node_from.group_node
-    self.group_node_to = self.context_node_to.group_node
   end
   
   def create_appropriate_links

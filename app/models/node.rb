@@ -39,14 +39,8 @@ class Node < ActiveRecord::Base
 
   class << self
     def get_klass conditions
-      if conditions[:question] && conditions[:group]
+      if conditions[:question] || conditions[:group] || conditions[:user]
         ContextNode
-      elsif conditions[:group]
-        Node::GroupNode
-      elsif conditions[:question]
-        Node::QuestionNode
-      elsif conditions[:user]
-        Node::UserNode
       else
         Node::GlobalNode
       end
@@ -60,7 +54,7 @@ class Node < ActiveRecord::Base
         with :group_id, conditions[:group] if conditions[:group]
         with :user_id, conditions[:user] if conditions[:user]
         order_by(:id, :asc)
-      end.results.map(&:global_node) 
+      end.results.map(&:global_node).uniq 
       if conditions[:page]
         Node::GlobalNode.where(:id => results).page(conditions[:page]).per(10)
       else

@@ -124,18 +124,7 @@ describe ContextNode do
                                                :number_existing => 1,
                                                :users_count => 1,
                                                :is_conclusion => true
-                                             },
-                             :question_node => {
-                                                 :number_created => 1,
-                                                 :number_existing => 1,
-                                                 :users_count => 1,
-                                                 :is_conclusion => true
-                                               },
-                             :user_node => {
-                                             :number_created => 1,
-                                             :number_existing => 1,
-                                             :users_count => 1
-                                           }
+                                             }
                            }
         @params = {:user=>@user, :question=>@question, :title => 'Title', :is_conclusion => conclusion_status}
       end 
@@ -155,18 +144,7 @@ describe ContextNode do
                                                :number_existing => 1,
                                                :users_count => 2,
                                                :is_conclusion => true
-                                             },
-                             :question_node => {
-                                                 :number_created => 1,
-                                                 :number_existing => 2,
-                                                 :users_count => 1,
-                                                 :is_conclusion => true
-                                               },
-                             :user_node => {
-                                             :number_created => 1,
-                                             :number_existing => 2,
-                                             :users_count => 1
-                                           }
+                                             }
                            }
         @user = FactoryGirl.create(:user, :email=>"another@test.com")
         @question = FactoryGirl.create(:question, :name => 'Alex is pretty')
@@ -188,18 +166,7 @@ describe ContextNode do
                                                :number_existing => 1,
                                                :users_count => 2,
                                                :is_conclusion => true
-                                             },
-                             :question_node => {
-                                                 :number_created => 1,
-                                                 :number_existing => 2,
-                                                 :users_count => 1,
-                                                 :is_conclusion => true
-                                               },
-                             :user_node => {
-                                             :number_created => 0,
-                                             :number_existing => 1,
-                                             :users_count => 2
-                                           }
+                                             }
                            }
         @question = FactoryGirl.create(:question, :name => 'Alex is pretty')
         @params = {:user=>@user, :question=>@question, :title => 'Title', :is_conclusion => conclusion_status}
@@ -221,18 +188,7 @@ describe ContextNode do
                                                :number_existing => 1,
                                                :users_count => 2,
                                                :is_conclusion => conclusion_status
-                                             },
-                             :question_node => {
-                                                 :number_created => 0,
-                                                 :number_existing => 1,
-                                                 :users_count => 2,
-                                                 :is_conclusion => conclusion_status
-                                               },
-                             :user_node => {
-                                             :number_created => 1,
-                                             :number_existing => 2,
-                                             :users_count => 1
-                                           }
+                                             }
                            }
         @user = FactoryGirl.create(:user, :email=>"another@test.com")
         @params = {:user=>@user, :question=>@question, :title => 'Title', :is_conclusion => new_conclusion_status}
@@ -253,18 +209,7 @@ describe ContextNode do
                                                  :number_existing => 1,
                                                  :users_count => 3,
                                                  :is_conclusion =>new_conclusion_status 
-                                               },
-                               :question_node => {
-                                                   :number_created => 0,
-                                                   :number_existing => 1,
-                                                   :users_count => 3,
-                                                   :is_conclusion =>new_conclusion_status 
-                                                 },
-                               :user_node => {
-                                               :number_created => 1,
-                                               :number_existing => 3,
-                                               :users_count => 1
-                                             }
+                                               }
                              }
           @user = FactoryGirl.create(:user, :email=>"new@test.com")
           @params = {:user=>@user, :question=>@question, :title => 'Title', :is_conclusion => new_conclusion_status}

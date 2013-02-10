@@ -41,19 +41,7 @@ describe ContextLink do
                                           },
                           :new_global_node_from => {
                                             :upvotes_count=> 0
-                                          },
-                          :new_group_node_to => {
-                                              :upvotes_count => 1
-                                            },
-                          :new_group_node_from => {
-                                              :upvotes_count => 0
-                                            },
-                          :new_user_node_to => {
-                                          :upvotes_count => 1
-                                        },
-                          :new_user_node_from => {
-                                          :upvotes_count => 0
-                                        }
+                                          }
                         }
         @node_state_hash = {
                              :context_node => {
@@ -64,24 +52,7 @@ describe ContextLink do
                                                :number_existing => 1,
                                                :users_count => 1,
                                                :is_conclusion => false
-                                             },
-                             :question_node => {
-                                                 :number_created => 1,
-                                                 :number_existing => 1,
-                                                 :users_count => 1,
-                                                 :is_conclusion => false
-                                               },
-                             :group_node => {
-                                                 :number_created => 1,
-                                                 :number_existing => 1,
-                                                 :users_count => 1,
-                                                 :is_conclusion => false
-                                               },
-                             :user_node => {
-                                             :number_created => 1,
-                                             :number_existing => 1,
-                                             :users_count => 1
-                                           }
+                                             }
                            }
           #do we need a conclusion status?
           @params = {:user=>@user, :question => @question, :group => @group, :global_node_to_id => @gnu1.global_node.id, :context_node_from_title => 'Title'}
@@ -128,19 +99,7 @@ describe ContextLink do
                                         },
                         :new_global_node_from => {
                                           :upvotes_count=> 0
-                                        },
-                        :new_group_node_to => {
-                                            :upvotes_count => 1
-                                          },
-                        :new_group_node_from => {
-                                            :upvotes_count => 0
-                                          },
-                        :new_user_node_to => {
-                                        :upvotes_count => 1
-                                      },
-                        :new_user_node_from => {
-                                        :upvotes_count => 0
-                                      }
+                                        }
                       }
         @params = {:user=>@user, :question => @question, :group => @group, :global_node_from_id => @gnu1.global_node.id, :global_node_to_id => @gnu2.global_node.id} 
       end
@@ -173,19 +132,7 @@ describe ContextLink do
                                           },
                           :new_global_node_from => {
                                             :upvotes_count=> 0
-                                          },
-                          :new_group_node_to => {
-                                              :upvotes_count => 1
-                                            },
-                          :new_group_node_from => {
-                                              :upvotes_count => 0
-                                            },
-                          :new_user_node_to => {
-                                          :upvotes_count => 1
-                                        },
-                          :new_user_node_from => {
-                                          :upvotes_count => 0
-                                        }
+                                          }
                         }
           @params = {:user=>@user, :question => @question, :group => @group, :global_node_from_id => @gnu1.global_node.id, :global_node_to_id => @gnu2.global_node.id} 
         end
@@ -221,19 +168,7 @@ describe ContextLink do
                                           },
                           :new_global_node_from => {
                                             :upvotes_count=> 0
-                                          },
-                          :new_group_node_to => {
-                                              :upvotes_count => 1
-                                            },
-                          :new_group_node_from => {
-                                              :upvotes_count => 0
-                                            },
-                          :new_user_node_to => {
-                                          :upvotes_count => 1
-                                        },
-                          :new_user_node_from => {
-                                          :upvotes_count => 0
-                                        }
+                                          }
                         }
           @question = FactoryGirl.create(:question, :name => 'another new question')
           @group = FactoryGirl.create(:group, :title => "Another group")
@@ -262,35 +197,11 @@ describe ContextLink do
                           :context_node => {
                                              :number_created => 0,
                                              :find_or_create_calls => 2 
-                                           },
-                          :new_global_node_to => {
-                                            :upvotes_count=> 0,
-                                            :equivalents_count=> 0
-                                          },
-                          :new_global_node_from => {
-                                            :upvotes_count=> 0,
-                                            :equivalents_count=> 0
-                                          },
-                          :new_group_node_to => {
-                                              :upvotes_count => 0,
-                                              :equivalents_count=> 0
-                                            },
-                          :new_group_node_from => {
-                                              :upvotes_count => 0,
-                                              :equivalents_count=> 0
-                                            },
-                          :new_user_node_to => {
-                                          :upvotes_count => 0,
-                                          :equivalents_count=> 0
-                                        },
-                          :new_user_node_from => {
-                                          :upvotes_count => 0,
-                                          :equivalents_count=> 0
-                                        }
+                                           }
                         }
           @params = {:user=>@user, :question => @question, :group => @group, :global_node_from_id => @gnu1.global_node.id, :global_node_to_id => @gnu2.global_node.id} 
         end
-        it_should_behave_like 'a context link creating links', "Equivalent"
+        it_should_behave_like 'a context link creating links', "Negative"
       end
     end
   end
@@ -351,39 +262,7 @@ describe ContextLink do
                         :old_global_node_from => {
                                           :upvotes_count=> 0,
                                           :downvotes_count=> 0
-                                        },
-                        :new_group_node_to => {
-                                            :upvotes_count => 0,
-                                            :downvotes_count=> 1
-                                          },
-                        :old_group_node_to => {
-                                            :upvotes_count => 1,
-                                            :downvotes_count=> 0
-                                          },
-                        :new_group_node_from => {
-                                            :upvotes_count => 0,
-                                            :downvotes_count=> 0
-                                          },
-                        :old_group_node_from => {
-                                            :upvotes_count => 0,
-                                            :downvotes_count=> 0
-                                          },
-                        :new_user_node_to => {
-                                        :upvotes_count => 0,
-                                        :downvotes_count=> 1
-                                      },
-                        :old_user_node_to => {
-                                        :upvotes_count => 1,
-                                        :downvotes_count=> 0
-                                      },
-                        :new_user_node_from => {
-                                        :upvotes_count => 0,
-                                        :downvotes_count=> 0
-                                      },
-                        :old_user_node_from => {
-                                        :upvotes_count => 0,
-                                        :downvotes_count=> 0
-                                      }
+                                        }
                       }
       end
       it_should_behave_like 'a @context_link updating links', "Negative", "Positive"
@@ -422,19 +301,7 @@ describe ContextLink do
                                         },
                         :new_global_node_from => {
                                           :upvotes_count=> 0
-                                        },
-                        :new_group_node_to => {
-                                            :upvotes_count => 0
-                                          },
-                        :new_group_node_from => {
-                                            :upvotes_count => 0
-                                          },
-                        :new_user_node_to => {
-                                        :upvotes_count => 0
-                                      },
-                        :new_user_node_from => {
-                                        :upvotes_count => 0
-                                      }
+                                        }
                       }
       end
       it_should_behave_like 'a @context_link deleting links', "Positive"
@@ -466,19 +333,7 @@ describe ContextLink do
                                         },
                         :new_global_node_from => {
                                           :upvotes_count=> 0
-                                        },
-                        :new_group_node_to => {
-                                            :upvotes_count => 0
-                                          },
-                        :new_group_node_from => {
-                                            :upvotes_count => 0
-                                          },
-                        :new_user_node_to => {
-                                        :upvotes_count => 0
-                                      },
-                        :new_user_node_from => {
-                                        :upvotes_count => 0
-                                      }
+                                        }
                       }
       end
       it_should_behave_like 'a @context_link deleting links', "Positive"
@@ -509,19 +364,7 @@ describe ContextLink do
                                         },
                         :new_global_node_from => {
                                           :upvotes_count=> 0
-                                        },
-                        :new_group_node_to => {
-                                            :upvotes_count => 1
-                                          },
-                        :new_group_node_from => {
-                                            :upvotes_count => 0
-                                          },
-                        :new_user_node_to => {
-                                        :upvotes_count => 0
-                                      },
-                        :new_user_node_from => {
-                                        :upvotes_count => 0
-                                      }
+                                        }
                       }
       end
       it_should_behave_like 'a @context_link deleting links', "Positive"
