@@ -9,6 +9,7 @@ class ContextNode < ActiveRecord::Base
     integer :question_id
     integer :group_id
     integer :user_id
+    integer :is_conclusion
   end
   include ActiverecordImportMethods
   include NodeDeletionModule
@@ -39,13 +40,23 @@ class ContextNode < ActiveRecord::Base
     create_appropriate_nodes
   end
 
-  after_save :update_caches
+  after_save :update_caches, :update_conclusions
   after_destroy :delete_appropriate_nodes, :update_caches
 
   def update_caches
-    if (gn = Node::GlobalNode.find_by_id(self.global_node_id))
-      gn.save!
+    self.global_node.save!
+  end
+
+  def update_conclusions
+    unless is_conclusion.nil?
+      [QuestionConclusion, GroupQuestionConclusion, UserQuestionConclusion].each do |conclusion_class|
+        conclusion_class.update_conclusion_status_for(self.global_node, context)
+      end
     end
+  end
+
+  def context
+    {:question_id => self.question_id, :group_id => self.group_id, :user_id => self.user_id}
   end
 
   def set_conclusion! value

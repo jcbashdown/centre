@@ -298,36 +298,14 @@ describe ContextNode do
             ContextNode.where(:user_id=>@user.id, :title=>'Title', :question_id=>@question.id)[0].destroy
           }.to change(Node::GlobalNode, :count).by(-1)
         end
-        it 'should destroy 1 questions_nodes' do
-          expect {
-            ContextNode.where(:user_id=>@user.id, :title=>'Title', :question_id=>@question.id)[0].destroy
-          }.to change(Node::QuestionNode, :count).by(-1)
-        end
         it 'should destroy 1 questions_nodes_users' do
           expect {
             ContextNode.where(:user_id=>@user.id, :title=>'Title', :question_id=>@question.id)[0].destroy
           }.to change(ContextNode, :count).by(-1)
         end
-        it 'should destroy 1 questions_nodes_users' do
-          expect {
-            ContextNode.where(:user_id=>@user.id, :title=>'Title', :question_id=>@question.id)[0].destroy
-          }.to change(Node::UserNode, :count).by(-1)
-        end
-        it 'should destroy the question node' do
-          qn = Node::QuestionNode.where(:title=>'Title', :question_id=>@question.id)[0]
-          qn.should_not be_nil
-          ContextNode.where(:user_id=>@user.id, :title=>'Title', :question_id=>@question.id)[0].destroy
-          qn = Node::QuestionNode.where(:title=>'Title', :question_id=>@question.id)[0]
-          qn.should be_nil
-        end
-        it 'should destroy the node user' do
-          ContextNode.where(:user_id=>@user.id, :title=>'Title', :question_id=>@question.id)[0].destroy
-          nu = Node::UserNode.where(:title=>'Title', :user_id=>@user.id)[0]
-          nu.should be_nil
-        end
         it 'should destroy the node' do
           ContextNode.where(:user_id=>@user.id, :title=>'Title', :question_id=>@question.id)[0].destroy
-          Node.where(:title=>'Title')[0].should be_nil
+          Node::GlobalNode.where(:title=>'Title')[0].should be_nil
         end
         it 'should destroy the question node user' do
           ContextNode.where(:user_id=>@user.id, :title=>'Title', :question_id=>@question.id)[0].destroy
@@ -339,56 +317,31 @@ describe ContextNode do
             context_node = ContextNode.create(:user=>@user, :title=>'Title', :question=>@question, :is_conclusion => false)
             context_node.question_node.reload.users_count.should == 2
           end
-          it 'should destroy 0 questions_nodes' do
+          it 'should destroy 0 global_nodes' do
             expect {
               ContextNode.where(:user_id=>@user.id, :title=>'Title', :question_id=>@question.id)[0].destroy
             }.to change(Node::GlobalNode, :count).by(0)
-          end
-          it 'should destroy 0 questions_nodes' do
-            expect {
-              ContextNode.where(:user_id=>@user.id, :title=>'Title', :question_id=>@question.id)[0].destroy
-            }.to change(Node::QuestionNode, :count).by(0)
           end
           it 'should destroy 1 questions_nodes_users' do
             expect {
               ContextNode.where(:user_id=>@user.id, :title=>'Title', :question_id=>@question.id)[0].destroy
             }.to change(ContextNode, :count).by(-1)
           end
-          it 'should destroy 1 nodes_users' do
-            expect {
-              ContextNode.where(:user_id=>@user.id, :title=>'Title', :question_id=>@question.id)[0].destroy
-            }.to change(Node::UserNode, :count).by(-1)
-          end
           it 'should update the caches' do
-            qn = Node::QuestionNode.where(:title=>'Title', :question_id=>@question.id)[0]
-            qn.should_not be_nil
             ContextNode.where(:user_id=>@user.id, :title=>'Title', :question_id=>@question.id)[0].destroy
-            qn = Node::QuestionNode.where(:title=>'Title', :question_id=>@question.id)[0]
-            qn.should_not be_nil
-            qn.users_count.should == 1
             gn = Node::GlobalNode.where(:title=>'Title')[0]
             gn.should_not be_nil
             gn.users_count.should == 1
-          end
-          it 'should destroy the node user' do
-            ContextNode.where(:user_id=>@user.id, :title=>'Title', :question_id=>@question.id)[0].destroy
-            nu = Node::UserNode.where(:title=>'Title', :user_id=>@user.id)[0]
-            nu.should be_nil
           end
           it 'should not destroy the node and question node and should destroy the context_node' do
             @user_two = FactoryGirl.create(:user, :email=>"another@test.com")
             context_node = ContextNode.create(:user=>@user_two, :question=>@question, :title => 'Title', :is_conclusion => true)
             ContextNode.where(:user_id=>@user_two.id, :title=>'Title', :question_id=>@question.id, :is_conclusion => true).count.should == 1
-            Node::UserNode.where(:user_id=>@user_two.id, :title=>'Title', :is_conclusion => true).count.should == 1
-            Node::QuestionNode.where(:title=>'Title', :question_id=>@question.id, :is_conclusion => true).count.should == 0
             @user_three = FactoryGirl.create(:user, :email=>"another@test2.com")
             context_node = ContextNode.create(:user=>@user_three, :question=>@question, :title => 'Title', :is_conclusion => true)
             ContextNode.where(:user_id=>@user_three.id, :title=>'Title', :question_id=>@question.id, :is_conclusion => true).count.should == 1
-            Node::UserNode.where(:user_id=>@user_three.id, :title=>'Title', :is_conclusion => true).count.should == 1
-            Node::QuestionNode.where(:title=>'Title', :question_id=>@question.id, :is_conclusion => true).count.should == 0
             ContextNode.where(:user_id=>@user.id, :title=>'Title', :question_id=>@question.id)[0].destroy
             
-            Node::QuestionNode.where(:title=>'Title', :question_id=>@question.id, :is_conclusion => true)[0].should_not be_nil
             Node::GlobalNode.where(:title=>'Title')[0].should_not be_nil
             ContextNode.where(:title=>'Title', :user_id => @user.id, :question_id=>@question.id)[0].should be_nil
           end

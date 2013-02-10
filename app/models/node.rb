@@ -3,14 +3,6 @@ class Node < ActiveRecord::Base
 
   def set_caches_and_conclusion
     self.users_count = ContextNode.count( :conditions => ["#{self.type.gsub("Node::", "").underscore}_id = ?", self.id] )
-    self.not_conclusion_votes_count = ContextNode.count( :conditions => ["is_conclusion = false AND #{self.type.gsub("Node::", "").underscore}_id = ?", self.id] )
-    self.conclusion_votes_count = ContextNode.count( :conditions => ["is_conclusion = true AND #{self.type.gsub("Node::", "").underscore}_id = ?", self.id] )
-    if (self.conclusion_votes_count > self.not_conclusion_votes_count)
-      self.is_conclusion = true
-    else
-      self.is_conclusion = false
-    end
-    nil
   end
 
   def opposite_direction
@@ -45,21 +37,25 @@ class Node < ActiveRecord::Base
         Node::GlobalNode
       end
     end
-    
+
     def find_by_context conditions
-      klass = self.get_klass conditions
-      results = klass.search do
-        fulltext conditions[:query] if conditions[:query]
-        with :question_id, conditions[:question] if conditions[:question]
-        with :group_id, conditions[:group] if conditions[:group]
-        with :user_id, conditions[:user] if conditions[:user]
-        order_by(:id, :asc)
-      end.results.map(&:global_node).uniq 
+      results = find_ids_by_context conditions
       if conditions[:page]
         Node::GlobalNode.where(:id => results).page(conditions[:page]).per(10)
       else
         Node::GlobalNode.where(:id => results)
       end
+    end
+    
+    def find_ids_by_context conditions
+      results = ContextNode.search do
+        fulltext conditions[:query] if conditions[:query]
+        with :question_id, conditions[:question] if conditions[:question]
+        with :group_id, conditions[:group] if conditions[:group]
+        with :user_id, conditions[:user] if conditions[:user]
+        with :is_conclusion, conditions[:is_conclusion] if conditions[:is_conclusion]
+        order_by(:id, :asc)
+      end.results.map(&:global_node_id).uniq 
     end
     
   end

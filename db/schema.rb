@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130208135019) do
+ActiveRecord::Schema.define(:version => 20130210144017) do
 
   create_table "context_links", :force => true do |t|
     t.integer  "question_id"
@@ -75,6 +75,14 @@ ActiveRecord::Schema.define(:version => 20130208135019) do
   add_index "context_nodes", ["question_node_id"], :name => "index_context_nodes_on_question_node_id"
   add_index "context_nodes", ["user_id"], :name => "index_context_nodes_on_user_id"
   add_index "context_nodes", ["user_node_id"], :name => "index_context_nodes_on_user_node_id"
+
+  create_table "group_question_conclusions", :force => true do |t|
+    t.integer  "group_id"
+    t.integer  "question_id"
+    t.integer  "global_node_id"
+    t.datetime "created_at",     :null => false
+    t.datetime "updated_at",     :null => false
+  end
 
   create_table "groups", :force => true do |t|
     t.string   "title"
@@ -142,6 +150,13 @@ ActiveRecord::Schema.define(:version => 20130208135019) do
   add_index "nodes", ["type"], :name => "index_nodes_on_type"
   add_index "nodes", ["user_id"], :name => "index_nodes_on_user_id"
 
+  create_table "question_conclusions", :force => true do |t|
+    t.integer  "question_id"
+    t.integer  "global_node_id"
+    t.datetime "created_at",     :null => false
+    t.datetime "updated_at",     :null => false
+  end
+
   create_table "question_users", :force => true do |t|
     t.integer "question_id"
     t.integer "user_id"
@@ -154,6 +169,14 @@ ActiveRecord::Schema.define(:version => 20130208135019) do
     t.string   "name"
     t.datetime "created_at", :null => false
     t.datetime "updated_at", :null => false
+  end
+
+  create_table "user_question_conclusions", :force => true do |t|
+    t.integer  "user_id"
+    t.integer  "question_id"
+    t.integer  "global_node_id"
+    t.datetime "created_at",     :null => false
+    t.datetime "updated_at",     :null => false
   end
 
   create_table "users", :force => true do |t|
