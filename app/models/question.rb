@@ -6,4 +6,5 @@ class Question < ActiveRecord::Base
     Node::QuestionNode.where(:question_id => self.id, :is_conclusion => true)#.collect(&:global_node_id)
     #Node::GlobalNode.where('id IN (?)', gn_ids)
   end
+#whooops! goood! even...
 end
