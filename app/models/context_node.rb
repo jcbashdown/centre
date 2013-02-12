@@ -9,7 +9,7 @@ class ContextNode < ActiveRecord::Base
     integer :question_id
     integer :group_id
     integer :user_id
-    integer :is_conclusion
+    boolean :is_conclusion
   end
   include ActiverecordImportMethods
   include NodeDeletionModule
@@ -44,7 +44,7 @@ class ContextNode < ActiveRecord::Base
   after_destroy :delete_appropriate_nodes, :update_caches
 
   def update_caches
-    self.global_node.save!
+    self.global_node.save! if self.global_node.try(:persisted?)
   end
 
   def update_conclusions

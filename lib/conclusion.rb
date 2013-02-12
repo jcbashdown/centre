@@ -5,8 +5,8 @@ module Conclusion
       new_context[attr] = context[attr] if context[attr] 
       new_context
     end
-    not_conclusion_votes = Node.find_ids_by_context context.merge({:is_conclusion => false}) 
-    is_conclusion_votes = Node.find_ids_by_context context.merge({:is_conclusion => true}) 
+    not_conclusion_votes = Node.find_ids_by_context(context.merge({:is_conclusion => false})).count
+    is_conclusion_votes = Node.find_ids_by_context(context.merge({:is_conclusion => true})).count
     if is_conclusion_votes > not_conclusion_votes
       find_or_create_conclusion context.merge({:global_node_id => global_node.id})
     else
@@ -18,7 +18,7 @@ module Conclusion
     where(context)[0] || create!(context)
   end
 
-  def destroy_conclusion_is_exists context
+  def destroy_conclusion_if_exists context
     where(context)[0].try(:destroy)
   end
 end

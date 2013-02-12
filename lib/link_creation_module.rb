@@ -31,7 +31,7 @@ module LinkCreationModule
       #test this properly - loading right ids?
       #even faster - composite primary key, no need to get back after insert as already know
       Link.import @new_links
-      @new_links = synchronize @new_links, Link, [:type, :user_id, :group_id, :node_from_id, :node_to_id]
+      @new_links = synchronize @new_links, Link, [:type, :user_id, :group_id, :global_node_from_id, :global_node_to_id]
       @new_links.each do |link|
         subtype_matcher = /Link::(.*)::#{link_kind}/
         subtype = (subtype_matcher.match(link.type))[1]
@@ -46,8 +46,8 @@ module LinkCreationModule
   end
 
   def find_or_initialise_links
-    if group
-      find_or_initialise("Link::GroupLink::#{link_kind}GroupLink".constantize, {:group_id => group_id, :node_from_id => self.group_node_from_id, :node_to_id => self.group_node_to_id, :global_node_from_id => self.global_node_from_id, :global_node_to_id => self.global_node_to_id, :global_link_id => self.global_link_id})
+    if self.group_id
+      find_or_initialise("Link::GroupLink::#{link_kind}GroupLink".constantize, {:group_id => self.group_id, :global_node_from_id => self.global_node_from_id, :global_node_to_id => self.global_node_to_id, :global_link_id => self.global_link_id})
     end
   end  
 
@@ -62,7 +62,7 @@ module LinkCreationModule
   end
 
   def find_or_create_user_link(attributes)
-    params = {:user_id => user_id, :node_from_id => self.user_node_from_id, :node_to_id => self.user_node_to_id, :global_node_from_id => self.global_node_from_id, :global_node_to_id => self.global_node_to_id, :global_link_id => self.global_link_id}
+    params = {:user_id => user_id, :global_node_from_id => self.global_node_from_id, :global_node_to_id => self.global_node_to_id, :global_link_id => self.global_link_id}
     Link::UserLink.where(params)[0] || "Link::UserLink::#{self.link_kind}UserLink".constantize.create!(params)
   end
 

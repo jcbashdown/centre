@@ -48,6 +48,7 @@ class Node < ActiveRecord::Base
     end
     
     def find_ids_by_context conditions
+      #.results could be .hits if don't need to get from db (just get from solr index)
       results = ContextNode.search do
         fulltext conditions[:query] if conditions[:query]
         with :question_id, conditions[:question] if conditions[:question]
