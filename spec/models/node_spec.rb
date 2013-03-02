@@ -28,8 +28,6 @@ describe Node do
         @context_nodes << @context_node2 = ContextNode.create(:user=>@user1, :question=>@question0, :title => "And another! Part of a node title")
         @context_nodes << @context_node3 = ContextNode.create(:user=>@user0, :question=>@question1, :title => 'A Title')
         Node::GlobalNode.reindex
-        Node::QuestionNode.reindex
-        Node::UserNode.reindex
         ContextNode.reindex
       end
       context 'when the direction is to' do
@@ -52,8 +50,6 @@ describe Node do
       @context_node3 = ContextNode.create(:user=>@user2, :question=>@question, :title => "And another! Part of a node title")
       @context_node4 = ContextNode.create(:user=>@user, :question=>@question2, :title => 'Title')
       Node::GlobalNode.reindex
-      Node::QuestionNode.reindex
-      Node::UserNode.reindex
       ContextNode.reindex
     end
     context 'when the question is set' do
