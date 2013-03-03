@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130210144017) do
+ActiveRecord::Schema.define(:version => 20130303140342) do
 
   create_table "context_links", :force => true do |t|
     t.integer  "question_id"
@@ -167,6 +167,13 @@ ActiveRecord::Schema.define(:version => 20130210144017) do
 
   create_table "questions", :force => true do |t|
     t.string   "name"
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
+  end
+
+  create_table "user_groups", :force => true do |t|
+    t.integer  "user_id"
+    t.integer  "group_id"
     t.datetime "created_at", :null => false
     t.datetime "updated_at", :null => false
   end

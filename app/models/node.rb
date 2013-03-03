@@ -31,7 +31,7 @@ class Node < ActiveRecord::Base
 
   class << self
     def get_klass conditions
-      if conditions[:question] || conditions[:group] || conditions[:user]
+      if conditions[:question] || conditions[:user_ids] || conditions[:user]
         ContextNode
       else
         Node::GlobalNode
@@ -39,7 +39,7 @@ class Node < ActiveRecord::Base
     end
 
     def find_by_context conditions
-      results = find_ids_by_context conditions
+      results = find_ids_by_context(conditions).map(&:global_node_id).uniq 
       if conditions[:page]
         Node::GlobalNode.where(:id => results).page(conditions[:page]).per(10)
       else
@@ -49,14 +49,20 @@ class Node < ActiveRecord::Base
     
     def find_ids_by_context conditions
       #.results could be .hits if don't need to get from db (just get from solr index)
+      binding.pry
       results = ContextNode.search do
         fulltext conditions[:query] if conditions[:query]
+        with :global_node_id, conditions[:global_node_id] if conditions[:global_node_id]
         with :question_id, conditions[:question] if conditions[:question]
-        with :group_id, conditions[:group] if conditions[:group]
         with :user_id, conditions[:user] if conditions[:user]
+        with(:user_id).any_of conditions[:user_ids] if conditions[:user_ids].try(:any?)#proxy for group
         with :is_conclusion, conditions[:is_conclusion] if conditions[:is_conclusion]
         order_by(:id, :asc)
-      end.results.map(&:global_node_id).uniq 
+      end.results
+      p conditions
+      p ContextNode.all
+      p results
+      results
     end
     
   end

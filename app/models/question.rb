@@ -3,7 +3,7 @@ class Question < ActiveRecord::Base
     :message => "Please use the pre defined 'All'" }
 
   has_many :question_conclusions
-  has_many :concluding_nodes, :through => :question_conclusions, :as => :global_node
+  has_many :concluding_nodes, :through => :question_conclusions, :source => :conclusion
   #def concluding_nodes
   #  Node::QuestionNode.where(:question_id => self.id, :is_conclusion => true)#.collect(&:global_node_id)
     #Node::GlobalNode.where('id IN (?)', gn_ids)

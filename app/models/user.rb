@@ -7,9 +7,14 @@ class User < ActiveRecord::Base
 
   has_many :context_nodes
 
+  has_many :user_groups
+  has_many :groups, :through => :user_groups
+
+  has_many :user_question_conclusions
+  has_many :conclusions, :through => :user_question_conclusions
+
   def concluding_nodes(question)
-    ContextNode.where(:user_id => self.id, :question_id => question.id, :is_conclusion => true)#.collect(&:global_node_id)
-    #Node::GlobalNode.where('id IN (?)', gn_ids)
+    conclusions.where(:question_id => question.id)
   end
 
   def may_destroy(question)

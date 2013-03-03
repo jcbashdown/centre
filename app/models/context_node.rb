@@ -6,8 +6,8 @@ class ContextNode < ActiveRecord::Base
   searchable do
     text :title
     integer :id
+    integer :global_node_id
     integer :question_id
-    integer :group_id
     integer :user_id
     boolean :is_conclusion
   end
@@ -50,13 +50,13 @@ class ContextNode < ActiveRecord::Base
   def update_conclusions
     unless is_conclusion.nil?
       [QuestionConclusion, GroupQuestionConclusion, UserQuestionConclusion].each do |conclusion_class|
-        conclusion_class.update_conclusion_status_for(self.global_node, context)
+        conclusion_class.update_conclusion_status_for(context)
       end
     end
   end
 
   def context
-    {:question_id => self.question_id, :group_id => self.group_id, :user_id => self.user_id}
+    HashWithIndifferentAccess.new({:question_id => self.question_id, :group_ids => self.user.groups.map(&:id), :user_id => self.user_id, :global_node_id => self.global_node_id})
   end
 
   def set_conclusion! value

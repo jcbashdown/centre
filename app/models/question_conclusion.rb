@@ -6,5 +6,5 @@ class QuestionConclusion < ActiveRecord::Base
   attr_accessible :global_node_id, :question_id
 
   belongs_to :question
-  belongs_to :global_node
+  belongs_to :conclusion, :foreign_key => :global_node_id, :class_name => Node::GlobalNode
 end
