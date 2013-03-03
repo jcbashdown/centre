@@ -34,7 +34,7 @@ class ContextNode < ActiveRecord::Base
   validates_presence_of :global_node
   validates_presence_of :user
 
-  validates :title, :uniqueness => {:scope => [:group_id, :question_id, :user_id]}
+  validates :title, :uniqueness => {:scope => [:question_id, :user_id]}
 
   before_validation(:on => :create) do
     create_appropriate_nodes

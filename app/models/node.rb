@@ -49,7 +49,6 @@ class Node < ActiveRecord::Base
     
     def find_ids_by_context conditions
       #.results could be .hits if don't need to get from db (just get from solr index)
-      binding.pry
       results = ContextNode.search do
         fulltext conditions[:query] if conditions[:query]
         with :global_node_id, conditions[:global_node_id] if conditions[:global_node_id]
@@ -59,10 +58,6 @@ class Node < ActiveRecord::Base
         with :is_conclusion, conditions[:is_conclusion] if conditions[:is_conclusion]
         order_by(:id, :asc)
       end.results
-      p conditions
-      p ContextNode.all
-      p results
-      results
     end
     
   end

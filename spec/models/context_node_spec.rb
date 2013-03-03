@@ -12,7 +12,6 @@ describe ContextNode do
   end
 
   shared_examples_for "a context node change correctly updating conclusions" do 
-    before {ContextNode.reindex}
     it "should ensure the global node has the correct conclusion status in the question" do
       @context_node.question.concluding_nodes.should include @context_node.global_node if @is_question_conclusion
     end
