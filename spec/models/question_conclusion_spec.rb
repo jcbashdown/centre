@@ -1,4 +1,5 @@
 require 'spec_helper'
+require 'lib/conclusion_spec_helper'
 
 describe QuestionConclusion do
   subject {QuestionConclusion}

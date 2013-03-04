@@ -11,14 +11,16 @@ class GroupQuestionConclusion < ActiveRecord::Base
 
   class << self
 
-    def update_conclusion_status_for context
+    private
+
+    def set_context! context
       context[:group_ids].each do |id|
         context[:group_id] = id
         super
       end
     end
 
-    def search_context context
+    def search_context
       context = super
       context[:user_id] = Group.find(context[:group_id]).users.map(&:id)
       context
