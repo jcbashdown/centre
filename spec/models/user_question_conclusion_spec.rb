@@ -1,5 +1,6 @@
 require 'spec_helper'
 
 describe UserQuestionConclusion do
-  pending "add some examples to (or delete) #{__FILE__}"
+  subject {UserQuestionConclusion}
+  it_should_behave_like "a conclusion class extending conclusion"
 end

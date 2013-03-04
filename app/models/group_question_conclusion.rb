@@ -24,10 +24,5 @@ class GroupQuestionConclusion < ActiveRecord::Base
       context
     end
    
-    def find_or_create_conclusion context
-      p context
-      super
-    end
-
   end
 end
