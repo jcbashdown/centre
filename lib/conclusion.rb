@@ -3,7 +3,7 @@ module Conclusion
   def update_conclusion_status_for context
     set_context! context
     if votes_for_conclusion > votes_against_conclusion
-      find_or_create_conclusion create_context
+      create_conclusion_unless_exists create_context
     else
       destroy_conclusion_if_exists create_context
     end
@@ -39,8 +39,8 @@ module Conclusion
     ContextNode.where(search_context.merge({:is_conclusion => conclusion_status})).count
   end
 
-  def find_or_create_conclusion create_context
-    where(create_context)[0] || create!(create_context)
+  def create_conclusion_unless_exists create_context
+    exists?(create_context) || create!(create_context)
   end
 
   def destroy_conclusion_if_exists create_context
