@@ -74,6 +74,14 @@ shared_examples_for "a conclusion class extending conclusion" do |special_contex
     end
   end
 
+  describe ".create_context" do
+
+  end
+
+  describe ".search_context" do
+
+  end
+
   describe ".set_context" do
     it "should assign context to the class instance variable @context" do
       subject.send(:set_context!, context)
