@@ -47,6 +47,33 @@ shared_examples_for "a conclusion class extending conclusion" do |special_contex
       end
     end
   end
+
+  describe ".votes_for_conclusion" do
+    it "should call vote_count with true" do
+      subject.should_receive(:vote_count).with true
+      subject.send(:votes_for_conclusion)
+    end
+  end
+
+  describe ".votes_for_conclusion" do
+    it "should call vote_count with false" do
+      subject.should_receive(:vote_count).with false
+      subject.send(:votes_against_conclusion)
+    end
+  end
+
+  describe ".vote_count" do
+    let(:conclusion_status) {true}
+    let(:search_context) {{:search => "context"}}
+    before {subject.stub(:search_context).and_return search_context}
+    it 'should count the votes for the conclusion status' do
+      mock_relation = mock('relation')
+      ContextNode.should_receive(:where).with(search_context.merge(:is_conclusion => conclusion_status)).and_return mock_relation
+      mock_relation.should_receive(:count)
+      subject.send(:vote_count, conclusion_status)
+    end
+  end
+
   describe ".set_context" do
     it "should assign context to the class instance variable @context" do
       subject.send(:set_context!, context)
