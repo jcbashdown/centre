@@ -13,6 +13,10 @@ class GroupQuestionConclusion < ActiveRecord::Base
 
     private
 
+    def meets_criteria?
+      !!@context[:group_id]
+    end
+
     def set_context! context
       context[:group_ids].each do |id|
         context[:group_id] = id
@@ -22,7 +26,7 @@ class GroupQuestionConclusion < ActiveRecord::Base
 
     def search_context
       context = super
-      context[:user_id] = Group.find(context[:group_id]).users.map(&:id)
+      context[:user_id] = Group.find_by_id(context[:group_id]).try(:users).try(:map,&:id)
       context
     end
    

@@ -1,11 +1,13 @@
 shared_examples_for "a conclusion class extending conclusion" do |special_context, inferred_context|
   
-  let(:context) {special_context ? {:silly => "context"}.merge(special_context) : {:silly => "context"}}
+  let(:other_context) {{:silly => "context"}}
+  let(:context) {special_context ? other_context.merge(special_context) : other_context}
 
   describe ".update_conclusion_status_for" do
     let(:create_context) {context}
     before do
       subject.stub(:set_context!)
+      subject.stub(:meets_criteria?).and_return true
       subject.stub(:votes_for_conclusion).and_return 0
       subject.stub(:votes_against_conclusion).and_return 0
       subject.stub(:find_or_create_conclusion)
@@ -75,11 +77,20 @@ shared_examples_for "a conclusion class extending conclusion" do |special_contex
   end
 
   describe ".create_context" do
-
+    let(:valid_context) {subject.attribute_names.inject({}) {|valid_context, attr| valid_context[attr] = "mock_data"; valid_context }}
+    context "when @context contains attributes of an instance of the subject and other_context" do
+      before {subject.instance_variable_set("@context", valid_context.merge(other_context))}
+      it "should set the valid_context and and ignore the other_context" do
+        subject.send(:create_context).should == valid_context
+      end
+    end
   end
 
   describe ".search_context" do
-
+    before {subject.stub(:create_context).and_return other_context}
+    it "should return a result containing the result of create_context" do
+      subject.send(:search_context).should include other_context
+    end
   end
 
   describe ".set_context" do
@@ -87,5 +98,17 @@ shared_examples_for "a conclusion class extending conclusion" do |special_contex
       subject.send(:set_context!, context)
       subject.instance_variable_get("@context").should == (inferred_context ? context.merge(inferred_context) : context)
     end
+  end
+
+  describe ".meets_criteria?" do
+
+  end
+
+  describe ".create_conclusion_unless_exists" do
+
+  end
+  
+  describe ".destroy_conclusion_if_exists" do
+
   end
 end
