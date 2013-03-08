@@ -8,6 +8,6 @@ class Group < ActiveRecord::Base
   has_many :conclusions, :through => :group_question_conclusions
 
   def concluding_nodes(question)
-    conclusions.where(:question_id => question.id)
+    group_question_conclusions.where(:question_id => question.id).conclusions
   end
 end
