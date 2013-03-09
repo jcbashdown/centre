@@ -14,7 +14,7 @@ class User < ActiveRecord::Base
   has_many :conclusions, :through => :user_question_conclusions
 
   def concluding_nodes(question)
-    user_question_conclusions.where(:question_id => question.id).conclusions
+    conclusions.by_question_for_user(question)
   end
 
   def may_destroy(question)

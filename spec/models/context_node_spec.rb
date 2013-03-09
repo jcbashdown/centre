@@ -12,15 +12,15 @@ describe ContextNode do
   end
 
   shared_examples_for "a context node change correctly updating conclusions" do 
-#    it "should ensure the global node has the correct conclusion status in the question" do
-#      @context_node.question.concluding_nodes.should include @context_node.global_node if @is_question_conclusion
-#    end
-#    it "should ensure the global node has the correct conclusion status for the question and user" do
-#      @context_node.user.concluding_nodes(@context_node.question).should include @context_node.global_node if @is_question_user_conclusion
-#    end
+    it "should ensure the global node has the correct conclusion status in the question" do
+      @context_node.question.concluding_nodes.should include @context_node.global_node if @is_question_conclusion
+    end
+    it "should ensure the global node has the correct conclusion status for the question and user" do
+      @context_node.user.concluding_nodes(@context_node.question).should include @context_node.global_node if @is_question_user_conclusion
+    end
     it "should ensure the global node has the correct conclusion status in the group" do
       #should come through users in group - no group in context
-      @group.concluding_nodes(@context_node.question).reload.should include @context_node.global_node if @is_question_group_conclusion
+      @group.concluding_nodes(@context_node.question).should include @context_node.global_node if @is_question_group_conclusion
     end
   end
 
