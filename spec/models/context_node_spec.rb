@@ -38,7 +38,7 @@ describe ContextNode do
       it_should_behave_like "a context node change correctly updating conclusions"
       context 'when a new context node for the qn is created as true' do
         before do
-          @user = Factory(:user, :email => "test2@email.com")
+          @user = FactoryGirl.create(:user, :email => "test2@email.com")
 	  @group.users << @user
           @new_conclusion_status = true
           @context_node = ContextNode.create(:user=>@user, :question=>@question, :title => 'Title', :is_conclusion => @new_conclusion_status)
@@ -56,14 +56,33 @@ describe ContextNode do
           end
           it_should_behave_like "a context node change correctly updating conclusions"
         end
+        context 'when the first user tries to recreate the same node' do
+          context "with the same conclusion status" do
+            it "should create nothing else and be invalid" do
+              pending
+            end
+          end
+          context "with a different conclusion status" do
+            it "should create nothing else and be invalid" do
+              pending
+            end
+          end
+        end
+        context 'when the first user changes their mind to true' do
+          before do
+            @context_node_one.set_conclusion!(@new_conclusion_status = true)
+	    @is_question_conclusion = @new_conclusion_status
+	    @is_question_group_conclusion = @new_conclusion_status
+            @is_question_user_conclusion = @new_conclusion_status
+          end
+          it_should_behave_like "a context node change correctly updating conclusions"
+        end
         context 'when another new context node for the qn is created as true' do
           before do
-            @user = Factory(:user, :email => "test3@email.com")
+            @user = FactoryGirl.create(:user, :email => "test3@email.com")
 	    @group.users << @user
             @new_conclusion_status = true
-            p "2 true"
             @context_node = ContextNode.create(:user=>@user, :question=>@question, :title => 'Title', :is_conclusion => @new_conclusion_status)
-            p "2 true"
 	    @is_question_conclusion = @new_conclusion_status
 	    @is_question_group_conclusion = @new_conclusion_status
             @is_question_user_conclusion = @new_conclusion_status
@@ -84,7 +103,7 @@ describe ContextNode do
       it_should_behave_like "a context node change correctly updating conclusions"
       context 'when a new context node for the qn is created as false' do
         before do
-          @user = Factory(:user, :email => "test4@email.com")
+          @user = FactoryGirl.create(:user, :email => "test4@email.com")
 	  @group.users << @user
           @new_conclusion_status = false
           @context_node = ContextNode.create(:user=>@user, :question=>@question, :title => 'Title', :is_conclusion => @new_conclusion_status)
@@ -106,7 +125,7 @@ describe ContextNode do
       it_should_behave_like "a context node change correctly updating conclusions"
       context 'when a new context node for the qn is created as true' do
         before do
-          @user = Factory(:user, :email => "test5@email.com")
+          @user = FactoryGirl.create(:user, :email => "test5@email.com")
 	  @group.users << @user
           @new_conclusion_status = true
           @context_node = ContextNode.create(:user=>@user, :question=>@question, :title => 'Title', :is_conclusion => @new_conclusion_status)

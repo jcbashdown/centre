@@ -46,8 +46,10 @@ module LinkCreationModule
   end
 
   def find_or_initialise_links
-    if self.group_id
-      find_or_initialise("Link::GroupLink::#{link_kind}GroupLink".constantize, {:group_id => self.group_id, :global_node_from_id => self.global_node_from_id, :global_node_to_id => self.global_node_to_id, :global_link_id => self.global_link_id})
+    if (group_ids = self.user.groups.map(&:id)).any?
+      group_ids.each do |group_id|
+        find_or_initialise("Link::GroupLink::#{link_kind}GroupLink".constantize, {:group_id => group_id, :global_node_from_id => self.global_node_from_id, :global_node_to_id => self.global_node_to_id, :global_link_id => self.global_link_id})
+      end
     end
   end  
 

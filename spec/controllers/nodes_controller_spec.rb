@@ -281,7 +281,7 @@ describe NodesController do
   
   describe 'PUT update' do
     before do
-      @context_node = Factory(:context_node)
+      @context_node = FactoryGirl.create(:context_node)
       @global_node_id = @context_node.global_node_id
       @question_id = @context_node.question_id
       @user_id = @context_node.user_id
