@@ -46,20 +46,22 @@ module LinkCreationModule
   end
 
   def find_or_initialise_links
-    if (group_ids = self.user.groups.map(&:id)).any?
+    if (group_ids = self.user.groups.reload.map(&:id)).any?
       group_ids.each do |group_id|
-        find_or_initialise("Link::GroupLink::#{link_kind}GroupLink".constantize, {:group_id => group_id, :global_node_from_id => self.global_node_from_id, :global_node_to_id => self.global_node_to_id, :global_link_id => self.global_link_id})
+        find_or_initialise("Link::GroupLink::#{link_kind}GroupLink".constantize, {:group_id => group_id, :global_node_from_id => self.global_node_from_id, :global_node_to_id => self.global_node_to_id, :global_link_id => self.global_link_id}, false)
       end
     end
   end  
 
-  def find_or_initialise(the_class, the_params={})
+  def find_or_initialise(the_class, the_params={}, related = true)
     unless link = the_class.where(the_params)[0]
       @new_links << the_class.new(the_params)
     else
-      subtype_matcher = /Link::(.*)::#{link_kind}/
-      subtype = (subtype_matcher.match(the_class.to_s))[1]
-      @existing_links_hash[:"#{subtype.underscore}_id"] = link.id
+      if related
+        subtype_matcher = /Link::(.*)::#{link_kind}/
+        subtype = (subtype_matcher.match(the_class.to_s))[1]
+        @existing_links_hash[:"#{subtype.underscore}_id"] = link.id
+      end
     end
   end
 

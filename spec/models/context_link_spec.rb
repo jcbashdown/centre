@@ -140,11 +140,9 @@ describe ContextLink do
         end
         it_should_behave_like 'a context link creating links', "Positive"
       end
-      context 'when creating a context_link in a different question' do
+      context 'when creating a context_link in a different question after the use has joined two more groups' do
         before do
           @question2 = FactoryGirl.create(:question, :name => 'new question')
-          @group2 = FactoryGirl.create(:group, :title => 'new group')
-          @group2.users << @user
           ContextLink::PositiveContextLink.create(:user=>@user, :question => @question2, :global_node_from_id => @gnu1.global_node.id, :global_node_to_id => @gnu2.global_node.id)
           @state_hash = {
                           :context_link => {:number_created => 1},
@@ -154,7 +152,7 @@ describe ContextLink do
                                             :activation => true
                                           },
                           :group_link => {
-                                              :number_created => 1,
+                                              :number_created => 2,
                                               :users_count => 1,
                                               :activation => true
                                             },
@@ -174,6 +172,8 @@ describe ContextLink do
                                           }
                         }
           @question = FactoryGirl.create(:question, :name => 'another new question')
+          @group2 = FactoryGirl.create(:group, :title => 'new group')
+          @group2.users << @user
           @group = FactoryGirl.create(:group, :title => "Another group")
           @group.users << @user
           @params = {:user=>@user, :question => @question, :global_node_from_id => @gnu1.global_node.id, :global_node_to_id => @gnu2.global_node.id} 

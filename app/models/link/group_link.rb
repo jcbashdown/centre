@@ -1,5 +1,6 @@
 class Link::GroupLink < Link
   belongs_to :global_link
+  validates :group_id, :uniqueness => {:scope => [:global_link_id]}
 
   class << self
     def update_active(gn_from, gn_to, group)

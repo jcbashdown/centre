@@ -21,11 +21,11 @@ shared_examples_for 'a context link creating links' do |type|
   end
   it 'should create the ql with the correct counts' do
     context_link = "ContextLink::#{type}ContextLink".constantize.create(@params)
-    context_link.group_link.reload.users_count.should == @state_hash[:group_link][:users_count]
+    Link::GroupLink.where(:group_id => @group.id, :global_link_id => context_link.global_link_id)[0].users_count.should == @state_hash[:group_link][:users_count]
   end
   it 'should create the ql with the correct activation' do
     context_link = "ContextLink::#{type}ContextLink".constantize.create(@params)
-    context_link.group_link.reload.active.should == @state_hash[:group_link][:activation]
+    Link::GroupLink.where(:group_id => @group.id, :global_link_id => context_link.global_link_id)[0].active.should == @state_hash[:group_link][:activation]
   end
   it 'should create the correct number of uls' do
     expect {
