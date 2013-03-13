@@ -312,12 +312,12 @@ describe ContextLink do
       end
       it_should_behave_like 'a @context_link deleting links', "Positive"
     end
-    context 'when there is this context_link and another for a different global' do
+    context 'when there is this context_link and another for a different question and the user has joined a new group' do
       before do
         @context_link = ContextLink::PositiveContextLink.create(:user=>@user, :question => @question, :global_node_from_id => @gnu1.global_node.id, :global_node_to_id => @gnu2.global_node.id)
         @question_two = FactoryGirl.create(:question, :name => 'test global')
-        @group_two = FactoryGirl.create(:group, :title => 'test group')
-        @group_two.users << @user
+        @group = FactoryGirl.create(:group, :title => 'test group')
+        @group.users << @user
         @context_link_two = ContextLink::PositiveContextLink.create(:user=>@user, :question => @question_two, :global_node_from_id => @gnu1.global_node.id, :global_node_to_id => @gnu2.global_node.id)
         @state_hash = {
                         :context_link => {:number_destroyed => -2},

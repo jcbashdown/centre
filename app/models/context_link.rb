@@ -10,7 +10,7 @@ class ContextLink < ActiveRecord::Base
   belongs_to :group
   belongs_to :user
   belongs_to :global_link, :class_name => Link
-  belongs_to :group_link, :class_name => Link::GroupLink, :counter_cache => :users_count
+  belongs_to :group_link, :class_name => Link::GroupLink
   belongs_to :user_link, :class_name => Link::UserLink
   belongs_to :global_node_from, :class_name => Node::GlobalNode
   belongs_to :global_node_to, :class_name => Node::GlobalNode
