@@ -4,13 +4,13 @@ class Link::GroupLink < Link
   has_many :user_groups, :foreign_key => :group_id, :primary_key => :group_id
   has_many :user_links, :through => :user_groups
 
-  validates :group_id, :uniqueness => {:scope => [:global_link_id]}
+  #validates :group_id, :uniqueness => {:scope => [:global_link_id]}
 
-  before_save :update_users_count
   after_save :update_active_for_group_link
+  after_create :update_users_count
 
   def update_users_count
-    self.users_count = self.user_links.count
+    self.update_attribute(:users_count, self.user_links.count)
   end
 
   def update_active_for_group_link

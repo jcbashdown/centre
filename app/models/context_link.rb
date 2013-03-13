@@ -41,11 +41,11 @@ class ContextLink < ActiveRecord::Base
 
   def update_type(type)
     ContextLink.where('user_link_id = ? AND id != ?', self.user_link_id, self.id).each do |cl|
-      attributes = {:user => cl.user, :question => cl.question, :group => cl.group, :global_node_from_id => cl.global_node_from_id, :global_node_to_id => cl.global_node_to_id}
+      attributes = {:user => cl.user, :question => cl.question, :global_node_from_id => cl.global_node_from_id, :global_node_to_id => cl.global_node_to_id}
       cl.destroy
       "ContextLink::#{type}ContextLink".constantize.create!(attributes)
     end
-    attributes = {:user => self.user, :question => self.question, :group => self.group, :global_node_from_id => self.global_node_from_id, :global_node_to_id => self.global_node_to_id}
+    attributes = {:user => self.user, :question => self.question, :global_node_from_id => self.global_node_from_id, :global_node_to_id => self.global_node_to_id}
     self.destroy
     "ContextLink::#{type}ContextLink".constantize.create(attributes)
   end

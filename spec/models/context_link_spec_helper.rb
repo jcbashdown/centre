@@ -64,7 +64,7 @@ shared_examples_for 'a context link creating links' do |type|
     context_link.global_link.reload.active.should == @state_hash[:global_link][:activation]
   end
   it 'should create the correct number of context nodes' do
-    ContextNode.should_receive(:find_or_create_by_user_id_and_question_id_and_group_id_and_title).exactly(@state_hash[:context_node][:find_or_create_calls]).times.and_return @gnu1
+    ContextNode.should_receive(:find_or_create_by_user_id_and_question_id_and_title).exactly(@state_hash[:context_node][:find_or_create_calls]).times.and_return @gnu1
     "ContextLink::#{type}ContextLink".constantize.create(@params)
   end
   it 'should create the correct number of context nodes' do
