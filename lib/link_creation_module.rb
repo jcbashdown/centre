@@ -23,45 +23,24 @@ module LinkCreationModule
   
   def create_appropriate_links
     self.global_link_id = find_or_create_global_link.id
-    @new_links = []
-    @existing_links_hash = {}
-    new_links_hash = {}
-    find_or_initialise_links
-    unless @new_links.empty?
-      #test this properly - loading right ids?
-      #even faster - composite primary key, no need to get back after insert as already know
-      Link.import @new_links
-      @new_links = synchronize @new_links, Link, [:type, :user_id, :group_id, :global_node_from_id, :global_node_to_id]
-      @new_links.each do |link|
-        subtype_matcher = /Link::(.*)::#{link_kind}/
-        subtype = (subtype_matcher.match(link.type))[1]
-        new_links_hash[:"#{subtype.underscore}_id"] = link.id
-      end
-    end
-    attributes = new_links_hash.merge(@existing_links_hash)
     unless user_link_id
       attributes[:user_link_id] = find_or_create_user_link(attributes).id
     end
+    find_or_create_links
     self.attributes = attributes
   end
 
-  def find_or_initialise_links
+  def find_or_create_links
     if (group_ids = self.user.groups.reload.map(&:id)).any?
       group_ids.each do |group_id|
-        find_or_initialise("Link::GroupLink::#{link_kind}GroupLink".constantize, {:group_id => group_id, :global_node_from_id => self.global_node_from_id, :global_node_to_id => self.global_node_to_id, :global_link_id => self.global_link_id}, false)
+        find_or_create_group_link("Link::GroupLink::#{link_kind}GroupLink".constantize, {:group_id => group_id, :global_node_from_id => self.global_node_from_id, :global_node_to_id => self.global_node_to_id, :global_link_id => self.global_link_id})
       end
     end
-  end  
+  end 
 
-  def find_or_initialise(the_class, the_params={}, related = true)
-    unless link = the_class.where(the_params)[0]
-      @new_links << the_class.new(the_params)
-    else
-      if related
-        subtype_matcher = /Link::(.*)::#{link_kind}/
-        subtype = (subtype_matcher.match(the_class.to_s))[1]
-        @existing_links_hash[:"#{subtype.underscore}_id"] = link.id
-      end
+  def find_or_create_group_link(the_class, the_params={})
+    unless the_class.where(the_params)[0]
+      the_class.create!(the_params)
     end
   end
 
