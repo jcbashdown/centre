@@ -23,11 +23,10 @@ module LinkCreationModule
   
   def create_appropriate_links
     self.global_link_id = find_or_create_global_link.id
-    unless user_link_id
-      attributes[:user_link_id] = find_or_create_user_link(attributes).id
+    unless self.user_link_id
+      self.user_link_id = find_or_create_user_link.id
     end
     find_or_create_links
-    self.attributes = attributes
   end
 
   def find_or_create_links
@@ -44,7 +43,7 @@ module LinkCreationModule
     end
   end
 
-  def find_or_create_user_link(attributes)
+  def find_or_create_user_link
     params = {:user_id => user_id, :global_node_from_id => self.global_node_from_id, :global_node_to_id => self.global_node_to_id, :global_link_id => self.global_link_id}
     Link::UserLink.where(params)[0] || "Link::UserLink::#{self.link_kind}UserLink".constantize.create!(params)
   end
