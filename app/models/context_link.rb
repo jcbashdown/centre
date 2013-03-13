@@ -64,6 +64,5 @@ class ContextLink < ActiveRecord::Base
 
   def update_active_links
     Link::GlobalLink.update_active(self.global_node_from_id, self.global_node_to_id)
-    Link::GroupLink.update_active(self.global_node_from_id, self.global_node_to_id, self.group_id)
   end
 end

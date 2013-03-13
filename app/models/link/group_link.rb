@@ -7,9 +7,14 @@ class Link::GroupLink < Link
   validates :group_id, :uniqueness => {:scope => [:global_link_id]}
 
   before_save :update_users_count
+  after_save :update_active_for_group_link
 
   def update_users_count
     self.users_count = self.user_links.count
+  end
+
+  def update_active_for_group_link
+    self.class.update_active(self.global_node_from_id, self.global_node_to_id, self.group_id)
   end
 
   class << self
