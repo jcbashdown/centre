@@ -316,8 +316,8 @@ describe ContextLink do
       before do
         @context_link = ContextLink::PositiveContextLink.create(:user=>@user, :question => @question, :global_node_from_id => @gnu1.global_node.id, :global_node_to_id => @gnu2.global_node.id)
         @question_two = FactoryGirl.create(:question, :name => 'test global')
-        @group = FactoryGirl.create(:group, :title => 'test group')
-        @group.users << @user
+        @group2 = FactoryGirl.create(:group, :title => 'test group')
+        @group2.users << @user
         @context_link_two = ContextLink::PositiveContextLink.create(:user=>@user, :question => @question_two, :global_node_from_id => @gnu1.global_node.id, :global_node_to_id => @gnu2.global_node.id)
         @state_hash = {
                         :context_link => {:number_destroyed => -2},
