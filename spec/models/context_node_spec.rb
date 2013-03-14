@@ -375,10 +375,11 @@ describe ContextNode do
     end
     describe 'with existing links' do
       before do
-        @context_node1 = ContextNode.create(:title => 'title', :question => @question, :group => @group, :user => @user)
-        @context_node2 = ContextNode.create(:title => 'test', :question => @question, :group => @group, :user => @user)
-        @context_node3 = ContextNode.create(:title => 'another', :question => @question, :group => @group, :user => @user)
-        @context_link = ContextLink::PositiveContextLink.create(:user=>@user, :question => @question, :group => @group, :global_node_from_id => @context_node1.global_node.id, :global_node_to_id => @context_node2.global_node.id)
+        @group.users << @user
+        @context_node1 = ContextNode.create(:title => 'title', :question => @question, :user => @user)
+        @context_node2 = ContextNode.create(:title => 'test', :question => @question, :user => @user)
+        @context_node3 = ContextNode.create(:title => 'another', :question => @question, :user => @user)
+        @context_link = ContextLink::PositiveContextLink.create(:user=>@user, :question => @question, :global_node_from_id => @context_node1.global_node.id, :global_node_to_id => @context_node2.global_node.id)
       end
       it 'should destroy 1 node' do
         expect {
@@ -424,7 +425,8 @@ describe ContextNode do
       
       context 'when another user has the link in this question' do
         before do
-          @context_link2 = ContextLink::PositiveContextLink.create(:user=>@user_two, :question => @question, :group => @group, :global_node_from_id => @context_node1.global_node.id, :global_node_to_id => @context_node2.global_node.id)
+          @group.users << @user_two
+          @context_link2 = ContextLink::PositiveContextLink.create(:user=>@user_two, :question => @question, :global_node_from_id => @context_node1.global_node.id, :global_node_to_id => @context_node2.global_node.id)
         end
         it 'should destroy 0 node' do
           expect {
@@ -567,7 +569,8 @@ describe ContextNode do
   
       context 'when the user has the link in another question' do
         before do
-          @context_link2 = ContextLink::PositiveContextLink.create(:user=>@user, :question => @question2, :group => @group2, :global_node_from_id => @context_node1.global_node.id, :global_node_to_id => @context_node2.global_node.id)
+          @user.groups << @group2
+          @context_link2 = ContextLink::PositiveContextLink.create(:user=>@user, :question => @question2, :global_node_from_id => @context_node1.global_node.id, :global_node_to_id => @context_node2.global_node.id)
         end
         it 'should destroy 0 node' do
           expect {
