@@ -251,11 +251,11 @@ describe ContextNode do
         @context_node = ContextNode.create(:user=>@user, :question=>@question, :title => 'Title', :is_conclusion => false)
       end
       it "should update the is conclusion status in all locations" do
-        @context_node.question_node.is_conclusion.should == false
+        @context_node.question.concluding_nodes.should_not include @context_node.global_node
         @context_node.set_conclusion! true
-        @context_node.question_node.reload.is_conclusion.should == true
+        @context_node.question.concluding_nodes.should include @context_node.global_node
         @context_node.set_conclusion! ''
-        @context_node.question_node.reload.is_conclusion.should == false
+        @context_node.question.concluding_nodes.should_not include @context_node.global_node
       end
     end
     describe 'updating with other context_nodes for qn' do

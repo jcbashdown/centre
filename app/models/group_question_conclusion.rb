@@ -18,8 +18,12 @@ class GroupQuestionConclusion < ActiveRecord::Base
     end
 
     def set_context! context
-      context[:group_ids].each do |id|
-        context[:group_id] = id
+      if context[:group_ids].any?
+        context[:group_ids].each do |id|
+          context[:group_id] = id
+          super
+        end
+      else
         super
       end
     end
