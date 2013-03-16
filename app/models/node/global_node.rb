@@ -20,6 +20,7 @@ class Node::GlobalNode < Node
     text :title
     integer :id
   end
+
   def global_node
     self
   end
