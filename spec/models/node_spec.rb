@@ -27,7 +27,6 @@ describe Node do
         @context_nodes << @context_node1 = ContextNode.create(:user=>@user1, :question=>@question1, :title => 'Title')
         @context_nodes << @context_node2 = ContextNode.create(:user=>@user1, :question=>@question0, :title => "And another! Part of a node title")
         @context_nodes << @context_node3 = ContextNode.create(:user=>@user0, :question=>@question1, :title => 'A Title')
-        Node::GlobalNode.reindex
         ContextNode.reindex
       end
       context 'when the direction is to' do
@@ -49,7 +48,6 @@ describe Node do
       @context_node2 = ContextNode.create(:user=>@user2, :question=>@question2, :title => 'Title')
       @context_node3 = ContextNode.create(:user=>@user2, :question=>@question, :title => "And another! Part of a node title")
       @context_node4 = ContextNode.create(:user=>@user, :question=>@question2, :title => 'Title')
-      Node::GlobalNode.reindex
       ContextNode.reindex
     end
     context 'when the question is set' do
@@ -61,21 +59,21 @@ describe Node do
                                        }
       end
       it 'should return the correct question nodes' do
-        Node.find_by_context(@existing_view_configuration).should == [@context_node1.global_node, @context_node3.global_node]
+        Node::GlobalNode.find_by_context(@existing_view_configuration).should == [@context_node1.global_node, @context_node3.global_node]
       end
       context 'when the user is set' do
         before do
           @existing_view_configuration.merge!(:user => @user.id)
         end
         it 'should return the correct context nodes' do
-          Node.find_by_context(@existing_view_configuration).should == [@context_node1.global_node]
+          Node::GlobalNode.find_by_context(@existing_view_configuration).should == [@context_node1.global_node]
         end
         context 'when the query is set' do
           before do
             @existing_view_configuration.merge!(:query => @query)
           end
           it 'should return the correct context nodes' do
-            Node.find_by_context(@existing_view_configuration).should == [@context_node1.global_node]
+            Node::GlobalNode.find_by_context(@existing_view_configuration).should == [@context_node1.global_node]
           end
         end
       end
@@ -84,7 +82,7 @@ describe Node do
           @existing_view_configuration.merge!(:query => @query)
         end
         it 'should return the correct question nodes' do
-          Node.find_by_context(@existing_view_configuration).should == [@context_node1.global_node, @context_node3.global_node]
+          Node::GlobalNode.find_by_context(@existing_view_configuration).should == [@context_node1.global_node, @context_node3.global_node]
         end
       end
     end
@@ -97,14 +95,14 @@ describe Node do
                                        }
       end
       it 'should return the correct user nodes' do
-        Node.find_by_context(@existing_view_configuration).should == [@context_node1.global_node, @context_node4.global_node]
+        Node::GlobalNode.find_by_context(@existing_view_configuration).should == [@context_node1.global_node, @context_node4.global_node]
       end
       context 'when the query is set' do
         before do
           @existing_view_configuration.merge!(:query => @query)
         end
         it 'should return the correct user nodes' do
-          Node.find_by_context(@existing_view_configuration).should == [@context_node1.global_node]
+          Node::GlobalNode.find_by_context(@existing_view_configuration).should == [@context_node1.global_node]
         end
       end
     end
@@ -117,7 +115,7 @@ describe Node do
                                        }
       end
       it 'should return the correct global nodes' do
-        Node.find_by_context(@existing_view_configuration).should == [@context_node1.global_node, @context_node3.global_node]
+        Node::GlobalNode.find_by_context(@existing_view_configuration).should == [@context_node1.global_node, @context_node3.global_node]
       end
     end
   end

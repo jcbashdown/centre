@@ -1,6 +1,6 @@
 shared_examples_for 'a controller setting nodes for the view' do |type, page|
   before do
-    @klass = type.capitalize.constantize 
+    @klass ||= Node::GlobalNode
   end
   context 'when the question is set' do
     before do

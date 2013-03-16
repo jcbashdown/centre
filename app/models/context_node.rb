@@ -69,5 +69,19 @@ class ContextNode < ActiveRecord::Base
     def with_all_associations
       ContextNode.includes(:node_title, :global_node)
     end
+    
+    def find_by_context conditions
+      #.results could be .hits if don't need to get from db (just get from solr index)
+      results = search do
+        fulltext conditions[:query] if conditions[:query]
+        with :global_node_id, conditions[:global_node_id] if conditions[:global_node_id]
+        with :question_id, conditions[:question] if conditions[:question]
+        with :user_id, conditions[:user] if conditions[:user]
+        with(:user_id).any_of conditions[:user_ids] if conditions[:user_ids].try(:any?)#proxy for group
+        with :is_conclusion, conditions[:is_conclusion] if conditions[:is_conclusion]
+        order_by(:id, :asc)
+      end.results
+    end
+    
   end
 end

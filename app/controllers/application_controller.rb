@@ -37,9 +37,9 @@ class ApplicationController < ActionController::Base
                 :page => params[:nodes_page] ? params[:nodes_page] : 1
               }
     context[:user] = session[:nodes_user] if session[:nodes_user]
-    @nodes = Node.find_by_context(context)
+    @nodes = Node::GlobalNode.find_by_context(context)
     unless @nodes.try(:any?)
-      @nodes = Node.find_by_context(context.except(:query))
+      @nodes = Node::GlobalNode.find_by_context(context.except(:query))
     end
   end
 
