@@ -1,10 +1,10 @@
 require 'spec_helper'
 require 'models/node_spec_helper'
 
-describe Node do
+describe Node::GlobalNode do
 
   describe "#find_view_links_by_context" do
-
+    
   end
 
   describe 'finding links' do

@@ -27,6 +27,7 @@ class Link::GlobalLink < Link
     def active(n_from, n_to)
       where(:node_from_id => n_from, :node_to_id => n_to, :active => true).last
     end
+
   end
 
 end
