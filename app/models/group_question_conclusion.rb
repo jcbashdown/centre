@@ -30,7 +30,7 @@ class GroupQuestionConclusion < ActiveRecord::Base
 
     def search_context
       context = super
-      context[:user_id] = Group.find_by_id(context[:group_id]).try(:users).try(:map,&:id)
+      context[:user_id] = Group.user_ids_for(context[:group_id])
       context.except :group_id
     end
    

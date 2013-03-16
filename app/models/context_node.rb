@@ -71,6 +71,7 @@ class ContextNode < ActiveRecord::Base
     end
     
     def find_by_context conditions
+      conditions[:user_ids] = Group.user_ids_for(conditions[:group_id]) if !conditions[:user_ids] && conditions[:group_id]
       #.results could be .hits if don't need to get from db (just get from solr index)
       results = search do
         fulltext conditions[:query] if conditions[:query]

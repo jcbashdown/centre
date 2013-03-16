@@ -2,6 +2,11 @@ require 'spec_helper'
 require 'models/node_spec_helper'
 
 describe Node do
+
+  describe "#find_view_links_by_context" do
+
+  end
+
   describe 'finding links' do
     before do
       @user0 = FactoryGirl.create(:user)

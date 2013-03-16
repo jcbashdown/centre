@@ -10,4 +10,15 @@ class Group < ActiveRecord::Base
   def concluding_nodes(question)
     conclusions.by_question_for_group(question)
   end
+
+  def user_ids
+    users.map(&:id)
+  end
+
+  class << self
+    def user_ids_for id
+      Group.find(id).user_ids
+    end
+  end
+    
 end

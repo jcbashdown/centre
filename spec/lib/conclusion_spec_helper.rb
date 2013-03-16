@@ -87,7 +87,10 @@ shared_examples_for "a conclusion class extending conclusion" do |special_contex
   end
 
   describe ".search_context" do
-    before {subject.stub(:create_context).and_return other_context}
+    before do
+      subject.stub(:create_context).and_return other_context
+      Group.stub(:user_ids_for).and_return []
+    end
     it "should return a result containing the result of create_context" do
       subject.send(:search_context).should include other_context
     end
