@@ -25,9 +25,6 @@ class ApplicationController < ActionController::Base
       end
     end
     if current_user
-      session[:nodes_user] ||= current_user.id 
-      session[:links_to_user] ||= current_user.id 
-      session[:links_from_user] ||= current_user.id 
       session[:arguments_user] ||= current_user.id 
     end
   end
@@ -35,10 +32,10 @@ class ApplicationController < ActionController::Base
   def set_nodes
     context = {
                 :question => session[:nodes_question],
-                #:user => session[:nodes_user], 
                 :query => session[:nodes_query], 
                 :page => params[:nodes_page] ? params[:nodes_page] : 1
               }
+    context[:user] = session[:nodes_user] if session[:nodes_user]
     @nodes = Node.find_by_context(context)
     unless @nodes.try(:any?)
       @nodes = Node.find_by_context(context.except(:query))

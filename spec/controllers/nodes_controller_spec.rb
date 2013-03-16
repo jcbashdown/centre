@@ -182,18 +182,6 @@ describe NodesController do
         }.to change(Node::GlobalNode, :count).by(1)
       end
 
-      it "doesn't create a new QuestionNode" do
-        expect {
-          post :create, valid_attributes
-        }.to change(Node::QuestionNode, :count).by(0)
-      end
-
-      it "creates a new UserNode" do
-        expect {
-          post :create, valid_attributes
-        }.to change(Node::UserNode, :count).by(1)
-      end
-
       it 'should have called new on global node user' do
         gnu = ContextNode.new({:user_id => @user.id, :title => 'title'})
         ContextNode.should_receive(:new).with({:user_id => @user.id, :question_id => nil, 'title' => 'title'}).and_return gnu
@@ -225,18 +213,6 @@ describe NodesController do
         expect {
           post :create, valid_attributes
         }.to change(Node::GlobalNode, :count).by(1)
-      end
-
-      it "doesn't create a new QuestionNode" do
-        expect {
-          post :create, valid_attributes
-        }.to change(Node::QuestionNode, :count).by(1)
-      end
-
-      it "creates a new UserNode" do
-        expect {
-          post :create, valid_attributes
-        }.to change(Node::UserNode, :count).by(1)
       end
 
       it 'should have called new on global node user' do

@@ -17,11 +17,9 @@ shared_examples_for 'a controller setting nodes for the view' do |type, page|
     end
     it 'should call search on the nodes for the question' do
       @klass.should_receive(:find_by_context).with({:question => @existing_view_configuration[:"#{type}s_question"],
-                                                   :user => @existing_view_configuration[:"#{type}s_user"],
                                                    :query => @existing_view_configuration[:"#{type}s_query"],
                                                    :page => page ? page : 1})
       @klass.should_receive(:find_by_context).with({:question => @existing_view_configuration[:"#{type}s_question"],
-                                                   :user => @existing_view_configuration[:"#{type}s_user"],
                                                    :page => page ? page : 1})
       get :index, {:nodes_page => page} if page
       get :index if page.blank?
@@ -79,11 +77,9 @@ shared_examples_for 'a controller setting nodes for the view' do |type, page|
       end
       it 'should call search on the nodes for the question and user and query' do
         @klass.should_receive(:find_by_context).with({:question => @existing_view_configuration[:"#{type}s_question"],
-                                                   :user => @existing_view_configuration[:"#{type}s_user"],
                                                    :query => @existing_view_configuration[:"#{type}s_query"],
                                                    :page => page ? page : 1})
         @klass.should_receive(:find_by_context).with({:question => @existing_view_configuration[:"#{type}s_question"],
-                                                   :user => @existing_view_configuration[:"#{type}s_user"],
                                                    :page => page ? page : 1})
         get :index, {:nodes_page => page} if page
         get :index if page.blank?
@@ -151,11 +147,9 @@ shared_examples_for 'a controller setting nodes for the view' do |type, page|
     end
     it 'should call search on the nodes for the query' do
       @klass.should_receive(:find_by_context).with({:question => @existing_view_configuration[:"#{type}s_question"],
-                                                   :user => @existing_view_configuration[:"#{type}s_user"],
                                                    :query => @existing_view_configuration[:"#{type}s_query"],
                                                    :page => page ? page : 1})
       @klass.should_receive(:find_by_context).with({:question => @existing_view_configuration[:"#{type}s_question"],
-                                                   :user => @existing_view_configuration[:"#{type}s_user"],
                                                    :page => page ? page : 1})
       get :index, {:nodes_page => page} if page
       get :index if page.blank?
@@ -181,13 +175,13 @@ shared_examples_for 'a controller setting links for the view' do |type, page|
       ["from", "to"].each do |direction|
         @current_node.should_receive(:"find_view_links_by_context").with(direction, {
                       :question => @existing_view_configuration[:"#{type}s_#{direction}_question"],
-                      :user => @existing_view_configuration[:"#{type}s_#{direction}_user"],
+                      :user => controller.current_user.try(:id),
                       :query => @existing_view_configuration[:"#{type}s_#{direction}_query"],
                       :page => page
                     })
         @current_node.should_receive(:"find_view_links_by_context").with(direction, {
                       :question => @existing_view_configuration[:"#{type}s_#{direction}_question"],
-                      :user => @existing_view_configuration[:"#{type}s_#{direction}_user"],
+                      :user => controller.current_user.try(:id),
                       :page => page
                     })
       end
@@ -209,13 +203,13 @@ shared_examples_for 'a controller setting links for the view' do |type, page|
         ["from", "to"].each do |direction|
           @current_node.should_receive(:"find_view_links_by_context").with(direction, {
                         :question => @existing_view_configuration[:"#{type}s_#{direction}_question"],
-                        :user => @existing_view_configuration[:"#{type}s_#{direction}_user"],
+                        :user => controller.current_user.try(:id),
                         :query => @existing_view_configuration[:"#{type}s_#{direction}_query"],
                         :page => page
                       })
           @current_node.should_receive(:"find_view_links_by_context").with(direction, {
                         :question => @existing_view_configuration[:"#{type}s_#{direction}_question"],
-                        :user => @existing_view_configuration[:"#{type}s_#{direction}_user"],
+                        :user => controller.current_user.try(:id),
                         :page => page
                       })
         end
@@ -237,13 +231,13 @@ shared_examples_for 'a controller setting links for the view' do |type, page|
           ["from", "to"].each do |direction|
             @current_node.should_receive(:"find_view_links_by_context").with(direction, {
                           :question => @existing_view_configuration[:"#{type}s_#{direction}_question"],
-                          :user => @existing_view_configuration[:"#{type}s_#{direction}_user"],
+                          :user => controller.current_user.try(:id),
                           :query => @existing_view_configuration[:"#{type}s_#{direction}_query"],
                           :page => page
                         })
             @current_node.should_receive(:"find_view_links_by_context").with(direction, {
                           :question => @existing_view_configuration[:"#{type}s_#{direction}_question"],
-                          :user => @existing_view_configuration[:"#{type}s_#{direction}_user"],
+                          :user => controller.current_user.try(:id),
                           :page => page
                         })
           end
@@ -267,13 +261,13 @@ shared_examples_for 'a controller setting links for the view' do |type, page|
         ["from", "to"].each do |direction|
           @current_node.should_receive(:"find_view_links_by_context").with(direction, {
                         :question => @existing_view_configuration[:"#{type}s_#{direction}_question"],
-                        :user => @existing_view_configuration[:"#{type}s_#{direction}_user"],
+                        :user => controller.current_user.try(:id),
                         :query => @existing_view_configuration[:"#{type}s_#{direction}_query"],
                         :page => page
                       })
           @current_node.should_receive(:"find_view_links_by_context").with(direction, {
                         :question => @existing_view_configuration[:"#{type}s_#{direction}_question"],
-                        :user => @existing_view_configuration[:"#{type}s_#{direction}_user"],
+                        :user => controller.current_user.try(:id),
                         :page => page
                       })
         end
@@ -299,13 +293,13 @@ shared_examples_for 'a controller setting links for the view' do |type, page|
       ["from", "to"].each do |direction|
         @current_node.should_receive(:"find_view_links_by_context").with(direction, {
                       :question => @existing_view_configuration[:"#{type}s_#{direction}_question"],
-                      :user => @existing_view_configuration[:"#{type}s_#{direction}_user"],
+                      :user => controller.current_user.try(:id),
                       :query => @existing_view_configuration[:"#{type}s_#{direction}_query"],
                       :page => page
                     })
         @current_node.should_receive(:"find_view_links_by_context").with(direction, {
                       :question => @existing_view_configuration[:"#{type}s_#{direction}_question"],
-                      :user => @existing_view_configuration[:"#{type}s_#{direction}_user"],
+                      :user => controller.current_user.try(:id),
                       :page => page
                     })
       end
@@ -327,13 +321,13 @@ shared_examples_for 'a controller setting links for the view' do |type, page|
         ["from", "to"].each do |direction|
           @current_node.should_receive(:"find_view_links_by_context").with(direction, {
                         :question => @existing_view_configuration[:"#{type}s_#{direction}_question"],
-                        :user => @existing_view_configuration[:"#{type}s_#{direction}_user"],
+                        :user => controller.current_user.try(:id),
                         :query => @existing_view_configuration[:"#{type}s_#{direction}_query"],
                         :page => page
                       })
           @current_node.should_receive(:"find_view_links_by_context").with(direction, {
                         :question => @existing_view_configuration[:"#{type}s_#{direction}_question"],
-                        :user => @existing_view_configuration[:"#{type}s_#{direction}_user"],
+                        :user => controller.current_user.try(:id),
                         :page => page
                       })
         end
@@ -359,13 +353,13 @@ shared_examples_for 'a controller setting links for the view' do |type, page|
       ["from", "to"].each do |direction|
         @current_node.should_receive(:"find_view_links_by_context").with(direction, {
                       :question => @existing_view_configuration[:"#{type}s_#{direction}_question"],
-                      :user => @existing_view_configuration[:"#{type}s_#{direction}_user"],
+                      :user => controller.current_user.try(:id),
                       :query => @existing_view_configuration[:"#{type}s_#{direction}_query"],
                       :page => page
                     })
         @current_node.should_receive(:"find_view_links_by_context").with(direction, {
                       :question => @existing_view_configuration[:"#{type}s_#{direction}_question"],
-                      :user => @existing_view_configuration[:"#{type}s_#{direction}_user"],
+                      :user => controller.current_user.try(:id),
                       :page => page
                     })
       end

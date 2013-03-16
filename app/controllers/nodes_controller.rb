@@ -90,7 +90,7 @@ class NodesController < ApplicationController
   def set_links direction, page
     context = ({
                 :question => session[:"links_#{direction}_question"], 
-                :user => session[:"links_#{direction}_user"], 
+                :user => current_user.try(:id),
                 :query => session[:"links_#{direction}_query"], 
                 :page => page
               })
