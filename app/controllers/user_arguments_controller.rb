@@ -11,8 +11,8 @@ class UserArgumentsController < ApplicationController
   end 
 
   def index
-    unless params[:user_id] && @user = User.find(params[:user_id])
-      @user = current_user
+    unless params[:user_id] && @argument_user = User.find(params[:user_id])
+      @argument_user = current_user
     end
     @previous = params[:path]
     respond_to do |format|

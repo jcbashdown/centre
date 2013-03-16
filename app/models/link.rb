@@ -1,17 +1,11 @@
 class Link < ActiveRecord::Base
 
   class << self
-    def get_klass conditions
-      if conditions[:group] && conditions[:user]
-        ContextLink
-      elsif conditions[:group]
-        Link::GroupLink
-      elsif conditions[:user]
-        Link::UserLink
-      else
-        Link::GlobalLink
-      end
+
+    def opposite_direction(direction)
+      {"to" => "from", "from" => "to"}[direction]
     end
+ 
   end
 
 end

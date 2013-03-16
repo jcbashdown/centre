@@ -1,7 +1,7 @@
 shared_examples_for 'a node finding directed links' do |node_is|
   context 'when the question is set' do
     before do
-      @other_node_is = @node.opposite_direction[node_is]
+      @other_node_is = Link.opposite_direction(node_is)
       @links = {}
       @users.each_with_index do |user, iu|
         @questions.each_with_index do |question, iq|

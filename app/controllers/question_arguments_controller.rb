@@ -6,7 +6,6 @@ class QuestionArgumentsController < ApplicationController
     @original= params[:original]
     respond_to do |format|
       format.js {}
-      format.html {render(:partial => 'question_arguments/show', :locals => {:node => @node, :previous => @previous, :original => @original})}
     end
   end 
  
@@ -14,11 +13,12 @@ class QuestionArgumentsController < ApplicationController
     @previous = params[:path]
     respond_to do |format|
       format.js {}
-      format.html { render(:partial => 'question_arguments/index', :locals => {:previous => @previous, :question => @argument_question}) }
+      format.html { render(:partial => 'question_arguments/index', :locals => {:previous => @previous, :argument_question => @argument_question, :argument_user => @argument_user}) }
     end
   end
  
   def update_view_configuration
+    session[:argument_user] = nil
     super
     set_node_question
     set_argument_question

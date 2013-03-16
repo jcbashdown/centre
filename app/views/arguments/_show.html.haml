@@ -1,5 +1,5 @@
--froms_positive = node.positive_node_froms
--froms_negative = node.negative_node_froms
+-froms_positive = ContextNode.where(:global_node_id => Link.where(:global_node_to_id => node.id, :user_id => argument_user.try(:id)).map(&:global_node_from_id), :user_id => argument_user.try(:id), :question_id => argument_question.id).map(&:global_node) 
+-froms_negative = ContextNode.where(:global_node_id => Link.where(:global_node_to_id => node.id, :user_id => argument_user.try(:id)).map(&:global_node_from_id), :user_id => argument_user.try(:id), :question_id => argument_question.id).map(&:global_node) 
 %div{:id => "#{previous}#{node.id}"}
   - if node.id == original
     = render :partial => "arguments/build_form", :locals => {:node => node, :original => original, :type => "Positive"}

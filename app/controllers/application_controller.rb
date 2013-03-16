@@ -27,6 +27,7 @@ class ApplicationController < ActionController::Base
     if current_user
       session[:arguments_user] ||= current_user.id 
     end
+    set_argument_user
   end
   
   def set_nodes
@@ -59,6 +60,14 @@ class ApplicationController < ActionController::Base
       @argument_question = Question.find_by_id question_id
     else
       @argument_question = nil
+    end
+  end
+
+  def set_argument_user
+    if user_id = session[:argument_user]
+      @argument_user = User.find_by_id user_id
+    else
+      @argument_user = nil
     end
   end
 end

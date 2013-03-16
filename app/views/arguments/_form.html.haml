@@ -37,4 +37,4 @@
     #other_user_topic.tab-pane
       Loading...
     #everyones_topic.tab-pane.active
-      = render(:partial => 'question_arguments/index', :locals => {:previous => "everyones_topic", :question => @argument_question})
+      = render(:partial => 'question_arguments/index', :locals => {:previous => "everyones_topic", :argument_question => @argument_question, :argument_user => @argument_user})

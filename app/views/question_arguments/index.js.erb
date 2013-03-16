@@ -1,2 +1,2 @@
-var j = '<%= j render(:partial => 'question_arguments/index', :locals => {:previous => @previous, :question => @argument_question}) %>';
+var j = '<%= j render(:partial => 'question_arguments/index', :locals => {:previous => @previous, :argument_user => @argument_user, :argument_question => @argument_question}) %>';
 $('#<%= @previous%>').html(j);

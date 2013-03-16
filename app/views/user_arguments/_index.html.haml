@@ -5,4 +5,4 @@
   - user.concluding_nodes(question).each do |node| 
     %h3
       =link_to node.title, node_path(node.global_node)
-    = render :partial => 'arguments/show', :locals => {:path_method => :user_argument_path, :node => node, :previous => previous, :original => node.id}
+    = render :partial => 'arguments/show', :locals => {:path_method => :user_argument_path, :node => node, :previous => previous, :original => node.id, :argument_question => argument_question, :argument_user => argument_user}

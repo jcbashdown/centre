@@ -5,14 +5,10 @@ class Node < ActiveRecord::Base
     self.users_count = ContextNode.count( :conditions => ["#{self.type.gsub("Node::", "").underscore}_id = ?", self.id] )
   end
 
-  def opposite_direction
-    {"to" => "from", "from" => "to"}
-  end
-
   #alt would be find all links from ids of nodes, map ids of subset of nodes there are links for
   #from result, delete ids from nodes map and construct for rest, slightly more db efficient as group find?
   def find_view_links_by_context direction, context
-    other_node = opposite_direction[direction]
+    other_node = Link.opposite_direction direction
     nodes = Node.find_by_context(context.except(:user, :page))
     links = []
     nodes.each do |node|
@@ -30,14 +26,6 @@ class Node < ActiveRecord::Base
   end
 
   class << self
-    def get_klass conditions
-      if conditions[:question] || conditions[:user_ids] || conditions[:user]
-        ContextNode
-      else
-        Node::GlobalNode
-      end
-    end
-
     def find_by_context conditions
       results = find_ids_by_context(conditions).map(&:global_node_id).uniq 
       if conditions[:page]
