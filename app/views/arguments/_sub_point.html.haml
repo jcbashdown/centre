@@ -8,5 +8,5 @@
     %i{:class => "icon-plus-sign #{previous}plus#{from.id}"}
   =render :partial => "arguments/build_form", :locals => {:node => from, :original => original, :type => "Negative"}
   =render :partial => "arguments/build_form", :locals => {:node => from, :original => original, :type => "Positive"}
-= render :partial => "links/node_through_link_form", :locals => {:type => "Negative", :global_node_to_id => from.global_node_id}
-= render :partial => "links/node_through_link_form", :locals => {:type => "Positive", :global_node_to_id => from.global_node_id}
+= render :partial => "links/node_through_link_form", :locals => {:type => "Negative", :global_node_to_id => from.global_node.id}
+= render :partial => "links/node_through_link_form", :locals => {:type => "Positive", :global_node_to_id => from.global_node.id}
