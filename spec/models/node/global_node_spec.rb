@@ -7,6 +7,10 @@ describe Node::GlobalNode do
     
   end
 
+  describe "" do
+
+  end
+
   describe 'finding links' do
     before do
       @user0 = FactoryGirl.create(:user)

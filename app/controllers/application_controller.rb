@@ -32,11 +32,11 @@ class ApplicationController < ActionController::Base
   
   def set_nodes
     context = {
-                :question => session[:nodes_question],
+                :question_id => session[:nodes_question],
                 :query => session[:nodes_query], 
                 :page => params[:nodes_page] ? params[:nodes_page] : 1
               }
-    context[:user] = session[:nodes_user] if session[:nodes_user]
+    context[:user_id] = session[:nodes_user] if session[:nodes_user]
     @nodes = Node::GlobalNode.find_by_context(context)
     unless @nodes.try(:any?)
       @nodes = Node::GlobalNode.find_by_context(context.except(:query))

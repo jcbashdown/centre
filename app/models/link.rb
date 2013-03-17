@@ -3,7 +3,7 @@ class Link < ActiveRecord::Base
   class << self
 
     def opposite_direction(direction)
-      {"to" => "from", "from" => "to"}[direction]
+      HashWithIndifferentAccess.new({"to" => "from", "from" => "to"})[direction]
     end
     
     def positive

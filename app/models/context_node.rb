@@ -76,8 +76,8 @@ class ContextNode < ActiveRecord::Base
       results = search do
         fulltext conditions[:query] if conditions[:query]
         with :global_node_id, conditions[:global_node_id] if conditions[:global_node_id]
-        with :question_id, conditions[:question] if conditions[:question]
-        with :user_id, conditions[:user] if conditions[:user]
+        with :question_id, conditions[:question_id] if conditions[:question_id]
+        with :user_id, conditions[:user_id] if conditions[:user_id]
         with(:user_id).any_of conditions[:user_ids] if conditions[:user_ids].try(:any?)#proxy for group
         with :is_conclusion, conditions[:is_conclusion] if conditions[:is_conclusion]
         order_by(:id, :asc)
