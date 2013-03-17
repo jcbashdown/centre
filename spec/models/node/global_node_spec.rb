@@ -62,8 +62,8 @@ describe Node::GlobalNode do
     context 'when the question is set' do
       before do
         @existing_view_configuration = {
-                                         :question => @question.id,
-                                         :user => nil,
+                                         :question_id => @question.id,
+                                         :user_id => nil,
                                          :query => nil 
                                        }
       end
@@ -72,7 +72,7 @@ describe Node::GlobalNode do
       end
       context 'when the user is set' do
         before do
-          @existing_view_configuration.merge!(:user => @user.id)
+          @existing_view_configuration.merge!(:user_id => @user.id)
         end
         it 'should return the correct context nodes' do
           Node::GlobalNode.find_by_context(@existing_view_configuration).should == [@context_node1.global_node]
@@ -98,8 +98,8 @@ describe Node::GlobalNode do
     context 'when the user is set' do
       before do
         @existing_view_configuration = {
-                                         :user => @user.id,
-                                         :question => nil,
+                                         :user_id => @user.id,
+                                         :question_id => nil,
                                          :query => nil
                                        }
       end
@@ -119,8 +119,8 @@ describe Node::GlobalNode do
       before do
         @existing_view_configuration = {
 					 :query => @query,
-                                         :question => nil,
-                                         :user => nil
+                                         :question_id => nil,
+                                         :user_id => nil
                                        }
       end
       it 'should return the correct global nodes' do

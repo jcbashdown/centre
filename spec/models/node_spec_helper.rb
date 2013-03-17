@@ -47,7 +47,7 @@ shared_examples_for 'a node finding directed links' do |node_is|
       @users.each_with_index do |user, iu|
         @questions.each_with_index do |question, iq|
           @queries.each do |query|
-            @node.find_view_links_by_context(node_is, {:user => user.try(:id), :question => question.try(:id), :query => query}).each do |gn|
+            @node.find_view_links_by_context(node_is, {:user_id => user.try(:id), :question_id => question.try(:id), :query => query}).each do |gn|
               if user && question
                 @links[:"user#{iu}_question#{iq}_#{query}"][gn.id].should == gn 
               elsif user

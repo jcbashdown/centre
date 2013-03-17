@@ -27,7 +27,7 @@ class Node::GlobalNode < Node
   [:to, :from].each do |direction|
     define_method :"links_#{direction}_of" do |nodes, context|
       other_direction = Link.opposite_direction(direction)
-      nodes.each do |node|
+      nodes.inject([]) do |links, node|
         unless node == self
           global_link_attrs = {:"global_node_#{direction}_id" => self.id, :"global_node_#{other_direction}_id" => node.id}
           link = Link.where(global_link_attrs.merge(context))[0].try(:global_link)
@@ -37,6 +37,7 @@ class Node::GlobalNode < Node
             links << Link::GlobalLink.new({:"node_#{direction}_id" => self.id, :"node_#{other_direction}_id" => node.id})
           end
         end
+        links
       end
     end
   end
