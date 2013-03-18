@@ -7,11 +7,11 @@ class Link < ActiveRecord::Base
     end
     
     def positive
-      "#{self}::Positive#{self.to_s.demodulize}".constantize
+      where("type LIKE '%Positive%'")
     end
 
     def negative
-      "#{self}::Negative#{self.to_s.demodulize}".constantize
+      where("type LIKE '%Negative%'")
     end
   end
 

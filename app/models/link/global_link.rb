@@ -13,6 +13,8 @@ class Link::GlobalLink < Link
     false
   end
 
+  #validate nils
+
   class << self
     def update_active(n_from, n_to)
       unless (current_active = active(n_from, n_to)) == (by_votes = active_by_votes(n_from, n_to))

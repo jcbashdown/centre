@@ -20,12 +20,12 @@ class Node::GlobalNode < Node
   #from result, delete ids from nodes map and construct for rest, slightly more db efficient as group find?
   def find_view_links_by_context direction, context, type=Link
     nodes = self.class.find_by_context(context.except(:user_id, :page))
-    links = send(:"links_#{direction}_of", nodes, context.extract!(:user_id,:group_id), type)
+    links = send(:"possible_links_#{direction}_of", nodes, context.extract!(:user_id,:group_id), type)
     Kaminari.paginate_array(links).page(context[:page]).per(10)
   end
 
   [:to, :from].each do |direction|
-    define_method :"links_#{direction}_of" do |nodes, context, type=Link|
+    define_method :"possible_links_#{direction}_of" do |nodes, context, type=Link|
       other_direction = Link.opposite_direction(direction)
       nodes.inject([]) do |links, node|
         unless node == self
@@ -39,6 +39,19 @@ class Node::GlobalNode < Node
         end
         links
       end
+    end
+  end
+
+  def find_argument_links_by_context direction, context, type=Link
+    nodes = self.class.find_by_context(context.except(:user_id, :page))
+    send(:"links_#{direction}_of", nodes, context.extract!(:user_id,:group_id), type)
+  end
+
+  [:to, :from].each do |direction|
+    define_method :"links_#{direction}_of" do |nodes, context, type=Link|
+      other_direction = Link.opposite_direction(direction)
+      global_link_attrs = {:"global_node_#{direction}_id" => self.id, :"global_node_#{other_direction}_id" => node.map {|n| n.id unless n.id == self.id}}
+      links = type.where(global_link_attrs.merge(context))
     end
   end
 
