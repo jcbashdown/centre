@@ -1,7 +1,12 @@
+require "#{Rails.root}/lib/validators.rb"
 class Link::GlobalLink < Link
 
   belongs_to :global_node_from, :foreign_key => :node_from_id, :class_name => Node::GlobalNode
   belongs_to :global_node_to, :foreign_key => :node_to_id, :class_name => Node::GlobalNode
+
+  include Validators
+  validate :correct_context_attributes
+  def correct_context_attributes(context_attributes = [:user_id, :group_id]);super;end
 
   def positive?
     false
@@ -12,8 +17,6 @@ class Link::GlobalLink < Link
   def negative?
     false
   end
-
-  #validate nils
 
   class << self
     def update_active(n_from, n_to)

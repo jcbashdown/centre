@@ -1,3 +1,4 @@
+require "#{Rails.root}/lib/validators.rb"
 class Link::GroupLink < Link
   belongs_to :global_link
   belongs_to :group
@@ -5,6 +6,10 @@ class Link::GroupLink < Link
   has_many :user_links, :through => :user_groups
 
   #validates :group_id, :uniqueness => {:scope => [:global_link_id]}
+  include Validators
+  validate :correct_context_attributes
+  def correct_context_attributes(context_attributes = [:user_id]);super;end
+  validates :group_id, :presence => true
 
   after_save :update_active_for_group_link
   after_create :update_users_count
