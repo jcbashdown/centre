@@ -44,13 +44,19 @@ class Node::GlobalNode < Node
 
   def find_argument_links_by_context direction, context, type=Link
     nodes = self.class.find_by_context(context.except(:user_id, :page))
+    p nodes
     send(:"links_#{direction}_of", nodes, context.extract!(:user_id,:group_id), type)
   end
 
   [:to, :from].each do |direction|
     define_method :"links_#{direction}_of" do |nodes, context, type=Link|
       other_direction = Link.opposite_direction(direction)
-      global_link_attrs = {:"global_node_#{direction}_id" => self.id, :"global_node_#{other_direction}_id" => node.map {|n| n.id unless n.id == self.id}}
+      p nodes.map {|n| n.id unless n.id == self.id}
+
+      #with global link it's not global node to id etc, it's just node to id 
+      #my topic still not working though...
+      #also need to do no link link type
+      global_link_attrs = {:"global_node_#{direction}_id" => self.id, :"global_node_#{other_direction}_id" => (nodes.map {|n| n.id unless n.id == self.id}).compact!}
       links = type.where(global_link_attrs.merge(context))
     end
   end
