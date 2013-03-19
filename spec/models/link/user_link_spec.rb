@@ -1,14 +1,20 @@
 require 'spec_helper'
 
 describe Link::UserLink do
-  describe ".positive" do
-    it "should return the correctly qualified class constant" do
-      Link::UserLink.positive.should == Link::UserLink::PositiveUserLink
+
+  describe "validations" do
+    context "when the user_link has a user" do
+      subject {Link::UserLink.new(:user_id => 1)}
+      it {should be_valid}
     end
-  end
-  describe ".negative" do
-    it "should return the correctly qualified class constant" do
-      Link::UserLink.negative.should == Link::UserLink::NegativeUserLink
+    context "when the user_link has a group" do
+      subject {Link::UserLink.new(:group_id => 1)}
+      it {should_not be_valid}
     end
+    context "when the user_link has no user or question" do
+      subject {Link::UserLink.new(:user_id => nil, :group_id => nil)}
+      it {should_not be_valid}
+    end
+
   end
 end
