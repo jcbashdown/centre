@@ -84,7 +84,7 @@ end
 shared_examples_for 'a @context_link deleting links' do |type|
   before do
     @ul_attrs = {:global_link_id => @context_link.global_link_id, :user_id => @user.id}
-    @gl_attrs = {:node_from_id => @context_link.global_node_from.id, :node_to_id => @context_link.global_node_to.id}
+    @gl_attrs = {:global_node_from_id => @context_link.global_node_from.id, :global_node_to_id => @context_link.global_node_to.id}
     @grl_attrs = {:global_link_id => @context_link.global_link_id, :group_id => @group.try(:id)}
   end
   it 'should destroy the correct number of context links' do
@@ -163,7 +163,7 @@ shared_examples_for 'a @context_link deleting links' do |type|
 end
 shared_examples_for 'a @context_link updating links' do |new_type, old_type|
   let(:ul_attrs) {{:global_link_id => @context_link.global_link_id, :user_id => @user.id}}
-  let(:gl_attrs) {{:node_from_id => @context_link.global_node_from.id, :node_to_id => @context_link.global_node_to.id}}
+  let(:gl_attrs) {{:global_node_from_id => @context_link.global_node_from.id, :global_node_to_id => @context_link.global_node_to.id}}
   let(:grl_attrs) {{:global_link_id => @context_link.global_link_id, :group_id => @group.try(:id)}}
   it 'should update the correct number of context links' do
     old_cls = ContextLink.where(:user_link_id => @context_link.user_link_id)

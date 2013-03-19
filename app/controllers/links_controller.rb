@@ -23,7 +23,7 @@ class LinksController < ApplicationController
         format.json {render json: @context_link.to_json}
       else
         link_params = params[:global_link]
-        blank_link = Link::GlobalLink.new(:node_from_id => link_params[:global_node_from_id], :node_to_id => link_params[:global_node_to_id])
+        blank_link = Link::GlobalLink.new(:global_node_from_id => link_params[:global_node_from_id], :global_node_to_id => link_params[:global_node_to_id])
         format.js { render :partial => 'a_link', :locals=>{:link => blank_link, :direction=>params[:direction]} }
         format.json {render json: false.to_json}
       end
@@ -39,7 +39,7 @@ class LinksController < ApplicationController
       else
         unless @context_link && @context_link.persisted?
           link_params = params[:global_link]
-          link = Link::GlobalLink.new(:node_from_id => link_params[:global_node_from_id], :node_to_id => link_params[:global_node_to_id])
+          link = Link::GlobalLink.new(:global_node_from_id => link_params[:global_node_from_id], :global_node_to_id => link_params[:global_node_to_id])
         else
           link = @context_link.global_link
         end
@@ -54,7 +54,7 @@ class LinksController < ApplicationController
     respond_to do |format|
       if @context_link.destroy_all_for_user_link
         link_params = params[:global_link]
-        blank_link = Link::GlobalLink.new(:node_from_id => link_params[:global_node_from_id], :node_to_id => link_params[:global_node_to_id])
+        blank_link = Link::GlobalLink.new(:global_node_from_id => link_params[:global_node_from_id], :global_node_to_id => link_params[:global_node_to_id])
         format.js { render :partial => 'a_link', :locals=>{:link=>blank_link, :direction=>params[:direction]} }
       else
         format.js { render :partial => 'a_link', :locals=>{:link=>@context_link.global_link, :direction=>params[:direction]} }

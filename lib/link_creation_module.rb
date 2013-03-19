@@ -49,7 +49,7 @@ module LinkCreationModule
   end
 
   def find_or_create_global_link
-    params = {:node_from_id => self.global_node_from_id, :node_to_id => self.global_node_to_id}
+    params = {:global_node_from_id => self.global_node_from_id, :global_node_to_id => self.global_node_to_id}
     link = "Link::GlobalLink::#{self.link_kind}GlobalLink".constantize.where(params)[0] || "Link::GlobalLink::#{self.link_kind}GlobalLink".constantize.create!(params)
   end
 end

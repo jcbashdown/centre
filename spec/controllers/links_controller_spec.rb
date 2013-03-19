@@ -46,14 +46,14 @@ describe LinksController do
           xhr :put, :update, @params
         end
         it 'increment the caches' do
-          Link::GlobalLink::NegativeGlobalLink.where(:node_from_id => @params["global_link"]["global_node_from_id"], :node_to_id => @params["global_link"]["global_node_to_id"]).first.should be_nil
-          global_link = Link::GlobalLink::PositiveGlobalLink.where(:node_from_id => @params_one["global_link"]["global_node_from_id"], :node_to_id => @params_one["global_link"]["global_node_to_id"]).first
+          Link::GlobalLink::NegativeGlobalLink.where(:global_node_from_id => @params["global_link"]["global_node_from_id"], :global_node_to_id => @params["global_link"]["global_node_to_id"]).first.should be_nil
+          global_link = Link::GlobalLink::PositiveGlobalLink.where(:global_node_from_id => @params_one["global_link"]["global_node_from_id"], :global_node_to_id => @params_one["global_link"]["global_node_to_id"]).first
           global_link.users_count.should == 2
           Link::UserLink.count.should == 2
           xhr :post, :update, @params
-          global_link = Link::GlobalLink::NegativeGlobalLink.where(:node_from_id => @params["global_link"]["global_node_from_id"], :node_to_id => @params["global_link"]["global_node_to_id"]).first
+          global_link = Link::GlobalLink::NegativeGlobalLink.where(:global_node_from_id => @params["global_link"]["global_node_from_id"], :global_node_to_id => @params["global_link"]["global_node_to_id"]).first
           global_link.users_count.should == 1
-          global_link = Link::GlobalLink::PositiveGlobalLink.where(:node_from_id => @params_one["global_link"]["global_node_from_id"], :node_to_id => @params_one["global_link"]["global_node_to_id"]).first
+          global_link = Link::GlobalLink::PositiveGlobalLink.where(:global_node_from_id => @params_one["global_link"]["global_node_from_id"], :global_node_to_id => @params_one["global_link"]["global_node_to_id"]).first
           global_link.users_count.should == 1
         end
         it 'should render the link partial for the newly associated link (not tested)' do
@@ -75,7 +75,7 @@ describe LinksController do
       context 'when destroy or save returns false for glu' do
         before do
           @params = {"type" => "Negative", "global_link"=>{"global_node_from_id"=>@node_one.id.to_s, "global_node_to_id"=>@node_two.id.to_s}, "id" =>@context_link.global_link.id, "view_configuration" => {"links_from_question" => @question.id}}
-          @new_link_params = {"global_link"=>{:node_from_id=>@node_one.id.to_s, :node_to_id=>@node_two.id.to_s}}
+          @new_link_params = {"global_link"=>{:global_node_from_id=>@node_one.id.to_s, :global_node_to_id=>@node_two.id.to_s}}
           ContextLink::NegativeContextLink.stub(:create).and_return false
         end
         context 'when glu destroyed but nothing new created' do
@@ -115,9 +115,9 @@ describe LinksController do
           xhr :post, :create, @params
         end
         it 'increment the caches' do
-          Link::GlobalLink::NegativeGlobalLink.where(:node_from_id => @params["global_link"]["global_node_from_id"], :node_to_id => @params["global_link"]["global_node_to_id"]).first.should be_nil
+          Link::GlobalLink::NegativeGlobalLink.where(:global_node_from_id => @params["global_link"]["global_node_from_id"], :global_node_to_id => @params["global_link"]["global_node_to_id"]).first.should be_nil
           xhr :post, :create, @params
-          global_link = Link::GlobalLink::NegativeGlobalLink.where(:node_from_id => @params["global_link"]["global_node_from_id"], :node_to_id => @params["global_link"]["global_node_to_id"]).first
+          global_link = Link::GlobalLink::NegativeGlobalLink.where(:global_node_from_id => @params["global_link"]["global_node_from_id"], :global_node_to_id => @params["global_link"]["global_node_to_id"]).first
           global_link.users_count.should == 1
         end
         it 'should render the link partial for the newly associated link (not tested)' do
@@ -207,7 +207,7 @@ describe LinksController do
         it 'should assign the correct link' do
           @new_link_params = {"global_link"=>{"global_node_from_id"=>@node_one.id.to_s, "global_node_to_id"=>@node_two.id.to_s}}
           new_link = ContextLink::PositiveContextLink.new(@new_link_params["global_link"])
-          Link::GlobalLink.should_receive(:new).with(:node_from_id => @new_link_params["global_link"]["global_node_from_id"], :node_to_id => @new_link_params["global_link"]["global_node_to_id"]).and_return new_link
+          Link::GlobalLink.should_receive(:new).with(:global_node_from_id => @new_link_params["global_link"]["global_node_from_id"], :global_node_to_id => @new_link_params["global_link"]["global_node_to_id"]).and_return new_link
           xhr :put, :destroy, @params_one
         end
       end

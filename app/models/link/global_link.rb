@@ -1,8 +1,8 @@
 require "#{Rails.root}/lib/validators.rb"
 class Link::GlobalLink < Link
 
-  belongs_to :global_node_from, :foreign_key => :node_from_id, :class_name => Node::GlobalNode
-  belongs_to :global_node_to, :foreign_key => :node_to_id, :class_name => Node::GlobalNode
+  belongs_to :global_node_from, :foreign_key => :global_node_from_id, :class_name => Node::GlobalNode
+  belongs_to :global_node_to, :foreign_key => :global_node_to_id, :class_name => Node::GlobalNode
 
   include Validators
   validate :correct_context_attributes
@@ -18,6 +18,10 @@ class Link::GlobalLink < Link
     false
   end
 
+  def global_link
+    self
+  end
+
   class << self
     def update_active(n_from, n_to)
       unless (current_active = active(n_from, n_to)) == (by_votes = active_by_votes(n_from, n_to))
@@ -27,10 +31,10 @@ class Link::GlobalLink < Link
     end
 
     def active_by_votes(n_from, n_to)
-      where(:node_from_id => n_from, :node_to_id => n_to).order(:users_count).last
+      where(:global_node_from_id => n_from, :global_node_to_id => n_to).order(:users_count).last
     end
     def active(n_from, n_to)
-      where(:node_from_id => n_from, :node_to_id => n_to, :active => true).last
+      where(:global_node_from_id => n_from, :global_node_to_id => n_to, :active => true).last
     end
 
   end

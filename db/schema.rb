@@ -94,8 +94,6 @@ ActiveRecord::Schema.define(:version => 20130303140342) do
   create_table "links", :force => true do |t|
     t.integer  "user_id"
     t.integer  "global_link_id"
-    t.integer  "node_from_id"
-    t.integer  "node_to_id"
     t.integer  "global_node_from_id"
     t.integer  "global_node_to_id"
     t.integer  "users_count",         :default => 0,     :null => false
@@ -112,8 +110,6 @@ ActiveRecord::Schema.define(:version => 20130303140342) do
   add_index "links", ["global_node_from_id"], :name => "index_links_on_global_node_from_id"
   add_index "links", ["global_node_to_id"], :name => "index_links_on_global_node_to_id"
   add_index "links", ["group_id"], :name => "index_links_on_group_id"
-  add_index "links", ["node_from_id"], :name => "index_links_on_node_from_id"
-  add_index "links", ["node_to_id"], :name => "index_links_on_node_to_id"
   add_index "links", ["type"], :name => "index_links_on_type"
   add_index "links", ["user_id"], :name => "index_links_on_user_id"
 
