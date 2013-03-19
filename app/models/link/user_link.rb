@@ -2,6 +2,8 @@ require "#{Rails.root}/lib/validators.rb"
 class Link::UserLink < Link
   belongs_to :global_link, :counter_cache => :users_count
   belongs_to :user
+  belongs_to :global_node_from, :foreign_key => :global_node_from_id, :class_name => Node::GlobalNode
+  belongs_to :global_node_to, :foreign_key => :global_node_to_id, :class_name => Node::GlobalNode
 
   validates :user_id, :uniqueness => {:scope => [:global_link_id]}
 

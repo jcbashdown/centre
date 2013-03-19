@@ -1,7 +1,7 @@
 class QuestionArgumentsController < ApplicationController
   
   def show
-    @node = Node::QuestionNode.find(params[:id])
+    @node = Node::GlobalNode.find(params[:id])
     @previous = params[:path]
     @original= params[:original]
     respond_to do |format|

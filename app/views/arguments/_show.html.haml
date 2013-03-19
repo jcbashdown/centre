@@ -1,5 +1,6 @@
--froms_positive = node.find_argument_links_by_context("from", {:user_id => argument_user.try(:id), :question_id => argument_question.try(:id)}, type=Link.negative).map(&:global_node_from)
--froms_negative = node.find_argument_links_by_context("from", {:user_id => argument_user.try(:id), :question_id => argument_question.try(:id)}, type=Link.positive).map(&:global_node_from)
+//Make oppsing work, doesn't seem to work for now for sub points, do no link and fill in when no opinion
+-froms_positive = node.find_argument_links_by_context("to", {:user_id => argument_user.try(:id), :question_id => argument_question.try(:id)}, type=Link.positive).map(&:global_node_from)
+-froms_negative = node.find_argument_links_by_context("to", {:user_id => argument_user.try(:id), :question_id => argument_question.try(:id)}, type=Link.negative).map(&:global_node_from)
 %div{:id => "#{previous}#{node.id}"}
   - if node.id == original
     = render :partial => "arguments/build_form", :locals => {:node => node, :original => original, :type => "Positive"}
