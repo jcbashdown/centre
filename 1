@@ -44,6 +44,8 @@ class Node::GlobalNode < Node
 
   def find_argument_links_by_context direction, context, type=Link
     nodes = self.class.find_by_context(context.except(:user_id, :page))
+    p nodes.count
+    p Node::GlobalNode.count
     send(:"links_#{direction}_of", nodes, context.extract!(:user_id,:group_id), type)
   end
 
@@ -53,7 +55,8 @@ class Node::GlobalNode < Node
       #also need to do no link link type
       #Make oppsing work, doesn't seem to work for now for sub points, do no link and fill in when no opinion
       global_link_attrs = {:"global_node_#{direction}_id" => self.id, :"global_node_#{other_direction}_id" => (nodes.map {|n| n.id unless n.id == self.id}).compact!}
-      type.where(global_link_attrs.merge(context))
+      links = type.where(global_link_attrs.merge(context))
+      p links
     end
   end
 
