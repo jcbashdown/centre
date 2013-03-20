@@ -86,8 +86,10 @@ centre.refreshNodes = function(view_configuration_data) {
 }
 
 centre.hideNodes = function() {
-  $('#main.argument-builder > .row-fluid > .span8').attr('class', 'span12');
-  $('#main.argument-builder > .row-fluid > .span4').remove();
+  if($('#global_link_context_node_from_title:visible').length == 0 && $('#node_title:visible').length == 0){
+    $('#main.argument-builder > .row-fluid > .span8').attr('class', 'span12');
+    $('#main.argument-builder > .row-fluid > .span4').remove();
+  }
   return false;
 }
 centre.refreshArgument = function() {

@@ -48,10 +48,10 @@ $(document).ready ->
     return false 
 
   $('.hide-new-conclusion').live "click", (event) ->
-    centre.hideNodes()
     $(this).hide()
     $('.hidden.new-conclusion').hide()
     $('.show-new-conclusion').show()
+    centre.hideNodes()
     return false 
     
   $('.show-node-through-link').live "click", (event) ->
@@ -64,12 +64,12 @@ $(document).ready ->
     return false 
 
   $('.hide-node-through-link').live "click", (event) ->
-    centre.hideNodes()
     $(this).hide()
     type = $(this).attr('data-type')
     global_node_to_id = $(this).attr('data-global-node-to-id')
     $('.hidden.node-through-link.'+type+'.'+global_node_to_id).hide()
     $('.show-node-through-link[data-type='+type+'][data-global-node-to-id='+global_node_to_id+']').show()
+    centre.hideNodes()
     return false 
 
   return false

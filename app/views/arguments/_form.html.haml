@@ -30,11 +30,13 @@
     .row-fluid
       .span12
         =render :partial => "nodes/new_conclusion_form"
-  .tab-content
-    -if current_user
-      #my_topic.tab-pane
-        Loading...
-    #other_user_topic.tab-pane
-      Loading...
-    #everyones_topic.tab-pane.active
-      = render(:partial => 'question_arguments/index', :locals => {:previous => "everyones_topic", :argument_question => @argument_question, :argument_user => @argument_user})
+  .row-fluid
+    .span12
+      .argument.tab-content
+        -if current_user
+          #my_topic.tab-pane
+            Loading...
+        #other_user_topic.tab-pane
+          Loading...
+        #everyones_topic.tab-pane.active
+          = render(:partial => 'question_arguments/index', :locals => {:previous => "everyones_topic", :argument_question => @argument_question, :argument_user => @argument_user})

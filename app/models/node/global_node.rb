@@ -34,7 +34,7 @@ class Node::GlobalNode < Node
           if link
             links << link
           else
-            links << Link::GlobalLink.new({:"node_#{direction}_id" => self.id, :"node_#{other_direction}_id" => node.id})
+            links << Link::GlobalLink.new({:"global_node_#{direction}_id" => self.id, :"global_node_#{other_direction}_id" => node.id})
           end
         end
         links
