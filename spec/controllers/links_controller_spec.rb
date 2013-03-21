@@ -34,8 +34,7 @@ describe LinksController do
           @mock_relation = mock('relation')
         end
         it 'should destroy the glu' do
-          @mock_relation.stub(:where).and_return [@mock_cn]
-          ContextLink.stub(:with_all_associations).and_return @mock_relation
+          ContextLink.stub(:where).and_return [@mock_cn]
           @mock_cn.should_receive(:update_type)
           xhr :put, :update, @params
         end
@@ -67,8 +66,7 @@ describe LinksController do
         end
         it 'should create a link with the correct parameters' do
           @mock_cn.should_receive(:update_type).with @params["type"]
-          @mock_relation.stub(:where).and_return [@mock_cn]
-          ContextLink.stub(:with_all_associations).and_return @mock_relation
+          ContextLink.stub(:where).and_return [@mock_cn]
           xhr :post, :update, @params
         end
       end
@@ -185,8 +183,7 @@ describe LinksController do
           @mock_relation = mock('relation')
         end
         it 'should save the glu' do
-          @mock_relation.stub(:where).and_return [@mock_cl]
-          ContextLink.stub(:with_all_associations).and_return @mock_relation
+          ContextLink.stub(:where).and_return [@mock_cl]
           @mock_cl.should_receive(:destroy_all_for_user_link)
           xhr :put, :destroy, @params_one
         end

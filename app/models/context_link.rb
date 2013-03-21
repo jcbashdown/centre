@@ -54,12 +54,6 @@ class ContextLink < ActiveRecord::Base
     self.type.gsub(/ContextLink::|ContextLink/, "")
   end
 
-  class << self
-    def with_all_associations
-      ContextLink.includes(:question, :user, :global_node_from, :global_node_to, :context_node_from, :context_node_to, :user_link, :global_link, :group_link)
-    end
-  end
-
   protected
 
   def update_active_links

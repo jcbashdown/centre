@@ -1,79 +1,69 @@
 shared_examples_for 'a context link creating links' do |type|
-  it 'should create the correct number of context links' do
-    expect {
-      "ContextLink::#{type}ContextLink".constantize.create(@params)
-    }.to change(ContextLink, :count).by(@state_hash[:context_link][:number_created])
-  end
-  it 'should create the correct number of the correct context links' do
-    expect {
-      "ContextLink::#{type}ContextLink".constantize.create(@params)
-    }.to change("ContextLink::#{type}ContextLink".constantize, :count).by(@state_hash[:context_link][:number_created])
-  end
   it 'should create the correct number of group links' do
     expect {
-      "ContextLink::#{type}ContextLink".constantize.create(@params)
+      "Link::UserLink::#{type}UserLink".constantize.create(@params)
     }.to change(Link::GroupLink, :count).by(@state_hash[:group_link][:number_created])
   end
   it 'should create the correct number of the correct group links' do
     expect {
-      "ContextLink::#{type}ContextLink".constantize.create(@params)
+      "Link::UserLink::#{type}UserLink".constantize.create(@params)
     }.to change("Link::GroupLink::#{type}GroupLink".constantize, :count).by(@state_hash[:group_link][:number_created])
   end
   it 'should create the ql with the correct counts' do
-    context_link = "ContextLink::#{type}ContextLink".constantize.create(@params)
+    context_link = "Link::UserLink::#{type}UserLink".constantize.create(@params)
     Link::GroupLink.where(:group_id => @group.id, :global_link_id => context_link.global_link_id)[0].users_count.should == @state_hash[:group_link][:users_count]
   end
   it 'should create the ql with the correct activation' do
-    context_link = "ContextLink::#{type}ContextLink".constantize.create(@params)
+    context_link = "Link::UserLink::#{type}UserLink".constantize.create(@params)
     Link::GroupLink.where(:group_id => @group.id, :global_link_id => context_link.global_link_id)[0].active.should == @state_hash[:group_link][:activation]
   end
   it 'should create the correct number of uls' do
     expect {
-      "ContextLink::#{type}ContextLink".constantize.create(@params)
+      "Link::UserLink::#{type}UserLink".constantize.create(@params)
     }.to change(Link::UserLink, :count).by(@state_hash[:user_link][:number_created])
   end
   it 'should create the correct number of the correct uls' do
     expect {
-      "ContextLink::#{type}ContextLink".constantize.create(@params)
+      "Link::UserLink::#{type}UserLink".constantize.create(@params)
     }.to change("Link::UserLink::#{type}UserLink".constantize, :count).by(@state_hash[:user_link][:number_created])
   end
   it 'should create the ul with the correct counts' do
-    context_link = "ContextLink::#{type}ContextLink".constantize.create(@params)
+    context_link = "Link::UserLink::#{type}UserLink".constantize.create(@params)
     context_link.user_link.reload.users_count.should == @state_hash[:user_link][:users_count]
   end
   it 'should maintain a single ul for this user link combination only' do
-    context_link = "ContextLink::#{type}ContextLink".constantize.create(@params)
+    context_link = "Link::UserLink::#{type}UserLink".constantize.create(@params)
     Link::UserLink.where(:user_id => @user.id, :global_link_id => context_link.global_link_id).count.should == 1
   end
   it 'should create the correct number of gls' do
     expect {
-      "ContextLink::#{type}ContextLink".constantize.create(@params)
+      "Link::UserLink::#{type}UserLink".constantize.create(@params)
     }.to change(Link::GlobalLink, :count).by(@state_hash[:global_link][:number_created])
   end
   it 'should create the correct number of the correct gls' do
     expect {
-      "ContextLink::#{type}ContextLink".constantize.create(@params)
+      "Link::UserLink::#{type}UserLink".constantize.create(@params)
     }.to change("Link::GlobalLink::#{type}GlobalLink".constantize, :count).by(@state_hash[:global_link][:number_created])
   end
   it 'should create the gl with the correct counts' do
-    context_link = "ContextLink::#{type}ContextLink".constantize.create(@params)
+    context_link = "Link::UserLink::#{type}UserLink".constantize.create(@params)
     context_link.global_link.reload.users_count.should == @state_hash[:global_link][:users_count]
   end
   it 'should create the gl with the correct activation' do
-    context_link = "ContextLink::#{type}ContextLink".constantize.create(@params)
+    context_link = "Link::UserLink::#{type}UserLink".constantize.create(@params)
     context_link.global_link.reload.active.should == @state_hash[:global_link][:activation]
   end
   it 'should create the correct number of context nodes' do
     ContextNode.should_receive(:find_or_create_by_user_id_and_question_id_and_title).exactly(@state_hash[:context_node][:find_or_create_calls]).times.and_return @gnu1
-    "ContextLink::#{type}ContextLink".constantize.create(@params)
+    "Link::UserLink::#{type}UserLink".constantize.create(@params)
   end
   it 'should create the correct number of context nodes' do
     expect {
-      "ContextLink::#{type}ContextLink".constantize.create(@params)
+      "Link::UserLink::#{type}UserLink".constantize.create(@params)
     }.to change(ContextNode, :count).by(@state_hash[:context_node][:number_created])
   end
   it 'should have persisted gnus to and from' do
-    context_link = "ContextLink::#{type}ContextLink".constantize.create(@params)
+    context_link = "Link::UserLink::#{type}UserLink".constantize.create(@params)
     context_link.context_node_from.should be_persisted
     context_link.context_node_to.should be_persisted
   end
@@ -86,16 +76,6 @@ shared_examples_for 'a @context_link deleting links' do |type|
     @ul_attrs = {:global_link_id => @context_link.global_link_id, :user_id => @user.id}
     @gl_attrs = {:global_node_from_id => @context_link.global_node_from.id, :global_node_to_id => @context_link.global_node_to.id}
     @grl_attrs = {:global_link_id => @context_link.global_link_id, :group_id => @group.try(:id)}
-  end
-  it 'should destroy the correct number of context links' do
-    expect {
-      @context_link.destroy_all_for_user_link
-    }.to change(ContextLink, :count).by(@state_hash[:context_link][:number_destroyed])
-  end
-  it 'should destroy the correct number of the correct context links' do
-    expect {
-      @context_link.destroy_all_for_user_link
-    }.to change("ContextLink::#{type}ContextLink".constantize, :count).by(@state_hash[:context_link][:number_destroyed])
   end
   it 'should destroy the correct number of group links' do
     expect {
@@ -165,14 +145,7 @@ shared_examples_for 'a @context_link updating links' do |new_type, old_type|
   let(:ul_attrs) {{:global_link_id => @context_link.global_link_id, :user_id => @user.id}}
   let(:gl_attrs) {{:global_node_from_id => @context_link.global_node_from.id, :global_node_to_id => @context_link.global_node_to.id}}
   let(:grl_attrs) {{:global_link_id => @context_link.global_link_id, :group_id => @group.try(:id)}}
-  it 'should update the correct number of context links' do
-    old_cls = ContextLink.where(:user_link_id => @context_link.user_link_id)
-    @context_link.update_type(new_type)
-    old_cls.each do cl
-       cl.should_not be_persisted
-      "ContexLink::#{new_type}ContextLink".constantize.where({:user => cl.user, :question => cl.question, :group => cl.group, :global_node_from_id => cl.global_node_from_id, :global_node_to_id => cl.global_node_to_id})[0].should be_persisted
-    end
-  end
+
   it 'should destroy the correct number of group links' do
     expect {
       @context_link.update_type(new_type)
