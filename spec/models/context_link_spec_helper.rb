@@ -28,8 +28,9 @@ shared_examples_for 'a context link creating links' do |type|
     }.to change("Link::UserLink::#{type}UserLink".constantize, :count).by(@state_hash[:user_link][:number_created])
   end
   it 'should create the ul with the correct counts' do
-    context_link = "Link::UserLink::#{type}UserLink".constantize.create(@params)
-    context_link.user_link.reload.users_count.should == @state_hash[:user_link][:users_count]
+    user_link = "Link::UserLink::#{type}UserLink".constantize.create(@params)
+    p user_link
+    user_link.reload.users_count.should == @state_hash[:user_link][:users_count]
   end
   it 'should maintain a single ul for this user link combination only' do
     context_link = "Link::UserLink::#{type}UserLink".constantize.create(@params)
@@ -63,9 +64,13 @@ shared_examples_for 'a context link creating links' do |type|
     }.to change(ContextNode, :count).by(@state_hash[:context_node][:number_created])
   end
   it 'should have persisted gnus to and from' do
-    context_link = "Link::UserLink::#{type}UserLink".constantize.create(@params)
-    context_link.context_node_from.should be_persisted
-    context_link.context_node_to.should be_persisted
+    user_link = "Link::UserLink::#{type}UserLink".constantize.create(@params)
+    context_node_froms = ContextNode.where(:user_id=>user_link.user_id, :question_id=>user_link.question_id, :title => user_link.global_node_from.title)
+    context_node_tos = ContextNode.where(:user_id=>user_link.user_id, :question_id=>user_link.question_id, :title => user_link.global_node_to.title)
+    context_node_froms.length.should == 1
+    context_node_tos.length.should == 1
+    context_node_froms[0].should be_persisted
+    context_node_tos[0].should be_persisted
   end
 end
 #shared_examples_for 'a context_link updating links' do |type, @state_hash|

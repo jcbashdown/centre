@@ -3,15 +3,14 @@ module LinkCreationModule
   end
  
   def create_appropriate_nodes
+    ContextNode.find_or_create_by_user_id_and_question_id_and_title(:user_id=>self.user_id, :question_id=>self.question_id, :title => self.global_node_to.title)
     unless self.global_node_from_id
-      create_and_associate_nested_nodes
+      context_node_from = ContextNode.find_or_create_by_user_id_and_question_id_and_title(:user_id=>self.user_id, :question_id=>self.question_id, :title => self.context_node_from_title)
+      self.global_node_from_id = context_node_from.global_node_id
+    else
+      ContextNode.find_or_create_by_user_id_and_question_id_and_title(:user_id=>self.user_id, :question_id=>self.question_id, :title => self.global_node_from.title)
     end
   end
-  
-  def create_and_associate_nested_nodes
-    context_node_from = ContextNode.find_or_create_by_user_id_and_question_id_and_title(:user_id=>self.user_id, :question_id=>self.question_id, :title => self.context_node_from_title)
-    self.global_node_from_id = context_node_from.global_node_id
-  end  
 
   def create_appropriate_links
     self.global_link_id = find_or_create_global_link.id

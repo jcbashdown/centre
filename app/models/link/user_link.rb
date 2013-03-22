@@ -47,6 +47,10 @@ class Link::UserLink < Link
     @question ||= Question.find_by_id question_id
   end
 
+  def question_id
+    @question_id ||= @question.id
+  end
+
   def user_link
     self
   end
