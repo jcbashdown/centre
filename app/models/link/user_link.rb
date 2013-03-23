@@ -22,12 +22,31 @@ class Link::UserLink < Link
   def correct_context_attributes(context_attributes = [:group_id]);super;end
   validates :user_id, :presence => true
 
+  class << self
+    def create(attributes = {})
+      attributes = new(attributes).create_appropriate_nodes.attributes
+      attributes = new(attributes).create_appropriate_links.attributes
+      super
+    end
+    def create!(attributes = {})
+      attributes = new(attributes).create_appropriate_nodes.attributes
+      attributes = new(attributes).create_appropriate_links.attributes
+      super
+    end
+  end
+
+  def attributes
+    super.merge({:question_id => question_id})
+  end
+
   before_validation(:on => :create) do
     #if validation will return true
-    create_appropriate_nodes
-    create_appropriate_links
     # end
     # then actual validation will happen whatever
+    # ---
+    # use different method
+    # use non db context_link?
+    # other callback so no rollback?
   end
   
   after_save :update_group_link_users_count, :update_active_links

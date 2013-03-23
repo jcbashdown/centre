@@ -10,11 +10,13 @@ module LinkCreationModule
     else
       ContextNode.find_or_create_by_user_id_and_question_id_and_title(:user_id=>self.user_id, :question_id=>self.question_id, :title => self.global_node_from.title)
     end
+    self
   end
 
   def create_appropriate_links
     self.global_link_id = find_or_create_global_link.id
     find_or_create_links
+    self
   end
 
   def find_or_create_links

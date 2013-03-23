@@ -27,11 +27,6 @@ shared_examples_for 'a context link creating links' do |type|
       "Link::UserLink::#{type}UserLink".constantize.create(@params)
     }.to change("Link::UserLink::#{type}UserLink".constantize, :count).by(@state_hash[:user_link][:number_created])
   end
-  it 'should create the ul with the correct counts' do
-    user_link = "Link::UserLink::#{type}UserLink".constantize.create(@params)
-    p user_link
-    user_link.reload.users_count.should == @state_hash[:user_link][:users_count]
-  end
   it 'should maintain a single ul for this user link combination only' do
     context_link = "Link::UserLink::#{type}UserLink".constantize.create(@params)
     Link::UserLink.where(:user_id => @user.id, :global_link_id => context_link.global_link_id).count.should == 1
