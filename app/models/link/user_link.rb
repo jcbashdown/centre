@@ -39,6 +39,7 @@ class Link::UserLink < Link
     #if validation will return true
     # end
     # then actual validation will happen whatever
+    p self.attributes
     create_appropriate_links
     # ---
     # use different method
@@ -55,7 +56,7 @@ class Link::UserLink < Link
 
   def update_type(new_type, question=nil)
     destroy
-    "Link::UserLink::#{new_type}ContextLink".constantize.create!({ 
+    "Link::UserLink::#{new_type}UserLink".constantize.create!({ 
       :user_id =>self.user, 
       :question => question, 
       :global_node_to_id => self.global_node_to_id, 
