@@ -9,6 +9,11 @@ shared_examples_for 'a context link creating links' do |type|
       "Link::UserLink::#{type}UserLink".constantize.create(@params)
     }.to change("Link::GroupLink::#{type}GroupLink".constantize, :count).by(@state_hash[:group_link][:number_created])
   end
+  it 'should have the correct number of the correct group links before and after creation' do
+    "Link::GroupLink::#{type}GroupLink".constantize.count.should == @state_hash[:group_link][:number_existing_before]
+    "Link::UserLink::#{type}UserLink".constantize.create(@params)
+    "Link::GroupLink::#{type}GroupLink".constantize.count.should == @state_hash[:group_link][:number_existing_before] + @state_hash[:group_link][:number_created]
+  end
   it 'should create the ql with the correct counts' do
     context_link = "Link::UserLink::#{type}UserLink".constantize.create(@params)
     Link::GroupLink.where(:group_id => @group.id, :global_link_id => context_link.global_link_id)[0].users_count.should == @state_hash[:group_link][:users_count]
@@ -148,77 +153,77 @@ shared_examples_for 'a @context_link updating links' do |new_type, old_type|
 
   it 'should destroy the correct number of group links' do
     expect {
-      @context_link.update_type(new_type)
+      @context_link.update_type(new_type, @question)
     }.to change(Link::GroupLink, :count).by(@state_hash[:group_link][:number_destroyed]+@state_hash[:group_link][:number_created])
   end
   it 'should destroy the correct number of the old group links' do
     expect {
-      @context_link.update_type(new_type)
+      @context_link.update_type(new_type, @question)
     }.to change("Link::GroupLink::#{old_type}GroupLink".constantize, :count).by(@state_hash[:group_link][:number_destroyed])
   end
   it 'should create the correct number of the new group links' do
     expect {
-      @context_link.update_type(new_type)
+      @context_link.update_type(new_type, @question)
     }.to change("Link::GroupLink::#{new_type}GroupLink".constantize, :count).by(@state_hash[:group_link][:number_created])
   end
   it 'should destroy the old gl with the correct counts' do
-    @context_link = @context_link.update_type(new_type)
+    @context_link = @context_link.update_type(new_type, @question)
     "Link::GroupLink::#{old_type}GroupLink".constantize.where(grl_attrs)[0].try(:users_count).should == @state_hash[:old_group_link][:users_count]
   end
   it 'should destroy the old gl with the correct activation' do
-    @context_link = @context_link.update_type(new_type)
+    @context_link = @context_link.update_type(new_type, @question)
     "Link::GroupLink::#{old_type}GroupLink".constantize.where(grl_attrs)[0].try(:active).should == @state_hash[:old_group_link][:activation]
   end
   it 'should create the new gl with the correct counts' do
-    @context_link = @context_link.update_type(new_type)
+    @context_link = @context_link.update_type(new_type, @question)
     "Link::GroupLink::#{new_type}GroupLink".constantize.where(grl_attrs)[0].try(:users_count).should == @state_hash[:new_group_link][:users_count]
   end
   it 'should create the new gl with the correct activation' do
-    @context_link = @context_link.update_type(new_type)
+    @context_link = @context_link.update_type(new_type, @question)
     "Link::GroupLink::#{new_type}GroupLink".constantize.where(grl_attrs)[0].try(:active).should == @state_hash[:new_group_link][:activation]
   end
   it 'should update the correct number of uls' do
-    @context_link = @context_link.update_type(new_type)
+    @context_link = @context_link.update_type(new_type, @question)
     Link::UserLink.where(ul_attrs).count.should == 1
     Link::UserLink.where(ul_attrs)[0].class.should == "Link::UserLink::#{new_type}UserLink".constantize
   end
   it 'should update the ul to the correct counts' do
-    @context_link = @context_link.update_type(new_type)
+    @context_link = @context_link.update_type(new_type, @question)
     "Link::UserLink::#{new_type}UserLink".constantize.where(ul_attrs)[0].try(:users_count).should == @state_hash[:user_link][:users_count]
   end
   it 'should maintain a single ul for this user link combination only' do
-    @context_link = @context_link.update_type(new_type)
+    @context_link = @context_link.update_type(new_type, @question)
     Link::UserLink.where(:user_id => @user.id, :global_link_id => @context_link.global_link_id).count.should == 1
   end
   it 'should destroy the correct number of gls' do
     expect {
-      @context_link.update_type(new_type)
+      @context_link.update_type(new_type, @question)
     }.to change(Link::GlobalLink, :count).by(@state_hash[:global_link][:number_destroyed]+@state_hash[:global_link][:number_created])
   end
   it 'should destroy the correct number of the old gls' do
     expect {
-      @context_link.update_type(new_type)
+      @context_link.update_type(new_type, @question)
     }.to change("Link::GlobalLink::#{old_type}GlobalLink".constantize, :count).by(@state_hash[:global_link][:number_destroyed])
   end
   it 'should create the correct number of the new gls' do
     expect {
-      @context_link.update_type(new_type)
+      @context_link.update_type(new_type, @question)
     }.to change("Link::GlobalLink::#{new_type}GlobalLink".constantize, :count).by(@state_hash[:global_link][:number_created])
   end
   it 'should destroy the old gl with the correct counts' do
-    @context_link = @context_link.update_type(new_type)
+    @context_link = @context_link.update_type(new_type, @question)
     "Link::GlobalLink::#{old_type}GlobalLink".constantize.where(gl_attrs)[0].try(:users_count).should == @state_hash[:old_global_link][:users_count]
   end
   it 'should destroy the old gl with the correct activation' do
-    @context_link = @context_link.update_type(new_type)
+    @context_link = @context_link.update_type(new_type, @question)
     "Link::GlobalLink::#{old_type}GlobalLink".constantize.where(gl_attrs)[0].try(:active).should == @state_hash[:old_global_link][:activation]
   end
   it 'should create the new gl with the correct counts' do
-    @context_link = @context_link.update_type(new_type)
+    @context_link = @context_link.update_type(new_type, @question)
     "Link::GlobalLink::#{new_type}GlobalLink".constantize.where(gl_attrs)[0].try(:users_count).should == @state_hash[:new_global_link][:users_count]
   end
   it 'should create the new gl with the correct activation' do
-    @context_link = @context_link.update_type(new_type)
+    @context_link = @context_link.update_type(new_type, @question)
     "Link::GlobalLink::#{new_type}GlobalLink".constantize.where(gl_attrs)[0].try(:active).should == @state_hash[:new_global_link][:activation]
   end
   it 'should have the correct votes on the gns' do
@@ -228,7 +233,7 @@ shared_examples_for 'a @context_link updating links' do |new_type, old_type|
     @state_hash[:old_global_node_from].each do |key, value|
       @context_link.try(:global_node_from).try(:reload).try(key).should == value
     end
-    @context_link = @context_link.update_type(new_type)
+    @context_link = @context_link.update_type(new_type, @question)
     @state_hash[:new_global_node_to].each do |key, value|
       @context_link.try(:global_node_to).try(:reload).try(key).should == value
     end

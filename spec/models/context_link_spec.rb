@@ -26,6 +26,7 @@ describe ContextLink do
                                           },
                           :group_link => {
                                               :number_created => 1,
+                                              :number_existing_before => 0,
                                               :users_count => 1,
                                               :activation => true
                                             },
@@ -85,6 +86,7 @@ describe ContextLink do
                                         },
                         :group_link => {
                                             :number_created => 1,
+                                            :number_existing_before => 0,
                                             :users_count => 1,
                                             :activation => true
                                           },
@@ -118,6 +120,7 @@ describe ContextLink do
                                           },
                           :group_link => {
                                               :number_created => 0,
+                                              :number_existing_before => 1,
                                               :users_count => 1,
                                               :activation => true
                                             },
@@ -152,7 +155,8 @@ describe ContextLink do
                                             :activation => true
                                           },
                           :group_link => {
-                                              :number_created => 2,
+                                              :number_created => 0,
+                                              :number_existing_before => 3,
                                               :users_count => 1,
                                               :activation => true
                                             },
@@ -191,6 +195,7 @@ describe ContextLink do
                                           },
                           :group_link => {
                                               :number_created => 1,
+                                              :number_existing_before => 0,
                                               :users_count => 1,
                                               :activation => true
                                             },

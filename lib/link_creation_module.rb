@@ -15,22 +15,24 @@ module LinkCreationModule
 
   def create_appropriate_links
     self.global_link_id = find_or_create_global_link.id
-    find_or_create_links
+    find_or_create_group_links
     self
   end
 
-  def find_or_create_links
+  def find_or_create_group_links
     if (group_ids = self.user.groups.reload.map(&:id)).any?
-      group_ids.each do |group_id|
-        find_or_create_group_link("Link::GroupLink::#{link_kind}GroupLink".constantize, {:group_id => group_id, :global_node_from_id => self.global_node_from_id, :global_node_to_id => self.global_node_to_id, :global_link_id => self.global_link_id})
+      group_ids.inject([]) do |group_links, group_id|
+        group_links << find_or_create_group_link("Link::GroupLink::#{link_kind}GroupLink".constantize, {:group_id => group_id, :global_node_from_id => self.global_node_from_id, :global_node_to_id => self.global_node_to_id, :global_link_id => self.global_link_id})
+        group_links
       end
+      group_links
+    else
+      []
     end
   end 
 
   def find_or_create_group_link(the_class, the_params={})
-    unless the_class.where(the_params)[0]
-      the_class.create!(the_params)
-    end
+    the_class.where(the_params)[0] || the_class.create!(the_params)
   end
 
   def find_or_create_global_link

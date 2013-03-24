@@ -23,15 +23,11 @@ class Link::UserLink < Link
   validates :user_id, :presence => true
 
   class << self
-    def create(attributes = {})
-      attributes = new(attributes).create_appropriate_nodes.attributes
-      attributes = new(attributes).create_appropriate_links.attributes
-      super
-    end
-    def create!(attributes = {})
-      attributes = new(attributes).create_appropriate_nodes.attributes
-      attributes = new(attributes).create_appropriate_links.attributes
-      super
+    [:create, :create!].each do |method|
+      define_method method do |attributes = {}|
+        attributes = new(attributes).create_appropriate_nodes.attributes
+        super(attributes)
+      end
     end
   end
 
@@ -43,6 +39,7 @@ class Link::UserLink < Link
     #if validation will return true
     # end
     # then actual validation will happen whatever
+    create_appropriate_links
     # ---
     # use different method
     # use non db context_link?
@@ -54,6 +51,16 @@ class Link::UserLink < Link
 
   def link_kind
     self.type.gsub(/Link::UserLink::|UserLink/, "")
+  end
+
+  def update_type(new_type, question=nil)
+    destroy
+    "Link::UserLink::#{new_type}ContextLink".constantize.create!({ 
+      :user_id =>self.user, 
+      :question => question, 
+      :global_node_to_id => self.global_node_to_id, 
+      :global_node_from_id =>self.global_node_from_id 
+    })
   end
 
   def update_group_link_users_count
