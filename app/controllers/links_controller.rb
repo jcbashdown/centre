@@ -16,11 +16,11 @@ class LinksController < ApplicationController
   end
 
   def create
-    @context_link = "ContextLink::#{params[:type]}ContextLink".constantize.new(params[:global_link].merge(:question_id => @link_question.try(:id), :user => current_user))
+    @user_link = "Link::UserLink::#{params[:type]}UserLink".constantize.new(params[:global_link].merge(:question_id => @link_question.try(:id), :user => current_user))
     respond_to do |format|
-      if @context_link.save
-        format.js { render :partial => 'a_link', :locals=>{:link => @context_link.global_link, :direction=>params[:direction]} }
-        format.json {render json: @context_link.to_json}
+      if @user_link.save
+        format.js { render :partial => 'a_link', :locals=>{:link => @user_link.global_link, :direction=>params[:direction]} }
+        format.json {render json: @user_link.to_json}
       else
         link_params = params[:global_link]
         blank_link = Link::GlobalLink.new(:global_node_from_id => link_params[:global_node_from_id], :global_node_to_id => link_params[:global_node_to_id])
@@ -32,16 +32,16 @@ class LinksController < ApplicationController
 
   def update
     @global_link = Link::GlobalLink.find(params[:id])
-    @context_link = ContextLink.where(:user_id => current_user.id, :global_link_id => @global_link.id)[0]
+    @user_link = Link::UserLink.where(:user_id => current_user.id, :global_link_id => @global_link.id)[0]
     respond_to do |format|
-      if @context_link = @context_link.update_type(params[:type])
-        format.js { render :partial => 'a_link', :locals=>{:link=> @context_link.global_link, :direction=>params[:direction]} }
+      if @user_link = @user_link.update_type(params[:type], @link_question)
+        format.js { render :partial => 'a_link', :locals=>{:link=> @user_link.global_link, :direction=>params[:direction]} }
       else
-        unless @context_link && @context_link.persisted?
+        unless @user_link && @user_link.persisted?
           link_params = params[:global_link]
           link = Link::GlobalLink.new(:global_node_from_id => link_params[:global_node_from_id], :global_node_to_id => link_params[:global_node_to_id])
         else
-          link = @context_link.global_link
+          link = @user_link.global_link
         end
         format.js { render :partial => 'a_link', :locals=>{:link => link, :direction=>params[:direction]} }
       end
@@ -50,14 +50,14 @@ class LinksController < ApplicationController
 
   def destroy
     @global_link = Link::GlobalLink.find(params[:id])
-    @context_link = ContextLink.where(:user_id => current_user.id, :global_link_id => @global_link.id)[0]
+    @user_link = Link::UserLink.where(:user_id => current_user.id, :global_link_id => @global_link.id)[0]
     respond_to do |format|
-      if @context_link.destroy_all_for_user_link
+      if @user_link.destroy
         link_params = params[:global_link]
         blank_link = Link::GlobalLink.new(:global_node_from_id => link_params[:global_node_from_id], :global_node_to_id => link_params[:global_node_to_id])
         format.js { render :partial => 'a_link', :locals=>{:link=>blank_link, :direction=>params[:direction]} }
       else
-        format.js { render :partial => 'a_link', :locals=>{:link=>@context_link.global_link, :direction=>params[:direction]} }
+        format.js { render :partial => 'a_link', :locals=>{:link=>@user_link.global_link, :direction=>params[:direction]} }
       end
     end
   end
