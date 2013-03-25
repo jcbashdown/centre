@@ -61,11 +61,11 @@ describe LinksController do
         end
         it 'should assign the correct link' do
           put :update, @params
-          new_link = Link::UserLink.where(@params["global_link"].merge(:user_id => @user.id, :question_id => @question.id)).first
+          new_link = Link::UserLink.where(@params["global_link"].merge(:user_id => @user.id)).first
           assigns(:user_link).should == new_link
         end
         it 'should create a link with the correct parameters' do
-          @mock_cn.should_receive(:update_type).with @params["type"]
+          @mock_cn.should_receive(:update_type).with @params["type"], @question
           Link::UserLink.stub(:where).and_return [@mock_cn]
           xhr :post, :update, @params
         end
@@ -126,7 +126,7 @@ describe LinksController do
         end
         it 'should assign the correct link' do
           post :create, @params
-          new_link = Link::UserLink.where(@params["global_link"].merge(:user_id => @user.id, :question_id => @question.id)).first
+          new_link = Link::UserLink.where(@params["global_link"].merge(:user_id => @user.id)).first
           assigns(:user_link).should == new_link
         end
         it 'initialise a new link with the correct parameters' do

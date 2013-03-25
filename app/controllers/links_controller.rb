@@ -22,28 +22,21 @@ class LinksController < ApplicationController
         format.js { render :partial => 'a_link', :locals=>{:link => @user_link.global_link, :direction=>params[:direction]} }
         format.json {render json: @user_link.to_json}
       else
-        link_params = params[:global_link]
-        blank_link = Link::GlobalLink.new(:global_node_from_id => link_params[:global_node_from_id], :global_node_to_id => link_params[:global_node_to_id])
-        format.js { render :partial => 'a_link', :locals=>{:link => blank_link, :direction=>params[:direction]} }
+        format.js { render :partial => 'a_link', :locals=>{:link => place_holder_link, :direction=>params[:direction]} }
         format.json {render json: false.to_json}
       end
     end
   end
 
   def update
-    @global_link = Link::GlobalLink.find(params[:id])
-    @user_link = Link::UserLink.where(:user_id => current_user.id, :global_link_id => @global_link.id)[0]
+    user_link = Link::UserLink.where(:user_id => current_user.id, :global_link_id => params[:id])[0]
+    @user_link = user_link.update_type(params[:type], @link_question)
+    @user_link = Link::UserLink.where(:user_id => current_user.id, :global_link_id => params[:id])[0] unless @user_link.persisted?
     respond_to do |format|
-      if @user_link = @user_link.update_type(params[:type], @link_question)
-        format.js { render :partial => 'a_link', :locals=>{:link=> @user_link.global_link, :direction=>params[:direction]} }
+      if @user_link
+        format.js { render :partial => 'a_link', :locals=>{:link => @user_link, :direction=>params[:direction]} }
       else
-        unless @user_link && @user_link.persisted?
-          link_params = params[:global_link]
-          link = Link::GlobalLink.new(:global_node_from_id => link_params[:global_node_from_id], :global_node_to_id => link_params[:global_node_to_id])
-        else
-          link = @user_link.global_link
-        end
-        format.js { render :partial => 'a_link', :locals=>{:link => link, :direction=>params[:direction]} }
+        format.js { render :partial => 'a_link', :locals=>{:link => place_holder_link, :direction=>params[:direction]} }
       end
     end
   end
@@ -53,13 +46,16 @@ class LinksController < ApplicationController
     @user_link = Link::UserLink.where(:user_id => current_user.id, :global_link_id => @global_link.id)[0]
     respond_to do |format|
       if @user_link.destroy
-        link_params = params[:global_link]
-        blank_link = Link::GlobalLink.new(:global_node_from_id => link_params[:global_node_from_id], :global_node_to_id => link_params[:global_node_to_id])
-        format.js { render :partial => 'a_link', :locals=>{:link=>blank_link, :direction=>params[:direction]} }
+        format.js { render :partial => 'a_link', :locals=>{:link=>place_holder_link, :direction=>params[:direction]} }
       else
         format.js { render :partial => 'a_link', :locals=>{:link=>@user_link.global_link, :direction=>params[:direction]} }
       end
     end
+  end
+
+  def place_holder_link
+    link_params = params[:global_link]
+    blank_link = Link::GlobalLink.new(:global_node_from_id => link_params[:global_node_from_id], :global_node_to_id => link_params[:global_node_to_id])
   end
   
 end
