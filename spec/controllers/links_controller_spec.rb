@@ -6,32 +6,35 @@ describe LinksController do
   let(:question) {Factory(:question)}
   before {controller.stub(:current_user).and_return current_user}
 
-  shared_examples_for "a LinksController method with the set_link_question before filter" do |rest_action, method|
-    before {controller.stub(method)}
+  shared_examples_for "a LinksController method with the set_link_question before filter" do |rest_action, method, essential_params={}|
+    before do
+      controller.stub(method)
+      controller.stub(:render)
+    end
     
     it "should call find_by_id on Question and assign the result to @link_question" do
       Question.should_receive(:find_by_id).with nil
-      send(rest_action, method)
-      assign(:link_question).should == nil
+      send(rest_action, method, essential_params)
+      assigns(:link_question).should == nil
       controller.session[:links_question] = question.id
       Question.should_receive(:find_by_id).with(question.id).and_return question
-      send(rest_action, method)
-      assign(:link_question).should == question
+      send(rest_action, method, essential_params)
+      assigns(:link_question).should == question
     end
 
     context "when there is a valid links_question in the session" do
       before {controller.session[:links_question] = question.id}
       it "should assign a real Question to @link_question" do
-        send(rest_action, method)
-        assign(:link_question).should be_a Question
-        assign(:link_question).should be_persisted
+        send(rest_action, method, essential_params)
+        assigns(:link_question).should be_a Question
+        assigns(:link_question).should be_persisted
       end
     end
 
     context "when there is not a valid links question in the session" do
       it "should assign nil to @link_question" do
-        send(rest_action, method)
-        assign(:link_question).should be_nil
+        send(rest_action, method, essential_params)
+        assigns(:link_question).should be_nil
       end
     end
 
@@ -77,7 +80,7 @@ describe LinksController do
       mock_link.stub(:persisted?)
     end
     
-    it_should_behave_like "a LinksController method with the set_link_question before filter", :put, :update
+    it_should_behave_like "a LinksController method with the set_link_question before filter", :put, :update, {:id => 1}
 
     context "with a @link_question set" do
       before {Question.stub(:find_by_id).and_return question}
