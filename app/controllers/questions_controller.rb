@@ -37,8 +37,7 @@ class QuestionsController < ApplicationController
   def update_view_configuration
     super
     session[:nodes_question] = params[:id]
-    session[:links_to_question] = params[:id]
-    session[:links_from_question] = params[:id]
+    session[:links_question] = params[:id]
     session[:arguments_question] = params[:id]
     set_question_if_unset
     set_node_question
