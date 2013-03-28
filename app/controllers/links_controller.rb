@@ -16,15 +16,9 @@ class LinksController < ApplicationController
   end
 
   def create
-    @user_link = "Link::UserLink::#{params[:type]}UserLink".constantize.new(params[:global_link].merge(:question_id => @link_question.try(:id), :user => current_user))
+    @user_link = "Link::UserLink::#{params[:type]}UserLink".constantize.create(params[:global_link].merge(:question_id => @link_question.try(:id), :user => current_user))
     respond_to do |format|
-      if @user_link.save
-        format.js { render :partial => 'a_link', :locals=>{:link => @user_link.global_link, :direction=>params[:direction]} }
-        format.json {render json: @user_link.to_json}
-      else
-        format.js { render :partial => 'a_link', :locals=>{:link => place_holder_link, :direction=>params[:direction]} }
-        format.json {render json: false.to_json}
-      end
+      rerender_link @user_link, format
     end
   end
 
@@ -33,23 +27,26 @@ class LinksController < ApplicationController
     @user_link = user_link.update_type(params[:type], @link_question)
     @user_link = Link::UserLink.where(:user_id => current_user.id, :global_link_id => params[:id])[0] unless @user_link.persisted?
     respond_to do |format|
-      if @user_link
-        format.js { render :partial => 'a_link', :locals=>{:link => @user_link, :direction=>params[:direction]} }
-      else
-        format.js { render :partial => 'a_link', :locals=>{:link => place_holder_link, :direction=>params[:direction]} }
-      end
+      rerender_link @user_link, format
     end
   end
 
   def destroy
     @global_link = Link::GlobalLink.find(params[:id])
     @user_link = Link::UserLink.where(:user_id => current_user.id, :global_link_id => @global_link.id)[0]
+    @user_link.destroy
     respond_to do |format|
-      if @user_link.destroy
-        format.js { render :partial => 'a_link', :locals=>{:link=>place_holder_link, :direction=>params[:direction]} }
-      else
-        format.js { render :partial => 'a_link', :locals=>{:link=>@user_link.global_link, :direction=>params[:direction]} }
-      end
+      rerender_link @user_link, format
+    end
+  end
+
+  def rerender_link user_link, format
+    if user_link && user_link.persisted?
+      format.js { render :partial => 'a_link', :locals=>{:link => @user_link.global_link, :direction=>params[:direction]} }
+      format.json {render json: @user_link.to_json}
+    else
+      format.js { render :partial => 'a_link', :locals=>{:link => place_holder_link, :direction=>params[:direction]} }
+      format.json {render json: false.to_json}
     end
   end
 
