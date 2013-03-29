@@ -7,15 +7,15 @@ describe Link::UserLink do
   shared_examples_for "a class ensuring no other links are created before_validation" do
 
     it "should not create any GlobalLinks" do
-      expect{subject.valid?}.to_change(Link::GlobalLink, :count).by 0
+      expect {subject.valid?}.to change(Link::GlobalLink, :count).by(0)
     end
 
     it "should not create and GroupLinks" do
-      expect{subject.valid?}.to_change(Link::Groupink, :count).by 0
+      expect {subject.valid?}.to change(Link::GroupLink, :count).by(0)
     end
 
     it "should not create and GroupLinks" do
-      expect{subject.valid?}.to_change(Link::UserLink, :count).by 0
+      expect {subject.valid?}.to change(Link::UserLink, :count).by(0)
     end
   end
 
