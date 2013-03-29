@@ -11,7 +11,7 @@ class LinksController < ApplicationController
       .create(params[:global_link]
               .merge(
                 :question_id => @link_question.try(:id), 
-                :user => current_user)
+                :user_id => current_user.id)
              )
     respond_to do |format|
       rerender_link @user_link, format
@@ -43,7 +43,7 @@ class LinksController < ApplicationController
       format.js { render({
                            partial: 'a_link', 
                            locals: {
-                                     link: @user_link.global_link, 
+                                     link: @user_link, 
                                      direction: params[:direction]
                                    } 
                         }) 
@@ -62,7 +62,7 @@ class LinksController < ApplicationController
                         }) 
                 }
       format.json { render({
-                             json: false.to_json 
+                             json: place_holder_link.to_json 
                           })
                   }
     end
@@ -71,8 +71,8 @@ class LinksController < ApplicationController
   def place_holder_link
     link_params = params[:global_link]
     blank_link = Link::GlobalLink
-      .new(:global_node_from_id => link_params[:global_node_from_id], 
-           :global_node_to_id => link_params[:global_node_to_id])
+      .new("global_node_from_id" => link_params[:global_node_from_id], 
+           "global_node_to_id" => link_params[:global_node_to_id])
   end
   
 end
