@@ -11,7 +11,7 @@ module NodeDeletionModule
   end
 
   def delete_context_links
-    ContextLink.where('context_node_from_id = ? || context_node_to_id = ?', id, id).each {|cl| cl.destroy_all_for_user_link}
+    Link::UserLink.where('user_id = ? AND (global_node_from_id = ? || global_node_to_id = ?)', self.user_id, self.global_node_id, self.global_node_id).each {|ul| ul.destroy}
   end
 
 end

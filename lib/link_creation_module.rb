@@ -20,7 +20,7 @@ module LinkCreationModule
   end
 
   def find_or_create_group_links
-    if (group_ids = self.user.groups.reload.map(&:id)).any?
+    if self.user.try(:groups) && (group_ids = self.user.groups.reload.map(&:id)).any?
       group_ids.inject([]) do |group_links, group_id|
         group_links << find_or_create_group_link("Link::GroupLink::#{link_kind}GroupLink".constantize, {:group_id => group_id, :global_node_from_id => self.global_node_from_id, :global_node_to_id => self.global_node_to_id, :global_link_id => self.global_link_id})
         group_links

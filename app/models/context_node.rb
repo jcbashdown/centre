@@ -20,16 +20,6 @@ class ContextNode < ActiveRecord::Base
   belongs_to :question
   belongs_to :group
 
-  has_many :positive_link_froms, :foreign_key => "context_node_to_id", :class_name => "ContextLink::PositiveContextLink"
-  has_many :positive_link_tos, :foreign_key => "context_node_from_id", :class_name => "ContextLink::PositiveContextLink"
-  has_many :negative_link_froms, :foreign_key => "context_node_to_id", :class_name => "ContextLink::NegativeContextLink"
-  has_many :negative_link_tos, :foreign_key => "context_node_from_id", :class_name => "ContextLink::NegativeContextLink"
-
-  has_many :positive_node_tos, :through => :positive_link_tos, :class_name => "ContextNode", :foreign_key => "context_node_to_id", :source=>:context_node_to
-  has_many :positive_node_froms, :through => :positive_link_froms, :class_name => "ContextNode", :foreign_key => "context_node_from_id", :source=>:context_node_from
-  has_many :negative_node_tos, :through => :negative_link_tos, :class_name => "ContextNode", :foreign_key => "context_node_to_id", :source=>:context_node_to
-  has_many :negative_node_froms, :through => :negative_link_froms, :class_name => "ContextNode", :foreign_key => "context_node_from_id", :source=>:context_node_from
-
   validates_presence_of :title
   validates_presence_of :global_node
   validates_presence_of :user

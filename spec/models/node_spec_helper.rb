@@ -10,7 +10,7 @@ shared_examples_for 'a node finding directed links' do |node_is|
               if cn.title =~ Regexp.new(query, true)
                 all_key = :"user#{iu}_question#{iq}_#{query}"
                 params = {:user_id =>user.id, :question_id => question.id, :"global_node_#{@other_node_is}_id" => cn.global_node.id, :"global_node_#{node_is}_id" => @node.id}
-                new_gn = ContextLink::PositiveContextLink.where(params)[0].try(:global_link) || ContextLink::PositiveContextLink.create!(params).global_link
+                new_gn = Link::UserLink::PositiveUserLink.where(params.except(:question_id))[0].try(:global_link) || Link::UserLink::PositiveUserLink.create!(params).global_link
                 if new_gn
                   if @links[all_key]
                     @links[all_key][new_gn.id] = new_gn

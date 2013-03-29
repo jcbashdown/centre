@@ -2,7 +2,24 @@ require 'spec_helper'
 require 'models/context_link_spec_helper'
 require 'models/context_node_spec_helper'
 
-describe ContextLink do
+describe Link::UserLink do
+
+  describe "validations" do
+    context "when the user_link has a user" do
+      subject {Link::UserLink::PositiveUserLink.new(:user_id => 1)}
+      it {should be_valid}
+    end
+    context "when the user_link has a group" do
+      subject {Link::UserLink::PositiveUserLink.new(:group_id => 1)}
+      it {should_not be_valid}
+    end
+    context "when the user_link has no user or question" do
+      subject {Link::UserLink::PositiveUserLink.new(:user_id => nil, :group_id => nil)}
+      it {should_not be_valid}
+    end
+
+  end
+
   describe 'create' do
     context 'when validations fail' do
       it 'should not create all the associated nodes' do
@@ -396,5 +413,4 @@ describe ContextLink do
       end
     end
   end
-
 end
