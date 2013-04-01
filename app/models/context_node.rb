@@ -26,9 +26,23 @@ class ContextNode < ActiveRecord::Base
 
   validates :title, :uniqueness => {:scope => [:question_id, :user_id]}
 
-  before_validation(:on => :create) do
-    create_appropriate_nodes
+  class << self
+    [:create, :create!].each do |method|
+      define_method method do |attributes = {}|
+        ActiveRecord::Base.transaction do
+          new_context_node = self.new(attributes)
+          p new_context_node
+          new_context_node.create_appropriate_nodes
+          new_context_node.save if method == :create
+          new_context_node.save! if method == :create!
+          new_context_node
+        end
+      end
+    end
   end
+#  before_validation(:on => :create) do
+#    create_appropriate_nodes
+#  end
 
   after_save :update_caches, :update_conclusions
   after_destroy :delete_appropriate_nodes, :update_caches, :update_conclusions

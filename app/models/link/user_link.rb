@@ -26,7 +26,14 @@ class Link::UserLink < Link
     [:create, :create!].each do |method|
       define_method method do |attributes = {}|
         attributes = new(attributes).create_appropriate_nodes.creation_attributes
-        super(attributes)
+        ActiveRecord::Base.transaction do
+          new_link = self.new(attributes)
+          p new_link
+          new_link.create_appropriate_links
+          new_link.save if method == :create
+          new_link.save! if method == :create!
+          new_link
+        end
       end
     end
   end
@@ -35,17 +42,6 @@ class Link::UserLink < Link
     attributes.merge({:question_id => question_id})
   end
 
-  before_validation(:on => :create) do
-    #if validation will return true
-    # end
-    # then actual validation will happen whatever
-    create_appropriate_links
-    # ---
-    # use different method
-    # use non db context_link?
-    # other callback so no rollback?
-  end
-  
   after_save :update_group_link_users_count, :update_active_links
   after_destroy :update_group_link_users_count, :delete_appropriate_links, :update_active_links
 
