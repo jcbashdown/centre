@@ -15,4 +15,11 @@ class Link < ActiveRecord::Base
     end
   end
 
+  def positive?
+    self.type.to_s =~ /Positive/
+  end
+  def negative?
+    self.type.to_s =~ /Negative/
+  end
+
 end

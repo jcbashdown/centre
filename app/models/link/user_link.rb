@@ -25,14 +25,14 @@ class Link::UserLink < Link
   class << self
     [:create, :create!].each do |method|
       define_method method do |attributes = {}|
-        attributes = new(attributes).create_appropriate_nodes.attributes
+        attributes = new(attributes).create_appropriate_nodes.creation_attributes
         super(attributes)
       end
     end
   end
 
-  def attributes
-    super.merge({:question_id => question_id})
+  def creation_attributes
+    attributes.merge({:question_id => question_id})
   end
 
   before_validation(:on => :create) do

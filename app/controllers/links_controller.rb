@@ -43,13 +43,13 @@ class LinksController < ApplicationController
       format.js { render({
                            partial: 'a_link', 
                            locals: {
-                                     link: @user_link, 
+                                     link: user_link, 
                                      direction: params[:direction]
                                    } 
                         }) 
                 }
       format.json { render({
-                             json: @user_link.to_json 
+                             json: user_link.to_json 
                           })
                   }
     else

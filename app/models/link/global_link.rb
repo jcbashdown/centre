@@ -8,15 +8,6 @@ class Link::GlobalLink < Link
   validate :correct_context_attributes
   def correct_context_attributes(context_attributes = [:user_id, :group_id]);super;end
 
-  def positive?
-    false
-  end
-  def equivalent?
-    false
-  end
-  def negative?
-    false
-  end
 
   def global_link
     self
