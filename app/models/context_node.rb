@@ -31,7 +31,6 @@ class ContextNode < ActiveRecord::Base
       define_method method do |attributes = {}|
         ActiveRecord::Base.transaction do
           new_context_node = self.new(attributes)
-          p new_context_node
           new_context_node.create_appropriate_nodes
           new_context_node.save if method == :create
           new_context_node.save! if method == :create!

@@ -25,10 +25,8 @@ class Link::UserLink < Link
   class << self
     [:create, :create!].each do |method|
       define_method method do |attributes = {}|
-        attributes = new(attributes).create_appropriate_nodes.creation_attributes
+        new_link = new(attributes).create_appropriate_nodes
         ActiveRecord::Base.transaction do
-          new_link = self.new(attributes)
-          p new_link
           new_link.create_appropriate_links
           new_link.save if method == :create
           new_link.save! if method == :create!

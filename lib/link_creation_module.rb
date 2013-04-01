@@ -3,12 +3,16 @@ module LinkCreationModule
   end
  
   def create_appropriate_nodes
-    ContextNode.find_or_create_by_user_id_and_question_id_and_title(:user_id=>self.user_id, :question_id=>self.question_id, :title => self.global_node_to.title)
+    to_params = {:user_id=>self.user_id, :question_id=>self.question_id, :title => self.global_node_to.title}
+    ContextNode.exists?(to_params) || ContextNode.create!(to_params)
     unless self.global_node_from_id
-      context_node_from = ContextNode.find_or_create_by_user_id_and_question_id_and_title(:user_id=>self.user_id, :question_id=>self.question_id, :title => self.context_node_from_title)
+      string_from_params = {:user_id=>self.user_id, :question_id=>self.question_id, :title => self.context_node_from_title}
+      context_node_from = ContextNode.where(string_from_params)[0] || ContextNode.create!(string_from_params)
+      #this as a problem... do we need trans? conclusion happening after...
       self.global_node_from_id = context_node_from.global_node_id
     else
-      ContextNode.find_or_create_by_user_id_and_question_id_and_title(:user_id=>self.user_id, :question_id=>self.question_id, :title => self.global_node_from.title)
+      id_from_params = {:user_id=>self.user_id, :question_id=>self.question_id, :title => self.global_node_from.title}
+      ContextNode.exists?(id_from_params) || ContextNode.create!(id_from_params)
     end
     self
   end

@@ -31,9 +31,8 @@ class NodesController < ApplicationController
   end
 
   def create
-    context_node = ContextNode.new({:user_id => current_user.id, :question_id => @node_question.try(:id)}.merge(params[:node]))
     respond_to do |format|
-      if context_node.save
+      if context_node = ContextNode.create({:user_id => current_user.id, :question_id => @node_question.try(:id)}.merge(params[:node]))
         @node = context_node.global_node
         format.json {render json: @node.to_json}
         format.html { redirect_to node_path(@node), notice: 'Node was successfully created.' }

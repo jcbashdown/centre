@@ -71,7 +71,7 @@ describe Link::UserLink do
                                         },
                           :context_node => {
                                              :number_created => 1,
-                                             :find_or_create_calls => 2 
+                                             :find_or_create_calls => 1
                                            },
                           :new_global_node_to => {
                                             :upvotes_count=> 1
@@ -131,7 +131,7 @@ describe Link::UserLink do
                                       },
                         :context_node => {
                                            :number_created => 0,
-                                           :find_or_create_calls => 2 
+                                           :find_or_create_calls => 0 
                                          },
                         :new_global_node_to => {
                                           :upvotes_count=> 1
@@ -165,7 +165,7 @@ describe Link::UserLink do
                                         },
                           :context_node => {
                                              :number_created => 0,
-                                             :find_or_create_calls => 2
+                                             :find_or_create_calls => 0 
                                            },
                           :new_global_node_to => {
                                             :upvotes_count=> 1
@@ -240,7 +240,7 @@ describe Link::UserLink do
                                         },
                           :context_node => {
                                              :number_created => 0,
-                                             :find_or_create_calls => 2 
+                                             :find_or_create_calls => 0 
                                            }
                         }
           @params = {:user=>@user, :question => @question, :global_node_from_id => @gnu1.global_node.id, :global_node_to_id => @gnu2.global_node.id} 
