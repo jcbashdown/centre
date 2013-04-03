@@ -248,7 +248,7 @@ describe NodesController do
         end
       end
       it "assigns a newly created but unsaved node as @node" do
-        ContextNode.any_instance.stub(:save).and_return(false)
+        ContextNode.stub(:create).and_return(false)
         post :create, :node => {}
         response.should redirect_to nodes_path
       end
@@ -257,7 +257,7 @@ describe NodesController do
   
   describe 'PUT update' do
     before do
-      @context_node = FactoryGirl.create(:context_node)
+      @context_node = ContextNode.create(title: 'Test', user: @user, question: @question)
       @global_node_id = @context_node.global_node_id
       @question_id = @context_node.question_id
       @user_id = @context_node.user_id
