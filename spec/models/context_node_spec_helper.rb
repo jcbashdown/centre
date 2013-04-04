@@ -47,20 +47,44 @@ shared_examples_for 'updating node text' do
           link.should_not be_persisted
         end
       end
+      #if user in fact already owns link??? just switching to other link in space?
       it "should ensure the correct global and group links are created with the correct counts" do
-        statuses = {:no_global_link => true, :no_group_link => true}
+        statuses = {:global_link => true, :group_link => true}
         existing_node = Node::GlobalNode.where(title: new_text)
+        changing_node_id = context_node.global_node_id
+        other_nodes = Link::UserLink.where("global_node_from_id = ?", changing_node_id).map(&:global_node_to_id)
+        other_nodes +=Link::UserLink.where("global_node_to_id = ?", changing_node_id).map(&:global_node_from_id)
+        global_links = []
+        group_links = []
+        user_group_ids = user.groups.map(&:id)
         if existing_node
-          if (global_links = Link::GlobalLink.where("global_node_from_id = ? || global_node_to_id = ?", existing_node.id, existing_node.id)).any?
-            statuses[:no_global_link] = false
-            if (group_links = Link::GroupLink.where("global_node_from_id = ? || global_node_to_id = ?", existing_node.id, existing_node.id)).any?
-              statuses[:no_group_link] = false
+          other_nodes.each do |node|
+            if (global_links += Link::GlobalLink.where("(global_node_from_id = ? && global_node_to_id = ?) || (global_node_from_id = ? && global_node_to_id = ?)", existing_node.id, other_node.id, other_node.id, existing_node.id)).any?
+              statuses[:global_link] = false
+              if (group_links += Link::GroupLink.where("((global_node_from_id = ? && global_node_to_id = ?) || (global_node_from_id = ? && global_node_to_id = ?)) && group_id IN ?", existing_node.id, other_node.id, other_node.id, existing_node.id, user_group_ids)).any?
+                statuses[:group_link] = false
               end
+            end
+          end
+        end
+        context_node.update_text(new_text)
+        statuses.each do |link_type, status|
+          unless status
+            send(:"#{link_type}s").each {|link| (link.users_count + 1).should == link.reload.users_count}
+          else
+            "Link::#{link_type.constantize}".constantize.where("global_node_from_id = ? || global_node_to_id = ?", existing_node.id, existing_node.id).each do |link|
+              link.users_count.should == 1
             end
           end
         end
       end
     end
+  end
+  context "correct node changes" do
+
+    #correct new global node with correct counts
+    #remove old context nodes/context nodes answering to that where...
+    #should have the correct conclusions
   end
 end
 
