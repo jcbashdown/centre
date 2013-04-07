@@ -9,11 +9,11 @@ describe ContextNode do
     let(:group_two) {FactoryGirl.create(:group, :title => "thundercats")}
     let(:group_three) {FactoryGirl.create(:group, :title => "warriors")}
     let(:new_text) {'Some revised title'}
+    let(:original_conclusion_status) {true}
+    before {context_node}
     context "when there is only the context node" do
-      let(:context_node) {ContextNode.create(:user=>@user, :question=>@question, :title => 'Title', :is_conclusion => @conclusion_status)}
+      let(:context_node) {ContextNode.create(:user=>user, :question=>question, :title => 'Title', :is_conclusion => original_conclusion_status)}
       it_should_behave_like "a context_node correctly updating node text"
-      it "should just run shared examples if I so choose" do
-      end
     end
   end
 
@@ -43,13 +43,13 @@ describe ContextNode do
     describe 'setting is conclusion' do
       context 'when the context node is created as false' do
         before do
-    @group.users << @user
+          @group.users << @user
           @conclusion_status = false
           @context_node = ContextNode.create(:user=>@user, :question=>@question, :title => 'Title', :is_conclusion => @conclusion_status)
           @context_node_one = @context_node
-    @is_question_conclusion = @conclusion_status
-    @is_question_user_conclusion = @conclusion_status
-    @is_question_group_conclusion = @conclusion_status
+          @is_question_conclusion = @conclusion_status
+          @is_question_user_conclusion = @conclusion_status
+          @is_question_group_conclusion = @conclusion_status
         end
         it_should_behave_like "a context node change correctly updating conclusions"
         context 'when a new context node for the qn is created as true' do

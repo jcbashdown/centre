@@ -27,7 +27,7 @@ shared_examples_for 'a context_node correctly updating node text' do
       end
     end
     [:global, :group].each do |link_type|
-      let(:links) {context_node.user_links.send(:"#{link_type}_links")}
+      let(:links) {context_node.send(:"#{link_type}_links")}
       let(:to_be_related_links) {Node::GlobalNode.where(title:new_text)}
       it "should ensure the correct #{link_type}_links have been destroyed and the correct #{link_type}_links have been updated" do
         destroyed = []
@@ -89,10 +89,146 @@ shared_examples_for 'a context_node correctly updating node text' do
     end
   end
   context "correct node changes" do
-
-    #correct new global node with correct counts
-    #remove old context nodes/context nodes answering to that where...
+    it "should create a global_node if none exists for this title or use the existing one" do
+      if existing_node = Node::GlobalNode.where(title: new_text)[0]
+        changed_context_node = nil
+        expect {
+          changed_context_node = context_node.update_title(new_text)
+        }.to change(Node::GlobalNode, :count).by 0
+        (existing_node.users_count + 1) == changed_context_node.global_node.reload.users_count
+        changed_context_node.global_node.should == existing_node
+      else
+        changed_context_node = nil
+        expect {
+          changed_context_node = context_node.update_title(new_text)
+        }.to change(Node::GlobalNode, :count).by 1
+        changed_context_node.global_node.reload.users_count.should == 1
+        changed_context_node.global_node.title.should == new_text
+      end
+    end
+    it "should not change the number of context nodes" do
+      expect {
+        context_node.update_title(new_text)
+      }.to change(ContextNode, :count).by 0
+    end
+    it "should not change the number of of the correct context nodes" do
+      expect {
+        context_node.update_title(new_text)
+      }.to change(ContextNode.where(user_id:user.id), :count).by 0
+    end
+    it "should remove the number of old titled context nodes" do
+      old_count = ContextNode.where(global_node_id:context_node.global_node_id).count
+      expect {
+        context_node.update_title(new_text)
+      }.to change(ContextNode.where(global_node_id:context_node.global_node_id), :count).by(-old_count)
+    end
+    it "should create the number of old titled context nodes in new context nodes" do
+      old_count = ContextNode.where(global_node_id:context_node.global_node_id).count
+      expect {
+        context_node.update_title(new_text)
+      }.to change(ContextNode.where(title:new_text), :count).by(old_count)
+    end
+    it "should have one identical new context node with the new title for every old node which featured that title" do
+      old_cns = ContextNode.where(global_node_id:context_node.global_node_id)
+      context_node.update_title(new_text)
+      new_gn_id = context_node.reload.global_node_id
+      old_cns.each do |cn|
+        ContextNode.where(user_id:cn.user_id, question_id:cn.question_id, global_node_id:new_gn_id, is_conclusion:cn.is_conclusion).length.should == 1
+      end
+    end
     #should have the correct conclusions
+  end
+  context "correct conclusion changes" do
+    it "should ensure the correct changes are made to group_question_conclusions" do
+      old = context_node.global_node
+      new_cn = context_node.update_title new_text
+      new = new_cn.global_node
+      context_node.user.groups.each do |group|
+        if @conclusion_statuses[:group_question_conclusions][:includes_old]
+          group.conclusions.by_question_for_group(question).should include old 
+        else
+          group.conclusions.by_question_for_group(question).should_not include old 
+        end
+        if @conclusion_statuses[:group_question_conclusions][:includes_new]
+          group.conclusions.by_question_for_group(question).should include new
+        else
+          group.conclusions.by_question_for_group(question).should_not include new
+        end
+      end
+    end
+    it "should ensure the correct changes are made to user_question_conclusions" do
+      old = context_node.global_node
+      new_cn = context_node.update_title new_text
+      new = new_cn.global_node
+      if @conclusion_statuses[:user_question_conclusions][:includes_old]
+        context_node.user.conclusions.by_question_for_group(question).should include old 
+      else
+        context_node.user.conclusions.by_question_for_group(question).should_not include old 
+      end
+      if @conclusion_statuses[:user_question_conclusions][:includes_new]
+        context_node.user.conclusions.by_question_for_group(question).should include new
+      else
+        context_node.user.conclusions.by_question_for_group(question).should_not include new
+      end
+    end
+    it "should ensure the correct changes are made to question_conclusions" do
+      old = context_node.global_node
+      new_cn = context_node.update_title new_text
+      new = new_cn.global_node
+      if @conclusion_statuses[:question_conclusions][:includes_old]
+        context_node.question.concluding_nodes.should include old 
+      else
+        context_node.question.concluding_nodes.should_not include old 
+      end
+      if @conclusion_statuses[:question_conclusions][:includes_new]
+        context_node.question.concluding_nodes.should include new
+      else
+        context_node.question.concluding_nodes.should_not include new
+      end
+    end
+#    it "should ensure the correct changes are made to group_question_conclusions" do
+#      is_conclusion = ContextNode(global_node_id:context_node.global_node_id, group_id:context_node.user.groups(&:id), question_id:context_node.question_id, is_conclusion:true).count
+#      is_not_conclusion = ContextNode(global_node_id:context_node.global_node_id, group_id:context_node.user.groups(&:id), question_id:context_node.question_id, is_conclusion:false).count
+#      if existing_node = Node::GlobalNode.where(title:new_text)[0]
+#        new_is_conclusion = ContextNode(global_node_id:existing_node.id, group_id:context_node.user.groups(&:id), question_id:context_node.question_id, is_conclusion:true).count
+#        new_is_not_conclusion = ContextNode(global_node_id:existing_node.id, group_id:context_node.user.groups(&:id), question_id:context_node.question_id, is_conclusion:false).count
+#      end
+#      unless existing_node == context_node.global_node
+#        if is_conclusion > is_not_conclusion
+#          if is_not_conclusion + 1 == is_conclusion
+#            if context_node.is_conclusion
+#              group.conclusions.by_question_for_group(question)
+#            else
+#
+#            end
+#          else
+#          end
+#        else
+#          if is_conclusion + 1 == is_not_conclusion
+#          else
+#          end
+#        end
+#        if existing_node
+#          if new_is_conclusion > new_is_not_conclusion
+#            if new_is_not_conclusion + 1 == new_is_conclusion
+#            else
+#            end
+#          else
+#            if new_is_conclusion + 1 == new_is_not_conclusion
+#            else
+#            end
+#          end
+#        end
+#      else
+#        old_gqcs = GroupQuestionConclusion.all
+#        context_node.update_title(new_text)
+#        old_gqcs.should == GroupQuestionConclusion.all
+#      end
+#    end
+#    it "should ensure the correct changes are made to user_question_conclusions" do
+#    end
+#    it "should ensure the correct changes are made to question_conclusions" do
+#    end
   end
 end
 

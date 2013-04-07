@@ -92,6 +92,7 @@ class ContextNode < ActiveRecord::Base
 #        link.type.constantize.create(link.attributes)
 #      end
 #    end
+    self
   end
 
   def question?
