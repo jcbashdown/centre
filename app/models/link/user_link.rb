@@ -10,6 +10,9 @@ class Link::UserLink < Link
   attr_accessor :context_node_from_title
 
   belongs_to :global_link, :counter_cache => :users_count
+  [:positive, :negative].each do |type|
+    belongs_to :"#{type}_global_link", :class_name => "Link::GlobalLink::#{type.capitalize}GlobalLink".constantize, :foreign_key => :global_link_id
+  end
   belongs_to :user
   belongs_to :global_node_from, :foreign_key => :global_node_from_id, :class_name => Node::GlobalNode
   belongs_to :global_node_to, :foreign_key => :global_node_to_id, :class_name => Node::GlobalNode

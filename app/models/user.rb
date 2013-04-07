@@ -6,6 +6,18 @@ class User < ActiveRecord::Base
   attr_accessible :name, :email, :password, :password_confirmation, :remember_me
 
   has_many :context_nodes
+  [:positive, :negative].each do |type|
+    has_many :"#{type}_user_links", :class_name => "Link::UserLink::#{type.capitalize}UserLink".constantize
+    has_many :"#{type}_global_links", :through => :"#{type}_user_links"
+  end
+
+  def user_links
+    Link::UserLink.where(:user_id => self.id)
+  end
+
+  def global_links
+    Link::GlobalLink.where(:id => user_links.pluck(:global_link_id))
+  end
 
   has_many :user_groups
   has_many :groups, :through => :user_groups

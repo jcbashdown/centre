@@ -60,28 +60,34 @@ class ContextNode < ActiveRecord::Base
     HashWithIndifferentAccess.new({:question_id => self.question_id, :group_ids => self.user.groups.map(&:id), :user_id => self.user_id, :global_node_id => self.global_node_id})
   end
 
+  def user_links
+    Link::UserLink
+      .where(:user_id => self.user_id)
+      .where("global_node_from_id = ? || global_node_to_id = ?", self.global_node_id, self.global_node_id)
+  end
+
   def set_conclusion! value
     update_attributes(:is_conclusion => value)
   end 
 
   def update_title new_title
-    ActiveRecord::Base.transaction do
-      old_global_node_id = self.global_node_id
-      new_links = self.user_links.dup
-      self.user_links.destroy_all
-      new_nodes = ContextNode.where(:global_node_id => self.global_node_id).each do |old_cn|
-        new_cn = old_cn.dup
-        old_cn.destroy
-        new_cn.title = new_title
-        ContextNode.create(new_cn.attributes)
-      end
-      new_global_node_id = new_nodes.global_node_id
-      new_links.each do |link|
-        link.global_node_from_id = new_global_node_id if link.global_node_from_id == old_global_node_id
-        link.global_node_to_id = new_global_node_id if link.global_node_to_id == old_global_node_id
-        link.type.constantize.create(link.attributes)
-      end
-    end
+#    ActiveRecord::Base.transaction do
+#      old_global_node_id = self.global_node_id
+#      new_links = self.user_links.dup
+#      self.user_links.destroy_all
+#      new_nodes = ContextNode.where(:global_node_id => self.global_node_id).each do |old_cn|
+#        new_cn = old_cn.dup
+#        old_cn.destroy
+#        new_cn.title = new_title
+#        ContextNode.create(new_cn.attributes)
+#      end
+#      new_global_node_id = new_nodes.global_node_id
+#      new_links.each do |link|
+#        link.global_node_from_id = new_global_node_id if link.global_node_from_id == old_global_node_id
+#        link.global_node_to_id = new_global_node_id if link.global_node_to_id == old_global_node_id
+#        link.type.constantize.create(link.attributes)
+#      end
+#    end
   end
 
   def question?
