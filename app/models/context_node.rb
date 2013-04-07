@@ -66,6 +66,10 @@ class ContextNode < ActiveRecord::Base
       .where("global_node_from_id = ? || global_node_to_id = ?", self.global_node_id, self.global_node_id)
   end
 
+  def group_links
+    self.user.groups.map(&:group_links)
+  end
+
   def set_conclusion! value
     update_attributes(:is_conclusion => value)
   end 
