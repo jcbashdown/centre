@@ -60,14 +60,23 @@ class ContextNode < ActiveRecord::Base
     HashWithIndifferentAccess.new({:question_id => self.question_id, :group_ids => self.user.groups.map(&:id), :user_id => self.user_id, :global_node_id => self.global_node_id})
   end
 
+  def in_link_sql
+    "global_node_from_id = ? || global_node_to_id = ?"
+  end
+
   def user_links
     Link::UserLink
       .where(:user_id => self.user_id)
-      .where("global_node_from_id = ? || global_node_to_id = ?", self.global_node_id, self.global_node_id)
+      .where(in_link_sql, self.global_node_id, self.global_node_id)
   end
 
   def group_links
-    self.user.groups.map(&:group_links)
+    self.user.groups.inject([]) {|links, group| links+=group.group_links.where(in_link_sql, self.global_node_id, self.global_node_id); links}
+  end
+
+  def global_links
+    Link::GlobalLink
+      .where(in_link_sql, self.global_node_id, self.global_node_id)
   end
 
   def set_conclusion! value
@@ -75,24 +84,30 @@ class ContextNode < ActiveRecord::Base
   end 
 
   def update_title new_title
-#    ActiveRecord::Base.transaction do
-#      old_global_node_id = self.global_node_id
-#      new_links = self.user_links.dup
-#      self.user_links.destroy_all
-#      new_nodes = ContextNode.where(:global_node_id => self.global_node_id).each do |old_cn|
-#        new_cn = old_cn.dup
-#        old_cn.destroy
-#        new_cn.title = new_title
-#        ContextNode.create(new_cn.attributes)
-#      end
-#      new_global_node_id = new_nodes.global_node_id
-#      new_links.each do |link|
-#        link.global_node_from_id = new_global_node_id if link.global_node_from_id == old_global_node_id
-#        link.global_node_to_id = new_global_node_id if link.global_node_to_id == old_global_node_id
-#        link.type.constantize.create(link.attributes)
-#      end
-#    end
-    self
+    the_new_one = self
+    ActiveRecord::Base.transaction do
+      old_global_node_id = self.global_node_id
+      ContextNode.where(:global_node_id => self.global_node_id).each do |old_cn|
+        new_cn = old_cn.dup
+        old_cn.destroy
+        new_cn.title = new_title
+        new = ContextNode.create(new_cn.attributes)
+        if(new.user_id == self.user_id && new.question_id == self.question_id && new.is_conclusion == self.is_conclusion)
+          the_new_one = new
+        end
+      end
+    end
+    new_global_node_id = the_new_one.global_node_id
+    ActiveRecord::Base.transaction do
+      new_links = self.user_links.dup
+      self.user_links.destroy_all
+      new_links.each do |link|
+        link.global_node_from_id = new_global_node_id if link.global_node_from_id == old_global_node_id
+        link.global_node_to_id = new_global_node_id if link.global_node_to_id == old_global_node_id
+        link.type.constantize.create(link.attributes)
+      end
+    end
+    the_new_one
   end
 
   def question?

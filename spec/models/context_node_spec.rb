@@ -10,9 +10,51 @@ describe ContextNode do
     let(:group_three) {FactoryGirl.create(:group, :title => "warriors")}
     let(:new_text) {'Some revised title'}
     let(:original_conclusion_status) {true}
-    before {context_node}
     context "when there is only the context node" do
       let(:context_node) {ContextNode.create(:user=>user, :question=>question, :title => 'Title', :is_conclusion => original_conclusion_status)}
+      before do
+        context_node
+        @conclusion_statuses = {
+                                 :group_question_conclusions => {
+                                                                  :includes_old => false,
+                                                                  :includes_new => true
+                                                                },
+                                 :user_question_conclusions => {
+                                                                  :includes_old => false,
+                                                                  :includes_new => true
+                                                               },
+                                 :question_conclusions => {
+                                                                  :includes_old => false,
+                                                                  :includes_new => true
+                                                          }
+                               }
+      end
+      it_should_behave_like "a context_node correctly updating node text"
+    end
+    context "when there is a context node in two links" do
+      let(:context_node) {ContextNode.create(:user=>user, :question=>question, :title => 'Title', :is_conclusion => original_conclusion_status)}
+      let(:context_node2) {ContextNode.create(:user=>user, :question=>question, :title => 'Title2', :is_conclusion => original_conclusion_status)}
+      let(:context_node3) {ContextNode.create(:user=>user, :question=>question, :title => 'Title3', :is_conclusion => original_conclusion_status)}
+      before do
+        group_one.users << user
+        group_two.users << user
+        @link1 = Link::UserLink::PositiveUserLink.create(:user=>user, :question => question, :global_node_to_id => context_node.global_node_id, :global_node_from_id => context_node2.global_node_id)
+        @link2 = Link::UserLink::PositiveUserLink.create(:user=>user, :question => question, :global_node_to_id => context_node.global_node_id, :global_node_from_id => context_node3.global_node_id)
+        @conclusion_statuses = {
+                                 :group_question_conclusions => {
+                                                                  :includes_old => false,
+                                                                  :includes_new => true
+                                                                },
+                                 :user_question_conclusions => {
+                                                                  :includes_old => false,
+                                                                  :includes_new => true
+                                                               },
+                                 :question_conclusions => {
+                                                                  :includes_old => false,
+                                                                  :includes_new => true
+                                                          }
+                               }
+      end
       it_should_behave_like "a context_node correctly updating node text"
     end
   end
