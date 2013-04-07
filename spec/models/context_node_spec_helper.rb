@@ -186,49 +186,6 @@ shared_examples_for 'a context_node correctly updating node text' do
         context_node.question.concluding_nodes.should_not include new
       end
     end
-#    it "should ensure the correct changes are made to group_question_conclusions" do
-#      is_conclusion = ContextNode(global_node_id:context_node.global_node_id, group_id:context_node.user.groups(&:id), question_id:context_node.question_id, is_conclusion:true).count
-#      is_not_conclusion = ContextNode(global_node_id:context_node.global_node_id, group_id:context_node.user.groups(&:id), question_id:context_node.question_id, is_conclusion:false).count
-#      if existing_node = Node::GlobalNode.where(title:new_text)[0]
-#        new_is_conclusion = ContextNode(global_node_id:existing_node.id, group_id:context_node.user.groups(&:id), question_id:context_node.question_id, is_conclusion:true).count
-#        new_is_not_conclusion = ContextNode(global_node_id:existing_node.id, group_id:context_node.user.groups(&:id), question_id:context_node.question_id, is_conclusion:false).count
-#      end
-#      unless existing_node == context_node.global_node
-#        if is_conclusion > is_not_conclusion
-#          if is_not_conclusion + 1 == is_conclusion
-#            if context_node.is_conclusion
-#              group.conclusions.by_question_for_group(question)
-#            else
-#
-#            end
-#          else
-#          end
-#        else
-#          if is_conclusion + 1 == is_not_conclusion
-#          else
-#          end
-#        end
-#        if existing_node
-#          if new_is_conclusion > new_is_not_conclusion
-#            if new_is_not_conclusion + 1 == new_is_conclusion
-#            else
-#            end
-#          else
-#            if new_is_conclusion + 1 == new_is_not_conclusion
-#            else
-#            end
-#          end
-#        end
-#      else
-#        old_gqcs = GroupQuestionConclusion.all
-#        context_node.update_title(new_text)
-#        old_gqcs.should == GroupQuestionConclusion.all
-#      end
-#    end
-#    it "should ensure the correct changes are made to user_question_conclusions" do
-#    end
-#    it "should ensure the correct changes are made to question_conclusions" do
-#    end
   end
 end
 
