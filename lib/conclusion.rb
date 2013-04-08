@@ -1,8 +1,11 @@
 module Conclusion
 
   def update_conclusion_status_for context
+    p context if self == UserQuestionConclusion
     set_context! context
+    p context if self == UserQuestionConclusion
     return unless meets_criteria?
+    p "met" if self == UserQuestionConclusion
     if votes_for_conclusion > votes_against_conclusion
       p create_conclusion_unless_exists create_context
     else
