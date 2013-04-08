@@ -167,7 +167,6 @@ shared_examples_for 'a context_node correctly updating node text' do
           group.conclusions.by_question_for_group(question).should_not include old 
         end
         if @conclusion_statuses[:group_question_conclusions][:includes_new]
-          binding.pry
           group.conclusions.reload.by_question_for_group(question).should include new
         else
           group.conclusions.reload.by_question_for_group(question).should_not include new

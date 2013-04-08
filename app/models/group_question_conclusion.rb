@@ -11,13 +11,7 @@ class GroupQuestionConclusion < ActiveRecord::Base
 
   class << self
 
-    private
-
-    def meets_criteria?
-      !!@context[:group_id]
-    end
-
-    def set_context! context
+    def update_conclusion_status_for context
       if context[:group_ids].any?
         context[:group_ids].each do |id|
           p id
@@ -27,6 +21,12 @@ class GroupQuestionConclusion < ActiveRecord::Base
       else
         super
       end
+    end
+
+    private
+
+    def meets_criteria?
+      !!@context[:group_id]
     end
 
     def search_context
