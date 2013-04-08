@@ -156,7 +156,9 @@ shared_examples_for 'a context_node correctly updating node text' do
   context "correct conclusion changes" do
     it "should ensure the correct changes are made to group_question_conclusions" do
       old = context_node.global_node
+      p "HERE"
       new_cn = context_node.update_title new_text
+      p "HERE"
       new = new_cn.global_node
       context_node.user.groups.each do |group|
         if @conclusion_statuses[:group_question_conclusions][:includes_old]
@@ -165,9 +167,10 @@ shared_examples_for 'a context_node correctly updating node text' do
           group.conclusions.by_question_for_group(question).should_not include old 
         end
         if @conclusion_statuses[:group_question_conclusions][:includes_new]
-          group.conclusions.by_question_for_group(question).should include new
+          binding.pry
+          group.conclusions.reload.by_question_for_group(question).should include new
         else
-          group.conclusions.by_question_for_group(question).should_not include new
+          group.conclusions.reload.by_question_for_group(question).should_not include new
         end
       end
     end
@@ -181,9 +184,9 @@ shared_examples_for 'a context_node correctly updating node text' do
         context_node.user.conclusions.by_question_for_user(question).should_not include old 
       end
       if @conclusion_statuses[:user_question_conclusions][:includes_new]
-        context_node.user.conclusions.by_question_for_user(question).should include new
+        context_node.user.conclusions.reload.by_question_for_user(question).should include new
       else
-        context_node.user.conclusions.by_question_for_user(question).should_not include new
+        context_node.user.conclusions.reload.by_question_for_user(question).should_not include new
       end
     end
     it "should ensure the correct changes are made to question_conclusions" do
@@ -196,9 +199,9 @@ shared_examples_for 'a context_node correctly updating node text' do
         context_node.question.concluding_nodes.should_not include old 
       end
       if @conclusion_statuses[:question_conclusions][:includes_new]
-        context_node.question.concluding_nodes.should include new
+        context_node.question.reload.concluding_nodes.should include new
       else
-        context_node.question.concluding_nodes.should_not include new
+        context_node.question.reload.concluding_nodes.should_not include new
       end
     end
   end

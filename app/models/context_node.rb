@@ -104,7 +104,6 @@ class ContextNode < ActiveRecord::Base
       new_links.each do |link|
         link.global_node_from_id = new_global_node_id if link.global_node_from_id == old_global_node_id
         link.global_node_to_id = new_global_node_id if link.global_node_to_id == old_global_node_id
-        p link.attributes
         link.type.constantize.create(link.attributes.merge(:no_nodes => true))
       end
     end

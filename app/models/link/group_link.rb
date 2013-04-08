@@ -3,7 +3,7 @@ class Link::GroupLink < Link
   belongs_to :global_link
   belongs_to :group
   has_many :user_groups, :foreign_key => :group_id, :primary_key => :group_id
-  has_many :user_links, :through => :user_groups
+  has_many :user_links, :through => :user_groups, :conditions => proc { ["global_link_id = ?", self.global_link_id] }
   belongs_to :global_node_from, :foreign_key => :global_node_from_id, :class_name => Node::GlobalNode
   belongs_to :global_node_to, :foreign_key => :global_node_to_id, :class_name => Node::GlobalNode
 

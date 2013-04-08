@@ -4,7 +4,7 @@ module Conclusion
     set_context! context
     return unless meets_criteria?
     if votes_for_conclusion > votes_against_conclusion
-      create_conclusion_unless_exists create_context
+      p create_conclusion_unless_exists create_context
     else
       destroy_conclusion_if_exists create_context
     end
@@ -48,6 +48,8 @@ module Conclusion
   end
 
   def destroy_conclusion_if_exists create_context
-    where(create_context)[0].try(:destroy)
+    conc = where(create_context)[0]
+    p conc
+    conc.try(:destroy)
   end
 end
