@@ -28,7 +28,8 @@ class Link::UserLink < Link
   class << self
     [:create, :create!].each do |method|
       define_method method do |attributes = {}|
-        new_link = new(attributes).create_appropriate_nodes
+        new_link = new(attributes.except(:no_nodes))
+        new_link.create_appropriate_nodes unless attributes[:no_nodes]
         ActiveRecord::Base.transaction do
           new_link.create_appropriate_links
           new_link.save if method == :create
@@ -72,7 +73,7 @@ class Link::UserLink < Link
   end
 
   def question_id
-    @question_id ||= @question.id
+    @question_id ||= @question.try(:id)
   end
 
   def user_link

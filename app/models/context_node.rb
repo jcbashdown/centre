@@ -85,9 +85,10 @@ class ContextNode < ActiveRecord::Base
 
   def update_title new_title
     the_new_one = self
+    new_links = self.user_links.map(&:dup)
+    old_global_node_id = self.global_node_id
     ActiveRecord::Base.transaction do
-      old_global_node_id = self.global_node_id
-      ContextNode.where(:global_node_id => self.global_node_id).each do |old_cn|
+      ContextNode.where(:global_node_id => self.global_node_id, :user_id => self.user_id).each do |old_cn|
         new_cn = old_cn.dup
         old_cn.destroy
         new_cn.title = new_title
@@ -99,12 +100,12 @@ class ContextNode < ActiveRecord::Base
     end
     new_global_node_id = the_new_one.global_node_id
     ActiveRecord::Base.transaction do
-      new_links = self.user_links.dup
-      self.user_links.destroy_all
+      self.user_links.destroy_all#probably already done at this point
       new_links.each do |link|
         link.global_node_from_id = new_global_node_id if link.global_node_from_id == old_global_node_id
         link.global_node_to_id = new_global_node_id if link.global_node_to_id == old_global_node_id
-        link.type.constantize.create(link.attributes)
+        p link.attributes
+        link.type.constantize.create(link.attributes.merge(:no_nodes => true))
       end
     end
     the_new_one

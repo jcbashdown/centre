@@ -22,9 +22,9 @@ shared_examples_for 'a context_node correctly updating node text' do
       new_context_node = context_node.update_title(new_text)
       old_attributes.each do |old_attribute_hash|
         if old_attribute_hash[:global_node_from_id]
-          Link::UserLink.where(old_attribute_hash.merge(user_id:user.id,global_node_to_id:context_node.global_node_id)).length.should == 1
+          Link::UserLink.where(old_attribute_hash.merge(user_id:user.id,global_node_to_id:new_context_node.global_node_id)).length.should == 1
         else
-          Link::UserLink.where(old_attribute_hash.merge(user_id:user.id,global_node_from_id:context_node.global_node_id)).length.should == 1
+          Link::UserLink.where(old_attribute_hash.merge(user_id:user.id,global_node_from_id:new_context_node.global_node_id)).length.should == 1
         end
       end
     end
@@ -38,9 +38,9 @@ shared_examples_for 'a context_node correctly updating node text' do
         destroyed = []
         updated_minus_one = []
         links.each do |link|
-          if link.users_count == 1 && (to_be_related_links - [link]).count == to_be_related_links.count
+          if link.users_count == 2 && (to_be_related_links - [link]).count == to_be_related_links.count
             destroyed << link
-          elsif (to_be_related_links - [link]).count == to_be_related_links.count
+          elsif link.users_count > 2 && (to_be_related_links - [link]).count == to_be_related_links.count
             updated_minus_one << link
           end
         end
