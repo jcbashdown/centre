@@ -156,9 +156,7 @@ shared_examples_for 'a context_node correctly updating node text' do
   context "correct conclusion changes" do
     it "should ensure the correct changes are made to group_question_conclusions" do
       old = context_node.global_node
-      p "HERE"
       new_cn = context_node.update_title new_text
-      p "HERE"
       new = new_cn.global_node
       context_node.user.groups.each do |group|
         if @conclusion_statuses[:group_question_conclusions][:includes_old]

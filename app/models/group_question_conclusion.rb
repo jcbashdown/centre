@@ -14,7 +14,6 @@ class GroupQuestionConclusion < ActiveRecord::Base
     def update_conclusion_status_for context
       if context[:group_ids].any?
         context[:group_ids].each do |id|
-          p id
           context[:group_id] = id
           super
         end

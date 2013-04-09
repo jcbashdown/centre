@@ -13,5 +13,5 @@ describe GroupQuestionConclusion do
 
   end
 
-  it_should_behave_like "a conclusion class extending conclusion", {:group_ids => [1]}, {:group_id => 1}
+  it_should_behave_like "a conclusion class extending conclusion", {:group_ids => [1, 2]}, {:group_ids => [1, 2]}
 end

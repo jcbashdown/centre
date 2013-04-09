@@ -36,7 +36,6 @@ describe ContextNode do
       let(:context_node2) {ContextNode.create(:user=>user, :question=>question, :title => 'Title2', :is_conclusion => original_conclusion_status)}
       let(:context_node3) {ContextNode.create(:user=>user, :question=>question, :title => 'Title3', :is_conclusion => original_conclusion_status)}
       before do
-        p "THIS"
         group_one.users << user
         group_two.users << user
         @link1 = Link::UserLink::PositiveUserLink.create(:user=>user, :question => question, :global_node_to_id => context_node.global_node_id, :global_node_from_id => context_node2.global_node_id)
@@ -55,7 +54,6 @@ describe ContextNode do
                                                                   :includes_new => true
                                                           }
                                }
-        p "THIS2"
       end
       it_should_behave_like "a context_node correctly updating node text"
     end

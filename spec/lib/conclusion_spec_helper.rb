@@ -24,7 +24,11 @@ shared_examples_for "a conclusion class extending conclusion" do |special_contex
         subject.stub(:votes_against_conclusion).and_return 0
       end
       it "should call create_conclusion_unless_exists with the result of create context" do
-        subject.should_receive(:create_conclusion_unless_exists).with create_context
+        if described_class == GroupQuestionConclusion
+          subject.should_receive(:create_conclusion_unless_exists).exactly(create_context[:group_ids].count).times.with create_context
+        else
+          subject.should_receive(:create_conclusion_unless_exists).with create_context
+        end
         subject.update_conclusion_status_for context
       end
     end
