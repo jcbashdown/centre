@@ -25,7 +25,9 @@ shared_examples_for "a conclusion class extending conclusion" do |special_contex
       end
       it "should call create_conclusion_unless_exists with the result of create context" do
         if described_class == GroupQuestionConclusion
-          subject.should_receive(:create_conclusion_unless_exists).exactly(create_context[:group_ids].count).times.with create_context
+          create_context[:group_ids].count.times do |n|
+            subject.should_receive(:create_conclusion_unless_exists).with create_context.merge(:group_id => create_context[:group_ids][n-1])
+          end
         else
           subject.should_receive(:create_conclusion_unless_exists).with create_context
         end
