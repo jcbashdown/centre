@@ -104,19 +104,19 @@ shared_examples_for 'a context_node correctly updating node text' do
         (existing_node.users_count + 1) == changed_context_node.global_node.reload.users_count
         changed_context_node.global_node.should == existing_node
       else
-        if context_node.global_node.users_count > 1
+        if context_node.global_node.reload.users_count > 1
           changed_context_node = nil
           expect {
             changed_context_node = context_node.update_title(new_text)
           }.to change(Node::GlobalNode, :count).by 1
-          changed_context_node.global_node.reload.users_count.should == 1
+          changed_context_node.global_node.reload.users_count.should == ContextNode.where(global_node_id:changed_context_node.global_node_id).count
           changed_context_node.global_node.title.should == new_text
         else
           changed_context_node = nil
           expect {
             changed_context_node = context_node.update_title(new_text)
           }.to change(Node::GlobalNode, :count).by 0
-          changed_context_node.global_node.reload.users_count.should == 1
+          changed_context_node.global_node.reload.users_count.should == ContextNode.where(global_node_id:changed_context_node.global_node_id).count
           changed_context_node.global_node.title.should == new_text
         end
       end
@@ -132,73 +132,78 @@ shared_examples_for 'a context_node correctly updating node text' do
       }.to change(ContextNode.where(user_id:user.id), :count).by 0
     end
     it "should remove the number of old titled context nodes" do
-      old_count = ContextNode.where(global_node_id:context_node.global_node_id).count
+      old_count = ContextNode.where(user_id: context_node.user_id, global_node_id:context_node.global_node_id).count
       expect {
         context_node.update_title(new_text)
       }.to change(ContextNode.where(global_node_id:context_node.global_node_id), :count).by(-old_count)
     end
     it "should create the number of old titled context nodes in new context nodes" do
-      old_count = ContextNode.where(global_node_id:context_node.global_node_id).count
+      old_count = ContextNode.where(user_id: context_node.user_id, global_node_id:context_node.global_node_id).count
       expect {
         context_node.update_title(new_text)
       }.to change(ContextNode.where(title:new_text), :count).by(old_count)
     end
     it "should have one identical new context node with the new title for every old node which featured that title" do
-      old_cns = ContextNode.where(global_node_id:context_node.global_node_id)
+      old_cns = ContextNode.where(user_id:context_node.user_id, global_node_id:context_node.global_node_id)
       new_context_node = context_node.update_title(new_text)
       new_gn_id = new_context_node.reload.global_node_id
       old_cns.each do |cn|
         ContextNode.where(user_id:cn.user_id, question_id:cn.question_id, global_node_id:new_gn_id, is_conclusion:cn.is_conclusion).length.should == 1
       end
     end
-    #should have the correct conclusions
   end
   context "correct conclusion changes" do
     it "should ensure the correct changes are made to group_question_conclusions" do
-      old = context_node.global_node
-      new_cn = context_node.update_title new_text
-      new = new_cn.global_node
-      context_node.user.groups.each do |group|
-        if @conclusion_statuses[:group_question_conclusions][:includes_old]
-          group.conclusions.by_question_for_group(question).should include old 
-        else
-          group.conclusions.by_question_for_group(question).should_not include old 
-        end
-        if @conclusion_statuses[:group_question_conclusions][:includes_new]
-          group.conclusions.reload.by_question_for_group(question).should include new
-        else
-          group.conclusions.reload.by_question_for_group(question).should_not include new
+      if @conclusion_statuses
+        old = context_node.global_node
+        new_cn = context_node.update_title new_text
+        new = new_cn.global_node
+        context_node.user.groups.each do |group|
+          if @conclusion_statuses[:group_question_conclusions][:includes_old]
+            group.conclusions.by_question_for_group(question).should include old 
+          else
+            group.conclusions.by_question_for_group(question).should_not include old 
+          end
+          if @conclusion_statuses[:group_question_conclusions][:includes_new]
+            group.conclusions.reload.by_question_for_group(question).should include new
+          else
+            group.conclusions.reload.by_question_for_group(question).should_not include new
+          end
         end
       end
     end
     it "should ensure the correct changes are made to user_question_conclusions" do
-      old = context_node.global_node
-      new_cn = context_node.update_title new_text
-      new = new_cn.global_node
-      if @conclusion_statuses[:user_question_conclusions][:includes_old]
-        context_node.user.conclusions.by_question_for_user(question).should include old 
-      else
-        context_node.user.conclusions.by_question_for_user(question).should_not include old 
-      end
-      if @conclusion_statuses[:user_question_conclusions][:includes_new]
-        context_node.user.conclusions.reload.by_question_for_user(question).should include new
-      else
-        context_node.user.conclusions.reload.by_question_for_user(question).should_not include new
+      if @conclusion_statuses
+        old = context_node.global_node
+        new_cn = context_node.update_title new_text
+        new = new_cn.global_node
+        if @conclusion_statuses[:user_question_conclusions][:includes_old]
+          context_node.user.conclusions.by_question_for_user(question).should include old 
+        else
+          context_node.user.conclusions.by_question_for_user(question).should_not include old 
+        end
+        if @conclusion_statuses[:user_question_conclusions][:includes_new]
+          context_node.user.conclusions.reload.by_question_for_user(question).should include new
+        else
+          context_node.user.conclusions.reload.by_question_for_user(question).should_not include new
+        end
       end
     end
     it "should ensure the correct changes are made to question_conclusions" do
-      old = context_node.global_node
-      new_cn = context_node.update_title new_text
-      new = new_cn.global_node
-      if @conclusion_statuses[:question_conclusions][:includes_old]
-        context_node.question.concluding_nodes.should include old 
-      else
-        context_node.question.concluding_nodes.should_not include old 
-      end
-      if @conclusion_statuses[:question_conclusions][:includes_new]
-        context_node.question.reload.concluding_nodes.should include new
-      else
-        context_node.question.reload.concluding_nodes.should_not include new
+      if @conclusion_statuses
+        old = context_node.global_node
+        new_cn = context_node.update_title new_text
+        new = new_cn.global_node
+        if @conclusion_statuses[:question_conclusions][:includes_old]
+          context_node.question.concluding_nodes.should include old 
+        else
+          context_node.question.concluding_nodes.should_not include old 
+        end
+        if @conclusion_statuses[:question_conclusions][:includes_new]
+          context_node.question.reload.concluding_nodes.should include new
+        else
+          context_node.question.reload.concluding_nodes.should_not include new
+        end
       end
     end
   end

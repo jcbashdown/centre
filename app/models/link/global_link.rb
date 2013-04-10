@@ -31,3 +31,7 @@ class Link::GlobalLink < Link
   end
 
 end
+
+class Link::GlobalLink::NegativeGlobalLink < Link::GlobalLink;end
+class Link::GlobalLink::PositiveGlobalLink < Link::GlobalLink;end
+class Link::GlobalLink::NoLinkGlobalLink < Link::GlobalLink;end

@@ -91,3 +91,5 @@ class Link::UserLink < Link
   end
 
 end
+
+class Link::UserLink::NoLinkUserLink < Link::UserLink;end

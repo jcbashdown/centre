@@ -41,8 +41,6 @@ class Link::GroupLink < Link
   end
 end
 
-class Link::GroupLink::EquivalentGroupLink < Link::GroupLink;end
 class Link::GroupLink::NegativeGroupLink < Link::GroupLink;end
-class Link::GroupLink::PartOfGroupLink < Link::GroupLink;end
 class Link::GroupLink::PositiveGroupLink < Link::GroupLink;end
-class Link::GroupLink::RelatedGroupLink < Link::GroupLink;end
+class Link::GroupLink::NoLinkGroupLink < Link::GroupLink;end
