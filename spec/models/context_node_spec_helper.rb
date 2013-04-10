@@ -38,9 +38,9 @@ shared_examples_for 'a context_node correctly updating node text' do
         destroyed = []
         updated_minus_one = []
         links.each do |link|
-          if link.users_count == 2 && (to_be_related_links - [link]).count == to_be_related_links.count
+          if link.users_count == 1 && (to_be_related_links - [link]).count == to_be_related_links.count
             destroyed << link
-          elsif link.users_count > 2 && (to_be_related_links - [link]).count == to_be_related_links.count
+          elsif link.users_count > 1 && (to_be_related_links - [link]).count == to_be_related_links.count
             updated_minus_one << link
           end
         end
