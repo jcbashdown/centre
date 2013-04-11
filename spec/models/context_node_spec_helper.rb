@@ -3,7 +3,7 @@ shared_examples_for 'a context_node correctly updating node text' do
     it "should not cause a change in the link count for this user" do
       expect {
         context_node.update_title(new_text)
-      }.to change(user.user_links, :count).by 0
+      }.to change(context_node.user.user_links, :count).by 0
     end
     it "should not cause a change in the link count" do
       expect {
@@ -16,15 +16,16 @@ shared_examples_for 'a context_node correctly updating node text' do
         attributes_hash[:global_node_to_id] = link.global_node_to_id unless link.global_node_to_id == context_node.global_node_id
         attributes_hash[:global_node_from_id] = link.global_node_from_id unless link.global_node_from_id == context_node.global_node_id
         attributes_hash[:type] = link.type
+        attributes_hash[:user_id] = context_node.user_id
         old_attributes << attributes_hash
         old_attributes
       end
       new_context_node = context_node.update_title(new_text)
       old_attributes.each do |old_attribute_hash|
         if old_attribute_hash[:global_node_from_id]
-          Link::UserLink.where(old_attribute_hash.merge(user_id:user.id,global_node_to_id:new_context_node.global_node_id)).length.should == 1
+          Link::UserLink.where(old_attribute_hash.merge(global_node_to_id:new_context_node.global_node_id)).length.should == 1
         else
-          Link::UserLink.where(old_attribute_hash.merge(user_id:user.id,global_node_from_id:new_context_node.global_node_id)).length.should == 1
+          Link::UserLink.where(old_attribute_hash.merge(global_node_from_id:new_context_node.global_node_id)).length.should == 1
         end
       end
     end
@@ -46,7 +47,6 @@ shared_examples_for 'a context_node correctly updating node text' do
             end
           end
         end
-        to_be_related_links
         context_node.update_title(new_text)
         to_be_related_links.each do |link|
           (link.users_count + 1).should == link.reload.users_count
@@ -70,7 +70,7 @@ shared_examples_for 'a context_node correctly updating node text' do
         other_nodes +=Link::UserLink.where("global_node_to_id = ?", changing_node_id).map(&:global_node_from_id)
         global_links = []
         group_links = []
-        user_group_ids = user.groups.map(&:id)
+        user_group_ids = context_node.user.groups.map(&:id)
         if existing_node
           other_nodes.each do |node|
             if (global_links += Link::GlobalLink.where("(global_node_from_id = ? && global_node_to_id = ?) || (global_node_from_id = ? && global_node_to_id = ?)", existing_node.id, other_node.id, other_node.id, existing_node.id)).any?
@@ -134,7 +134,7 @@ shared_examples_for 'a context_node correctly updating node text' do
     it "should not change the number of of the correct context nodes" do
       expect {
         context_node.update_title(new_text)
-      }.to change(ContextNode.where(user_id:user.id), :count).by 0
+      }.to change(ContextNode.where(user_id:context_node.user_id), :count).by 0
     end
     it "should remove the number of old titled context nodes" do
       old_count = ContextNode.where(user_id: context_node.user_id, global_node_id:context_node.global_node_id).count

@@ -76,6 +76,7 @@ class ContextNode < ActiveRecord::Base
 
   def global_links
     Link::GlobalLink
+      .where(:id => self.user.global_links.map(&:id))
       .where(in_link_sql, self.global_node_id, self.global_node_id)
   end
 
