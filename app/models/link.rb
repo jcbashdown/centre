@@ -13,6 +13,12 @@ class Link < ActiveRecord::Base
     def negative
       where("type LIKE '%Negative%'")
     end
+
+    [:user_link, :global_link, :group_link].each do |link_type|
+      define_method link_type do
+        "Link::#{link_type.to_s.classify}".constantize
+      end
+    end
   end
 
   def positive?
