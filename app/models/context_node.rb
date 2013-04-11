@@ -71,13 +71,18 @@ class ContextNode < ActiveRecord::Base
   end
 
   def group_links
-    self.user.groups.inject([]) {|links, group| links+=group.group_links.where(in_link_sql, self.global_node_id, self.global_node_id); links}
+    self.user.groups.inject([]) do |links, group| 
+      links+= group.group_links
+        .where(in_link_sql, self.global_node_id, self.global_node_id)
+        .where(:global_link_id => self.user_links.map(&:global_link_id))
+      links
+    end
   end
 
   def global_links
     Link::GlobalLink
-      .where(:id => self.user.global_links.map(&:id))
       .where(in_link_sql, self.global_node_id, self.global_node_id)
+      .where(:global_link_id => self.user_links.map(&:global_link_id))
   end
 
   def set_conclusion! value
