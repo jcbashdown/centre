@@ -20,7 +20,7 @@ describe ContextNode do
       before(:all){link_map}
       after(:all){Link.delete_all;Question.delete_all;User.delete_all;Group.delete_all;Node.delete_all}
 
-      [:global, :group].each do |link_type|
+      [:group].each do |link_type|
         it "should ensure the correct #{link_type}_links have been destroyed and the correct #{link_type}_links have been updated" do
           links = context_node.send(:"#{link_type}_links")
           to_be_related_links = send(:"to_be_related_links_#{link_type}")
@@ -28,9 +28,15 @@ describe ContextNode do
           updated_minus_one = []
           links.each do |link|
             if (to_be_related_links - [link]).count == to_be_related_links.count#if the link isn't one of the links we're finding/creating and relating
-              if link.users_count == 1
+              if link.reload.users_count == 1
+                #binding.pry
+                p "adding"
+                p link.users_count
+                p link.user_links.count
+                p "id"
+                p link.id
                 destroyed << link
-              elsif link.users_count > 1
+              elsif link.reload.users_count > 1
                 updated_minus_one << link
               end
             end
@@ -46,6 +52,13 @@ describe ContextNode do
             #recreating with same id?
             params = {global_node_from_id: link.global_node_from_id, global_node_to_id: link.global_node_to_id}
             params.merge!(group_id: link.group_id) if link_type == :group
+            #link_count = Link.send(:"#{link_type}_link").where(params).count
+            #binding.pry if link_count != 0
+                p "testing"
+                p link.users_count
+                p link.user_links.count
+                p "id"
+                p link.id
             Link.send(:"#{link_type}_link").where(params).count.should == 0
           end
         end
