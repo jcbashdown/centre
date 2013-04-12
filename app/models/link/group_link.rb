@@ -13,19 +13,21 @@ class Link::GroupLink < Link
   def correct_context_attributes(context_attributes = [:user_id]);super;end
   validates :group_id, :presence => true
 
-  after_save :update_active_for_group_link#, :destroy_if_necessary
+  after_save :update_active_for_group_link
   after_create :update_users_count
 
   def update_users_count
-    self.update_attribute(:users_count, self.user_links.reload.count)
+    if (users_count = self.user_links.reload.count) > 0
+      self.update_attribute(:users_count, users_count)
+    else
+      self.destroy if self.persisted?
+    end
   end
 
   def update_active_for_group_link
-    self.class.update_active(self.global_node_from_id, self.global_node_to_id, self.group_id)
-  end
-
-  def destroy_if_necessary
-    #self.destroy if self.users_count == 0
+    if self.persisted?
+      self.class.update_active(self.global_node_from_id, self.global_node_to_id, self.group_id)
+    end
   end
 
   class << self
