@@ -63,8 +63,8 @@ describe ContextNode do
                                        :question_count => 5,
                                        :user_count => 5,
                                        :group_count => 5,
-                                       :node_count => 10,
-                                       :link_count_per_node => 15
+                                       :node_count => 20,
+                                       :link_count_per_node => 20
                                       }, true)}
       let(:context_node) {link_map.nodes.last}
       before(:all){link_map}

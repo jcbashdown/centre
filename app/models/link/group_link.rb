@@ -14,7 +14,11 @@ class Link::GroupLink < Link
   validates :group_id, :presence => true
 
   after_save :update_active_for_group_link
-  after_create :update_users_count
+  after_create :initialize_users_count
+
+  def initialize_users_count
+    self.update_attribute(:users_count, self.user_links.reload.count)
+  end
 
   def update_users_count
     if (users_count = self.user_links.reload.count) > 0

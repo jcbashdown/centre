@@ -19,8 +19,11 @@ describe ContextNode do
       let(:to_be_related_links_group) {Link::GroupLink.where(:group_id => context_node.user.groups.map(&:id)).where('global_node_from_id = ? || global_node_to_id = ?', existing.try(:id), existing.try(:id))}
       before(:all){link_map}
       after(:all){Link.delete_all;Question.delete_all;User.delete_all;Group.delete_all;Node.delete_all}
-
-      it_should_behave_like "a context_node correctly updating node text"
+      it "should be quicker" do
+        start = Time.now
+        context_node.update_title new_text
+        p Time.now - start
+      end
     end
   end
 end
