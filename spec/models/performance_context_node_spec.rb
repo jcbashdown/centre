@@ -15,9 +15,13 @@ describe ContextNode do
                                       }, true)}
       let(:context_node) {ContextNode.find(link_map.nodes.last)}
       before {p "before";link_map; p "after"}
-      3.times do
+      5.times do
         it "should be quicker" do
           start = Time.now
+          p Link::UserLink.count
+          p Link::UserLink.where(user_id:context_node.user_id).count
+          p ContextNode.count
+          p ContextNode.where(user_id:context_node.user_id).count
           context_node.update_title new_text
           p Time.now - start
         end
