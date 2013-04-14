@@ -10,16 +10,18 @@ describe ContextNode do
                                        :question_count => 5,
                                        :user_count => 5,
                                        :group_count => 5,
-                                       :node_count => 300,
-                                       :link_count_per_node => 500
+                                       :node_count => 25,
+                                       :link_count_per_node => 25
                                       }, true)}
-      let(:context_node) {link_map.nodes.last}
-      #before {link_map}
-      #it "should be quicker" do
-      #  start = Time.now
-      #  context_node.update_title new_text
-      #  p Time.now - start
-      #end
+      let(:context_node) {ContextNode.find(link_map.nodes.last)}
+      before {p "before";link_map; p "after"}
+      3.times do
+        it "should be quicker" do
+          start = Time.now
+          context_node.update_title new_text
+          p Time.now - start
+        end
+      end
     end
   end
 end
