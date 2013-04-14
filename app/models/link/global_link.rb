@@ -3,31 +3,27 @@ class Link::GlobalLink < Link
 
   belongs_to :global_node_from, :foreign_key => :global_node_from_id, :class_name => Node::GlobalNode
   belongs_to :global_node_to, :foreign_key => :global_node_to_id, :class_name => Node::GlobalNode
+  has_many :user_links
 
   include Validators
   validate :correct_context_attributes
   def correct_context_attributes(context_attributes = [:user_id, :group_id]);super;end
-
+  after_create :initialize_users_count
 
   def global_link
     self
   end
 
-  class << self
-    def update_active(n_from, n_to)
-      unless (current_active = active(n_from, n_to)) == (by_votes = active_by_votes(n_from, n_to))
-        current_active.update_attributes(:active => false) if current_active
-        by_votes.update_attributes(:active => true)
-      end
-    end
+  def initialize_users_count
+    self.update_attribute(:users_count, self.user_links.reload.count)
+  end
 
-    def active_by_votes(n_from, n_to)
-      where(:global_node_from_id => n_from, :global_node_to_id => n_to).order(:users_count).last
+  def update_users_count
+    if (users_count = self.reload.user_links.count) > 0
+      self.update_attribute(:users_count, users_count)
+    else
+      self.destroy if self.persisted?
     end
-    def active(n_from, n_to)
-      where(:global_node_from_id => n_from, :global_node_to_id => n_to, :active => true).last
-    end
-
   end
 
 end

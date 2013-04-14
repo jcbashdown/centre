@@ -66,7 +66,7 @@ describe ContextNode do
                                        :node_count => 20,
                                        :link_count_per_node => 20
                                       }, true)}
-      let(:context_node) {link_map.nodes.last}
+      let(:context_node) {ContextNode.find(link_map.nodes.last)}
       before {link_map}
       it_should_behave_like "a context_node correctly updating node text"
     end

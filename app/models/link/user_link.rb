@@ -9,7 +9,7 @@ class Link::UserLink < Link
   attr_accessor :question
   attr_accessor :context_node_from_title
 
-  belongs_to :global_link, :counter_cache => :users_count
+  belongs_to :global_link
   [:positive, :negative].each do |type|
     belongs_to :"#{type}_global_link", :class_name => "Link::GlobalLink::#{type.capitalize}GlobalLink".constantize, :foreign_key => :global_link_id
   end
@@ -44,8 +44,8 @@ class Link::UserLink < Link
     attributes.merge({:question_id => question_id})
   end
 
-  after_save :update_group_link_users_count, :update_active_links
-  after_destroy :update_group_link_users_count, :delete_appropriate_links, :update_active_links
+  after_save :update_group_links_users_count, :update_global_link_users_count
+  after_destroy :update_group_links_users_count, :update_global_link_users_count
 
   def link_kind
     self.type.gsub(/Link::UserLink::|UserLink/, "")
@@ -62,10 +62,14 @@ class Link::UserLink < Link
     })
   end
 
-  def update_group_link_users_count
+  def update_group_links_users_count
     self.group_links.reload.each do |gl|
       gl.update_users_count
     end
+  end
+
+  def update_global_link_users_count
+    global_link.update_users_count
   end
 
   def question
@@ -82,12 +86,6 @@ class Link::UserLink < Link
 
   def user_link_id
     self.id
-  end
-
-  protected
-
-  def update_active_links
-    Link::GlobalLink.update_active(self.global_node_from_id, self.global_node_to_id)
   end
 
 end

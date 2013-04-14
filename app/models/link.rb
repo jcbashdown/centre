@@ -5,6 +5,14 @@ class Link < ActiveRecord::Base
     def opposite_direction(direction)
       HashWithIndifferentAccess.new({"to" => "from", "from" => "to"})[direction]
     end
+
+    def active
+      order("users_count desc").limit(1)[0]
+    end
+
+    def active_for params
+      where(params).active
+    end
     
     def positive
       where("type LIKE '%Positive%'")

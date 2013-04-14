@@ -13,7 +13,6 @@ class Link::GroupLink < Link
   def correct_context_attributes(context_attributes = [:user_id]);super;end
   validates :group_id, :presence => true
 
-  after_save :update_active_for_group_link
   after_create :initialize_users_count
 
   def initialize_users_count
@@ -28,27 +27,6 @@ class Link::GroupLink < Link
     end
   end
 
-  def update_active_for_group_link
-    if self.persisted?
-      self.class.update_active(self.global_node_from_id, self.global_node_to_id, self.group_id)
-    end
-  end
-
-  class << self
-    def update_active(gn_from, gn_to, group)
-      unless (current_active = active(gn_from, gn_to, group)) == (by_votes = active_by_votes(gn_from, gn_to, group))
-        current_active.update_attributes(:active => false) if current_active
-        by_votes.update_attributes(:active => true)
-      end
-    end
-  
-    def active_by_votes(gn_from, gn_to, group)
-      where(:global_node_from_id => gn_from, :global_node_to_id => gn_to, :group_id => group).order(:users_count).last
-    end
-    def active(gn_from, gn_to, group)
-      where(:global_node_from_id => gn_from, :global_node_to_id => gn_to, :active => true, :group_id => group).last
-    end
-  end
 end
 
 class Link::GroupLink::NegativeGroupLink < Link::GroupLink;end

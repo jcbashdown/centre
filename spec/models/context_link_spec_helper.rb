@@ -20,7 +20,7 @@ shared_examples_for 'a context link creating links' do |type|
   end
   it 'should create the ql with the correct activation' do
     context_link = "Link::UserLink::#{type}UserLink".constantize.create(@params)
-    Link::GroupLink.where(:group_id => @group.id, :global_link_id => context_link.global_link_id)[0].active.should == @state_hash[:group_link][:activation]
+    Link::GroupLink.where(:group_id => @group.id, :global_link_id => context_link.global_link_id)[0].should == Link::GroupLink.active_for({:group_id => @group.id, :global_node_from_id => context_link.global_node_from_id, :global_node_to_id => context_link.global_node_to_id}) if @state_hash[:group_link][:activation]
   end
   it 'should create the correct number of uls' do
     expect {
@@ -52,7 +52,7 @@ shared_examples_for 'a context link creating links' do |type|
   end
   it 'should create the gl with the correct activation' do
     context_link = "Link::UserLink::#{type}UserLink".constantize.create(@params)
-    context_link.global_link.reload.active.should == @state_hash[:global_link][:activation]
+    context_link.global_link.should == Link::GlobalLink.active_for({global_node_from_id: context_link.global_node_from_id, global_node_to_id: context_link.global_node_to_id}) if @state_hash[:global_link][:activation]
   end
   it 'should create the correct number of context nodes' do
     ContextNode.should_receive(:create!).exactly(@state_hash[:context_node][:find_or_create_calls]).times.and_return @gnu1
@@ -98,7 +98,7 @@ shared_examples_for 'a @context_link deleting links' do |type|
   end
   it 'should destroy the ql with the correct activation' do
     @context_link.destroy
-    "Link::GroupLink::#{type}GroupLink".constantize.where(@grl_attrs)[0].try(:active).should == @state_hash[:group_link][:activation]
+    "Link::GroupLink::#{type}GroupLink".constantize.where(@grl_attrs)[0].should == Link::GroupLink.active_for({global_node_from_id: @context_link.global_node_from_id, global_node_to_id: @context_link.global_node_to_id, group_id: @group.id}) if @state_hash[:group_link][:activation]
   end
   it 'should destroy the correct number of uls' do
     expect {
@@ -113,10 +113,6 @@ shared_examples_for 'a @context_link deleting links' do |type|
   it 'should destroy the ul with the correct counts' do
     @context_link.destroy
     "Link::UserLink::#{type}UserLink".constantize.where(@ul_attrs)[0].try(:users_count).should == @state_hash[:user_link][:users_count]
-  end
-  it 'should destroy the ul with the correct activation' do
-    @context_link.destroy
-    "Link::UserLink::#{type}UserLink".constantize.where(@ul_attrs)[0].try(:active).should == @state_hash[:user_link][:activation]
   end
   it 'should destroy the correct number of gls' do
     expect {
@@ -134,7 +130,7 @@ shared_examples_for 'a @context_link deleting links' do |type|
   end
   it 'should destroy the gl with the correct activation' do
     @context_link.destroy
-    "Link::GlobalLink::#{type}GlobalLink".constantize.where(@gl_attrs)[0].try(:active).should == @state_hash[:global_link][:activation]
+    "Link::GlobalLink::#{type}GlobalLink".constantize.where(@gl_attrs)[0].should == Link::GlobalLink.active_for(@gl_attrs) if @state_hash[:global_link][:activation]
   end
   it 'should have the correct votes on the gns' do
     @context_link.destroy
@@ -172,7 +168,7 @@ shared_examples_for 'a @context_link updating links' do |new_type, old_type|
   end
   it 'should destroy the old gl with the correct activation' do
     @context_link = @context_link.update_type(new_type, @question)
-    "Link::GroupLink::#{old_type}GroupLink".constantize.where(grl_attrs)[0].try(:active).should == @state_hash[:old_group_link][:activation]
+    "Link::GroupLink::#{old_type}GroupLink".constantize.where(grl_attrs).should == Link::GroupLink.active_for({global_node_from_id: @context_link.global_node_from_id, global_node_to_id: @context_link.global_node_to_id, group_id: @group.try(:id)}) if @state_hash[:old_group_link][:activation]
   end
   it 'should create the new gl with the correct counts' do
     @context_link = @context_link.update_type(new_type, @question)
@@ -180,7 +176,7 @@ shared_examples_for 'a @context_link updating links' do |new_type, old_type|
   end
   it 'should create the new gl with the correct activation' do
     @context_link = @context_link.update_type(new_type, @question)
-    "Link::GroupLink::#{new_type}GroupLink".constantize.where(grl_attrs)[0].try(:active).should == @state_hash[:new_group_link][:activation]
+    "Link::GroupLink::#{new_type}GroupLink".constantize.where(grl_attrs)[0].should == Link::GroupLink.active_for({global_node_from_id: @context_link.global_node_from_id, global_node_to_id: @context_link.global_node_to_id, group_id: @group.try(:id)}) if @state_hash[:new_group_link][:activation]
   end
   it 'should update the correct number of uls' do
     @context_link = @context_link.update_type(new_type, @question)
@@ -216,7 +212,7 @@ shared_examples_for 'a @context_link updating links' do |new_type, old_type|
   end
   it 'should destroy the old gl with the correct activation' do
     @context_link = @context_link.update_type(new_type, @question)
-    "Link::GlobalLink::#{old_type}GlobalLink".constantize.where(gl_attrs)[0].try(:active).should == @state_hash[:old_global_link][:activation]
+    "Link::GlobalLink::#{old_type}GlobalLink".constantize.where(gl_attrs)[0].should == Link::GlobalLink.active_for(gl_attrs) if @state_hash[:old_global_link][:activation]
   end
   it 'should create the new gl with the correct counts' do
     @context_link = @context_link.update_type(new_type, @question)
@@ -224,7 +220,7 @@ shared_examples_for 'a @context_link updating links' do |new_type, old_type|
   end
   it 'should create the new gl with the correct activation' do
     @context_link = @context_link.update_type(new_type, @question)
-    "Link::GlobalLink::#{new_type}GlobalLink".constantize.where(gl_attrs)[0].try(:active).should == @state_hash[:new_global_link][:activation]
+    "Link::GlobalLink::#{new_type}GlobalLink".constantize.where(gl_attrs)[0].should == Link::GlobalLink.active_for(gl_attrs) if @state_hash[:new_global_link][:activation]
   end
   it 'should have the correct votes on the gns' do
     @state_hash[:old_global_node_to].each do |key, value|
