@@ -44,7 +44,7 @@ class ContextNode < ActiveRecord::Base
 #  end
 
   after_save :update_caches, :update_conclusions
-  after_destroy :delete_appropriate_nodes, :update_caches, :update_conclusions
+  after_destroy :update_caches, :delete_appropriate_nodes, :update_conclusions
 
   def update_caches
     self.global_node.save! if self.global_node.try(:persisted?)
