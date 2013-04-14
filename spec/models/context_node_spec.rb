@@ -67,8 +67,7 @@ describe ContextNode do
                                        :link_count_per_node => 20
                                       }, true)}
       let(:context_node) {link_map.nodes.last}
-      before(:all){link_map}
-      after(:all){Link.delete_all;Question.delete_all;User.delete_all;Group.delete_all;Node.delete_all}
+      before {link_map}
       it_should_behave_like "a context_node correctly updating node text"
     end
   end

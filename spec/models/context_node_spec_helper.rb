@@ -56,7 +56,7 @@ shared_examples_for 'a context_node correctly updating node text' do
         end
         destroyed.each do |link|
           #recreating with same id?
-          params = {global_node_from_id: link.global_node_from_id, global_node_to_id: link.global_node_to_id}
+          params = {global_node_from_id: link.global_node_from_id, global_node_to_id: link.global_node_to_id, type: link.type}
           params.merge!(group_id: link.group_id) if link_type == :group
           Link.send(:"#{link_type}_link").where(params).count.should == 0
         end
