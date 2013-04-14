@@ -109,7 +109,7 @@ shared_examples_for 'a context_node correctly updating node text' do
         (existing_node.users_count + 1) == changed_context_node.global_node.reload.users_count
         changed_context_node.global_node.should == existing_node
       else
-        if context_node.global_node.reload.users_count > 1
+        if context_node.global_node.reload.users_count > ContextNode.where(user_id: context_node.user_id, global_node_id: context_node.global_node_id).count
           changed_context_node = nil
           expect {
             changed_context_node = context_node.update_title(new_text)
