@@ -1,5 +1,7 @@
 require "#{Rails.root}/lib/validators.rb"
 class Link::GroupLink < Link
+  default_scope where(:active => true)
+
   belongs_to :global_link
   belongs_to :group
   has_many :user_groups, :foreign_key => :group_id, :primary_key => :group_id
@@ -7,7 +9,7 @@ class Link::GroupLink < Link
   belongs_to :global_node_from, :foreign_key => :global_node_from_id, :class_name => Node::GlobalNode
   belongs_to :global_node_to, :foreign_key => :global_node_to_id, :class_name => Node::GlobalNode
 
-  #validates :group_id, :uniqueness => {:scope => [:global_link_id]}
+  validates :group_id, :uniqueness => {:scope => [:global_link_id]}
   include Validators
   validate :correct_context_attributes
   def correct_context_attributes(context_attributes = [:user_id]);super;end
@@ -17,6 +19,7 @@ class Link::GroupLink < Link
 
   def initialize_users_count
     self.update_attribute(:users_count, self.user_links.reload.count)
+    ensure_correct_active
   end
 
   def update_users_count
@@ -25,6 +28,7 @@ class Link::GroupLink < Link
     else
       self.destroy if self.persisted?
     end
+    ensure_correct_active
   end
 
 end

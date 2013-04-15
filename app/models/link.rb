@@ -29,6 +29,15 @@ class Link < ActiveRecord::Base
     end
   end
 
+  def ensure_correct_active
+    active_by_votes = self.class.active_for(self.global_node_attrs)
+    current_active = self.class.where({active:true}.merge(self.global_node_attrs)).limit(1)[0]
+    unless active_by_votes == current_active
+      active_by_votes.update_attribute(:active, true)
+      current_active.update_attribute(:active, false)
+    end
+  end
+
   def positive?
     self.type.to_s =~ /Positive/
   end
@@ -36,4 +45,7 @@ class Link < ActiveRecord::Base
     self.type.to_s =~ /Negative/
   end
 
+  def global_node_attrs
+    {global_node_to_id: self.global_node_to_id, global_node_from_id: self.global_node_from_id}
+  end
 end

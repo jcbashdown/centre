@@ -1,7 +1,6 @@
 require 'spec_helper'
 require 'random_link_map'
 require 'models/context_node_spec_helper'
-#remove active, just find active as needed and keep counts, set counts on create, update on user link save (include destroy)
 describe ContextNode do
   describe ".update_text" do
     let(:new_text) {'Some revised title'}
