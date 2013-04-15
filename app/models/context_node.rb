@@ -26,6 +26,24 @@ class ContextNode < ActiveRecord::Base
 
   validates :title, :uniqueness => {:scope => [:question_id, :user_id]}
 
+  #around_update :create_nodes_if_needed
+  after_save :update_caches, :update_conclusions
+  after_destroy :update_caches, :delete_appropriate_nodes, :update_conclusions
+
+# dead end, need to go back to user_node to do these updates? should only need one update which cascades to global nodes, conclusions, links etc. 
+#  def create_nodes_if_needed
+#    ActiveRecord::Base.transaction do
+#      if self.title_changed?
+#        binding.pry
+#        create_appropriate_nodes
+#        yield
+#        Node::GlobalNode.find_by_id(self.global_node_id_was).try(:save)
+#      else
+#        yield
+#      end
+#    end
+#  end
+
   class << self
     [:create, :create!].each do |method|
       define_method method do |attributes = {}|
@@ -39,12 +57,6 @@ class ContextNode < ActiveRecord::Base
       end
     end
   end
-#  before_validation(:on => :create) do
-#    create_appropriate_nodes
-#  end
-
-  after_save :update_caches, :update_conclusions
-  after_destroy :update_caches, :delete_appropriate_nodes, :update_conclusions
 
   def update_caches
     self.global_node.save! if self.global_node.try(:persisted?)
