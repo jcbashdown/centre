@@ -1,4 +1,4 @@
-class Node::UserNode < ActiveRecord::Base
+class Node::UserNode < Node
   attr_accessor :question_id 
   attr_accessor :question
 

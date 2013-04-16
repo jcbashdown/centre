@@ -217,7 +217,7 @@ end
 shared_examples_for 'context node creating nodes' do
   before do
     @state_hash = @node_state_hash
-    @perform ||= 'ContextNode.create(@params)'
+    @perform ||= 'Node::UserNode.create(@params)'
   end
   it 'should create the correct number of global_nodes' do
     expect {
@@ -231,7 +231,7 @@ shared_examples_for 'context node creating nodes' do
   end
   it 'should create the correct global node with the correct users count' do
     cn = eval(@perform)
-    cn = (cn.is_a?(ContextNode) ? cn : ContextNode.where(:user_id=>cn.user_id, :question_id=>cn.question_id, :title => cn.global_node_from.title)[0])
+    cn = (cn.is_a?(ContextNode) || cn.is_a?(Node::UserNode) ? cn : ContextNode.where(:user_id=>cn.user_id, :question_id=>cn.question_id, :title => cn.global_node_from.title)[0])
     gn = Node::GlobalNode.where(:title => 'Title', :users_count => @state_hash[:global_node][:users_count])
     gn.count.should == 1
     gn[0].id.should == cn.global_node_id
