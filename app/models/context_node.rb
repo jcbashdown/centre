@@ -128,10 +128,6 @@ class ContextNode < ActiveRecord::Base
     the_new_one
   end
 
-  def question?
-    question_id.present?
-  end
-
   class << self
     def with_all_associations
       ContextNode.includes(:node_title, :global_node)

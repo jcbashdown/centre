@@ -3,6 +3,12 @@ class Node::GlobalNode < Node
   has_many :user_question_conclusions, :foreign_key => :global_node_id
   has_many :question_conclusions, :foreign_key => :global_node_id
 
+  before_save :set_caches
+
+  def set_caches
+    self.users_count = ContextNode.count( :conditions => ["#{self.type.gsub("Node::", "").underscore}_id = ?", self.id] )
+  end
+
   scope :by_question_for_group, lambda {|question|
     unless question.nil?
       joins(:group_question_conclusions).
