@@ -30,7 +30,7 @@ describe ContextNode do
                                                           }
                                }
       end
-      it_should_behave_like "a context_node correctly updating node text"
+      #it_should_behave_like "a context_node correctly updating node text"
     end
     context "when there is a context node in two links" do
       let(:context_node) {ContextNode.create(:user=>user, :question=>question, :title => 'Title', :is_conclusion => original_conclusion_status)}
@@ -56,7 +56,7 @@ describe ContextNode do
                                                           }
                                }
       end
-      it_should_behave_like "a context_node correctly updating node text"
+      #it_should_behave_like "a context_node correctly updating node text"
     end
     context "when there are many many links and nodes and such" do
       let(:link_map) {RandomLinkMap.new( {
@@ -67,8 +67,8 @@ describe ContextNode do
                                        :link_count_per_node => 20
                                       }, true)}
       let(:context_node) {ContextNode.find(link_map.nodes.last)}
-      before {link_map}
-      it_should_behave_like "a context_node correctly updating node text"
+      #before {link_map}
+      #it_should_behave_like "a context_node correctly updating node text"
     end
   end
 

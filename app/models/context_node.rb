@@ -1,7 +1,3 @@
-require "#{Rails.root}/lib/node_creation_module.rb"
-require "#{Rails.root}/lib/node_deletion_module.rb"
-require "#{Rails.root}/lib/activerecord_import_methods.rb"
-
 class ContextNode < ActiveRecord::Base
   searchable do
     text :title
@@ -11,45 +7,27 @@ class ContextNode < ActiveRecord::Base
     integer :user_id
     boolean :is_conclusion
   end
-  include ActiverecordImportMethods
-  include NodeDeletionModule
-  include NodeCreationModule
   belongs_to :node_title
-  belongs_to :global_node, :class_name => Node::GlobalNode
+  belongs_to :user_node, :class_name => Node::UserNode
+  has_one :global_node, :through => :user_node
   belongs_to :user
   belongs_to :question
   belongs_to :group
 
   validates_presence_of :title
-  validates_presence_of :global_node
+  validates_presence_of :user_node
   validates_presence_of :user
 
   validates :title, :uniqueness => {:scope => [:question_id, :user_id]}
 
-  #around_update :create_nodes_if_needed
-  after_save :update_caches, :update_conclusions
-  after_destroy :update_caches, :delete_appropriate_nodes, :update_conclusions
-
-# dead end, need to go back to user_node to do these updates? should only need one update which cascades to global nodes, conclusions, links etc. 
-#  def create_nodes_if_needed
-#    ActiveRecord::Base.transaction do
-#      if self.title_changed?
-#        binding.pry
-#        create_appropriate_nodes
-#        yield
-#        Node::GlobalNode.find_by_id(self.global_node_id_was).try(:save)
-#      else
-#        yield
-#      end
-#    end
-#  end
+  after_save :update_conclusions
+  after_destroy :update_conclusions
 
   class << self
     [:create, :create!].each do |method|
       define_method method do |attributes = {}|
         ActiveRecord::Base.transaction do
           new_context_node = self.new(attributes)
-          new_context_node.create_appropriate_nodes
           new_context_node.save if method == :create
           new_context_node.save! if method == :create!
           new_context_node
@@ -58,8 +36,8 @@ class ContextNode < ActiveRecord::Base
     end
   end
 
-  def update_caches
-    self.global_node.save! if self.global_node.try(:persisted?)
+  def global_node_id
+    self.user_node.global_node_id
   end
 
   def update_conclusions
@@ -69,7 +47,7 @@ class ContextNode < ActiveRecord::Base
   end
 
   def context
-    HashWithIndifferentAccess.new({:question_id => self.question_id, :group_ids => self.user.groups.map(&:id), :user_id => self.user_id, :global_node_id => self.global_node_id})
+    HashWithIndifferentAccess.new({:question_id => self.question_id, :group_ids => self.user.groups.map(&:id), :user_id => self.user_id, :user_node => {:global_node_id => global_node_id}})
   end
 
   def in_link_sql
@@ -129,10 +107,6 @@ class ContextNode < ActiveRecord::Base
   end
 
   class << self
-    def with_all_associations
-      ContextNode.includes(:node_title, :global_node)
-    end
-    
     def find_by_context conditions
       conditions[:user_ids] = Group.user_ids_for(conditions[:group_id]) if !conditions[:user_ids] && conditions[:group_id]
       #.results could be .hits if don't need to get from db (just get from solr index)

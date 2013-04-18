@@ -17,7 +17,7 @@ module Conclusion
   end
 
   def search_context
-    HashWithIndifferentAccess.new create_context
+    HashWithIndifferentAccess.new create_context.merge(:user_nodes => @context[:user_node])
   end
 
   def create_context
@@ -40,7 +40,7 @@ module Conclusion
   end
 
   def vote_count conclusion_status
-    ContextNode.where(search_context.merge({:is_conclusion => conclusion_status})).count
+    ContextNode.joins(:user_node).includes(:user_node).where(search_context.merge({:is_conclusion => conclusion_status})).count
   end
 
   def create_conclusion_unless_exists create_context

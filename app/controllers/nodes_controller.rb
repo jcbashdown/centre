@@ -49,7 +49,7 @@ class NodesController < ApplicationController
   end
 
   def destroy
-    context_node = ContextNode.with_all_associations.where(:user_id => current_user.id, :global_node_id => @node.id, :question_id => @node_question.try(:id))[0]
+    context_node = ContextNode.where(:user_id => current_user.id, :global_node_id => @node.id, :question_id => @node_question.try(:id))[0]
     if context_node.destroy
       respond_to do |format|
         format.html { redirect_to nodes_path }

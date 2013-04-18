@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130303140342) do
+ActiveRecord::Schema.define(:version => 20130303140344) do
 
   create_table "context_links", :force => true do |t|
     t.integer  "question_id"
@@ -34,6 +34,7 @@ ActiveRecord::Schema.define(:version => 20130303140342) do
     t.integer  "group_link_id"
     t.integer  "group_node_from_id"
     t.integer  "group_node_to_id"
+    t.integer  "user_node_id"
   end
 
   add_index "context_links", ["global_link_id"], :name => "index_context_links_on_global_link_id"
@@ -45,12 +46,12 @@ ActiveRecord::Schema.define(:version => 20130303140342) do
   add_index "context_links", ["type"], :name => "index_context_links_on_type"
   add_index "context_links", ["user_id"], :name => "index_context_links_on_user_id"
   add_index "context_links", ["user_link_id"], :name => "index_context_links_on_user_link_id"
+  add_index "context_links", ["user_node_id"], :name => "index_context_links_on_user_node_id"
 
   create_table "context_nodes", :force => true do |t|
     t.integer  "question_id"
     t.integer  "user_id"
     t.text     "title"
-    t.integer  "global_node_id"
     t.integer  "user_node_id"
     t.integer  "question_node_id"
     t.integer  "private_global_node_id"
@@ -67,7 +68,6 @@ ActiveRecord::Schema.define(:version => 20130303140342) do
     t.integer  "group_node_id"
   end
 
-  add_index "context_nodes", ["global_node_id"], :name => "index_context_nodes_on_global_node_id"
   add_index "context_nodes", ["group_id"], :name => "index_context_nodes_on_group_id"
   add_index "context_nodes", ["group_node_id"], :name => "index_context_nodes_on_group_node_id"
   add_index "context_nodes", ["node_title_id"], :name => "index_context_nodes_on_node_title_id"
@@ -94,6 +94,8 @@ ActiveRecord::Schema.define(:version => 20130303140342) do
   create_table "links", :force => true do |t|
     t.integer  "user_id"
     t.integer  "global_link_id"
+    t.integer  "node_from_id"
+    t.integer  "node_to_id"
     t.integer  "global_node_from_id"
     t.integer  "global_node_to_id"
     t.integer  "users_count",         :default => 0,     :null => false
@@ -110,6 +112,8 @@ ActiveRecord::Schema.define(:version => 20130303140342) do
   add_index "links", ["global_node_from_id"], :name => "index_links_on_global_node_from_id"
   add_index "links", ["global_node_to_id"], :name => "index_links_on_global_node_to_id"
   add_index "links", ["group_id"], :name => "index_links_on_group_id"
+  add_index "links", ["node_from_id"], :name => "index_links_on_node_from_id"
+  add_index "links", ["node_to_id"], :name => "index_links_on_node_to_id"
   add_index "links", ["type"], :name => "index_links_on_type"
   add_index "links", ["user_id"], :name => "index_links_on_user_id"
 
@@ -173,6 +177,28 @@ ActiveRecord::Schema.define(:version => 20130303140342) do
     t.datetime "created_at", :null => false
     t.datetime "updated_at", :null => false
   end
+
+  create_table "user_nodes", :force => true do |t|
+    t.integer  "global_node_id"
+    t.integer  "user_id"
+    t.text     "title"
+    t.integer  "equivalents_count",      :default => 0,     :null => false
+    t.integer  "upvotes_count",          :default => 0,     :null => false
+    t.integer  "downvotes_count",        :default => 0,     :null => false
+    t.integer  "related_votes_count",    :default => 0,     :null => false
+    t.integer  "part_of_votes_count",    :default => 0,     :null => false
+    t.integer  "conclusion_votes_count", :default => 0,     :null => false
+    t.boolean  "is_conclusion",          :default => false
+    t.float    "page_rank",              :default => 0.0
+    t.integer  "users_count",            :default => 0,     :null => false
+    t.boolean  "private",                :default => false
+    t.string   "type"
+    t.datetime "created_at",                                :null => false
+    t.datetime "updated_at",                                :null => false
+  end
+
+  add_index "user_nodes", ["type"], :name => "index_user_nodes_on_type"
+  add_index "user_nodes", ["user_id"], :name => "index_user_nodes_on_user_id"
 
   create_table "user_question_conclusions", :force => true do |t|
     t.integer  "user_id"

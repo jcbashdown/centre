@@ -6,7 +6,7 @@ class Node::GlobalNode < Node
   before_save :set_caches
 
   def set_caches
-    self.users_count = ContextNode.count( :conditions => ["#{self.type.gsub("Node::", "").underscore}_id = ?", self.id] )
+    self.users_count = Node::UserNode.count( :conditions => ["global_node_id = ?", self.id] )
   end
 
   scope :by_question_for_group, lambda {|question|
