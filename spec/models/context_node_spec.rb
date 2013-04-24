@@ -722,4 +722,13 @@ describe ContextNode do
       end
     end
   end
+  it "should have a test for deleting context not when last one, which deletes user node (not user node deleting context node) which deletes links" do
+    pending
+  end
+  it "should not store is conclusion on user node" do
+    pending
+  end
+  it "should delete db cruft and remove sti as much as possible" do
+    pending
+  end
 end

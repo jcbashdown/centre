@@ -35,7 +35,7 @@ class Node::UserNode < Node
           new_user_node.save! if method == :create!
         end
         new_user_node.create_context_node_if_needed
-	new_user_node
+	      new_user_node
       end
     end
   end

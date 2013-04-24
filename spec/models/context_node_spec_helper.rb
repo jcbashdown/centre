@@ -219,6 +219,11 @@ shared_examples_for 'context node creating nodes' do
     @state_hash = @node_state_hash
     @perform ||= 'Node::UserNode.create(@params)'
   end
+  it 'should create the correct number of user_nodes' do
+    expect {
+      eval(@perform)
+    }.to change(Node::UserNode, :count).by(@state_hash[:user_node][:number_created])
+  end
   it 'should create the correct number of global_nodes' do
     expect {
       eval(@perform)
@@ -240,325 +245,51 @@ shared_examples_for 'context node creating nodes' do
 end
 
 shared_examples_for "a node deleting nodes correctly" do |type|
-  context 'when there are no associated links' do
-    describe 'when the question nodes question node user count is less than two (when there is only this user)' do
-      before do
-        context_node = Node::UserNode.create(:user=>@user, :title=>'Title', :question=>@question, :is_conclusion => false)
-      end
-      it 'should destroy 1 node' do
-        expect {
-          ContextNode.where(:user_id=>@user.id, :title=>'Title', :question_id=>@question.id)[0].destroy
-        }.to change(Node::GlobalNode, :count).by(-1)
-      end
-      it 'should destroy 1 questions_nodes_users' do
-        expect {
-          ContextNode.where(:user_id=>@user.id, :title=>'Title', :question_id=>@question.id)[0].destroy
-        }.to change(ContextNode, :count).by(-1)
-      end
-      it 'should destroy the node' do
-        ContextNode.where(:user_id=>@user.id, :title=>'Title', :question_id=>@question.id)[0].destroy
-        Node::GlobalNode.where(:title=>'Title')[0].should be_nil
-      end
-      it 'should destroy the question node user' do
-        ContextNode.where(:user_id=>@user.id, :title=>'Title', :question_id=>@question.id)[0].destroy
-        ContextNode.where(:title=>'Title', :question_id=>@question.id)[0].should be_nil
-      end
-      context 'with another user for the question node' do
-        before do
-          @user = FactoryGirl.create(:user, :email => "a@test.com")
-          context_node = ContextNode.create(:user=>@user, :title=>'Title', :question=>@question, :is_conclusion => false)
-        end
-        it 'should destroy 0 global_nodes' do
-          expect {
-            ContextNode.where(:user_id=>@user.id, :title=>'Title', :question_id=>@question.id)[0].destroy
-          }.to change(Node::GlobalNode, :count).by(0)
-        end
-        it 'should destroy 1 questions_nodes_users' do
-          expect {
-            ContextNode.where(:user_id=>@user.id, :title=>'Title', :question_id=>@question.id)[0].destroy
-          }.to change(ContextNode, :count).by(-1)
-        end
-        it 'should update the caches' do
-          ContextNode.where(:user_id=>@user.id, :title=>'Title', :question_id=>@question.id)[0].destroy
-          gn = Node::GlobalNode.where(:title=>'Title')[0]
-          gn.should_not be_nil
-          gn.users_count.should == 1
-        end
-        it 'should not destroy the node and question node and should destroy the context_node' do
-          @user_two = FactoryGirl.create(:user, :email=>"another@test.com")
-          context_node = ContextNode.create(:user=>@user_two, :question=>@question, :title => 'Title', :is_conclusion => true)
-          ContextNode.where(:user_id=>@user_two.id, :title=>'Title', :question_id=>@question.id, :is_conclusion => true).count.should == 1
-          @user_three = FactoryGirl.create(:user, :email=>"another@test2.com")
-          context_node = ContextNode.create(:user=>@user_three, :question=>@question, :title => 'Title', :is_conclusion => true)
-          ContextNode.where(:user_id=>@user_three.id, :title=>'Title', :question_id=>@question.id, :is_conclusion => true).count.should == 1
-          ContextNode.where(:user_id=>@user.id, :title=>'Title', :question_id=>@question.id)[0].destroy
-          
-          Node::GlobalNode.where(:title=>'Title')[0].should_not be_nil
-          ContextNode.where(:title=>'Title', :user_id => @user.id, :question_id=>@question.id)[0].should be_nil
-        end
-      end
+  it 'should destroy the correct number of global nodes' do
+    expect {
+      eval(@perform).destroy
+    }.to change(Node::GlobalNode, :count).by(@state_hash[:global_node][:destroyed])
+  end
+  it 'should destroy the correct number of user nodes' do
+    expect {
+      eval(@perform).destroy
+    }.to change(Node::UserNode, :count).by(@state_hash[:user_node][:destroyed])
+  end
+  it 'should destroy the correct number of context nodes' do
+    expect {
+      eval(@perform).destroy
+    }.to change(ContextNode, :count).by(@state_hash[:context_node][:destroyed])
+  end
+
+  it 'should destroy the correct number of the correct global nodes' do
+    expect {
+      eval(@perform).destroy
+    }.to change(Node::GlobalNode.where(title: @create_params[:title]), :count).by(@state_hash[:global_node][:destroyed])
+  end
+  it 'should destroy the correct number of the correct user nodes' do
+    expect {
+      eval(@perform).destroy
+    }.to change(Node::UserNode.where(user_id: @create_params[:user_id], title: @create_params[:title]), :count).by(@state_hash[:user_node][:destroyed])
+  end
+  it 'should destroy the correct number of the correct context nodes' do
+    expect {
+      eval(@perform).destroy
+    }.to change(ContextNode.where(user_id: @create_params[:user_id], 
+                                  title: @create_params[:title],
+                                  question_id: @create_params[:question_id]), :count).by(@state_hash[:context_node][:destroyed])
+  end
+  it 'should update the global node caches' do
+    gn = eval(@perform).global_node
+    eval(@perform)[0].destroy
+    gn.users_count.should == @state_hash[:global_node][:users_count] unless (@state_hash[:global_node][:destroyed] < 0)
+  end
+
+  it "should delete user links if the user node was deleted" do
+    if @state_hash[:user_node][:destroyed] < 0
+      Link::UserLink.should_receive(:where).with('user_id = ? AND (global_node_from_id = ? || global_node_to_id = ?)', self.user_id, self.global_node_id, self.global_node_id).and_return(mock_relation = mock('relation'))
+      mock_relation.should_receive(:destroy_all)
+      eval(@perform)[0].destroy
     end
   end
-  describe 'with existing links' do
-    before do
-      @group.users << @user
-      @context_node1 = ContextNode.create(:title => 'title', :question => @question, :user => @user)
-      @context_node2 = ContextNode.create(:title => 'test', :question => @question, :user => @user)
-      @context_node3 = ContextNode.create(:title => 'another', :question => @question, :user => @user)
-      @context_link = Link::UserLink::PositiveUserLink.create(:user=>@user, :question => @question, :global_node_from_id => @context_node1.global_node.id, :global_node_to_id => @context_node2.global_node.id)
-    end
-    it 'should destroy 1 node' do
-      expect {
-        @context_node1.destroy
-      }.to change(Node::GlobalNode, :count).by(-1)
-    end
-    it 'should destroy 1 questions_nodes_users' do
-      expect {
-        @context_node1.destroy
-      }.to change(ContextNode, :count).by(-1)
-    end
-    it 'should destroy 1 link' do
-      expect {
-        @context_node1.destroy
-      }.to change(Link::GlobalLink, :count).by(-1)
-    end
 
-    it 'should destroy 1 context_link' do
-      expect {
-        @context_node1.destroy
-      }.to change(Link::GroupLink, :count).by(-1)
-    end
-
-    it 'should destroy 1 context_link' do
-      expect {
-        @context_node1.destroy
-      }.to change(Link::UserLink, :count).by(-1)
-    end
-
-    it 'update the caches' do
-      #@context_node2.reload.upvotes_count.should == 1
-      @context_node2.global_node.reload.upvotes_count.should == 1
-      @context_node1.destroy
-      #@context_node2.reload.upvotes_count.should == 0 
-      @context_node2.global_node.reload.upvotes_count.should == 0
-    end
-    
-    context 'when another user has the link in this question' do
-      before do
-        @group.users << @user_two
-        @context_link2 = Link::UserLink::PositiveUserLink.create(:user=>@user_two, :question => @question, :global_node_from_id => @context_node1.global_node.id, :global_node_to_id => @context_node2.global_node.id)
-      end
-      it 'should destroy 0 node' do
-        expect {
-          @context_node1.destroy
-        }.to change(Node::GlobalNode, :count).by(0)
-      end
-      it 'should destroy 1 questions_nodes_users' do
-        expect {
-          @context_node1.destroy
-        }.to change(ContextNode, :count).by(-1)
-      end
-      it 'should destroy 0 link' do
-        expect {
-          @context_node1.destroy
-        }.to change(Link::GlobalLink, :count).by(0)
-      end
-
-      it 'should destroy 0 gl' do
-        expect {
-          @context_node1.destroy
-        }.to change(Link::GroupLink, :count).by(0)
-      end
-
-      it 'should destroy 1 lu' do
-        expect {
-          @context_node1.destroy
-        }.to change(Link::UserLink, :count).by(-1)
-      end
-
-      it 'update the caches' do
-        #@context_node2.reload.upvotes_count.should == 1
-        @context_node2.global_node.reload.upvotes_count.should == 2
-        @context_node1.destroy
-        #@context_node2.reload.upvotes_count.should == 0 
-        @context_node2.global_node.reload.upvotes_count.should == 1
-      end
-    end
-
-    context 'when another user has another link in this question which uses the same node from' do
-      before do
-        @group.users << @user
-        @context_link2 = Link::UserLink::PositiveUserLink.create(:user=>@user_two, :question => @question, :global_node_from_id => @context_node1.global_node.id, :global_node_to_id => @context_node3.global_node.id)
-      end
-      it 'should destroy 0 node (due to shared node from and diff users)' do
-        expect {
-          @context_node1.destroy
-        }.to change(Node::GlobalNode, :count).by(0)
-      end
-      it 'should destroy 1 questions_nodes_users' do
-        expect {
-          @context_node1.destroy
-        }.to change(ContextNode, :count).by(-1)
-      end
-
-      it 'should destroy 1 link' do
-        expect {
-          @context_node1.destroy
-        }.to change(Link::GlobalLink, :count).by(-1)
-      end
-
-      it 'should destroy 1 gl' do
-        expect {
-          @context_node1.destroy
-        }.to change(Link::GroupLink, :count).by(-1)
-      end
-
-      it 'should destroy 1 lu' do
-        expect {
-          @context_node1.destroy
-        }.to change(Link::UserLink, :count).by(-1)
-      end
-
-      it 'update the caches' do
-        #@context_node2.reload.upvotes_count.should == 1
-        @context_node2.global_node.reload.upvotes_count.should == 1
-        @context_node1.destroy
-        #@context_node2.reload.upvotes_count.should == 0 
-        @context_node2.global_node.reload.upvotes_count.should == 0
-      end
-    end
-
-    context 'when another user has the link in another question' do
-      before do
-        @group2.users << @user_two
-        @context_link2 = Link::UserLink::PositiveUserLink.create(:user=>@user_two, :question => @question2, :global_node_from_id => @context_node1.global_node.id, :global_node_to_id => @context_node2.global_node.id)
-      end
-      it 'should destroy 0 node' do
-        expect {
-          @context_node1.destroy
-        }.to change(Node::GlobalNode, :count).by(0)
-      end
-      it 'should destroy 1 questions_nodes_users' do
-        expect {
-          @context_node1.destroy
-        }.to change(ContextNode, :count).by(-1)
-      end
-
-      it 'should destroy 0 link' do
-        expect {
-          @context_node1.destroy
-        }.to change(Link::GlobalLink, :count).by(0)
-      end
-
-      it 'should destroy 1 gl' do
-        expect {
-          @context_node1.destroy
-        }.to change(Link::GroupLink, :count).by(-1)
-      end
-
-      it 'should destroy 1 lu' do
-        expect {
-          @context_node1.destroy
-        }.to change(Link::UserLink, :count).by(-1)
-      end
-
-      it 'update the caches' do
-        #@context_node2.reload.upvotes_count.should == 1
-        @context_node2.global_node.reload.upvotes_count.should == 2
-        @context_node1.destroy
-        #@context_node2.reload.upvotes_count.should == 0 
-        @context_node2.global_node.reload.upvotes_count.should == 1
-      end
-    end
-
-    context 'when the user has the link in another question' do
-      before do
-        @user.groups << @group2
-        @context_link2 = Link::UserLink::PositiveUserLink.create(:user=>@user, :question => @question2, :global_node_from_id => @context_node1.global_node.id, :global_node_to_id => @context_node2.global_node.id)
-      end
-      it 'should destroy 0 node' do
-        expect {
-          @context_node1.destroy
-        }.to change(Node::GlobalNode, :count).by(0)
-      end
-      it 'should destroy 1 questions_nodes_users' do
-        expect {
-          @context_node1.destroy
-        }.to change(ContextNode, :count).by(-1)
-      end
-
-      it 'should destroy 0 link' do
-        expect {
-          @context_node1.destroy
-        }.to change(Link::GlobalLink, :count).by(-1)
-      end
-
-      it 'should destroy 1 gl' do
-        expect {
-          @context_node1.destroy
-        }.to change(Link::GroupLink, :count).by(-2)
-      end
-
-      it 'should destroy 1 lu' do
-        expect {
-          @context_node1.destroy
-        }.to change(Link::UserLink, :count).by(-1)
-      end
-
-      it 'update the caches' do
-        #@context_node2.reload.upvotes_count.should == 1
-        @context_node2.global_node.reload.upvotes_count.should == 1
-        @context_node1.destroy
-        #@context_node2.reload.upvotes_count.should == 0 
-        @context_node2.global_node.reload.upvotes_count.should == 0
-      end
-    end
-
-    context 'when the user has another link in this question where the links share a node from' do
-      before do
-        @group.users << @user
-        @context_link2 = Link::UserLink::PositiveUserLink.create(:user=>@user, :question => @question, :global_node_from_id => @context_node1.global_node.id, :global_node_to_id => @context_node3.global_node.id)
-      end
-      it 'should destroy 1 node (despite shared node from -- all on user)' do
-        expect {
-          @context_node1.destroy
-        }.to change(Node::GlobalNode, :count).by(-1)
-      end
-      it 'should destroy 1 questions_nodes_users' do
-        expect {
-          @context_node1.destroy
-        }.to change(ContextNode, :count).by(-1)
-      end
-
-      it 'should destroy 1 link' do
-        expect {
-          @context_node1.destroy
-        }.to change(Link::GlobalLink, :count).by(-2)
-      end
-
-      it 'should destroy 1 context_link' do
-        expect {
-          @context_node1.destroy
-        }.to change(Link::GroupLink, :count).by(-2)
-      end
-
-      it 'should destroy 1 context_link' do
-        expect {
-          @context_node1.destroy
-        }.to change(Link::UserLink, :count).by(-2)
-      end
-
-      it 'update the caches' do
-        #@context_node2.reload.upvotes_count.should == 1
-        @context_node2.global_node.reload.upvotes_count.should == 1
-        #@context_node3.reload.upvotes_count.should == 1
-        @context_node3.global_node.reload.upvotes_count.should == 1
-        @context_node1.destroy
-        #@context_node2.reload.upvotes_count.should == 0 
-        @context_node2.global_node.reload.upvotes_count.should == 0
-        #@context_node3.reload.upvotes_count.should == 0 
-        @context_node3.global_node.reload.upvotes_count.should == 0
-      end
-    end
-  end
 end
