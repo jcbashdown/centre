@@ -244,7 +244,7 @@ shared_examples_for 'context node creating nodes' do
   end
 end
 
-shared_examples_for "a node deleting nodes correctly" do |type|
+shared_examples_for "a node deleting nodes correctly" do
   it 'should destroy the correct number of global nodes' do
     expect {
       eval(@perform).destroy
@@ -290,6 +290,10 @@ shared_examples_for "a node deleting nodes correctly" do |type|
       mock_relation.should_receive(:destroy_all)
       eval(@perform)[0].destroy
     end
+  end
+
+  it "should handle conclusions correctly" do
+    pending
   end
 
 end

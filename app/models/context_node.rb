@@ -20,8 +20,17 @@ class ContextNode < ActiveRecord::Base
 
   validates :title, :uniqueness => {:scope => [:question_id, :user_id]}
 
+  after_create :update_user_node_users_count
   after_save :update_conclusions
-  after_destroy :update_conclusions
+  after_destroy :update_conclusions, :update_user_node_users_count
+
+  def update_user_node_users_count
+    if (user_node_users_count = ContextNode.where(user_id:self.user_id, title:self.title).count) > 0
+      self.user_node.update_attribute(:users_count, ContextNode.where(user_id:self.user_id, title:self.title))
+    else
+      self.user_node.destroy
+    end
+  end
 
   class << self
     [:create, :create!].each do |method|
