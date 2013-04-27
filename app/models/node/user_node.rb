@@ -53,7 +53,8 @@ class Node::UserNode < Node
   def update_title new_title
     old_global_node_id = self.global_node_id
     old_global_node = self.global_node
-    new_links = self.user_links.map(&:dup)
+    old_links = self.user_links
+    new_links = old_links.map(&:dup)
     new_global_node_id = Node::GlobalNode.where(:title => new_title)[0].try(:id) || Node::GlobalNode.create!({:title => new_title}).id
     update_attributes(global_node_id: new_global_node_id)
     old_global_node.save
@@ -61,7 +62,7 @@ class Node::UserNode < Node
       cn.save
     end
     ActiveRecord::Base.transaction do
-      self.user_links.destroy_all#probably already done at this point
+      old_links.destroy_all#probably already done at this point
       new_links.each do |link|
         link.global_node_from_id = new_global_node_id if link.global_node_from_id == old_global_node_id
         link.global_node_to_id = new_global_node_id if link.global_node_to_id == old_global_node_id

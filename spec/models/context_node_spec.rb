@@ -56,7 +56,7 @@ describe ContextNode do
                                                           }
                                }
       end
-      #it_should_behave_like "a context_node correctly updating node text"
+      it_should_behave_like "a context_node correctly updating node text"
     end
     context "when there are many many links and nodes and such" do
       let(:link_map) {RandomLinkMap.new( {

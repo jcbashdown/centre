@@ -79,10 +79,10 @@ ary
 new_ary = ary.sort { |x, y| x[:date] <=> y[:date] }
 
 {:name=>"Nicholas Stern", :date=>Sat, 25 May 2013 16:00:00 +0000}x
-{:name=>"Chris Goodall", :date=>Sat, 25 May 2013 17:30:00 +0000}Building a sustainable society is perhaps the greatest test that the world’s population has ever faced. Today we have borrowed from the future by grabbing prosperity now and imposing the cost on the next generation.
-{:name=>"Mukesh Kapila talks to Philippe Sands", :date=>Sat, 25 May 2013 17:30:00 +0000}The former head of the UN in Sudan reveals the shocking depths of evil plumbed by those who designed and orchestrated ‘the final solution’ in Darfur – How One Man Became The Whistleblower To The First Mass Murder Of The Twenty-First Century.
-{:name=>"Oscar Guardiola Rivera, Joanna Bourke, Patricia Tutt, Costas Douzinas", :date=>Sat, 25 May 2013 17:30:00 +0000} - hobsbawm
-{:name=>"John Browne", :date=>Sat, 25 May 2013 19:00:00 +0000}The former BP chief examines the current and future use of the Earth’s natural resources in his fascinating survey, Seven Elements That Have Changed The World: Iron, Carbon, Gold, Silver, Uranium, Titanium, Silicon. Chaired by The Telegraph’s business editor Kamal Ahmed.
+{:name=>"Chris Goodall", :date=>Sat, 25 May 2013 17:30:00 +0000}
+{:name=>"Mukesh Kapila talks to Philippe Sands", :date=>Sat, 25 May 2013 17:30:00 +0000}
+{:name=>"Oscar Guardiola Rivera, Joanna Bourke, Patricia Tutt, Costas Douzinas", :date=>Sat, 25 May 2013 17:30:00 +0000}
+{:name=>"John Browne", :date=>Sat, 25 May 2013 19:00:00 +0000}
 {:name=>"Carwyn Jones", :date=>Sat, 25 May 2013 19:00:00 +0000}
 {:name=>"Carl Bernstein, Jaime Abello, William Sieghart and Perihan Magden chaired by John Kampfner", :date=>Sat, 25 May 2013 19:00:00 +0000}
 {:name=>"Jon Ronson", :date=>Sat, 25 May 2013 20:30:00 +0000}
