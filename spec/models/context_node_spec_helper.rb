@@ -109,19 +109,19 @@ shared_examples_for 'a context_node correctly updating node text' do
         (existing_node.users_count + 1) == changed_context_node.global_node.reload.users_count
         changed_context_node.global_node.should == existing_node
       else
-        if context_node.global_node.reload.users_count > ContextNode.where(user_id: context_node.user_id, global_node_id: context_node.global_node_id).count
+        if context_node.global_node.reload.users_count > 1
           changed_context_node = nil
           expect {
             changed_context_node = context_node.update_title(new_text)
           }.to change(Node::GlobalNode, :count).by 1
-          changed_context_node.global_node.reload.users_count.should == ContextNode.where(global_node_id:changed_context_node.global_node_id).count
+          changed_context_node.global_node.reload.users_count.should == ContextNode.where(user_node_id:changed_context_node).count
           changed_context_node.global_node.title.should == new_text
         else
           changed_context_node = nil
           expect {
             changed_context_node = context_node.update_title(new_text)
           }.to change(Node::GlobalNode, :count).by 0
-          changed_context_node.global_node.reload.users_count.should == ContextNode.where(global_node_id:changed_context_node.global_node_id).count
+          changed_context_node.global_node.reload.users_count.should == ContextNode.where(user_node_id:changed_context_node).count
           changed_context_node.global_node.title.should == new_text
         end
       end
@@ -137,24 +137,27 @@ shared_examples_for 'a context_node correctly updating node text' do
       }.to change(ContextNode.where(user_id:context_node.user_id), :count).by 0
     end
     it "should remove the number of old titled context nodes" do
-      old_count = ContextNode.where(user_id: context_node.user_id, global_node_id:context_node.global_node_id).count
+      old_id = context_node.id
       expect {
         context_node.update_title(new_text)
-      }.to change(ContextNode.where(global_node_id:context_node.global_node_id), :count).by(-old_count)
+      }.to change(ContextNode.where(user_node_id:old_id), :count).by(0)
     end
-    it "should create the number of old titled context nodes in new context nodes" do
-      old_count = ContextNode.where(user_id: context_node.user_id, global_node_id:context_node.global_node_id).count
-      expect {
-        context_node.update_title(new_text)
-      }.to change(ContextNode.where(title:new_text), :count).by(old_count)
+    it "should call update_conclusions for each context_node" do
+      context_node.context_nodes.each do |cn|
+        cn.should_receive(:update_conclusions)
+      end
+      context_node.update_title(new_text)
     end
     it "should have one identical new context node with the new title for every old node which featured that title" do
-      old_cns = ContextNode.where(user_id:context_node.user_id, global_node_id:context_node.global_node_id)
+      old_cns = ContextNode.where(user_node_id: Node::UserNode.where(user_id: context_node.user_id, global_node_id: context_node.global_node_id)[0].try(:id))
       new_context_node = context_node.update_title(new_text)
-      new_gn_id = new_context_node.reload.global_node_id
+      new_gn_title = new_context_node.reload.title
       old_cns.each do |cn|
-        ContextNode.where(user_id:cn.user_id, question_id:cn.question_id, global_node_id:new_gn_id, is_conclusion:cn.is_conclusion).length.should == 1
+        ContextNode.where(user_id:cn.user_id, question_id:cn.question_id, title:new_gn_title, is_conclusion:cn.is_conclusion).length.should == 1
       end
+    end
+    it "should not have title on the context node" do
+      pending
     end
   end
   context "correct conclusion changes" do

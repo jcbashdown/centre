@@ -52,9 +52,11 @@ class Node::UserNode < Node
 
   def update_title new_title
     old_global_node_id = self.global_node_id
+    old_global_node = self.global_node
     new_links = self.user_links.map(&:dup)
-    new_global_node_id = Node::GlobalNode.where(:title => self.title)[0].id || Node::GlobalNode.create!({:title => self.title}).id
-    update_attribute(:global_node_id, new_global_node_id)
+    new_global_node_id = Node::GlobalNode.where(:title => new_title)[0].try(:id) || Node::GlobalNode.create!({:title => new_title}).id
+    update_attributes(global_node_id: new_global_node_id)
+    old_global_node.save
     context_nodes.each do |cn|
       cn.save
     end
@@ -77,6 +79,21 @@ class Node::UserNode < Node
     Link::UserLink
       .where(:user_id => self.user_id)
       .where(in_link_sql, self.global_node_id, self.global_node_id)
+  end
+
+  def group_links
+    self.user.groups.inject([]) do |links, group| 
+      links+= group.group_links
+        .where(in_link_sql, self.global_node_id, self.global_node_id)
+        .where(:global_link_id => self.user_links.map(&:global_link_id))
+      links
+    end
+  end
+
+  def global_links
+    Link::GlobalLink
+      .where(in_link_sql, self.global_node_id, self.global_node_id)
+      .where(:global_link_id => self.user_links.map(&:global_link_id))
   end
 
   def create_context_node_if_needed

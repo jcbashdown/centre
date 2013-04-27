@@ -3,10 +3,15 @@ class Node::GlobalNode < Node
   has_many :user_question_conclusions, :foreign_key => :global_node_id
   has_many :question_conclusions, :foreign_key => :global_node_id
 
-  before_save :set_caches
+  before_update :set_caches
+  after_update :destroy_if_no_users
 
   def set_caches
     self.users_count = Node::UserNode.count( :conditions => ["global_node_id = ?", self.id] )
+  end
+
+  def destroy_if_no_users
+    destroy if reload.users_count == 0
   end
 
   scope :by_question_for_group, lambda {|question|
