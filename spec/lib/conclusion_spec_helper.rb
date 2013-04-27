@@ -76,7 +76,9 @@ shared_examples_for "a conclusion class extending conclusion" do |special_contex
     before {subject.stub(:search_context).and_return search_context}
     it 'should count the votes for the conclusion status' do
       mock_relation = mock('relation')
-      ContextNode.should_receive(:where).with(search_context.merge(:is_conclusion => conclusion_status)).and_return mock_relation
+      ContextNode.should_receive(:joins).with(:user_node).and_return mock_relation
+      mock_relation.should_receive(:includes).with(:user_node).and_return mock_relation
+      mock_relation.should_receive(:where).with(search_context.merge(:is_conclusion => conclusion_status)).and_return mock_relation
       mock_relation.should_receive(:count)
       subject.send(:vote_count, conclusion_status)
     end

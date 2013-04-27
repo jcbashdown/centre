@@ -51,7 +51,7 @@ describe Link::UserLink do
           @group = FactoryGirl.create(:group)
           @user = FactoryGirl.create(:user)
           @group.users << @user
-          @gnu1 = ContextNode.create(:title => 'title one', :question => @question, :user => @user)
+          @gnu1 = Node::UserNode.create(:title => 'title one', :question => @question, :user => @user)
           @state_hash = {
                           :context_link => {:number_created => 1},
                           :global_link => {
@@ -84,6 +84,9 @@ describe Link::UserLink do
                              :context_node => {
                                                 :number_created => 1
                                               },
+                             :user_node => {
+                                                :number_created => 1
+                                              },
                              :global_node => {
                                                :number_created => 1,
                                                :number_existing => 1,
@@ -110,8 +113,8 @@ describe Link::UserLink do
         @group = FactoryGirl.create(:group)
         @user = FactoryGirl.create(:user)
         @group.users << @user
-        @gnu1 = ContextNode.create(:title => 'title', :question => @question, :user => @user)
-        @gnu2 = ContextNode.create(:title => 'test', :question => @question, :user => @user)
+        @gnu1 = Node::UserNode.create(:title => 'title', :question => @question, :user => @user)
+        @gnu2 = Node::UserNode.create(:title => 'test', :question => @question, :user => @user)
         @state_hash = {
                         :context_link => {:number_created => 1},
                         :global_link => {
@@ -256,8 +259,8 @@ describe Link::UserLink do
       @group = FactoryGirl.create(:group)
       @user = FactoryGirl.create(:user)
       @group.users << @user
-      @gnu1 = ContextNode.create(:title => 'title', :question => @question, :user => @user)
-      @gnu2 = ContextNode.create(:title => 'test', :question => @question, :user => @user)
+      @gnu1 = Node::UserNode.create(:title => 'title', :question => @question, :user => @user)
+      @gnu2 = Node::UserNode.create(:title => 'test', :question => @question, :user => @user)
     end
     context 'when there is only this context_link' do
       before do
@@ -320,8 +323,8 @@ describe Link::UserLink do
       @group = FactoryGirl.create(:group)
       @user = FactoryGirl.create(:user)
       @group.users << @user
-      @gnu1 = ContextNode.create(:title => 'title', :question => @question, :user => @user)
-      @gnu2 = ContextNode.create(:title => 'test', :question => @question, :user => @user)
+      @gnu1 = Node::UserNode.create(:title => 'title', :question => @question, :user => @user)
+      @gnu2 = Node::UserNode.create(:title => 'test', :question => @question, :user => @user)
     end
     context 'when there is only this context_link' do
       before do

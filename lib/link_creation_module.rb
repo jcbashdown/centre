@@ -4,15 +4,15 @@ module LinkCreationModule
  
   def create_appropriate_nodes
     to_params = {:user_id=>self.user_id, :question_id=>self.question_id, :title => self.global_node_to.title}
-    ContextNode.exists?(to_params) || ContextNode.create!(to_params)
+    ContextNode.exists?(to_params) || Node::UserNode.create!(to_params)
     unless self.global_node_from_id
       string_from_params = {:user_id=>self.user_id, :question_id=>self.question_id, :title => self.context_node_from_title}
-      context_node_from = ContextNode.where(string_from_params)[0] || ContextNode.create!(string_from_params)
+      context_node_from = ContextNode.where(string_from_params)[0] || Node::UserNode.create!(string_from_params)
       #this as a problem... do we need trans? conclusion happening after...
       self.global_node_from_id = context_node_from.global_node_id
     else
       id_from_params = {:user_id=>self.user_id, :question_id=>self.question_id, :title => self.global_node_from.title}
-      ContextNode.exists?(id_from_params) || ContextNode.create!(id_from_params)
+      ContextNode.exists?(id_from_params) || Node::UserNode.create!(id_from_params)
     end
     self
   end

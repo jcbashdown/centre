@@ -10,9 +10,11 @@ class Node::UserNode < Node
 
   belongs_to :global_node, :class_name => Node::GlobalNode
   belongs_to :user
+  has_many :context_nodes
 
   validates_presence_of :global_node
   validates_presence_of :user
+  validates :user_id, :uniqueness => {:scope => [:title]}
 
   after_save :update_caches
   after_destroy :update_caches, :delete_appropriate_nodes
@@ -28,14 +30,22 @@ class Node::UserNode < Node
   class << self
     [:create, :create!].each do |method|
       define_method method do |attributes = {}|
-        new_user_node = self.new(attributes)
-        ActiveRecord::Base.transaction do
-          new_user_node.create_appropriate_nodes
-          new_user_node.save if method == :create
-          new_user_node.save! if method == :create!
+        #binding.pry
+        question_id = attributes[:question_id] ? attributes[:question_id] : attributes[:question].id
+        user_id = attributes[:user_id] ? attributes[:user_id] : attributes[:user].id
+        unless new_user_node = self.where(attributes.except(:user,:question,:question_id,:is_conclusion).merge(user_id:user_id))[0]
+          new_user_node = self.new(attributes)
+          ActiveRecord::Base.transaction do
+            new_user_node.create_appropriate_nodes
+            new_user_node.save if method == :create
+            new_user_node.save! if method == :create!
+          end
         end
+        new_user_node.question_id = question_id
+        new_user_node.user_id = user_id
+        new_user_node.is_conclusion = attributes[:is_conclusion]
         new_user_node.create_context_node_if_needed
-	      new_user_node
+        new_user_node
       end
     end
   end

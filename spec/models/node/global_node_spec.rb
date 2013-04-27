@@ -15,7 +15,7 @@ describe Node::GlobalNode do
     before do
       @user0 = FactoryGirl.create(:user)
       @question0 = FactoryGirl.create(:question)
-      context_node = ContextNode.create!(:user=>@user0, :question=>@question0, :title => "First Node")
+      context_node = Node::UserNode.create!(:user=>@user0, :question=>@question0, :title => "First Node")
       @node = context_node.global_node
       @params = {}
       @nodes = []
@@ -32,10 +32,10 @@ describe Node::GlobalNode do
         @queries << @query0 = "Part of a node title"
         @queries << @query1 = "Title"
         @context_nodes = []
-        @context_nodes << @context_node0 = ContextNode.create(:user=>@user0, :question=>@question0, :title => "Part of a node title, here it is!")
-        @context_nodes << @context_node1 = ContextNode.create(:user=>@user1, :question=>@question1, :title => 'Title')
-        @context_nodes << @context_node2 = ContextNode.create(:user=>@user1, :question=>@question0, :title => "And another! Part of a node title")
-        @context_nodes << @context_node3 = ContextNode.create(:user=>@user0, :question=>@question1, :title => 'A Title')
+        @context_nodes << @context_node0 = Node::UserNode.create(:user=>@user0, :question=>@question0, :title => "Part of a node title, here it is!")
+        @context_nodes << @context_node1 = Node::UserNode.create(:user=>@user1, :question=>@question1, :title => 'Title')
+        @context_nodes << @context_node2 = Node::UserNode.create(:user=>@user1, :question=>@question0, :title => "And another! Part of a node title")
+        @context_nodes << @context_node3 = Node::UserNode.create(:user=>@user0, :question=>@question1, :title => 'A Title')
         ContextNode.reindex
       end
       context 'when the direction is to' do
@@ -53,10 +53,10 @@ describe Node::GlobalNode do
       @question = FactoryGirl.create(:question)
       @question2 = FactoryGirl.create(:question, :name => 'Aaa')
       @query = "Part of a node title"
-      @context_node1 = ContextNode.create(:user=>@user, :question=>@question, :title => "Part of a node title, here it is!")
-      @context_node2 = ContextNode.create(:user=>@user2, :question=>@question2, :title => 'Title')
-      @context_node3 = ContextNode.create(:user=>@user2, :question=>@question, :title => "And another! Part of a node title")
-      @context_node4 = ContextNode.create(:user=>@user, :question=>@question2, :title => 'Title')
+      @context_node1 = Node::UserNode.create(:user=>@user, :question=>@question, :title => "Part of a node title, here it is!")
+      @context_node2 = Node::UserNode.create(:user=>@user2, :question=>@question2, :title => 'Title')
+      @context_node3 = Node::UserNode.create(:user=>@user2, :question=>@question, :title => "And another! Part of a node title")
+      @context_node4 = Node::UserNode.create(:user=>@user, :question=>@question2, :title => 'Title')
       ContextNode.reindex
     end
     context 'when the question is set' do
