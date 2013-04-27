@@ -50,6 +50,35 @@ class Node::UserNode < Node
     end
   end
 
+  def update_title new_title
+    old_global_node_id = self.global_node_id
+    new_links = self.user_links.map(&:dup)
+    new_global_node_id = Node::GlobalNode.where(:title => self.title)[0].id || Node::GlobalNode.create!({:title => self.title}).id
+    update_attribute(:global_node_id, new_global_node_id)
+    context_nodes.each do |cn|
+      cn.save
+    end
+    ActiveRecord::Base.transaction do
+      self.user_links.destroy_all#probably already done at this point
+      new_links.each do |link|
+        link.global_node_from_id = new_global_node_id if link.global_node_from_id == old_global_node_id
+        link.global_node_to_id = new_global_node_id if link.global_node_to_id == old_global_node_id
+        link.type.constantize.create(link.attributes.merge(:no_nodes => true))
+      end
+    end
+    self
+  end
+
+  def in_link_sql
+    "global_node_from_id = ? || global_node_to_id = ?"
+  end
+
+  def user_links
+    Link::UserLink
+      .where(:user_id => self.user_id)
+      .where(in_link_sql, self.global_node_id, self.global_node_id)
+  end
+
   def create_context_node_if_needed
     context_node = ContextNode.where(context)[0] || ContextNode.create!(context)
   end
