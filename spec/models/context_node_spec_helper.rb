@@ -121,7 +121,7 @@ shared_examples_for 'a context_node correctly updating node text' do
           expect {
             changed_context_node = context_node.update_title(new_text)
           }.to change(Node::GlobalNode, :count).by 0
-          changed_context_node.global_node.reload.users_count.should == ContextNode.where(user_node_id:changed_context_node).count
+          changed_context_node.global_node.reload.users_count.should == Node::UserNode.where(global_node_id:changed_context_node.global_node_id).count
           changed_context_node.global_node.title.should == new_text
         end
       end
@@ -298,12 +298,18 @@ shared_examples_for "a node deleting nodes correctly" do
 
   it "should handle conclusions correctly" do
     if(node = eval(@perform)).is_a? Node::UserNode
-      node.context_node.each do |cn|
+      context_nodes = node.context_nodes
+      node.stub(:context_nodes).and_return context_nodes
+      context_nodes.each do |cn|
+        p "cn to update"
+        p cn
+        p "cn to update"
         cn.should_receive(:update_conclusions)
       end
     else
       node.should_receive(:update_conclusions)
     end
+    p "here"
     node.destroy
   end
 

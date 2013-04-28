@@ -69,7 +69,7 @@ class RandomLinkMap
     node_count.times do |n|
       new_node = nil
       while(new_node==nil)
-        node = ContextNode.create(
+        node = Node::UserNode.create(
                                    :user=>User.find(users[rand(users.count)]), 
                                    :question=>Question.find(questions[rand(questions.count)]), 
                                    :title => n.to_s, 
@@ -90,11 +90,11 @@ class RandomLinkMap
 
   def generate_links link_count_per_node, link_count_only_subject_node_last_user
     if link_count_only_subject_node_last_user
-      subject = ContextNode.find(nodes.last)
-      make_associations_for_subject ContextNode.find(nodes.last), link_count_per_node, subject.user
+      subject = Node::UserNode.find(nodes.last)
+      make_associations_for_subject Node::UserNode.find(nodes.last), link_count_per_node, subject.user
     else
       nodes.each do |node|
-        make_associations_for_subject ContextNode.find(node), link_count_per_node
+        make_associations_for_subject Node::UserNode.find(node), link_count_per_node
       end
     end
   end
@@ -119,7 +119,7 @@ class RandomLinkMap
       user ||= User.find(users[rand(users.count)]) 
       other_node = nil
       while(other_node==nil) do
-        other_node = ContextNode.find(nodes[rand(nodes.count)])
+        other_node = Node::UserNode.find(nodes[rand(nodes.count)])
         other_node = nil if other_node == subject
       end
       if (rand(1..2) % 2) == 0

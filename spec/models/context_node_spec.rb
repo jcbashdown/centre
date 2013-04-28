@@ -66,7 +66,7 @@ describe ContextNode do
                                        :node_count => 20,
                                        :link_count_per_node => 20
                                       }, true)}
-      let(:context_node) {ContextNode.find(link_map.nodes.last)}
+      let(:context_node) {Node::UserNode.find(link_map.nodes.last)}
       #before {link_map}
       #it_should_behave_like "a context_node correctly updating node text"
     end
@@ -416,62 +416,20 @@ describe ContextNode do
       end
     end
     describe 'deletion' do
-      context 'when there are no associated links' do
-        describe 'when the question nodes question node user count is less than two (when there is only this user)' do
-          before do
-            @create_params = {:user_id=>@user.id, :title=>'Title', :question_id=>@question.id, :is_conclusion => false}
-            @node = Node::UserNode.create(@create_params)
-            @perform = "ContextNode.where(:user_id=>@user.id, :title=>'Title', :question_id=>@question.id)[0]"
-
-            @state_hash = {
-                     :context_node => {
-                                        :destroyed => -1
-                                      },
-                     :global_node => {
-                                       :destroyed => -1
-                                     },
-                     :user_node => {
-                                       :destroyed => -1
-                                     }
-                   }
-          end
-          it_should_behave_like "a node deleting nodes correctly"
-          context 'with another context node for this user and title' do
+      context "deleting context nodes" do
+        context 'when there are no associated links' do
+          describe 'when the question nodes question node user count is less than two (when there is only this user)' do
             before do
-              @question2 = FactoryGirl.create(:question, :name => 'Abbaa')
-              @create_params = {:user_id=>@user.id, :title=>'Title', :question_id=>@question2.id, :is_conclusion => false}
+              @create_params = {:user_id=>@user.id, :title=>'Title', :question_id=>@question.id, :is_conclusion => false}
               @node = Node::UserNode.create(@create_params)
-              @perform = "ContextNode.where(:user_id=>@user.id, :title=>'Title', :question_id=>@question2.id)[0]"
+              @perform = "ContextNode.where(:user_id=>@user.id, :title=>'Title', :question_id=>@question.id)[0]"
 
               @state_hash = {
                        :context_node => {
                                           :destroyed => -1
                                         },
                        :global_node => {
-                                         :destroyed => 0,
-                                         :users_count => 1
-                                       },
-                       :user_node => {
-                                         :destroyed => 0
-                                       }
-                     }
-            end
-            it_should_behave_like "a node deleting nodes correctly"
-          end
-          context 'with another user for the question node' do
-            before do
-              @user2 = FactoryGirl.create(:user, :email => "a@test.com")
-              @create_params = {:user_id=>@user2.id, :title=>'Title', :question_id=>@question.id, :is_conclusion => false}
-              @node = Node::UserNode.create(@create_params)
-              @perform = "ContextNode.where(:user_id=>@user2.id, :title=>'Title', :question_id=>@question.id)[0]"
-
-              @state_hash = {
-                       :context_node => {
-                                          :destroyed => -1
-                                        },
-                       :global_node => {
-                                         :destroyed => 0,
-                                         :users_count => 1
+                                         :destroyed => -1
                                        },
                        :user_node => {
                                          :destroyed => -1
@@ -479,12 +437,118 @@ describe ContextNode do
                      }
             end
             it_should_behave_like "a node deleting nodes correctly"
+            context 'with another context node for this user and title' do
+              before do
+                @question2 = FactoryGirl.create(:question, :name => 'Abbaa')
+                @create_params = {:user_id=>@user.id, :title=>'Title', :question_id=>@question2.id, :is_conclusion => false}
+                @node = Node::UserNode.create(@create_params)
+                @perform = "ContextNode.where(:user_id=>@user.id, :title=>'Title', :question_id=>@question2.id)[0]"
+
+                @state_hash = {
+                         :context_node => {
+                                            :destroyed => -1
+                                          },
+                         :global_node => {
+                                           :destroyed => 0,
+                                           :users_count => 1
+                                         },
+                         :user_node => {
+                                           :destroyed => 0
+                                         }
+                       }
+              end
+              it_should_behave_like "a node deleting nodes correctly"
+            end
+            context 'with another user for the question node' do
+              before do
+                @user2 = FactoryGirl.create(:user, :email => "a@test.com")
+                @create_params = {:user_id=>@user2.id, :title=>'Title', :question_id=>@question.id, :is_conclusion => false}
+                @node = Node::UserNode.create(@create_params)
+                @perform = "ContextNode.where(:user_id=>@user2.id, :title=>'Title', :question_id=>@question.id)[0]"
+
+                @state_hash = {
+                         :context_node => {
+                                            :destroyed => -1
+                                          },
+                         :global_node => {
+                                           :destroyed => 0,
+                                           :users_count => 1
+                                         },
+                         :user_node => {
+                                           :destroyed => -1
+                                         }
+                       }
+              end
+              it_should_behave_like "a node deleting nodes correctly"
+            end
           end
         end
       end
-      context "when perform is user node delete" do
-        it "should" do
-          pending
+      context "deleting user nodes" do
+        context 'when there are no associated links' do
+          describe 'when the question nodes question node user count is less than two (when there is only this user)' do
+            before do
+              @create_params = {:user_id=>@user.id, :title=>'Title', :question_id=>@question.id, :is_conclusion => false}
+              @node = Node::UserNode.create(@create_params)
+              @perform = '@node'
+
+              @state_hash = {
+                       :context_node => {
+                                          :destroyed => -1
+                                        },
+                       :global_node => {
+                                         :destroyed => -1
+                                       },
+                       :user_node => {
+                                         :destroyed => -1
+                                       }
+                     }
+            end
+            it_should_behave_like "a node deleting nodes correctly"
+            context 'with another context node for this user and title' do
+              before do
+                @question2 = FactoryGirl.create(:question, :name => 'Abbaa')
+                @create_params = {:user_id=>@user.id, :title=>'Title', :question_id=>@question2.id, :is_conclusion => false}
+                @node = Node::UserNode.create(@create_params)
+                @perform = '@node'
+
+                @state_hash = {
+                         :context_node => {
+                                            :destroyed => -2
+                                          },
+                         :global_node => {
+                                           :destroyed => -1,
+                                         },
+                         :user_node => {
+                                           :destroyed => -1
+                                         }
+                       }
+              end
+              it_should_behave_like "a node deleting nodes correctly"
+            end
+            context 'with another user for the question node' do
+              before do
+                @user2 = FactoryGirl.create(:user, :email => "a@test.com")
+                @create_params = {:user_id=>@user2.id, :title=>'Title', :question_id=>@question.id, :is_conclusion => false}
+                @node = Node::UserNode.create(@create_params)
+                @perform = '@node'
+
+                @state_hash = {
+                         :context_node => {
+                                            :destroyed => -1
+                                          },
+                         :global_node => {
+                                           :destroyed => 0,
+                                           :users_count => 1
+                                         },
+                         :user_node => {
+                                           :destroyed => -1
+                                         }
+                       }
+              end
+              it_should_behave_like "a node deleting nodes correctly"
+            end
+          end
         end
       end
     end

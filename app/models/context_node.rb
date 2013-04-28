@@ -14,6 +14,8 @@ class ContextNode < ActiveRecord::Base
   belongs_to :question
   belongs_to :group
 
+  attr_accessor :global_node_id
+
   validates_presence_of :title
   validates_presence_of :user_node
   validates_presence_of :user
@@ -25,10 +27,12 @@ class ContextNode < ActiveRecord::Base
   after_destroy :update_conclusions, :update_user_node_users_count
 
   def update_user_node_users_count
-    if (user_node_users_count = ContextNode.where(user_id:self.user_id, title:self.title).count) > 0
-      self.user_node.update_attribute(:users_count, ContextNode.where(user_id:self.user_id, title:self.title))
-    else
-      self.user_node.destroy
+    if self.user_node.try(:persisted?)
+      if (user_node_users_count = ContextNode.where(user_id:self.user_id, title:self.title).count) > 0
+        self.user_node.update_attribute(:users_count, ContextNode.where(user_id:self.user_id, title:self.title))
+      else
+        self.user_node.destroy
+      end
     end
   end
 
@@ -46,10 +50,11 @@ class ContextNode < ActiveRecord::Base
   end
 
   def global_node_id
-    self.user_node.global_node_id
+    @global_node_id ||= self.user_node.global_node_id
   end
 
   def update_conclusions
+    p "updating_conclusions"
     [QuestionConclusion, GroupQuestionConclusion, UserQuestionConclusion].each do |conclusion_class|
       conclusion_class.update_conclusion_status_for(context)
     end
