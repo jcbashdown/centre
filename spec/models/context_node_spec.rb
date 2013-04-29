@@ -67,8 +67,8 @@ describe ContextNode do
                                        :link_count_per_node => 20
                                       }, true)}
       let(:context_node) {Node::UserNode.find(link_map.nodes.last)}
-      #before {link_map}
-      #it_should_behave_like "a context_node correctly updating node text"
+      before {link_map}
+      it_should_behave_like "a context_node correctly updating node text"
     end
   end
 
@@ -552,9 +552,6 @@ describe ContextNode do
         end
       end
     end
-  end
-  it "should have a test for deleting context not when last one, which deletes user node (not user node deleting context node) which deletes links" do
-    pending
   end
   it "should not store is conclusion on user node" do
     pending
