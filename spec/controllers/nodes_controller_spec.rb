@@ -183,8 +183,8 @@ describe NodesController do
       end
 
       it 'should have called new on global node user' do
-        gnu = ContextNode.new({:user_id => @user.id, :title => 'title'})
-        ContextNode.should_receive(:new).with({:user_id => @user.id, :question_id => nil, 'title' => 'title'}).and_return gnu
+        gnu = Node::UserNode.new({:user_id => @user.id, :title => 'title'})
+        Node::UserNode.should_receive(:new).with({:user_id => @user.id, :question_id => nil, 'title' => 'title'}).and_return gnu
         post :create, valid_attributes
       end
 
@@ -216,8 +216,8 @@ describe NodesController do
       end
 
       it 'should have called new on global node user' do
-        gnu = ContextNode.new({:user_id => @user.id, :title => 'title'})
-        ContextNode.should_receive(:new).with({:user_id => @user.id, :question_id => @question.id, 'title' => 'title'}).and_return gnu
+        gnu = Node::UserNode.new({:user_id => @user.id, :title => 'title'})
+        Node::UserNode.should_receive(:new).with({:user_id => @user.id, :question_id => @question.id, 'title' => 'title'}).and_return gnu
         post :create, valid_attributes
       end
 
@@ -235,7 +235,7 @@ describe NodesController do
     describe "with invalid params" do
       context 'when the node already exists' do
         before do
-          @context_node = ContextNode.create!(:user => @user, :title => 'a test node')
+          @context_node = Node::UserNode.create!(:user => @user, :title => 'a test node')
         end
         it 'should redirect to show the node' do
           post :create, :node => {:title => 'a test node'}
@@ -248,7 +248,7 @@ describe NodesController do
         end
       end
       it "assigns a newly created but unsaved node as @node" do
-        ContextNode.stub(:create).and_return(false)
+        Node::UserNode.stub(:create).and_return(false)
         post :create, :node => {}
         response.should redirect_to nodes_path
       end
@@ -257,7 +257,8 @@ describe NodesController do
   
   describe 'PUT update' do
     before do
-      @context_node = ContextNode.create(title: 'Test', user: @user, question: @question)
+      @user_node = Node::UserNode.create(title: 'Test', user: @user, question: @question)
+      @context_node = ContextNode.where(user_node_id:@user_node.id, question_id:@question.try(:id))[0]
       @global_node_id = @context_node.global_node_id
       @question_id = @context_node.question_id
       @user_id = @context_node.user_id
@@ -279,7 +280,7 @@ describe NodesController do
     end
 
     it 'should find the correct context node' do
-      ContextNode.should_receive(:where).with(:question_id => @question_id, :user_id => @user_id, :global_node_id => @global_node_id.to_s)
+      ContextNode.should_receive(:where).with(:question_id => @question_id, :user_node_id => @user_node.id)
       xhr :put, :update, params
     end
 
@@ -306,10 +307,10 @@ describe NodesController do
       before do
         @question = FactoryGirl.create(:question)
         Question.stub(:find).and_return @question
-        @context_node = ContextNode.create(:user=>@user, :title => 'Title', :question => @question)
+        @user_node = Node::UserNode.create(:user=>@user, :title => 'Title', :question => @question)
+        @context_node = ContextNode.where(:user_node_id=>@user_node.id, :question_id => @question.try(:id))[0]
         mock_relation = mock('relation')
-        mock_relation.stub(:where).and_return [@context_node]
-        ContextNode.stub(:with_all_associations).and_return mock_relation
+        ContextNode.stub(:where).and_return [@context_node]
       end
   
       it 'should call destroy on the current gnu' do
@@ -326,12 +327,10 @@ describe NodesController do
     context 'when there is no question' do
       before do
         @question = FactoryGirl.create(:question)
-        no_question_context_node = ContextNode.create(:user=>@user, :title => 'Title', :question => @question)
-        @context_node = ContextNode.create(:user=>@user, :title => 'Title', :question => nil)
-        no_question_context_node.node_title.should == @context_node.node_title
+        @user_node = Node::UserNode.create(:user=>@user, :title => 'Title', :question => @question)
+        @context_node = ContextNode.where(:user_node_id=>@user_node.id, :question_id => @question.try(:id))[0]
         mock_relation = mock('relation')
-        mock_relation.stub(:where).and_return [@context_node]
-        ContextNode.stub(:with_all_associations).and_return mock_relation
+        ContextNode.stub(:where).and_return [@context_node]
       end
   
       it 'should call destroy on the current gnu' do
@@ -359,6 +358,7 @@ describe NodesController do
         @current_node.stub(:find_view_links_from_by_context)
         @current_node.stub(:find_view_links_to_by_context)
         Node.stub(:find).and_return @current_node
+        Node::UserNode.stub(:where).and_return [stub(id:nil)]
       end
       describe 'set_links_to and from' do
         let(:action) {:show}

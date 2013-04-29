@@ -31,7 +31,7 @@ class Node::UserNode < Node
     [:create, :create!].each do |method|
       define_method method do |attributes = {}|
         #binding.pry
-        question_id = attributes[:question_id] ? attributes[:question_id] : attributes[:question].id
+        question_id = attributes[:question_id] ? attributes[:question_id] : attributes[:question].try(:id)
         user_id = attributes[:user_id] ? attributes[:user_id] : attributes[:user].id
         unless new_user_node = self.where(attributes.except(:user,:question,:question_id,:is_conclusion).merge(user_id:user_id))[0]
           new_user_node = self.new(attributes)
