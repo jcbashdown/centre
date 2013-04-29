@@ -54,7 +54,6 @@ class ContextNode < ActiveRecord::Base
   end
 
   def update_conclusions
-    p "updating_conclusions"
     [QuestionConclusion, GroupQuestionConclusion, UserQuestionConclusion].each do |conclusion_class|
       conclusion_class.update_conclusion_status_for(context)
     end

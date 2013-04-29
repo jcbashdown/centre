@@ -298,18 +298,14 @@ shared_examples_for "a node deleting nodes correctly" do
 
   it "should handle conclusions correctly" do
     if(node = eval(@perform)).is_a? Node::UserNode
-      context_nodes = node.context_nodes
-      node.stub(:context_nodes).and_return context_nodes
-      context_nodes.each do |cn|
-        p "cn to update"
-        p cn
-        p "cn to update"
-        cn.should_receive(:update_conclusions)
-      end
+      QuestionConclusion.should_receive(:update_conclusion_status_for).exactly(node.context_nodes.count).times
+      GroupQuestionConclusion.should_receive(:update_conclusion_status_for).exactly(node.context_nodes.count).times
+      UserQuestionConclusion.should_receive(:update_conclusion_status_for).exactly(node.context_nodes.count).times
     else
-      node.should_receive(:update_conclusions)
+      QuestionConclusion.should_receive(:update_conclusion_status_for)
+      GroupQuestionConclusion.should_receive(:update_conclusion_status_for)
+      UserQuestionConclusion.should_receive(:update_conclusion_status_for)
     end
-    p "here"
     node.destroy
   end
 
