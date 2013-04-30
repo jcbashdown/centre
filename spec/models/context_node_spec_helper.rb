@@ -278,8 +278,8 @@ shared_examples_for "a node deleting nodes correctly" do
     expect {
       eval(@perform).destroy
     }.to change(ContextNode.where(user_id: @create_params[:user_id], 
-                                  title: @create_params[:title],
-                                  question_id: @create_params[:question_id]), :count).by(@state_hash[:context_node][:destroyed])
+                                  title: @create_params[:title]
+                                 ), :count).by(@state_hash[:context_node][:destroyed])
   end
   it 'should update the global node caches' do
     n = eval(@perform)
