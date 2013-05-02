@@ -44,7 +44,8 @@ class Node::UserNode < Node
         new_user_node.question_id = question_id
         new_user_node.user_id = user_id
         new_user_node.is_conclusion = attributes[:is_conclusion]
-        new_user_node.create_context_node_if_needed
+        p attributes
+        new_user_node.create_context_node_if_needed(attributes["is_conclusion"])
         new_user_node
       end
     end
@@ -97,12 +98,14 @@ class Node::UserNode < Node
       .where(:global_link_id => self.user_links.map(&:global_link_id))
   end
 
-  def create_context_node_if_needed
-    context_node = ContextNode.where(context)[0] || ContextNode.create!(context)
+  def create_context_node_if_needed(is_conclusion_status=nil)
+    this_context = self.context.merge(is_conclusion:is_conclusion_status)
+    p this_context
+    context_node = ContextNode.where(this_context)[0] || ContextNode.create!(this_context)
   end
 
   def context
-    HashWithIndifferentAccess.new({:question_id => self.question_id, :user_id => self.user_id, :title=> self.title, :user_node_id => self.id, :is_conclusion => self.is_conclusion})
+    HashWithIndifferentAccess.new({:question_id => self.question_id, :user_id => self.user_id, :title=> self.title, :user_node_id => self.id})
   end
 
   def update_caches

@@ -7,7 +7,6 @@ module NodeDeletionModule
     Node.where('users_count = 0').delete_all
     if self.is_a? Node::UserNode
       ContextNode.where(user_node_id:self.id).each do |cn|
-        p cn
         cn.global_node_id = self.global_node_id
         cn.destroy
       end

@@ -50,3 +50,4 @@ gem 'pry'#, :group => :test
 gem "activerecord-import"
 gem "capistrano", :group => :development
 gem 'rvm-capistrano'
+gem 'angular-rails'

@@ -1,0 +1,16 @@
+.select-form
+  =form_for @new_question, :html => {:class => 'navbar-form'} do |g|
+    .input-append
+      %input#appendedInput.span2{:placeholder => "New Question", :type => "text", :id =>"question_id", :name => "question[name]"}
+      %span.add-on 
+        .dropdown
+          %a{:href => "#", :"data-toggle"=>"dropdown"}
+            Select question
+          %ul.dropdown-menu{"aria-labelledby" => "dLabel", :role => "menu"}
+            - @questions.each do |question|
+              %li{:id => "question#{question.id}"}
+                %a{:href => question_path(:id => (question.id ? question.id : 0)), :tabindex => "-1"}
+                  = question.name
+                - if current_user
+                  %a.delete-question{:href => question_path(question), :rel => "nofollow", "data-confirm" => "Are you sure?"}
+                    %i.icon-remove

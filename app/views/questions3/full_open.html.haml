@@ -1,0 +1,267 @@
+.tabbable
+  .row-fluid
+    .span6
+      %h2 new
+    .span3
+      %a.show-new-conclusion
+        Add Conclusion
+      %a.hide-new-conclusion.hidden
+        Close conclusion form
+    .span3
+      %ul.nav.nav-pills.right
+        %li#menu2.dropdown.active
+          %a.dropdown-toggle{"data-toggle" => "dropdown", :href => "#menu2"}
+            Topic
+            %b.caret
+          %ul.dropdown-menu
+            %li.arg-option
+              %a{"data-remote" => "", "data-target" => "#my_topic", "data-toggle" => "tab", :href => "/user_arguments?path=my_topic"} My Topic
+            %li.divider
+            %li.arg-option.active
+              %a{"data-remote" => "", "data-target" => "#everyones_topic", "data-toggle" => "tab", :href => "/question_arguments?path=everyones_topic"} Everyone's topic
+            %li.divider
+            %li.arg-option
+              %a{"data-remote" => "", "data-target" => "#other_user_topic", "data-toggle" => "tab", :href => "/user_arguments?path=other_user_topic&user_id=1"} jacob
+  .row-fluid
+    .span12
+      .hidden.new-conclusion
+        %form#new_node.form-inline.remote-submit-and-refresh{"accept-charset" => "UTF-8", :action => "/nodes", :method => "post"}
+          %div{:style => "margin:0;padding:0;display:inline"}
+            %input{:name => "utf8", :type => "hidden", :value => "✓"}/
+            %input{:name => "authenticity_token", :type => "hidden", :value => "Kqpud9TOfwv3x80mIoXqro9+jr4VZizuRqHQL4nf4jc="}/
+          .row-fluid
+            .input-append.span12
+              .row-fluid
+                %input#node_title.typeahead.span9{:autocomplete => "off", :name => "node[title]", :placeholder => "Conclusion", :size => "30", :type => "text", :value => "conclusion"}/
+                %input#node_is_conclusion{:name => "node[is_conclusion]", :type => "hidden", :value => "true"}/
+                %input.btn.span3{:name => "commit", :type => "submit", :value => "Add/View"}/
+  .row-fluid
+    .span12
+      .argument.tab-content
+        #my_topic.tab-pane
+          Loading...
+        #other_user_topic.tab-pane
+          Loading...
+        #everyones_topic.tab-pane.active
+          %h3
+            %a{:href => "/nodes/1"} conclusion
+            %a.accordion-toggle-override.delete-node{"data-confirm" => "Are you sure?", :href => "/nodes/1", :rel => "nofollow"}
+              %i.icon-remove
+          #everyones_topic1
+            %h5
+              Argument For
+              %a.show-node-through-link{"data-global-node-to-id" => "1", "data-type" => "Positive"}
+                %i.icon-plus{:alt => "Show create supporting point form"}
+              %a.hide-node-through-link.hidden{"data-global-node-to-id" => "1", "data-type" => "Positive"}
+                %i.icon-plus{:alt => "Hide create supporting point form"}
+            .hidden.node-through-link.Positive.1
+              %form.form-inline.remote-submit-and-refresh{"accept-charset" => "UTF-8", :action => "/links", :method => "post"}
+                %div{:style => "margin:0;padding:0;display:inline"}
+                  %input{:name => "utf8", :type => "hidden", :value => "✓"}/
+                  %input{:name => "authenticity_token", :type => "hidden", :value => "Kqpud9TOfwv3x80mIoXqro9+jr4VZizuRqHQL4nf4jc="}/
+                %input#type{:name => "type", :type => "hidden", :value => "Positive"}/
+                %input#global_link_global_node_to_id{:name => "global_link[global_node_to_id]", :type => "hidden", :value => "1"}/
+                %input#global_link_context_node_from_title.typeahead.span9{:autocomplete => "off", :name => "global_link[context_node_from_title]", :placeholder => "Point", :size => "30", :type => "text", :value => "for"}/
+                %input.btn.span3{:name => "commit", :type => "submit", :value => "Add/View"}/
+            %ul.positive
+              %li
+                %i.icon-plus
+                %a{:href => "/nodes/2"}
+                  for
+                %a{:href => "#"}
+                  %i.icon-minus-sign.everyones_topicplus2{:style => ""}
+                %a{"data-remote" => "", :href => "/question_arguments/2?original=1&path=everyones_topicplus", :style => "display: none;"}
+                  %i.icon-plus-sign.everyones_topicplus2
+                %a.show-node-through-link{"data-global-node-to-id" => "2", "data-type" => "Negative"}
+                  %i.icon-minus{:alt => "Show create opposing point form"}
+                %a.hide-node-through-link.hidden{"data-global-node-to-id" => "2", "data-type" => "Negative"}
+                  %i.icon-minus{:alt => "Hide create opposing point form"}
+                %a.show-node-through-link{"data-global-node-to-id" => "2", "data-type" => "Positive"}
+                  %i.icon-plus{:alt => "Show create supporting point form"}
+                %a.hide-node-through-link.hidden{"data-global-node-to-id" => "2", "data-type" => "Positive"}
+                  %i.icon-plus{:alt => "Hide create supporting point form"}
+            .hidden.node-through-link.Negative.2
+              %form.form-inline.remote-submit-and-refresh{"accept-charset" => "UTF-8", :action => "/links", :method => "post"}
+                %div{:style => "margin:0;padding:0;display:inline"}
+                  %input{:name => "utf8", :type => "hidden", :value => "✓"}/
+                  %input{:name => "authenticity_token", :type => "hidden", :value => "Kqpud9TOfwv3x80mIoXqro9+jr4VZizuRqHQL4nf4jc="}/
+                %input#type{:name => "type", :type => "hidden", :value => "Negative"}/
+                %input#global_link_global_node_to_id{:name => "global_link[global_node_to_id]", :type => "hidden", :value => "2"}/
+                %input#global_link_context_node_from_title.typeahead.span9{:autocomplete => "off", :name => "global_link[context_node_from_title]", :placeholder => "Point", :size => "30", :type => "text", :value => "for"}/
+                %input.btn.span3{:name => "commit", :type => "submit", :value => "Add/View"}/
+            .hidden.node-through-link.Positive.2
+              %form.form-inline.remote-submit-and-refresh{"accept-charset" => "UTF-8", :action => "/links", :method => "post"}
+                %div{:style => "margin:0;padding:0;display:inline"}
+                  %input{:name => "utf8", :type => "hidden", :value => "✓"}/
+                  %input{:name => "authenticity_token", :type => "hidden", :value => "Kqpud9TOfwv3x80mIoXqro9+jr4VZizuRqHQL4nf4jc="}/
+                %input#type{:name => "type", :type => "hidden", :value => "Positive"}/
+                %input#global_link_global_node_to_id{:name => "global_link[global_node_to_id]", :type => "hidden", :value => "2"}/
+                %input#global_link_context_node_from_title.typeahead.span9{:autocomplete => "off", :name => "global_link[context_node_from_title]", :placeholder => "Point", :size => "30", :type => "text", :value => "for"}/
+                %input.btn.span3{:name => "commit", :type => "submit", :value => "Add/View"}/
+            #everyones_topicplus2
+              %ul.positive
+                %li
+                  %i.icon-plus
+                  %a{:href => "/nodes/3"}
+                    for for
+                  %a{:href => "#"}
+                    %i.icon-minus-sign.everyones_topicplusplus3{:style => ""}
+                  %a{"data-remote" => "", :href => "/question_arguments/3?original=1&path=everyones_topicplusplus", :style => "display: none;"}
+                    %i.icon-plus-sign.everyones_topicplusplus3
+                  %a.show-node-through-link{"data-global-node-to-id" => "3", "data-type" => "Negative"}
+                    %i.icon-minus{:alt => "Show create opposing point form"}
+                  %a.hide-node-through-link.hidden{"data-global-node-to-id" => "3", "data-type" => "Negative"}
+                    %i.icon-minus{:alt => "Hide create opposing point form"}
+                  %a.show-node-through-link{"data-global-node-to-id" => "3", "data-type" => "Positive"}
+                    %i.icon-plus{:alt => "Show create supporting point form"}
+                  %a.hide-node-through-link.hidden{"data-global-node-to-id" => "3", "data-type" => "Positive"}
+                    %i.icon-plus{:alt => "Hide create supporting point form"}
+              .hidden.node-through-link.Negative.3
+                %form.form-inline.remote-submit-and-refresh{"accept-charset" => "UTF-8", :action => "/links", :method => "post"}
+                  %div{:style => "margin:0;padding:0;display:inline"}
+                    %input{:name => "utf8", :type => "hidden", :value => "✓"}/
+                    %input{:name => "authenticity_token", :type => "hidden", :value => "Kqpud9TOfwv3x80mIoXqro9+jr4VZizuRqHQL4nf4jc="}/
+                  %input#type{:name => "type", :type => "hidden", :value => "Negative"}/
+                  %input#global_link_global_node_to_id{:name => "global_link[global_node_to_id]", :type => "hidden", :value => "3"}/
+                  %input#global_link_context_node_from_title.typeahead.span9{:autocomplete => "off", :name => "global_link[context_node_from_title]", :placeholder => "Point", :size => "30", :type => "text", :value => "for"}/
+                  %input.btn.span3{:name => "commit", :type => "submit", :value => "Add/View"}/
+              .hidden.node-through-link.Positive.3
+                %form.form-inline.remote-submit-and-refresh{"accept-charset" => "UTF-8", :action => "/links", :method => "post"}
+                  %div{:style => "margin:0;padding:0;display:inline"}
+                    %input{:name => "utf8", :type => "hidden", :value => "✓"}/
+                    %input{:name => "authenticity_token", :type => "hidden", :value => "Kqpud9TOfwv3x80mIoXqro9+jr4VZizuRqHQL4nf4jc="}/
+                  %input#type{:name => "type", :type => "hidden", :value => "Positive"}/
+                  %input#global_link_global_node_to_id{:name => "global_link[global_node_to_id]", :type => "hidden", :value => "3"}/
+                  %input#global_link_context_node_from_title.typeahead.span9{:autocomplete => "off", :name => "global_link[context_node_from_title]", :placeholder => "Point", :size => "30", :type => "text", :value => "for"}/
+                  %input.btn.span3{:name => "commit", :type => "submit", :value => "Add/View"}/
+              #everyones_topicplusplus3
+                %ul.positive
+                %ul.negative
+                  %li
+                    %i.icon-minus
+                    %a{:href => "/nodes/6"}
+                      against for
+                    %a{:href => "#"}
+                      %i.icon-minus-sign.everyones_topicplusplusminus6{:style => ""}
+                    %a{"data-remote" => "", :href => "/question_arguments/6?original=1&path=everyones_topicplusplusminus", :style => "display: none;"}
+                      %i.icon-plus-sign.everyones_topicplusplusminus6
+                    %a.show-node-through-link{"data-global-node-to-id" => "6", "data-type" => "Negative"}
+                      %i.icon-minus{:alt => "Show create opposing point form"}
+                    %a.hide-node-through-link.hidden{"data-global-node-to-id" => "6", "data-type" => "Negative"}
+                      %i.icon-minus{:alt => "Hide create opposing point form"}
+                    %a.show-node-through-link{"data-global-node-to-id" => "6", "data-type" => "Positive"}
+                      %i.icon-plus{:alt => "Show create supporting point form"}
+                    %a.hide-node-through-link.hidden{"data-global-node-to-id" => "6", "data-type" => "Positive"}
+                      %i.icon-plus{:alt => "Hide create supporting point form"}
+                .hidden.node-through-link.Negative.6
+                  %form.form-inline.remote-submit-and-refresh{"accept-charset" => "UTF-8", :action => "/links", :method => "post"}
+                    %div{:style => "margin:0;padding:0;display:inline"}
+                      %input{:name => "utf8", :type => "hidden", :value => "✓"}/
+                      %input{:name => "authenticity_token", :type => "hidden", :value => "Kqpud9TOfwv3x80mIoXqro9+jr4VZizuRqHQL4nf4jc="}/
+                    %input#type{:name => "type", :type => "hidden", :value => "Negative"}/
+                    %input#global_link_global_node_to_id{:name => "global_link[global_node_to_id]", :type => "hidden", :value => "6"}/
+                    %input#global_link_context_node_from_title.typeahead.span9{:autocomplete => "off", :name => "global_link[context_node_from_title]", :placeholder => "Point", :size => "30", :type => "text", :value => "for"}/
+                    %input.btn.span3{:name => "commit", :type => "submit", :value => "Add/View"}/
+                .hidden.node-through-link.Positive.6
+                  %form.form-inline.remote-submit-and-refresh{"accept-charset" => "UTF-8", :action => "/links", :method => "post"}
+                    %div{:style => "margin:0;padding:0;display:inline"}
+                      %input{:name => "utf8", :type => "hidden", :value => "✓"}/
+                      %input{:name => "authenticity_token", :type => "hidden", :value => "Kqpud9TOfwv3x80mIoXqro9+jr4VZizuRqHQL4nf4jc="}/
+                    %input#type{:name => "type", :type => "hidden", :value => "Positive"}/
+                    %input#global_link_global_node_to_id{:name => "global_link[global_node_to_id]", :type => "hidden", :value => "6"}/
+                    %input#global_link_context_node_from_title.typeahead.span9{:autocomplete => "off", :name => "global_link[context_node_from_title]", :placeholder => "Point", :size => "30", :type => "text", :value => "for"}/
+                    %input.btn.span3{:name => "commit", :type => "submit", :value => "Add/View"}/
+                #everyones_topicplusplusminus6
+                  %ul.positive
+                  %ul.negative
+              %ul.negative
+            %h5
+              Argument Against
+              %a.show-node-through-link{"data-global-node-to-id" => "1", "data-type" => "Negative"}
+                %i.icon-minus{:alt => "Show create opposing point form"}
+              %a.hide-node-through-link.hidden{"data-global-node-to-id" => "1", "data-type" => "Negative"}
+                %i.icon-minus{:alt => "Hide create opposing point form"}
+            .hidden.node-through-link.Negative.1
+              %form.form-inline.remote-submit-and-refresh{"accept-charset" => "UTF-8", :action => "/links", :method => "post"}
+                %div{:style => "margin:0;padding:0;display:inline"}
+                  %input{:name => "utf8", :type => "hidden", :value => "✓"}/
+                  %input{:name => "authenticity_token", :type => "hidden", :value => "Kqpud9TOfwv3x80mIoXqro9+jr4VZizuRqHQL4nf4jc="}/
+                %input#type{:name => "type", :type => "hidden", :value => "Negative"}/
+                %input#global_link_global_node_to_id{:name => "global_link[global_node_to_id]", :type => "hidden", :value => "1"}/
+                %input#global_link_context_node_from_title.typeahead.span9{:autocomplete => "off", :name => "global_link[context_node_from_title]", :placeholder => "Point", :size => "30", :type => "text", :value => "for"}/
+                %input.btn.span3{:name => "commit", :type => "submit", :value => "Add/View"}/
+            %ul.negative
+              %li
+                %i.icon-minus
+                %a{:href => "/nodes/4"}
+                  against
+                %a{:href => "#"}
+                  %i.icon-minus-sign.everyones_topicminus4{:style => ""}
+                %a{"data-remote" => "", :href => "/question_arguments/4?original=1&path=everyones_topicminus", :style => "display: none;"}
+                  %i.icon-plus-sign.everyones_topicminus4
+                %a.show-node-through-link{"data-global-node-to-id" => "4", "data-type" => "Negative"}
+                  %i.icon-minus{:alt => "Show create opposing point form"}
+                %a.hide-node-through-link.hidden{"data-global-node-to-id" => "4", "data-type" => "Negative"}
+                  %i.icon-minus{:alt => "Hide create opposing point form"}
+                %a.show-node-through-link{"data-global-node-to-id" => "4", "data-type" => "Positive"}
+                  %i.icon-plus{:alt => "Show create supporting point form"}
+                %a.hide-node-through-link.hidden{"data-global-node-to-id" => "4", "data-type" => "Positive"}
+                  %i.icon-plus{:alt => "Hide create supporting point form"}
+            .hidden.node-through-link.Negative.4
+              %form.form-inline.remote-submit-and-refresh{"accept-charset" => "UTF-8", :action => "/links", :method => "post"}
+                %div{:style => "margin:0;padding:0;display:inline"}
+                  %input{:name => "utf8", :type => "hidden", :value => "✓"}/
+                  %input{:name => "authenticity_token", :type => "hidden", :value => "Kqpud9TOfwv3x80mIoXqro9+jr4VZizuRqHQL4nf4jc="}/
+                %input#type{:name => "type", :type => "hidden", :value => "Negative"}/
+                %input#global_link_global_node_to_id{:name => "global_link[global_node_to_id]", :type => "hidden", :value => "4"}/
+                %input#global_link_context_node_from_title.typeahead.span9{:autocomplete => "off", :name => "global_link[context_node_from_title]", :placeholder => "Point", :size => "30", :type => "text", :value => "for"}/
+                %input.btn.span3{:name => "commit", :type => "submit", :value => "Add/View"}/
+            .hidden.node-through-link.Positive.4
+              %form.form-inline.remote-submit-and-refresh{"accept-charset" => "UTF-8", :action => "/links", :method => "post"}
+                %div{:style => "margin:0;padding:0;display:inline"}
+                  %input{:name => "utf8", :type => "hidden", :value => "✓"}/
+                  %input{:name => "authenticity_token", :type => "hidden", :value => "Kqpud9TOfwv3x80mIoXqro9+jr4VZizuRqHQL4nf4jc="}/
+                %input#type{:name => "type", :type => "hidden", :value => "Positive"}/
+                %input#global_link_global_node_to_id{:name => "global_link[global_node_to_id]", :type => "hidden", :value => "4"}/
+                %input#global_link_context_node_from_title.typeahead.span9{:autocomplete => "off", :name => "global_link[context_node_from_title]", :placeholder => "Point", :size => "30", :type => "text", :value => "for"}/
+                %input.btn.span3{:name => "commit", :type => "submit", :value => "Add/View"}/
+            #everyones_topicminus4
+              %ul.positive
+                %li
+                  %i.icon-plus
+                  %a{:href => "/nodes/5"}
+                    for against
+                  %a{:href => "#"}
+                    %i.icon-minus-sign.everyones_topicminusplus5{:style => ""}
+                  %a{"data-remote" => "", :href => "/question_arguments/5?original=1&path=everyones_topicminusplus", :style => "display: none;"}
+                    %i.icon-plus-sign.everyones_topicminusplus5
+                  %a.show-node-through-link{"data-global-node-to-id" => "5", "data-type" => "Negative"}
+                    %i.icon-minus{:alt => "Show create opposing point form"}
+                  %a.hide-node-through-link.hidden{"data-global-node-to-id" => "5", "data-type" => "Negative"}
+                    %i.icon-minus{:alt => "Hide create opposing point form"}
+                  %a.show-node-through-link{"data-global-node-to-id" => "5", "data-type" => "Positive"}
+                    %i.icon-plus{:alt => "Show create supporting point form"}
+                  %a.hide-node-through-link.hidden{"data-global-node-to-id" => "5", "data-type" => "Positive"}
+                    %i.icon-plus{:alt => "Hide create supporting point form"}
+              .hidden.node-through-link.Negative.5
+                %form.form-inline.remote-submit-and-refresh{"accept-charset" => "UTF-8", :action => "/links", :method => "post"}
+                  %div{:style => "margin:0;padding:0;display:inline"}
+                    %input{:name => "utf8", :type => "hidden", :value => "✓"}/
+                    %input{:name => "authenticity_token", :type => "hidden", :value => "Kqpud9TOfwv3x80mIoXqro9+jr4VZizuRqHQL4nf4jc="}/
+                  %input#type{:name => "type", :type => "hidden", :value => "Negative"}/
+                  %input#global_link_global_node_to_id{:name => "global_link[global_node_to_id]", :type => "hidden", :value => "5"}/
+                  %input#global_link_context_node_from_title.typeahead.span9{:autocomplete => "off", :name => "global_link[context_node_from_title]", :placeholder => "Point", :size => "30", :type => "text", :value => "for"}/
+                  %input.btn.span3{:name => "commit", :type => "submit", :value => "Add/View"}/
+              .hidden.node-through-link.Positive.5
+                %form.form-inline.remote-submit-and-refresh{"accept-charset" => "UTF-8", :action => "/links", :method => "post"}
+                  %div{:style => "margin:0;padding:0;display:inline"}
+                    %input{:name => "utf8", :type => "hidden", :value => "✓"}/
+                    %input{:name => "authenticity_token", :type => "hidden", :value => "Kqpud9TOfwv3x80mIoXqro9+jr4VZizuRqHQL4nf4jc="}/
+                  %input#type{:name => "type", :type => "hidden", :value => "Positive"}/
+                  %input#global_link_global_node_to_id{:name => "global_link[global_node_to_id]", :type => "hidden", :value => "5"}/
+                  %input#global_link_context_node_from_title.typeahead.span9{:autocomplete => "off", :name => "global_link[context_node_from_title]", :placeholder => "Point", :size => "30", :type => "text", :value => "for"}/
+                  %input.btn.span3{:name => "commit", :type => "submit", :value => "Add/View"}/
+              #everyones_topicminusplus5
+                %ul.positive
+                %ul.negative
+              %ul.negative
