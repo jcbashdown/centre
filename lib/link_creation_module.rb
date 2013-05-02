@@ -3,63 +3,44 @@ module LinkCreationModule
   end
  
   def create_appropriate_nodes
-    self.global_node_from = Node::GlobalNode.find self.global_node_from_id
-    self.global_node_to = Node::GlobalNode.find self.global_node_to_id
-    self.context_node_from = ContextNode.find_or_create_by_user_id_and_question_id_and_title(:user_id=>self.user_id, :question_id=>self.question_id, :title => self.global_node_from.title)
-    self.context_node_to = ContextNode.find_or_create_by_user_id_and_question_id_and_title(:user_id=>self.user_id, :question_id=>self.question_id, :title => self.global_node_to.title)
-    self.user_node_from = self.context_node_from.user_node
-    self.user_node_to = self.context_node_to.user_node
-    self.question_node_from = self.context_node_from.question_node
-    self.question_node_to = self.context_node_to.question_node
+    to_params = {:user_id=>self.user_id, :question_id=>self.question_id, :title => self.global_node_to.title}
+    ContextNode.exists?(to_params) || Node::UserNode.create!(to_params)
+    unless self.global_node_from_id
+      string_from_params = {:user_id=>self.user_id, :question_id=>self.question_id, :title => self.context_node_from_title}
+      context_node_from = ContextNode.where(string_from_params)[0] || Node::UserNode.create!(string_from_params)
+      #this as a problem... do we need trans? conclusion happening after...
+      self.global_node_from_id = context_node_from.global_node_id
+    else
+      id_from_params = {:user_id=>self.user_id, :question_id=>self.question_id, :title => self.global_node_from.title}
+      ContextNode.exists?(id_from_params) || Node::UserNode.create!(id_from_params)
+    end
+    self
   end
-  
+
   def create_appropriate_links
     self.global_link_id = find_or_create_global_link.id
-    @new_links = []
-    @existing_links_hash = {}
-    new_links_hash = {}
-    find_or_initialise_links
-    unless @new_links.empty?
-      #test this properly - loading right ids?
-      #even faster - composite primary key, no need to get back after insert as already know
-      Link.import @new_links
-      @new_links = synchronize @new_links, Link, [:type, :user_id, :question_id, :node_from_id, :node_to_id]
-      @new_links.each do |link|
-        subtype_matcher = /Link::(.*)::#{link_kind}/
-        subtype = (subtype_matcher.match(link.type))[1]
-        new_links_hash[:"#{subtype.underscore}_id"] = link.id
+    find_or_create_group_links
+    self
+  end
+
+  def find_or_create_group_links
+    if self.user.try(:groups) && (group_ids = self.user.groups.reload.map(&:id)).any?
+      group_ids.inject([]) do |group_links, group_id|
+        group_links << find_or_create_group_link("Link::GroupLink::#{link_kind}GroupLink".constantize, {:group_id => group_id, :global_node_from_id => self.global_node_from_id, :global_node_to_id => self.global_node_to_id, :global_link_id => self.global_link_id})
+        group_links
       end
-    end
-    attributes = new_links_hash.merge(@existing_links_hash)
-    unless user_link_id
-      attributes[:user_link_id] = find_or_create_user_link(attributes).id
-    end
-    self.attributes = attributes
-  end
-
-  def find_or_initialise_links
-    if question
-      find_or_initialise("Link::QuestionLink::#{link_kind}QuestionLink".constantize, {:question_id => question_id, :node_from_id => self.question_node_from_id, :node_to_id => self.question_node_to_id, :global_node_from_id => self.global_node_from_id, :global_node_to_id => self.global_node_to_id, :global_link_id => self.global_link_id})
-    end
-  end  
-
-  def find_or_initialise(the_class, the_params={})
-    unless link = the_class.where(the_params)[0]
-      @new_links << the_class.new(the_params)
+      group_links
     else
-      subtype_matcher = /Link::(.*)::#{link_kind}/
-      subtype = (subtype_matcher.match(the_class.to_s))[1]
-      @existing_links_hash[:"#{subtype.underscore}_id"] = link.id
+      []
     end
-  end
+  end 
 
-  def find_or_create_user_link(attributes)
-    params = {:user_id => user_id, :node_from_id => self.user_node_from_id, :node_to_id => self.user_node_to_id, :global_node_from_id => self.global_node_from_id, :global_node_to_id => self.global_node_to_id, :global_link_id => self.global_link_id}
-    Link::UserLink.where(params)[0] || "Link::UserLink::#{self.link_kind}UserLink".constantize.create!(params)
+  def find_or_create_group_link(the_class, the_params={})
+    the_class.where(the_params)[0] || the_class.create!(the_params)
   end
 
   def find_or_create_global_link
-    params = {:node_from_id => self.global_node_from_id, :node_to_id => self.global_node_to_id}
+    params = {:global_node_from_id => self.global_node_from_id, :global_node_to_id => self.global_node_to_id}
     link = "Link::GlobalLink::#{self.link_kind}GlobalLink".constantize.where(params)[0] || "Link::GlobalLink::#{self.link_kind}GlobalLink".constantize.create!(params)
   end
 end

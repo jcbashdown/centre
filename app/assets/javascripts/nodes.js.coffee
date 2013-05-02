@@ -1,40 +1,27 @@
 $(document).ready ->
-  question = $('#global_id').text()
   $('.typeahead').typeahead(
     source: (typeahead, query) ->
-      url = "/nodes.js"
-      method = "GET"
       data_hash = {"view_configuration":{"nodes_query":query}}
+      centre.refreshNodes(data_hash)
+      url = "/nodes.json"
+      method = "GET"
       $.ajax(
         url: url
         type: method  
         data: data_hash   
-        dataType: "html"
         error: (XMLHttpRequest, textStatus, errorThrown) ->
           alert errorThrown    
         success: (data, textStatus, XMLHttpRequest) ->
-          $('#current_nodes').html(data)
-          url = "/nodes.json"
-          method = "GET"
-          data_hash = {"view_configuration":{"nodes_query":query}}
-          $.ajax(
-            url: url
-            type: method  
-            data: data_hash   
-            error: (XMLHttpRequest, textStatus, errorThrown) ->
-              alert errorThrown    
-            success: (data, textStatus, XMLHttpRequest) ->
-              typeahead.process(data)
-          )
+          typeahead.process(data)
       )
     # if we return objects to typeahead.process we must specify the property
     # that typeahead uses to look up the display value
     property: "title"
   )
+
   $('.icon-minus-sign').live "click", (event) ->
-    target = event.target
-    $(target).hide()
-    target_class = $(target).attr('class')
+    $(this).hide()
+    target_class = $(this).attr('class')
     id_from_class = target_class.replace('icon-minus-sign ', "")
     $('.'+id_from_class).parent().show()
     $('#'+id_from_class).html("")
@@ -45,5 +32,44 @@ $(document).ready ->
     id = $(this).attr('id')
     $("#"+id).submit()
     return false 
+  
+  $('a.delete-node').live "click", (event) ->
+    centre.deleteNode(this)
+
+  $('form.remote-submit-and-refresh').live "submit", (event) ->
+    centre.createNodeThroughLink(this)
+
+  #arg builder stuff
+  $('.show-new-conclusion').live "click", (event) ->
+    centre.refreshNodes()
+    $(this).hide()
+    $('.hidden.new-conclusion').show()
+    $('.hide-new-conclusion').show()
+    return false 
+
+  $('.hide-new-conclusion').live "click", (event) ->
+    $(this).hide()
+    $('.hidden.new-conclusion').hide()
+    $('.show-new-conclusion').show()
+    centre.hideNodes()
+    return false 
     
+  $('.show-node-through-link').live "click", (event) ->
+    centre.refreshNodes()
+    $(this).hide()
+    type = $(this).attr('data-type')
+    global_node_to_id = $(this).attr('data-global-node-to-id')
+    $('.hidden.node-through-link.'+type+'.'+global_node_to_id).show()
+    $('.hide-node-through-link[data-type='+type+'][data-global-node-to-id='+global_node_to_id+']').show()
+    return false 
+
+  $('.hide-node-through-link').live "click", (event) ->
+    $(this).hide()
+    type = $(this).attr('data-type')
+    global_node_to_id = $(this).attr('data-global-node-to-id')
+    $('.hidden.node-through-link.'+type+'.'+global_node_to_id).hide()
+    $('.show-node-through-link[data-type='+type+'][data-global-node-to-id='+global_node_to_id+']').show()
+    centre.hideNodes()
+    return false 
+
   return false

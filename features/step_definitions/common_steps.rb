@@ -1,6 +1,6 @@
 
 Given /^a node has been created$/ do
-  created_node = Factory(:node)
+  created_node = FactoryGirl.create(:node)
   @created_node_id = created_node.id
 end
 

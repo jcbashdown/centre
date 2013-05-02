@@ -1,0 +1,8 @@
+-is_conclusion ||= nil
+.row-fluid
+  .input-append.span12
+    .row-fluid
+      = f.text_field :title, :placeholder=>(is_conclusion ? "Conclusion" : "Point"), :class=>"typeahead span9", :autocomplete => "off", :value =>(session["nodes_query"] ? session["nodes_query"] : "")
+      -if is_conclusion
+        = f.hidden_field :is_conclusion, :value => true
+      = f.submit 'Add/View', :class => 'btn span3'

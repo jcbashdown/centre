@@ -1,6 +1,7 @@
--question ||=nil
-- if question
-  - question.concluding_nodes.each do |node| 
+-argument_question ||=nil
+- if argument_question
+  - argument_question.concluding_nodes.each do |node| 
     %h3
       =link_to node.title, node_path(node.global_node)
-    = render :partial => 'question_arguments/show', :locals => {:node => node, :previous => previous, :original => node.id}
+      =render :partial => 'nodes/delete_form', :locals => {:node => node.global_node}
+    = render :partial => 'arguments/show', :locals => {:path_method => :question_argument_path, :node => node, :previous => previous, :original => node.id, :argument_question => argument_question, :argument_user => argument_user}

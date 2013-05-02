@@ -8,12 +8,9 @@ module ViewConfiguration
             :nodes_query => true,
             :argument_user => true,
             :argument_question => true,
-            :links_to_question => true,
-            :links_to_user => true,
-            :links_to_query => true,
-            :links_from_question => true,
-            :links_from_user => true,
-            :links_from_query => true
+            :links_question => true,
+            :links_user => true,
+            :links_query => true
           })
   end
 

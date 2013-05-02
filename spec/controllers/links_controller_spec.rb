@@ -1,226 +1,118 @@
 require 'spec_helper'
+require 'controllers/links_controller_spec_helper'
 
 describe LinksController do
+  let(:current_user) {FactoryGirl.create(:user)}
+  let(:direction) {"from"}
+  let(:question) {FactoryGirl.create(:question)}
+  let(:nodes_params) {{:global_link => {"global_node_from_id" => "1",
+                                        "global_node_to_id" => "2"}}}
+  before {controller.stub(:current_user).and_return current_user}
 
-  before do
-    @question = FactoryGirl.create(:question)
-    Question.stub(:find).and_return @question
-  end
-  
   describe 'update' do
+    let(:id) {123321}
+    let(:type) {"Positive"}
+    let(:mock_link) {mock('link')}
+    let(:mock_links) {[mock_link]}
+    let(:mock_format) {mock('format')}
+    let(:params) {{type: type, direction: direction, id: id}.merge(nodes_params)} 
     before do
-      @user = FactoryGirl.create(:user)
-      controller.stub(:current_user).and_return @user
-      @cn1 = ContextNode.create(:user=>@user, :title=>'title', :question=>@question)
-      @node_one = @cn1.global_node
-      @cn2 = ContextNode.create(:user=>@user, :title=>'test', :question=>@question)
-      @node_two = @cn2.global_node
-      @params_one = {"type" => "Positive", "global_link"=>{"global_node_from_id"=>@node_one.id.to_s, "global_node_to_id"=>@node_two.id.to_s}}
-      @context_link = ContextLink::PositiveContextLink.create(@params_one["global_link"].merge(:question => @question, :user => @user))
-      @user_two = FactoryGirl.create(:user, :email => "user2@test.com")
-      @context_linkuser2 = ContextLink::PositiveContextLink.create(@params_one["global_link"].merge(:question => @question, :user => @user_two))
+      Link::UserLink.stub(:where).and_return mock_links
+      mock_link.stub(:update_type).and_return mock_link
+      mock_link.stub(:persisted?)
     end
-    #update will destroy and then create as too much logic for an after save if we check if we need to to destroy question links etc.
-    context 'when ajax request' do
-      context 'with valid params' do
-        before do
-          @params = {"type" => "Negative", "global_link"=>{"global_node_from_id"=>@node_one.id.to_s, "global_node_to_id"=>@node_two.id.to_s}, "id" =>@context_link.global_link.id, "view_configuration" => {"links_from_question" => @question.id}}
-          @mock_cn = mock('context_link')
-          @mock_cn_2 = mock('context_link')
-          @mock_global_link = mock('global_link')
-          @mock_cn_2.stub(:save).and_return true
-          @mock_cn_2.stub(:global_link).and_return @mock_global_link
-          @mock_cn.stub(:destroy).and_return true
-          @mock_relation = mock('relation')
-        end
-        it 'should destroy the glu' do
-          @mock_relation.stub(:where).and_return [@mock_cn]
-          ContextLink.stub(:with_all_associations).and_return @mock_relation
-          @mock_cn.should_receive(:update_type)
-          xhr :put, :update, @params
-        end
-        it 'should save the glu' do
-          ContextLink::NegativeContextLink.stub(:find).and_return @mock_cn
-          ContextLink::NegativeContextLink.stub(:new).and_return @mock_cn_2
-          @mock_cn_2.should_receive(:save)
-          xhr :put, :update, @params
-        end
-        it 'increment the caches' do
-          Link::GlobalLink::NegativeGlobalLink.where(:node_from_id => @params["global_link"]["global_node_from_id"], :node_to_id => @params["global_link"]["global_node_to_id"]).first.should be_nil
-          global_link = Link::GlobalLink::PositiveGlobalLink.where(:node_from_id => @params_one["global_link"]["global_node_from_id"], :node_to_id => @params_one["global_link"]["global_node_to_id"]).first
-          global_link.users_count.should == 2
-          Link::UserLink.count.should == 2
-          xhr :post, :update, @params
-          global_link = Link::GlobalLink::NegativeGlobalLink.where(:node_from_id => @params["global_link"]["global_node_from_id"], :node_to_id => @params["global_link"]["global_node_to_id"]).first
-          global_link.users_count.should == 1
-          global_link = Link::GlobalLink::PositiveGlobalLink.where(:node_from_id => @params_one["global_link"]["global_node_from_id"], :node_to_id => @params_one["global_link"]["global_node_to_id"]).first
-          global_link.users_count.should == 1
-        end
-        it 'should render the link partial for the newly associated link (not tested)' do
-          xhr :put, :update, @params
-          response.should render_template(:partial => "_a_link")
-        end
-        it 'should assign the correct link' do
-          put :update, @params
-          new_link = ContextLink.where(@params["global_link"].merge(:user_id => @user.id, :question_id => @question.id)).first
-          assigns(:context_link).should == new_link
-        end
-        it 'should create a link with the correct parameters' do
-          @mock_cn.should_receive(:update_type).with @params["type"]
-          @mock_relation.stub(:where).and_return [@mock_cn]
-          ContextLink.stub(:with_all_associations).and_return @mock_relation
-          xhr :post, :update, @params
-        end
+    
+    it_should_behave_like "a LinksController method with the set_link_question before filter", :put, :update, {:id => 1}
+
+    context "with a @link_question set" do
+      before do
+        Question.stub(:find_by_id).and_return question
       end
-      context 'when destroy or save returns false for glu' do
-        before do
-          @params = {"type" => "Negative", "global_link"=>{"global_node_from_id"=>@node_one.id.to_s, "global_node_to_id"=>@node_two.id.to_s}, "id" =>@context_link.global_link.id, "view_configuration" => {"links_from_question" => @question.id}}
-          @new_link_params = {"global_link"=>{:node_from_id=>@node_one.id.to_s, :node_to_id=>@node_two.id.to_s}}
-          ContextLink::NegativeContextLink.stub(:create).and_return false
-        end
-        context 'when glu destroyed but nothing new created' do
-          it 'initialise a new link with the correct parameters' do
-            Link::GlobalLink.should_receive(:new).with(@new_link_params["global_link"])
-            xhr :put, :update, @params
-          end
-        end
-        it 'should render the link template' do
-          xhr :put, :update, @params
-          response.should render_template(:partial => "_a_link")
-        end
+      it "should call where on Link::UserLink with the params[:id] as the global_link_id and the current_user.id as the user_id" do
+        Link::UserLink.should_receive(:where)
+          .with(
+                 user_id: current_user.id,
+                 global_link_id: id.to_s
+               )
+          .and_return mock_links
+        put :update, params
       end
+      it "should call update_type on the the first result of where with the params[:type]" do
+        mock_link.should_receive(:update_type).with type, question
+        put :update, params
+      end
+
     end
+
+    it "should have node from and to or makes no sense?" do
+      pending
+    end
+
+    it_should_behave_like "a LinksController method calling rerender_link to handle rendering", {:rest_action => :put, :method => :update}
+
   end
   describe 'create' do
+    let(:type) {"Positive"}
+    let(:mock_link) {mock('link')}
+    let(:mock_format) {mock('format')}
+    let(:params) {{type: type, direction: direction}.merge(nodes_params)} 
     before do
-      @user = FactoryGirl.create(:user)
-      controller.stub(:current_user).and_return @user
-      @cn1 = ContextNode.create(:user=>@user, :title=>'title', :question=>@question)
-      @node_one = @cn1.global_node
-      @cn2 = ContextNode.create(:user=>@user, :title=>'test', :question=>@question)
-      @node_two = @cn2.global_node
+      "Link::UserLink::#{type}UserLink".constantize.stub(:create).and_return mock_link
+      mock_link.stub(:persisted?)
     end
-    context 'when ajax request' do
-      context 'with valid params' do
-        before do
-          @params = {"type" => "Negative", "global_link"=>{"global_node_from_id"=>@node_one.id.to_s, "global_node_to_id"=>@node_two.id.to_s}, "view_configuration" => {"links_from_question" => @question.id}}
-          @mock_cl = mock('context_link')
-          @mock_global_link = mock('global_link')
-          @mock_cl.stub(:save).and_return true
-          @mock_cl.stub(:global_link).and_return @mock_global_link
-        end
-        it 'should save the glu' do
-          ContextLink::NegativeContextLink.stub(:new).and_return @mock_cl
-          @mock_cl.should_receive(:save)
-          xhr :post, :create, @params
-        end
-        it 'increment the caches' do
-          Link::GlobalLink::NegativeGlobalLink.where(:node_from_id => @params["global_link"]["global_node_from_id"], :node_to_id => @params["global_link"]["global_node_to_id"]).first.should be_nil
-          xhr :post, :create, @params
-          global_link = Link::GlobalLink::NegativeGlobalLink.where(:node_from_id => @params["global_link"]["global_node_from_id"], :node_to_id => @params["global_link"]["global_node_to_id"]).first
-          global_link.users_count.should == 1
-        end
-        it 'should render the link partial for the newly associated link (not tested)' do
-          @mock_cl.stub(:save).and_return true
-          ContextLink::NegativeContextLink.stub(:new).and_return(@mock_cl)
-          xhr :post, :create, @params
-          response.should render_template(:partial => "_a_link")
-        end
-        it 'should assign the correct link' do
-          post :create, @params
-          new_link = ContextLink.where(@params["global_link"].merge(:user_id => @user.id, :question_id => @question.id)).first
-          assigns(:context_link).should == new_link
-        end
-        it 'initialise a new link with the correct parameters' do
-          ContextLink::NegativeContextLink.should_receive(:new).with(@params["global_link"].merge("question_id" => @question.id, "user" => @user)).and_return @mock_cl
-          xhr :post, :create, @params
-        end
+
+    it_should_behave_like "a LinksController method with the set_link_question before filter", :post, :create
+
+    context "with a @link_question set" do
+      before do
+        Question.stub(:find_by_id).and_return question
       end
-      context 'when save returns false for glu' do
-        before do
-          @params = {"type" => "Negative", "global_link"=>{"global_node_from_id"=>@node_one.id.to_s, "global_node_to_id"=>@node_two.id.to_s}}
-          @mock_cl = mock('context_link')
-          @mock_global_link = mock('global_link')
-          @mock_cl.stub(:save).and_return false
-          @mock_cl.stub(:link).and_return @mock_global_link
-        end
-        it 'initialise a new link with the correct parameters' do
-          ContextLink::NegativeContextLink.should_receive(:new).and_return @mock_cl
-          Link::GlobalLink.should_receive(:new).and_return @mock_global_link
-          xhr :post, :create, @params
-        end
-        it 'should render the link template' do
-          ContextLink::NegativeContextLink.stub(:new).and_return @mock_cl
-          xhr :post, :create, @params
-          response.should render_template(:partial => "_a_link")
-        end
+      it "should call create on the correct type of Link::UserLink with the global_link params the current_user.id as the user_id and the question.id as the question_id" do
+        "Link::UserLink::#{type}UserLink".constantize.should_receive(:create)
+          .with( params[:global_link].merge("question_id" => question.id, "user_id" => current_user.id))
+          .and_return mock_link
+        post :create, params
       end
     end
+
+    it_should_behave_like "a LinksController method calling rerender_link to handle rendering", {:rest_action => :post, :method => :create}
+
   end
   describe 'destroy' do
+    let(:id) {123321}
+    let(:type) {"Positive"}
+    let(:mock_link) {mock('link')}
+    let(:mock_links) {[mock_link]}
+    let(:mock_format) {mock('format')}
+    let(:params) {{type: type, direction: direction, id: id}.merge(nodes_params)} 
     before do
-      @user = FactoryGirl.create(:user)
-      controller.stub(:current_user).and_return @user
-      @cn1 = ContextNode.create(:user=>@user, :title=>'title', :question=>@question)
-      @node_one = @cn1.global_node
-      @cn2 = ContextNode.create(:user=>@user, :title=>'test', :question=>@question)
-      @node_two = @cn2.global_node
-      @params_one = {"type" => "Positive", "global_link"=>{"global_node_from_id"=>@node_one.id.to_s, "global_node_to_id"=>@node_two.id.to_s}}
-      @context_link = ContextLink::PositiveContextLink.create(@params_one["global_link"].merge(:question => @question, :user => @user))
-      @user_two = FactoryGirl.create(:user, :email => "user2@test.com")
-      @context_linkuser2 = ContextLink::PositiveContextLink.create!(@params_one["global_link"].merge(:question => @question, :user => @user_two))
-      @params_one = {"type" => "Positive", "global_link"=>{"global_node_from_id"=>@node_one.id.to_s, "global_node_to_id"=>@node_two.id.to_s}, :id => @context_link.global_link.id, :view_configuration => {:links_from_question => @question.id}}
-      @context_link.global_link.should == @context_linkuser2.global_link
+      mock_link.stub(:persisted?).and_return false
+      mock_link.stub(:destroy).and_return mock_link
+      Link::UserLink.stub(:where).and_return mock_links
     end
-    #update will destroy and then create as too much logic for an after save if we check if we need to to destroy question links etc.
-    context 'when ajax request' do
-      context 'with valid params' do
-        before do
-          @mock_cl = mock('context_link')
-          @mock_cl_2 = mock('context_link')
-          @mock_global_link = mock('global_link')
-          @mock_cl_2.stub(:save).and_return true
-          @mock_cl_2.stub(:link).and_return @mock_global_link
-          @mock_cl.stub(:destroy_all_for_user_link).and_return true
-          @mock_relation = mock('relation')
-        end
-        it 'should save the glu' do
-          @mock_relation.stub(:where).and_return [@mock_cl]
-          ContextLink.stub(:with_all_associations).and_return @mock_relation
-          @mock_cl.should_receive(:destroy_all_for_user_link)
-          xhr :put, :destroy, @params_one
-        end
-        it 'decrement the caches' do
-          global_link = Link::GlobalLink.where(@params_one["link"]).first
-          global_link.should_not be_nil
-          global_link.reload.users_count.should == 2
-          global_link.users_count.should == 2 
-          xhr :post, :destroy, @params_one
-          global_link = Link::GlobalLink.where(@params_one["link"]).first
-          global_link.users_count.should == 1
-          global_link.users_count.should == 1
-        end
-        it 'should render the link partial for the newly associated link (not tested)' do
-          xhr :put, :destroy, @params_one
-          response.should render_template(:partial => "_a_link")
-        end
-        it 'should assign the correct link' do
-          @new_link_params = {"global_link"=>{"global_node_from_id"=>@node_one.id.to_s, "global_node_to_id"=>@node_two.id.to_s}}
-          new_link = ContextLink::PositiveContextLink.new(@new_link_params["global_link"])
-          Link::GlobalLink.should_receive(:new).with(:node_from_id => @new_link_params["global_link"]["global_node_from_id"], :node_to_id => @new_link_params["global_link"]["global_node_to_id"]).and_return new_link
-          xhr :put, :destroy, @params_one
-        end
+
+    it_should_behave_like "a LinksController method with the set_link_question before filter", :delete, :destroy, {:id => 1}
+
+    context "with a @link_question set" do
+      before do
+        Question.stub(:find_by_id).and_return question
       end
-      context 'when destroy or save returns false for glu' do
-        before do
-          @context_link.stub(:destroy_all_for_user_link).and_return false
-          ContextLink::PositiveContextLink.stub(:find).and_return @context_link
-        end
-        it 'should render the link template' do
-          xhr :put, :destroy, @params_one
-          response.should render_template(:partial => "_a_link")
-        end
+      it "should call where on Link::UserLink with the params[:id] as the global_link_id and the current_user.id as the user_id" do
+        Link::UserLink.should_receive(:where)
+          .with(
+                 user_id: current_user.id,
+                 global_link_id: id.to_s
+               )
+          .and_return mock_links
+        delete :destroy, params
+      end
+      it "should call destroy on the mock_link" do
+        mock_link.should_receive(:destroy)
+        delete :destroy, params
       end
     end
+
+    it_should_behave_like "a LinksController method calling rerender_link to handle rendering", {:rest_action => :delete, :method => :destroy}
   end
+
 end

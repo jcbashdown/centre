@@ -1,7 +1,7 @@
 class UserArgumentsController < ApplicationController
   
   def show
-    @node = ContextNode.find(params[:id])
+    @node = Node::GlobalNode.find(params[:id])
     @previous = params[:path]
     @original= params[:original]
     respond_to do |format|
@@ -11,8 +11,8 @@ class UserArgumentsController < ApplicationController
   end 
 
   def index
-    unless params[:user_id] && @user = User.find(params[:user_id])
-      @user = current_user
+    unless params[:user_id] && @argument_user = User.find(params[:user_id])
+      @argument_user = current_user
     end
     @previous = params[:path]
     respond_to do |format|
@@ -21,4 +21,9 @@ class UserArgumentsController < ApplicationController
     end
   end
  
+  def update_view_configuration
+    super
+    set_node_question
+    set_argument_question
+  end
 end

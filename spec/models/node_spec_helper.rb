@@ -1,7 +1,7 @@
 shared_examples_for 'a node finding directed links' do |node_is|
   context 'when the question is set' do
     before do
-      @other_node_is = @node.opposite_direction[node_is]
+      @other_node_is = Link.opposite_direction(node_is)
       @links = {}
       @users.each_with_index do |user, iu|
         @questions.each_with_index do |question, iq|
@@ -10,7 +10,7 @@ shared_examples_for 'a node finding directed links' do |node_is|
               if cn.title =~ Regexp.new(query, true)
                 all_key = :"user#{iu}_question#{iq}_#{query}"
                 params = {:user_id =>user.id, :question_id => question.id, :"global_node_#{@other_node_is}_id" => cn.global_node.id, :"global_node_#{node_is}_id" => @node.id}
-                new_gn = ContextLink::PositiveContextLink.where(params)[0].try(:global_link) || ContextLink::PositiveContextLink.create!(params).global_link
+                new_gn = Link::UserLink::PositiveUserLink.where(params.except(:question_id))[0].try(:global_link) || Link::UserLink::PositiveUserLink.create!(params).global_link
                 if new_gn
                   if @links[all_key]
                     @links[all_key][new_gn.id] = new_gn
@@ -47,7 +47,7 @@ shared_examples_for 'a node finding directed links' do |node_is|
       @users.each_with_index do |user, iu|
         @questions.each_with_index do |question, iq|
           @queries.each do |query|
-            @node.find_view_links_by_context(node_is, {:user => user.try(:id), :question => question.try(:id), :query => query}).each do |gn|
+            @node.find_view_links_by_context(node_is, {:user_id => user.try(:id), :question_id => question.try(:id), :query => query}).each do |gn|
               if user && question
                 @links[:"user#{iu}_question#{iq}_#{query}"][gn.id].should == gn 
               elsif user

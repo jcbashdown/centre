@@ -1,846 +1,562 @@
 require 'spec_helper'
+require 'random_link_map'
+require 'models/context_node_spec_helper'
 
 describe ContextNode do
-  before do
-    @user = FactoryGirl.create(:user)
-    @user_two = FactoryGirl.create(:user, :email => "test@email.com")
-    @question = FactoryGirl.create(:question)
-    @question2 = FactoryGirl.create(:question, :name => 'Aaa')
+  describe ".update_text" do
+    let(:user) {FactoryGirl.create(:user)}
+    let(:question) {FactoryGirl.create(:question)}
+    let(:group_one) {FactoryGirl.create(:group)}
+    let(:group_two) {FactoryGirl.create(:group, :title => "thundercats")}
+    let(:group_three) {FactoryGirl.create(:group, :title => "warriors")}
+    let(:new_text) {'Some revised title'}
+    let(:original_conclusion_status) {true}
+    context "when there is only the context node" do
+      let(:context_node) {Node::UserNode.create(:user=>user, :question=>question, :title => 'Title', :is_conclusion => original_conclusion_status)}
+      before do
+        context_node
+        @conclusion_statuses = {
+                                 :group_question_conclusions => {
+                                                                  :includes_old => false,
+                                                                  :includes_new => true
+                                                                },
+                                 :user_question_conclusions => {
+                                                                  :includes_old => false,
+                                                                  :includes_new => true
+                                                               },
+                                 :question_conclusions => {
+                                                                  :includes_old => false,
+                                                                  :includes_new => true
+                                                          }
+                               }
+      end
+      it_should_behave_like "a context_node correctly updating node text"
+    end
+    context "when there is a context node in two links" do
+      let(:context_node) {Node::UserNode.create(:user=>user, :question=>question, :title => 'Title', :is_conclusion => original_conclusion_status)}
+      let(:context_node2) {Node::UserNode.create(:user=>user, :question=>question, :title => 'Title2', :is_conclusion => original_conclusion_status)}
+      let(:context_node3) {Node::UserNode.create(:user=>user, :question=>question, :title => 'Title3', :is_conclusion => original_conclusion_status)}
+      before do
+        group_one.users << user
+        group_two.users << user
+        @link1 = Link::UserLink::PositiveUserLink.create(:user=>user, :question => question, :global_node_to_id => context_node.global_node_id, :global_node_from_id => context_node2.global_node_id)
+        @link2 = Link::UserLink::PositiveUserLink.create(:user=>user, :question => question, :global_node_to_id => context_node.global_node_id, :global_node_from_id => context_node3.global_node_id)
+        @conclusion_statuses = {
+                                 :group_question_conclusions => {
+                                                                  :includes_old => false,
+                                                                  :includes_new => true
+                                                                },
+                                 :user_question_conclusions => {
+                                                                  :includes_old => false,
+                                                                  :includes_new => true
+                                                               },
+                                 :question_conclusions => {
+                                                                  :includes_old => false,
+                                                                  :includes_new => true
+                                                          }
+                               }
+      end
+      it_should_behave_like "a context_node correctly updating node text"
+    end
+    context "when there are many many links and nodes and such" do
+      let(:link_map) {RandomLinkMap.new( {
+                                       :question_count => 5,
+                                       :user_count => 5,
+                                       :group_count => 5,
+                                       :node_count => 20,
+                                       :link_count_per_node => 20
+                                      }, true)}
+      let(:context_node) {Node::UserNode.find(link_map.nodes.last)}
+      before {link_map}
+      it_should_behave_like "a context_node correctly updating node text"
+    end
   end
 
-  describe 'setting is conclusion' do
-    context 'when the context node is created as false' do
-      before do
-        @conclusion_status = false
-        @context_node = ContextNode.create(:user=>@user, :question=>@question, :title => 'Title', :is_conclusion => @conclusion_status)
-        @context_node_one = @context_node
-      end
-      it 'should create the sub nodes as false' do
-        @context_node.reload.is_conclusion.should == @conclusion_status
-        @context_node.question_node.reload.is_conclusion.should == @conclusion_status
-        @context_node.global_node.reload.is_conclusion.should == @conclusion_status
-        @context_node.user_node.reload.is_conclusion.should == @conclusion_status
-      end
-      context 'when a new context node for the qn is created as true' do
+  shared_examples_for "a context node change correctly updating conclusions" do 
+    it "should ensure the global node has the correct conclusion status in the question" do
+      @context_node.question.concluding_nodes.should include @context_node.global_node if @is_question_conclusion
+    end
+    it "should ensure the global node has the correct conclusion status for the question and user" do
+      @context_node.user.concluding_nodes(@question).should include @context_node.global_node if @is_question_user_conclusion
+    end
+    it "should ensure the global node has the correct conclusion status in the group" do
+      #should come through users in group - no group in context
+      @group.concluding_nodes(@question).should include @context_node.global_node if @is_question_group_conclusion
+    end
+  end
+
+  context "old features" do
+    before do
+      @user = FactoryGirl.create(:user)
+      @user_two = FactoryGirl.create(:user, :email => "test@email.com")
+      @question = FactoryGirl.create(:question)
+      @question2 = FactoryGirl.create(:question, :name => 'Aaa')
+      @group = FactoryGirl.create(:group)
+      @group2 = FactoryGirl.create(:group, :title=> 'Aaa')
+    end
+
+    describe 'setting is conclusion' do
+      context 'when the context node is created as false' do
         before do
-          @user = Factory(:user)
-          @new_conclusion_status = true
-          @context_node = ContextNode.create(:user=>@user, :question=>@question, :title => 'Title', :is_conclusion => @new_conclusion_status)
+          @group.users << @user
+          @conclusion_status = false
+          @params = {:user_id=>@user.id, :question_id=>@question.id, :title => 'Title', :is_conclusion => @conclusion_status}
+          @context_node = Node::UserNode.create(@params)
+          @context_node_one = @context_node
+          @is_question_conclusion = @conclusion_status
+          @is_question_user_conclusion = @conclusion_status
+          @is_question_group_conclusion = @conclusion_status
         end
-        it 'the sub nodes apart from user_node should still be false' do
-          @context_node.reload.is_conclusion.should == @new_conclusion_status
-          @context_node.question_node.reload.is_conclusion.should == @conclusion_status
-          @context_node.global_node.reload.is_conclusion.should == @conclusion_status
-          @context_node.user_node.reload.is_conclusion.should == @new_conclusion_status
-        end
-        context 'when the first node is destroyed' do
+        it_should_behave_like "a context node change correctly updating conclusions"
+        context 'when a new context node for the qn is created as true' do
           before do
-            @context_node_one.destroy
-          end
-          it 'the sub nodes should still be false' do
-            @context_node.reload.is_conclusion.should == @new_conclusion_status
-            @context_node.question_node.reload.is_conclusion.should == @new_conclusion_status
-            @context_node.global_node.reload.is_conclusion.should == @new_conclusion_status
-            @context_node.user_node.reload.is_conclusion.should == @new_conclusion_status
-          end
-        end
-        context 'when another new context node for the qn is created as true' do
-          before do
-            @user = Factory(:user)
+            @user = FactoryGirl.create(:user, :email => "test2@email.com")
+      @group.users << @user
             @new_conclusion_status = true
-            @context_node = ContextNode.create(:user=>@user, :question=>@question, :title => 'Title', :is_conclusion => @new_conclusion_status)
+            @params2 = {:user_id=>@user.id, :question_id=>@question.id, :title => 'Title', :is_conclusion => @new_conclusion_status}
+            @context_node = Node::UserNode.create(@params2)
+            @is_question_conclusion = @conclusion_status
+            @is_question_group_conclusion = @conclusion_status
+            @is_question_user_conclusion = @new_conclusion_status
           end
-          it 'the sub nodes should be false' do
-            @context_node.reload.is_conclusion.should == @new_conclusion_status
-            @context_node.question_node.reload.is_conclusion.should == @new_conclusion_status
-            @context_node.global_node.reload.is_conclusion.should == @new_conclusion_status
-            @context_node.user_node.reload.is_conclusion.should == @new_conclusion_status
+          it_should_behave_like "a context node change correctly updating conclusions"
+          context 'when the first node is destroyed' do
+            before do
+              context_node = ContextNode.where(@params.except(:is_conclusion))[0]
+              context_node.destroy
+              @is_question_conclusion = @new_conclusion_status
+              @is_question_group_conclusion = @new_conclusion_status
+              @is_question_user_conclusion = @new_conclusion_status
+            end
+            it_should_behave_like "a context node change correctly updating conclusions"
+          end
+          context 'when the first user tries to recreate the same node' do
+            context "with the same conclusion status" do
+              it "should create nothing else and be invalid" do
+                pending
+              end
+            end
+            context "with a different conclusion status" do
+              it "should create nothing else and be invalid" do
+                pending
+              end
+            end
+          end
+          context 'when the first user changes their mind to true' do
+            before do
+              context_node = ContextNode.where(@params.except(:is_conclusion))[0]
+              context_node.set_conclusion!(@new_conclusion_status = true)
+              @is_question_conclusion = @new_conclusion_status
+              @is_question_group_conclusion = @new_conclusion_status
+              @is_question_user_conclusion = @new_conclusion_status
+            end
+            it_should_behave_like "a context node change correctly updating conclusions"
+          end
+          context 'when another new context node for the qn is created as true' do
+            before do
+              @user = FactoryGirl.create(:user, :email => "test3@email.com")
+        @group.users << @user
+              @new_conclusion_status = true
+              @context_node = Node::UserNode.create(:user=>@user, :question=>@question, :title => 'Title', :is_conclusion => @new_conclusion_status)
+        @is_question_conclusion = @new_conclusion_status
+        @is_question_group_conclusion = @new_conclusion_status
+              @is_question_user_conclusion = @new_conclusion_status
+            end
+            it_should_behave_like "a context node change correctly updating conclusions"
           end
         end
       end
-    end
-    context 'when the context node is created as true' do
-      before do
-        @conclusion_status = true
-        @context_node = ContextNode.create(:user=>@user, :question=>@question, :title => 'Title', :is_conclusion => @conclusion_status)
-      end
-      it 'should create the sub nodes as true' do
-        @context_node.reload.is_conclusion.should == @conclusion_status
-        @context_node.question_node.reload.is_conclusion.should == @conclusion_status
-        @context_node.global_node.reload.is_conclusion.should == @conclusion_status
-        @context_node.user_node.reload.is_conclusion.should == @conclusion_status
-      end
-      context 'when a new context node for the qn is created as false' do
+      context 'when the context node is created as true' do
         before do
-          @user = Factory(:user)
-          @new_conclusion_status = false
-          @context_node = ContextNode.create(:user=>@user, :question=>@question, :title => 'Title', :is_conclusion => @new_conclusion_status)
+    @group.users << @user
+          @conclusion_status = true
+          @context_node = Node::UserNode.create(:user=>@user, :question=>@question, :title => 'Title', :is_conclusion => @conclusion_status)
+          @is_question_conclusion = @conclusion_status
+          @is_question_group_conclusion = @conclusion_status
+          @is_question_user_conclusion = @conclusion_status
         end
-        it 'the sub nodes should become false' do
-          @context_node.reload.is_conclusion.should == @new_conclusion_status
-          @context_node.question_node.reload.is_conclusion.should == @new_conclusion_status
-          @context_node.global_node.reload.is_conclusion.should == @new_conclusion_status
-          @context_node.user_node.reload.is_conclusion.should == @new_conclusion_status
+        it_should_behave_like "a context node change correctly updating conclusions"
+        context 'when a new context node for the qn is created as false' do
+          before do
+            @user = FactoryGirl.create(:user, :email => "test4@email.com")
+      @group.users << @user
+            @new_conclusion_status = false
+            @context_node = Node::UserNode.create(:user=>@user, :question=>@question, :title => 'Title', :is_conclusion => @new_conclusion_status)
+            @is_question_conclusion = @new_conclusion_status
+            @is_question_group_conclusion = @new_conclusion_status
+            @is_question_user_conclusion = @new_conclusion_status
+          end
+          it_should_behave_like "a context node change correctly updating conclusions"
         end
       end
-    end
-    context 'when the context node is created as nil' do
-      before do
-        @conclusion_status = nil
-        @context_node = ContextNode.create(:user=>@user, :question=>@question, :title => 'Title', :is_conclusion => "")
-      end
-      it 'should create the sub nodes as false' do
-        @context_node.reload.is_conclusion.should == @conclusion_status
-        @context_node.question_node.reload.is_conclusion.should == false
-        @context_node.global_node.reload.is_conclusion.should == false
-        @context_node.user_node.reload.is_conclusion.should == false
-      end
-      context 'when a new context node for the qn is created as true' do
+      context 'when the context node is created as nil' do
         before do
-          @user = Factory(:user)
-          @new_conclusion_status = true
-          @context_node = ContextNode.create(:user=>@user, :question=>@question, :title => 'Title', :is_conclusion => @new_conclusion_status)
+          @conclusion_status = nil
+          @context_node = Node::UserNode.create(:user=>@user, :question=>@question, :title => 'Title', :is_conclusion => "")
+          @is_question_conclusion = false
+          @is_question_group_conclusion = false
+          @is_question_user_conclusion = false
         end
-        it 'the sub nodes should become true' do
-          @context_node.reload.is_conclusion.should == @new_conclusion_status
-          @context_node.question_node.reload.is_conclusion.should == @new_conclusion_status
-          @context_node.global_node.reload.is_conclusion.should == @new_conclusion_status
-          @context_node.user_node.reload.is_conclusion.should == @new_conclusion_status
+        it_should_behave_like "a context node change correctly updating conclusions"
+        context 'when a new context node for the qn is created as true' do
+          before do
+            @user = FactoryGirl.create(:user, :email => "test5@email.com")
+            @group.users << @user
+            @new_conclusion_status = true
+            @context_node = Node::UserNode.create(:user=>@user, :question=>@question, :title => 'Title', :is_conclusion => @new_conclusion_status)
+            @is_question_conclusion = true
+            @is_question_group_conclusion = true
+            @is_question_user_conclusion = true
+          end
+          it_should_behave_like "a context node change correctly updating conclusions"
         end
       end
     end
-  end
 
-  describe 'creation' do
-    describe 'creation with no existing inclusion in qns context_nodes' do
-      it 'should create 2 questions_nodes' do
-        expect {
-          ContextNode.create(:user=>@user, :question=>@question, :title => 'Title')
-        }.to change(Node::QuestionNode, :count).by(1)
+    describe 'creation' do
+      context 'when there is no existing node with title for question and user' do
+        before do
+          conclusion_status = true
+          @node_state_hash = {
+                               :context_node => {
+                                                  :number_created => 1
+                                                },
+                               :user_node => {
+                                                  :number_created => 1
+                                                },
+                               :global_node => {
+                                                 :number_created => 1,
+                                                 :number_existing => 1,
+                                                 :users_count => 1,
+                                               }
+                             }
+          @params = {:user=>@user, :question=>@question, :title => 'Title', :is_conclusion => conclusion_status}
+        end 
+        it_should_behave_like 'context node creating nodes'
       end
-      it 'should create 2 questions_nodes' do
-        expect {
-          ContextNode.create(:user=>@user, :question=>@question, :title => 'Title')
-        }.to change(Node::GlobalNode, :count).by(1)
+      context 'when there is an existing node for different question and user' do
+        before do
+          conclusion_status = true
+          @params = {:user=>@user, :question=>@question, :title => 'Title', :is_conclusion => conclusion_status}
+          Node::UserNode.create(@params)
+          @node_state_hash = {
+                               :context_node => {
+                                                  :number_created => 1
+                                                },
+                               :user_node => {
+                                                  :number_created => 1
+                                                },
+                               :global_node => {
+                                                 :number_created => 0,
+                                                 :number_existing => 1,
+                                                 :users_count => 2,
+                                                 :is_conclusion => true
+                                               }
+                             }
+          @user = FactoryGirl.create(:user, :email=>"another@test.com")
+          @question = FactoryGirl.create(:question, :name => 'Alex is pretty')
+          @params = {:user=>@user, :question=>@question, :title => 'Title', :is_conclusion => conclusion_status}
+        end 
+        it_should_behave_like 'context node creating nodes'
       end
-      it 'should create 2 context_nodes' do
-        expect {
-          ContextNode.create(:user=>@user, :question=>@question, :title => 'Title')
-        }.to change(ContextNode, :count).by(1)
+      context 'when there is an existing node for user but different question' do
+        before do
+          conclusion_status = true
+          @params = {:user=>@user, :question=>@question, :title => 'Title', :is_conclusion => conclusion_status}
+          Node::UserNode.create(@params)
+          @node_state_hash = {
+                               :context_node => {
+                                                  :number_created => 1
+                                                },
+                               :user_node => {
+                                                  :number_created => 0
+                                                },
+                               :global_node => {
+                                                 :number_created => 0,
+                                                 :number_existing => 1,
+                                                 :users_count => 1
+                                               }
+                             }
+          @question = FactoryGirl.create(:question, :name => 'Alex is pretty')
+          @params = {:user=>@user, :question=>@question, :title => 'Title', :is_conclusion => conclusion_status}
+        end 
+        it_should_behave_like 'context node creating nodes'
       end
-      it 'should create 2 context_nodes' do
-        expect {
-          ContextNode.create(:user=>@user, :question=>@question, :title => 'Title')
-        }.to change(Node::UserNode, :count).by(1)
-      end
-      it 'should create a questions_node for the question and node and all and node' do
-        context_node = ContextNode.create(:user=>@user, :question=>@question, :title => 'Title')
-        context_node2 = ContextNode.create(:user=>@user, :question=>@question2, :title => 'Title')
-        nu = context_node.user_node
-        nu2 = context_node2.user_node
-        nu.should_not be_nil
-        nu2.should_not be_nil
-        nu.should == nu2
-        nu.reload.users_count.should == 2 
-      end
-      it 'should create a questions_node for the question and node and all and node' do
-        context_node = ContextNode.create(:user=>@user, :question=>@question, :title => 'Title')
-        context_node2 = ContextNode.create(:user=>@user, :question=>@question2, :title => 'Title')
-        qn = context_node.question_node
-        qn2 = context_node2.question_node
-        qn.should_not be_nil
-        qn2.should_not be_nil
-        qn.should_not == qn2
-        qn.reload.users_count.should == 1 
-        qn2.reload.users_count.should == 1 
-      end
-      it 'should create a questions_user_node for the question and node and all and node' do
-        context_node = ContextNode.create(:user=>@user, :question=>@question, :title => 'Title')
-        context_node.should be_persisted
-        context_node.should be_a(ContextNode)
+      context 'when there is an existing node for question where is conclusion is false but different user and is_conclusion is true' do
+        before do
+          conclusion_status = false
+          @params = {:user=>@user, :question=>@question, :title => 'Title', :is_conclusion => conclusion_status}
+          Node::UserNode.create(@params)
+          new_conclusion_status = true
+          @node_state_hash = {
+                               :context_node => {
+                                                  :number_created => 1
+                                                },
+                               :user_node => {
+                                                  :number_created => 1
+                                                },
+                               :global_node => {
+                                                 :number_created => 0,
+                                                 :number_existing => 1,
+                                                 :users_count => 2,
+                                                 :is_conclusion => conclusion_status
+                                               }
+                             }
+          @user = FactoryGirl.create(:user, :email=>"another@test.com")
+          @params = {:user=>@user, :question=>@question, :title => 'Title', :is_conclusion => new_conclusion_status}
+        end 
+        it_should_behave_like 'context node creating nodes'
+        context 'when there is a further existing node for the question but a different user who thinks the conclusion status is true' do
+          before do
+            conclusion_status = true
+            @params = {:user=>@user, :question=>@question, :title => 'Title', :is_conclusion => conclusion_status}
+            Node::UserNode.create(@params)
+            new_conclusion_status = true
+            @node_state_hash = {
+                                 :context_node => {
+                                                    :number_created => 1
+                                                  },
+                               :user_node => {
+                                                  :number_created => 1
+                                                },
+                                 :global_node => {
+                                                   :number_created => 0,
+                                                   :number_existing => 1,
+                                                   :users_count => 3,
+                                                   :is_conclusion =>new_conclusion_status 
+                                                 }
+                               }
+            @user = FactoryGirl.create(:user, :email=>"new@test.com")
+            @params = {:user=>@user, :question=>@question, :title => 'Title', :is_conclusion => new_conclusion_status}
+          end 
+          it_should_behave_like 'context node creating nodes'
+        end
       end
     end
-    describe 'creation with existing nu' do
-      before do
-        @context_node = ContextNode.create(:user=>@user, :question=>@question, :title => 'Title', :is_conclusion => false)
-        @context_node.user_node.should_not be_nil
-      end
-      context 'when in the question' do
-        it 'should create 0 questions_nodes' do
-          expect {
-            ContextNode.create(:user=>@user, :question=>@question, :title => 'Title')
-          }.to change(Node::QuestionNode, :count).by(0)
+    describe 'updating conclusion' do
+      describe 'updating with no other context_nodes for qn' do
+        let(:cn_params) {{:user_id=>@user.id, :question_id=>@question.id, :title => 'Title', :is_conclusion => false}}
+        before do
+          @un = Node::UserNode.create!(cn_params)
         end
-        it 'should create 0 context_nodes' do
-          expect {
-            ContextNode.create(:user=>@user, :question=>@question, :title => 'Title')
-          }.to change(ContextNode, :count).by(0)
-        end
-        it 'should create 0 user_nodes' do
-          expect {
-            ContextNode.create(:user=>@user, :question=>@question, :title => 'Title')
-          }.to change(Node::UserNode, :count).by(0)
-        end
-        it 'there should be only one context_node etc for this description' do
-          ContextNode.where(:user_id=>@user.id, :title=>'Title', :question_id=>@question.id, :is_conclusion => false).count.should == 1
-          Node::UserNode.where(:user_id=>@user.id, :title=>'Title', :is_conclusion => false).count.should == 1
-          Node::QuestionNode.where(:title=>'Title', :question_id=>@question.id, :is_conclusion => false).count.should == 1
-          context_node = ContextNode.create(:user=>@user, :question=>@question, :title => 'Title')
-          ContextNode.where(:user_id=>@user.id, :title=>'Title', :question_id=>@question.id, :is_conclusion => false).count.should == 1
-          Node::UserNode.where(:user_id=>@user.id, :title=>'Title', :is_conclusion => false).count.should == 1
-          Node::QuestionNode.where(:title=>'Title', :question_id=>@question.id, :is_conclusion => false).count.should == 1
-        end
-        context 'when new user' do
-          before do
-            @user = FactoryGirl.create(:user, :email=>"another@test.com")
-          end
-          it 'should create 0 questions_nodes' do
-            expect {
-              ContextNode.create(:user=>@user, :question=>@question, :title => 'Title')
-            }.to change(Node::QuestionNode, :count).by(0)
-          end
-          it 'should create 1 context_nodes' do
-            expect {
-              ContextNode.create(:user=>@user, :question=>@question, :title => 'Title')
-            }.to change(ContextNode, :count).by(1)
-          end
-          it 'should create 1 user_nodes' do
-            expect {
-              ContextNode.create(:user=>@user, :question=>@question, :title => 'Title')
-            }.to change(Node::UserNode, :count).by(1)
-          end
-          it 'should create a questions_user_node etc' do
-            context_node = ContextNode.create(:user=>@user, :question=>@question, :title => 'Title', :is_conclusion => true)
-            ContextNode.where(:user_id=>@user.id, :title=>'Title', :question_id=>@question.id, :is_conclusion => true).count.should == 1
-            Node::UserNode.where(:user_id=>@user.id, :title=>'Title', :is_conclusion => true).count.should == 1
-            Node::QuestionNode.where(:title=>'Title', :question_id=>@question.id, :is_conclusion => true).count.should == 0
-            @user = FactoryGirl.create(:user, :email=>"another@test2.com")
-            context_node = ContextNode.create(:user=>@user, :question=>@question, :title => 'Title', :is_conclusion => true)
-            ContextNode.where(:user_id=>@user.id, :title=>'Title', :question_id=>@question.id, :is_conclusion => true).count.should == 1
-            Node::UserNode.where(:user_id=>@user.id, :title=>'Title', :is_conclusion => true).count.should == 1
-            Node::QuestionNode.where(:title=>'Title', :question_id=>@question.id, :is_conclusion => true).count.should == 1
-          end
+        it "should update the is conclusion status in all locations" do
+          cn = ContextNode.where(cn_params.merge({:user_node_id => @un.id}))[0]
+	        cn.question.concluding_nodes.reload.should_not include cn.global_node
+          cn.set_conclusion! true
+          cn.question.concluding_nodes.reload.should include cn.global_node
+          cn.set_conclusion! ''
+          cn.question.concluding_nodes.reload.should_not include cn.global_node
         end
       end
-      context 'when outside of the question' do
+      describe 'updating with other context_nodes for qn' do
+        let(:cn_params) {{:user_id=>@user.id, :question_id=>@question.id, :title => 'Title', :is_conclusion => false}}
+	let(:user2) {FactoryGirl.create(:user, :email=>"another@test.com")}
+	let(:cn_params2) {{:user_id=>user2.id, :question_id=>@question.id, :title => 'Title', :is_conclusion => true}}
+        before do
+          @un = Node::UserNode.create(cn_params)
+          @un2 = Node::UserNode.create(cn_params2)
+        end
+        it "should update the is conclusion status in all locations" do
+          cn = ContextNode.where(cn_params.merge(user_node_id:@un.id))[0]
+	  cn2 = ContextNode.where(cn_params2.merge(user_node_id:@un2.id))[0]
+	  cn.question.concluding_nodes.reload.should_not include cn.global_node
+          cn2.question.concluding_nodes.reload.should_not include cn2.global_node
+          cn2.set_conclusion! true
+          cn.question.concluding_nodes.reload.should_not include cn.global_node
+          cn2.question.concluding_nodes.reload.should_not include cn2.global_node
+          cn.set_conclusion! ''
+          cn.question.concluding_nodes.reload.should include cn.global_node
+          cn2.question.concluding_nodes.reload.should include cn2.global_node
+          cn.set_conclusion! false
+          cn.question.concluding_nodes.reload.should_not include cn.global_node
+          cn2.question.concluding_nodes.reload.should_not include cn2.global_node
+          cn.set_conclusion! true
+          cn.question.concluding_nodes.reload.should include cn.global_node
+          cn2.question.concluding_nodes.reload.should include cn2.global_node
+        end
+      end
+      describe 'updating with another context node for another qn' do
+        let(:cn_params) {{:user_id=>@user.id, :question_id=>@question.id, :title => 'Title', :is_conclusion => false}}
+	let(:cn_params2) {{:user_id=>@user.id, :question_id=>@question2.id, :title => 'Title', :is_conclusion => true}}
+        before do
+          @un = Node::UserNode.create(cn_params)
+          @un2 = Node::UserNode.create(cn_params2)
+        end
         context 'when existing nu' do
-          before do
-            Node::UserNode.where(:user_id=>@user.id, :title => 'Title').count.should == 1
-          end
-          it 'should create 1 questions_nodes' do
-            expect {
-              ContextNode.create(:user=>@user, :question=>@question2, :title => 'Title')
-            }.to change(Node::QuestionNode, :count).by(1)
-          end
-          it 'should create 1 context_nodes' do
-            expect {
-              ContextNode.create(:user=>@user, :question=>@question2, :title => 'Title')
-            }.to change(ContextNode, :count).by(1)
-          end
-          it 'should create 1 user_nodes' do
-            expect {
-              ContextNode.create(:user=>@user, :question=>@question2, :title => 'Title')
-            }.to change(Node::UserNode, :count).by(0)
-          end
-          it 'should create a questions_user_node etc for the question and node' do
-            context_node = ContextNode.create(:user=>@user, :question=>@question2, :title => 'Title')
-            ContextNode.where(:user_id=>@user.id, :title=>'Title', :question_id=>@question2.id).count.should == 1
-            Node::UserNode.where(:user_id=>@user.id, :title=>'Title').count.should == 1
-            Node::QuestionNode.where(:title=>'Title', :question_id=>@question2.id).count.should == 1
+          it "should update the is conclusion status in all locations" do
+            cn = ContextNode.where(cn_params.merge(user_node_id:@un.id))[0]
+            cn2= ContextNode.where(cn_params2.merge(user_node_id:@un2.id))[0]
+            cn.question.concluding_nodes.should_not include cn.global_node
+            cn2.question.concluding_nodes.should include cn2.global_node
+            cn2.set_conclusion! true
+            cn.question.concluding_nodes.reload.should_not include cn.global_node
+            cn2.question.concluding_nodes.reload.should include cn2.global_node
+            cn.set_conclusion! true
+            cn.question.concluding_nodes.reload.should include cn.global_node
+            cn2.question.concluding_nodes.reload.should include cn2.global_node
           end
         end
         context 'when no existing nu' do
+          let(:user2) {FactoryGirl.create(:user, :email=>"another@test.com")}
+	  let(:cn_params3) {{:user_id=>user2.id, :question_id=>@question2.id, :title => 'Title', :is_conclusion => false}}
           before do
-            @user = FactoryGirl.create(:user, :email=>"another@test.com")
+            @un3 = Node::UserNode.create(cn_params3)
           end
-          it 'should create 0 questions_nodes' do
-            expect {
-              ContextNode.create(:user=>@user, :title=>'Title', :question=>@question2)
-            }.to change(Node::QuestionNode, :count).by(1)
+          it "should update the is conclusion status in all locations" do
+            cn = ContextNode.where(cn_params.merge(user_node_id:@un.id))[0]
+            cn2= ContextNode.where(cn_params2.merge(user_node_id:@un2.id))[0]
+            cn3= ContextNode.where(cn_params3.merge(user_node_id:@un3.id))[0]
+            cn2.question.concluding_nodes.should_not include cn.global_node
+            cn3.question.concluding_nodes.should_not include cn2.global_node
+            cn3.set_conclusion! true
+            cn3.question.concluding_nodes.reload.should include cn.global_node
+            cn2.question.concluding_nodes.reload.should include cn2.global_node
           end
-          it 'should create 1 context_nodes' do
-            expect {
-              ContextNode.create(:user=>@user, :title=>'Title', :question=>@question2)
-            }.to change(ContextNode, :count).by(1)
+        end
+      end
+    end
+    describe 'deletion' do
+      context "deleting context nodes" do
+        context 'when there are no associated links' do
+          describe 'when the question nodes question node user count is less than two (when there is only this user)' do
+            before do
+              @create_params = {:user_id=>@user.id, :title=>'Title', :question_id=>@question.id, :is_conclusion => false}
+              @node = Node::UserNode.create(@create_params)
+              @perform = "ContextNode.where(:user_id=>@user.id, :title=>'Title', :question_id=>@question.id)[0]"
+
+              @state_hash = {
+                       :context_node => {
+                                          :destroyed => -1
+                                        },
+                       :global_node => {
+                                         :destroyed => -1
+                                       },
+                       :user_node => {
+                                         :destroyed => -1
+                                       }
+                     }
+            end
+            it_should_behave_like "a node deleting nodes correctly"
+            context 'with another context node for this user and title' do
+              before do
+                @question2 = FactoryGirl.create(:question, :name => 'Abbaa')
+                @create_params = {:user_id=>@user.id, :title=>'Title', :question_id=>@question2.id, :is_conclusion => false}
+                @node = Node::UserNode.create(@create_params)
+                @perform = "ContextNode.where(:user_id=>@user.id, :title=>'Title', :question_id=>@question2.id)[0]"
+
+                @state_hash = {
+                         :context_node => {
+                                            :destroyed => -1
+                                          },
+                         :global_node => {
+                                           :destroyed => 0,
+                                           :users_count => 1
+                                         },
+                         :user_node => {
+                                           :destroyed => 0
+                                         }
+                       }
+              end
+              it_should_behave_like "a node deleting nodes correctly"
+            end
+            context 'with another user for the question node' do
+              before do
+                @user2 = FactoryGirl.create(:user, :email => "a@test.com")
+                @create_params = {:user_id=>@user2.id, :title=>'Title', :question_id=>@question.id, :is_conclusion => false}
+                @node = Node::UserNode.create(@create_params)
+                @perform = "ContextNode.where(:user_id=>@user2.id, :title=>'Title', :question_id=>@question.id)[0]"
+
+                @state_hash = {
+                         :context_node => {
+                                            :destroyed => -1
+                                          },
+                         :global_node => {
+                                           :destroyed => 0,
+                                           :users_count => 1
+                                         },
+                         :user_node => {
+                                           :destroyed => -1
+                                         }
+                       }
+              end
+              it_should_behave_like "a node deleting nodes correctly"
+            end
           end
-          it 'should create 1 user_nodes' do
-            expect {
-              ContextNode.create(:user=>@user, :title=>'Title', :question=>@question2)
-            }.to change(Node::UserNode, :count).by(1)
-          end
-          it 'should create a questions_user_node etc for the question and node' do
-            context_node = ContextNode.create(:user=>@user, :question=>@question2, :title => 'Title')
-            ContextNode.where(:user_id=>@user.id, :title=>'Title', :question_id=>@question2.id).count.should == 1
-            Node::UserNode.where(:user_id=>@user.id, :title=>'Title').count.should == 1
-            Node::QuestionNode.where(:title=>'Title', :question_id=>@question2.id).count.should == 1
+        end
+      end
+      context "deleting user nodes" do
+        context 'when there are no associated links' do
+          describe 'when the question nodes question node user count is less than two (when there is only this user)' do
+            before do
+              @create_params = {:user_id=>@user.id, :title=>'Title', :question_id=>@question.id, :is_conclusion => false}
+              @node = Node::UserNode.create(@create_params)
+              @perform = '@node'
+
+              @state_hash = {
+                       :context_node => {
+                                          :destroyed => -1
+                                        },
+                       :global_node => {
+                                         :destroyed => -1
+                                       },
+                       :user_node => {
+                                         :destroyed => -1
+                                       }
+                     }
+            end
+            it_should_behave_like "a node deleting nodes correctly"
+            context 'with another context node for this user and title' do
+              before do
+                @question2 = FactoryGirl.create(:question, :name => 'Abbaa')
+                @create_params = {:user_id=>@user.id, :title=>'Title', :question_id=>@question2.id, :is_conclusion => false}
+                @node = Node::UserNode.create(@create_params)
+                @perform = '@node'
+
+                @state_hash = {
+                         :context_node => {
+                                            :destroyed => -2
+                                          },
+                         :global_node => {
+                                           :destroyed => -1,
+                                         },
+                         :user_node => {
+                                           :destroyed => -1
+                                         }
+                       }
+              end
+              it_should_behave_like "a node deleting nodes correctly"
+            end
+            context 'with another user for the question node' do
+              before do
+                @user2 = FactoryGirl.create(:user, :email => "a@test.com")
+                @create_params = {:user_id=>@user2.id, :title=>'Title', :question_id=>@question.id, :is_conclusion => false}
+                @node = Node::UserNode.create(@create_params)
+                @perform = '@node'
+
+                @state_hash = {
+                         :context_node => {
+                                            :destroyed => -1
+                                          },
+                         :global_node => {
+                                           :destroyed => 0,
+                                           :users_count => 1
+                                         },
+                         :user_node => {
+                                           :destroyed => -1
+                                         }
+                       }
+              end
+              it_should_behave_like "a node deleting nodes correctly"
+            end
           end
         end
       end
     end
   end
-  describe 'updating conclusion' do
-    describe 'updating with no other context_nodes for qn' do
-      before do
-        @context_node = ContextNode.create(:user=>@user, :question=>@question, :title => 'Title', :is_conclusion => false)
-      end
-      it "should update the is conclusion status in all locations" do
-        @context_node.question_node.is_conclusion.should == false
-        @context_node.set_conclusion! true
-        @context_node.question_node.reload.is_conclusion.should == true
-        @context_node.set_conclusion! ''
-        @context_node.question_node.reload.is_conclusion.should == false
-      end
-    end
-    describe 'updating with other context_nodes for qn' do
-      before do
-        @user2 = FactoryGirl.create(:user, :email=>"another@test.com")
-        @context_node = ContextNode.create(:user=>@user, :question=>@question, :title => 'Title', :is_conclusion => false)
-        @context_node2 = ContextNode.create(:user=>@user2, :question=>@question, :title => 'Title', :is_conclusion => true)
-      end
-      it "should update the is conclusion status in all locations" do
-        @context_node2.question_node.is_conclusion.should == false
-        @context_node.question_node.is_conclusion.should == false
-        @context_node2.set_conclusion! true
-        @context_node.question_node.reload.is_conclusion.should == false
-        @context_node2.question_node.reload.is_conclusion.should == false
-        @context_node.set_conclusion! ''
-        @context_node.question_node.reload.is_conclusion.should == true
-        @context_node2.question_node.reload.is_conclusion.should == true
-        @context_node.set_conclusion! false
-        @context_node.question_node.reload.is_conclusion.should == false
-        @context_node2.question_node.reload.is_conclusion.should == false
-        @context_node.set_conclusion! true
-        @context_node.question_node.reload.is_conclusion.should == true
-        @context_node2.question_node.reload.is_conclusion.should == true
-      end
-    end
-    describe 'updating with another context node for another qn' do
-      before do
-        @context_node = ContextNode.create(:user=>@user, :question=>@question, :title => 'Title', :is_conclusion => false)
-        @context_node2 = ContextNode.create(:user=>@user, :question=>@question2, :title => 'Title', :is_conclusion => true)
-      end
-      context 'when existing nu' do
-        it "should update the is conclusion status in all locations" do
-          @context_node.question_node.is_conclusion.should == false
-          @context_node2.question_node.is_conclusion.should == true
-          @context_node2.set_conclusion! true
-          @context_node.question_node.reload.is_conclusion.should == false
-          @context_node2.question_node.reload.is_conclusion.should == true
-          @context_node.set_conclusion! true
-          @context_node.question_node.reload.is_conclusion.should == true
-          @context_node2.question_node.reload.is_conclusion.should == true
-        end
-      end
-      context 'when no existing nu' do
-        before do
-          @user2 = FactoryGirl.create(:user, :email=>"another@test.com")
-          @context_node3 = ContextNode.create(:user=>@user2, :question=>@question2, :title => 'Title', :is_conclusion => false)
-        end
-        it "should update the is conclusion status in all locations" do
-          @context_node2.question_node.is_conclusion.should == false
-          @context_node3.question_node.is_conclusion.should == false
-          @context_node3.set_conclusion! true
-          @context_node3.question_node.reload.is_conclusion.should == true
-          @context_node2.question_node.reload.is_conclusion.should == true
-        end
-      end
-    end
+  it "should not store is conclusion on user node" do
+    pending
   end
-  describe 'deletion' do
-    context 'when there are no associated links' do
-      describe 'when the question nodes question node user count is less than two (when there is only this user)' do
-        before do
-          context_node = ContextNode.create(:user=>@user, :title=>'Title', :question=>@question, :is_conclusion => false)
-          context_node.question_node.reload.users_count.should == 1
-        end
-        it 'should destroy 1 node' do
-          expect {
-            ContextNode.where(:user_id=>@user.id, :title=>'Title', :question_id=>@question.id)[0].destroy
-          }.to change(Node::GlobalNode, :count).by(-1)
-        end
-        it 'should destroy 1 questions_nodes' do
-          expect {
-            ContextNode.where(:user_id=>@user.id, :title=>'Title', :question_id=>@question.id)[0].destroy
-          }.to change(Node::QuestionNode, :count).by(-1)
-        end
-        it 'should destroy 1 questions_nodes_users' do
-          expect {
-            ContextNode.where(:user_id=>@user.id, :title=>'Title', :question_id=>@question.id)[0].destroy
-          }.to change(ContextNode, :count).by(-1)
-        end
-        it 'should destroy 1 questions_nodes_users' do
-          expect {
-            ContextNode.where(:user_id=>@user.id, :title=>'Title', :question_id=>@question.id)[0].destroy
-          }.to change(Node::UserNode, :count).by(-1)
-        end
-        it 'should destroy the question node' do
-          qn = Node::QuestionNode.where(:title=>'Title', :question_id=>@question.id)[0]
-          qn.should_not be_nil
-          ContextNode.where(:user_id=>@user.id, :title=>'Title', :question_id=>@question.id)[0].destroy
-          qn = Node::QuestionNode.where(:title=>'Title', :question_id=>@question.id)[0]
-          qn.should be_nil
-        end
-        it 'should destroy the node user' do
-          ContextNode.where(:user_id=>@user.id, :title=>'Title', :question_id=>@question.id)[0].destroy
-          nu = Node::UserNode.where(:title=>'Title', :user_id=>@user.id)[0]
-          nu.should be_nil
-        end
-        it 'should destroy the node' do
-          ContextNode.where(:user_id=>@user.id, :title=>'Title', :question_id=>@question.id)[0].destroy
-          Node.where(:title=>'Title')[0].should be_nil
-        end
-        it 'should destroy the question node user' do
-          ContextNode.where(:user_id=>@user.id, :title=>'Title', :question_id=>@question.id)[0].destroy
-          ContextNode.where(:title=>'Title', :question_id=>@question.id)[0].should be_nil
-        end
-        context 'with another user for the question node' do
-          before do
-            @user = FactoryGirl.create(:user, :email => "a@test.com")
-            context_node = ContextNode.create(:user=>@user, :title=>'Title', :question=>@question, :is_conclusion => false)
-            context_node.question_node.reload.users_count.should == 2
-          end
-          it 'should destroy 0 questions_nodes' do
-            expect {
-              ContextNode.where(:user_id=>@user.id, :title=>'Title', :question_id=>@question.id)[0].destroy
-            }.to change(Node::GlobalNode, :count).by(0)
-          end
-          it 'should destroy 0 questions_nodes' do
-            expect {
-              ContextNode.where(:user_id=>@user.id, :title=>'Title', :question_id=>@question.id)[0].destroy
-            }.to change(Node::QuestionNode, :count).by(0)
-          end
-          it 'should destroy 1 questions_nodes_users' do
-            expect {
-              ContextNode.where(:user_id=>@user.id, :title=>'Title', :question_id=>@question.id)[0].destroy
-            }.to change(ContextNode, :count).by(-1)
-          end
-          it 'should destroy 1 nodes_users' do
-            expect {
-              ContextNode.where(:user_id=>@user.id, :title=>'Title', :question_id=>@question.id)[0].destroy
-            }.to change(Node::UserNode, :count).by(-1)
-          end
-          it 'should update the caches' do
-            qn = Node::QuestionNode.where(:title=>'Title', :question_id=>@question.id)[0]
-            qn.should_not be_nil
-            ContextNode.where(:user_id=>@user.id, :title=>'Title', :question_id=>@question.id)[0].destroy
-            qn = Node::QuestionNode.where(:title=>'Title', :question_id=>@question.id)[0]
-            qn.should_not be_nil
-            qn.users_count.should == 1
-            gn = Node::GlobalNode.where(:title=>'Title')[0]
-            gn.should_not be_nil
-            gn.users_count.should == 1
-          end
-          it 'should destroy the node user' do
-            ContextNode.where(:user_id=>@user.id, :title=>'Title', :question_id=>@question.id)[0].destroy
-            nu = Node::UserNode.where(:title=>'Title', :user_id=>@user.id)[0]
-            nu.should be_nil
-          end
-          it 'should not destroy the node and question node and should destroy the context_node' do
-            @user_two = FactoryGirl.create(:user, :email=>"another@test.com")
-            context_node = ContextNode.create(:user=>@user_two, :question=>@question, :title => 'Title', :is_conclusion => true)
-            ContextNode.where(:user_id=>@user_two.id, :title=>'Title', :question_id=>@question.id, :is_conclusion => true).count.should == 1
-            Node::UserNode.where(:user_id=>@user_two.id, :title=>'Title', :is_conclusion => true).count.should == 1
-            Node::QuestionNode.where(:title=>'Title', :question_id=>@question.id, :is_conclusion => true).count.should == 0
-            @user_three = FactoryGirl.create(:user, :email=>"another@test2.com")
-            context_node = ContextNode.create(:user=>@user_three, :question=>@question, :title => 'Title', :is_conclusion => true)
-            ContextNode.where(:user_id=>@user_three.id, :title=>'Title', :question_id=>@question.id, :is_conclusion => true).count.should == 1
-            Node::UserNode.where(:user_id=>@user_three.id, :title=>'Title', :is_conclusion => true).count.should == 1
-            Node::QuestionNode.where(:title=>'Title', :question_id=>@question.id, :is_conclusion => true).count.should == 0
-            ContextNode.where(:user_id=>@user.id, :title=>'Title', :question_id=>@question.id)[0].destroy
-            
-            Node::QuestionNode.where(:title=>'Title', :question_id=>@question.id, :is_conclusion => true)[0].should_not be_nil
-            Node::GlobalNode.where(:title=>'Title')[0].should_not be_nil
-            ContextNode.where(:title=>'Title', :user_id => @user.id, :question_id=>@question.id)[0].should be_nil
-          end
-        end
-      end
-    end
-    describe 'with existing links' do
-      before do
-        @context_node1 = ContextNode.create(:title => 'title', :question => @question, :user => @user)
-        @context_node2 = ContextNode.create(:title => 'test', :question => @question, :user => @user)
-        @context_node3 = ContextNode.create(:title => 'another', :question => @question, :user => @user)
-        @context_link = ContextLink::PositiveContextLink.create(:user=>@user, :question => @question, :global_node_from_id => @context_node1.global_node.id, :global_node_to_id => @context_node2.global_node.id)
-      end
-      it 'should destroy 1 node' do
-        expect {
-          @context_node1.destroy
-        }.to change(Node::GlobalNode, :count).by(-1)
-      end
-      it 'should destroy 1 questions_nodes' do
-        expect {
-          @context_node1.destroy
-        }.to change(Node::QuestionNode, :count).by(-1)
-      end
-      it 'should destroy 1 questions_nodes_users' do
-        expect {
-          @context_node1.destroy
-        }.to change(ContextNode, :count).by(-1)
-      end
-      it 'should destroy 1 nodes_users' do
-        expect {
-          @context_node1.destroy
-        }.to change(Node::UserNode, :count).by(-1)
-      end
-
-      it 'should destroy 1 link' do
-        expect {
-          @context_node1.destroy
-        }.to change(Link::GlobalLink, :count).by(-1)
-      end
-
-      it 'should destroy 1 context_link' do
-        expect {
-          @context_node1.destroy
-        }.to change(ContextLink, :count).by(-1)
-      end
-
-      it 'should destroy 1 context_link' do
-        expect {
-          @context_node1.destroy
-        }.to change(Link::QuestionLink, :count).by(-1)
-      end
-
-      it 'should destroy 1 context_link' do
-        expect {
-          @context_node1.destroy
-        }.to change(Link::UserLink, :count).by(-1)
-      end
-
-      it 'update the caches' do
-        #@context_node2.reload.upvotes_count.should == 1
-        @context_node2.user_node.reload.upvotes_count.should == 1
-        @context_node2.question_node.reload.upvotes_count.should == 1
-        @context_node2.global_node.reload.upvotes_count.should == 1
-        @context_node1.destroy
-        #@context_node2.reload.upvotes_count.should == 0 
-        @context_node2.user_node.reload.upvotes_count.should == 0
-        @context_node2.question_node.reload.upvotes_count.should == 0
-        @context_node2.global_node.reload.upvotes_count.should == 0
-      end
-      
-      context 'when another user has the link in this question' do
-        before do
-          @context_link2 = ContextLink::PositiveContextLink.create(:user=>@user_two, :question => @question, :global_node_from_id => @context_node1.global_node.id, :global_node_to_id => @context_node2.global_node.id)
-        end
-        it 'should destroy 0 node' do
-          expect {
-            @context_node1.destroy
-          }.to change(Node::GlobalNode, :count).by(0)
-        end
-        it 'should destroy 0 questions_nodes' do
-          expect {
-            @context_node1.destroy
-          }.to change(Node::QuestionNode, :count).by(0)
-        end
-        it 'should destroy 1 questions_nodes_users' do
-          expect {
-            @context_node1.destroy
-          }.to change(ContextNode, :count).by(-1)
-        end
-        it 'should destroy 1 nodes_users' do
-          expect {
-            @context_node1.destroy
-          }.to change(Node::UserNode, :count).by(-1)
-        end
-  
-        it 'should destroy 0 link' do
-          expect {
-            @context_node1.destroy
-          }.to change(Link::GlobalLink, :count).by(0)
-        end
-  
-        it 'should destroy 1 context_link' do
-          expect {
-            @context_node1.destroy
-          }.to change(ContextLink, :count).by(-1)
-        end
-  
-        it 'should destroy 0 gl' do
-          expect {
-            @context_node1.destroy
-          }.to change(Link::QuestionLink, :count).by(0)
-        end
-  
-        it 'should destroy 1 lu' do
-          expect {
-            @context_node1.destroy
-          }.to change(Link::UserLink, :count).by(-1)
-        end
-  
-        it 'update the caches' do
-          #@context_node2.reload.upvotes_count.should == 1
-          @context_node2.user_node.reload.upvotes_count.should == 1
-          @context_node2.question_node.reload.upvotes_count.should == 2
-          @context_node2.global_node.reload.upvotes_count.should == 2
-          @context_node1.destroy
-          #@context_node2.reload.upvotes_count.should == 0 
-          @context_node2.user_node.reload.upvotes_count.should == 0
-          @context_node2.question_node.reload.upvotes_count.should == 1
-          @context_node2.global_node.reload.upvotes_count.should == 1
-        end
-      end
-  
-      context 'when another user has another link in this question which uses the same node from' do
-        before do
-          @context_link2 = ContextLink::PositiveContextLink.create(:user=>@user_two, :question => @question, :global_node_from_id => @context_node1.global_node.id, :global_node_to_id => @context_node3.global_node.id)
-        end
-        it 'should destroy 0 node (due to shared node from and diff users)' do
-          expect {
-            @context_node1.destroy
-          }.to change(Node::GlobalNode, :count).by(0)
-        end
-        it 'should destroy 0 questions_nodes' do
-          expect {
-            @context_node1.destroy
-          }.to change(Node::QuestionNode, :count).by(0)
-        end
-        it 'should destroy 1 questions_nodes_users' do
-          expect {
-            @context_node1.destroy
-          }.to change(ContextNode, :count).by(-1)
-        end
-        it 'should destroy 1 nodes_users' do
-          expect {
-            @context_node1.destroy
-          }.to change(Node::UserNode, :count).by(-1)
-        end
-  
-        it 'should destroy 1 link' do
-          expect {
-            @context_node1.destroy
-          }.to change(Link::GlobalLink, :count).by(-1)
-        end
-  
-        it 'should destroy 1 context_link' do
-          expect {
-            @context_node1.destroy
-          }.to change(ContextLink, :count).by(-1)
-        end
-  
-        it 'should destroy 1 gl' do
-          expect {
-            @context_node1.destroy
-          }.to change(Link::QuestionLink, :count).by(-1)
-        end
-  
-        it 'should destroy 1 lu' do
-          expect {
-            @context_node1.destroy
-          }.to change(Link::UserLink, :count).by(-1)
-        end
-  
-        it 'update the caches' do
-          #@context_node2.reload.upvotes_count.should == 1
-          @context_node2.user_node.reload.upvotes_count.should == 1
-          @context_node2.question_node.reload.upvotes_count.should == 1
-          @context_node2.global_node.reload.upvotes_count.should == 1
-          @context_node1.destroy
-          #@context_node2.reload.upvotes_count.should == 0 
-          @context_node2.user_node.reload.upvotes_count.should == 0
-          @context_node2.question_node.reload.upvotes_count.should == 0
-          @context_node2.global_node.reload.upvotes_count.should == 0
-        end
-      end
-  
-      context 'when another user has the link in another question' do
-        before do
-          @context_link2 = ContextLink::PositiveContextLink.create(:user=>@user_two, :question => @question2, :global_node_from_id => @context_node1.global_node.id, :global_node_to_id => @context_node2.global_node.id)
-        end
-        it 'should destroy 0 node' do
-          expect {
-            @context_node1.destroy
-          }.to change(Node::GlobalNode, :count).by(0)
-        end
-        it 'should destroy 1 questions_nodes' do
-          expect {
-            @context_node1.destroy
-          }.to change(Node::QuestionNode, :count).by(-1)
-        end
-        it 'should destroy 1 questions_nodes_users' do
-          expect {
-            @context_node1.destroy
-          }.to change(ContextNode, :count).by(-1)
-        end
-        it 'should destroy 1 nodes_users' do
-          expect {
-            @context_node1.destroy
-          }.to change(Node::UserNode, :count).by(-1)
-        end
-  
-        it 'should destroy 0 link' do
-          expect {
-            @context_node1.destroy
-          }.to change(Link::GlobalLink, :count).by(0)
-        end
-  
-        it 'should destroy 1 context_link' do
-          expect {
-            @context_node1.destroy
-          }.to change(ContextLink, :count).by(-1)
-        end
-  
-        it 'should destroy 1 gl' do
-          expect {
-            @context_node1.destroy
-          }.to change(Link::QuestionLink, :count).by(-1)
-        end
-  
-        it 'should destroy 1 lu' do
-          expect {
-            @context_node1.destroy
-          }.to change(Link::UserLink, :count).by(-1)
-        end
-  
-        it 'update the caches' do
-          #@context_node2.reload.upvotes_count.should == 1
-          @context_node2.user_node.reload.upvotes_count.should == 1
-          @context_node2.question_node.reload.upvotes_count.should == 1
-          @context_node2.global_node.reload.upvotes_count.should == 2
-          @context_node1.destroy
-          #@context_node2.reload.upvotes_count.should == 0 
-          @context_node2.user_node.reload.upvotes_count.should == 0
-          @context_node2.question_node.reload.upvotes_count.should == 0
-          @context_node2.global_node.reload.upvotes_count.should == 1
-        end
-      end
-  
-      context 'when the user has the link in another question' do
-        before do
-          @context_link2 = ContextLink::PositiveContextLink.create(:user=>@user, :question => @question2, :global_node_from_id => @context_node1.global_node.id, :global_node_to_id => @context_node2.global_node.id)
-        end
-        it 'should destroy 0 node' do
-          expect {
-            @context_node1.destroy
-          }.to change(Node::GlobalNode, :count).by(0)
-        end
-        it 'should destroy 1 questions_nodes' do
-          expect {
-            @context_node1.destroy
-          }.to change(Node::QuestionNode, :count).by(-1)
-        end
-        it 'should destroy 1 questions_nodes_users' do
-          expect {
-            @context_node1.destroy
-          }.to change(ContextNode, :count).by(-1)
-        end
-        it 'should destroy 0 nodes_users' do
-          expect {
-            @context_node1.destroy
-          }.to change(Node::UserNode, :count).by(0)
-        end
-  
-        it 'should destroy 0 link' do
-          expect {
-            @context_node1.destroy
-          }.to change(Link::GlobalLink, :count).by(-1)
-        end
-  
-        it 'should destroy 1 context_link' do
-          expect {
-            @context_node1.destroy
-          }.to change(ContextLink, :count).by(-2)
-        end
-  
-        it 'should destroy 1 gl' do
-          expect {
-            @context_node1.destroy
-          }.to change(Link::QuestionLink, :count).by(-2)
-        end
-  
-        it 'should destroy 1 lu' do
-          expect {
-            @context_node1.destroy
-          }.to change(Link::UserLink, :count).by(-1)
-        end
-  
-        it 'update the caches' do
-          #@context_node2.reload.upvotes_count.should == 1
-          @context_node2.user_node.reload.upvotes_count.should == 1
-          @context_node2.question_node.reload.upvotes_count.should == 1
-          @context_node2.global_node.reload.upvotes_count.should == 1
-          @context_node1.destroy
-          #@context_node2.reload.upvotes_count.should == 0 
-          @context_node2.user_node.reload.upvotes_count.should == 0
-          @context_node2.question_node.reload.upvotes_count.should == 0
-          @context_node2.global_node.reload.upvotes_count.should == 0
-        end
-      end
-
-      context 'when the user has another link in this question where the links share a node from' do
-        before do
-          @context_link2 = ContextLink::PositiveContextLink.create(:user=>@user, :question => @question, :global_node_from_id => @context_node1.global_node.id, :global_node_to_id => @context_node3.global_node.id)
-        end
-        it 'should destroy 1 node (despite shared node from -- all on user)' do
-          expect {
-            @context_node1.destroy
-          }.to change(Node::GlobalNode, :count).by(-1)
-        end
-        it 'should destroy 1 questions_nodes' do
-          expect {
-            @context_node1.destroy
-          }.to change(Node::QuestionNode, :count).by(-1)
-        end
-        it 'should destroy 1 questions_nodes_users' do
-          expect {
-            @context_node1.destroy
-          }.to change(ContextNode, :count).by(-1)
-        end
-        it 'should destroy 1 nodes_users' do
-          expect {
-            @context_node1.destroy
-          }.to change(Node::UserNode, :count).by(-1)
-        end
-  
-        it 'should destroy 1 link' do
-          expect {
-            @context_node1.destroy
-          }.to change(Link::GlobalLink, :count).by(-2)
-        end
-  
-        it 'should destroy 1 context_link' do
-          expect {
-            @context_node1.destroy
-          }.to change(ContextLink, :count).by(-2)
-        end
-  
-        it 'should destroy 1 context_link' do
-          expect {
-            @context_node1.destroy
-          }.to change(Link::QuestionLink, :count).by(-2)
-        end
-  
-        it 'should destroy 1 context_link' do
-          expect {
-            @context_node1.destroy
-          }.to change(Link::UserLink, :count).by(-2)
-        end
-  
-        it 'update the caches' do
-          #@context_node2.reload.upvotes_count.should == 1
-          @context_node2.user_node.reload.upvotes_count.should == 1
-          @context_node2.question_node.reload.upvotes_count.should == 1
-          @context_node2.global_node.reload.upvotes_count.should == 1
-          #@context_node3.reload.upvotes_count.should == 1
-          @context_node3.user_node.reload.upvotes_count.should == 1
-          @context_node3.question_node.reload.upvotes_count.should == 1
-          @context_node3.global_node.reload.upvotes_count.should == 1
-          @context_node1.destroy
-          #@context_node2.reload.upvotes_count.should == 0 
-          @context_node2.user_node.reload.upvotes_count.should == 0
-          @context_node2.question_node.reload.upvotes_count.should == 0
-          @context_node2.global_node.reload.upvotes_count.should == 0
-          #@context_node3.reload.upvotes_count.should == 0 
-          @context_node3.user_node.reload.upvotes_count.should == 0
-          @context_node3.question_node.reload.upvotes_count.should == 0
-          @context_node3.global_node.reload.upvotes_count.should == 0
-        end
-      end
-    end
-  end
-  describe 'it should not delete the links for other questions - do not delete cl, delete ugl? or uql down..?' do
-    it 'should be sensible' do
-      pending
-    end
+  it "should delete db cruft and remove sti as much as possible" do
+    pending
   end
 end

@@ -3,21 +3,12 @@ module LinkDeletionModule
   end
 
   def delete_appropriate_links
-    delete_user_link
     delete_non_user_links
   end
 
   def delete_non_user_links
-    Link.where('users_count = 0 && 
-                (id = ? || 
-                 id = ? 
-                )', self.global_link_id, self.question_link_id,)
-              .destroy_all
-  end
-
-  def delete_user_link
-    self.user_link.try(:destroy)
+    Link::GroupLink.where('users_count = 0').destroy_all
+    Link::GlobalLink.where('users_count = 0').destroy_all
   end
 
 end
-

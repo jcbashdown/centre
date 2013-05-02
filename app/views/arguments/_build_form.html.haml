@@ -1,0 +1,17 @@
+-global_node_to_id = node.global_node.id
+-sign = type == "Positive" ? "plus" : "minus"
+- if node.id == original
+  %h5
+    = "Argument #{type == "Positive" ? "For" : "Against"}"
+    - if current_user
+      %a.show-node-through-link{:"data-type" => type, :"data-global-node-to-id" => global_node_to_id}
+        %i{alt:"Show create #{type == "Positive" ? "supporting" : "opposing"} point form", class:"icon-#{sign}"}
+      %a.hide-node-through-link.hidden{:"data-type" => type, :"data-global-node-to-id" => global_node_to_id}
+        %i{alt:"Hide create #{type == "Positive" ? "supporting" : "opposing"} point form", class:"icon-#{sign}"}
+- else
+  - if current_user
+    %a.show-node-through-link{:"data-type" => type, :"data-global-node-to-id" => global_node_to_id}
+      %i{alt:"Show create #{type == "Positive" ? "supporting" : "opposing"} point form", class:"icon-#{sign}"}
+    %a.hide-node-through-link.hidden{:"data-type" => type, :"data-global-node-to-id" => global_node_to_id}
+      %i{alt:"Hide create #{type == "Positive" ? "supporting" : "opposing"} point form", class:"icon-#{sign}"}
+  

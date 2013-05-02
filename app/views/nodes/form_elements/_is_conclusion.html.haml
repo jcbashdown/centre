@@ -1,0 +1,10 @@
+-context_node ||= nil
+%label.checkbox.inline
+  No&nbsp;
+  = f.radio_button :is_conclusion, false, :checked => (context_node && context_node.is_conclusion == false ? true : false)
+%label.checkbox.inline
+  No opinion&nbsp;
+  = f.radio_button :is_conclusion, "", :checked => true, :checked => (context_node.nil? || context_node.is_conclusion.nil? ? true : false)
+%label.checkbox.inline
+  Yes&nbsp;
+  = f.radio_button :is_conclusion, true, :checked => (context_node && context_node.is_conclusion ? true : false)

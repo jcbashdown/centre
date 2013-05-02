@@ -1,0 +1,17 @@
+-froms_positive = node.find_argument_links_by_context("to", {:user_id => argument_user.try(:id), :question_id => argument_question.try(:id)}, type=Link.positive).map(&:global_node_from)
+-froms_negative = node.find_argument_links_by_context("to", {:user_id => argument_user.try(:id), :question_id => argument_question.try(:id)}, type=Link.negative).map(&:global_node_from)
+%div{:id => "#{previous}#{node.id}"}
+  - if node.id == original
+    = render :partial => "arguments/build_form", :locals => {:node => node, :original => original, :type => "Positive"}
+    = render :partial => "links/node_through_link_form", :locals => {:type => "Positive", :global_node_to_id => node.global_node.id}
+  %ul.positive
+    -froms_positive.each do |from|
+      =render :partial => "arguments/sub_point", :locals => {:from => from, :previous => previous, :original => original, :path_method => path_method, :sign => "plus"}
+      %div{:id => "#{previous}plus#{from.id}", :style => "display:none;"}
+  - if node.id == original
+    = render :partial => "arguments/build_form", :locals => {:node => node, :original => original, :type => "Negative"}
+    = render :partial => "links/node_through_link_form", :locals => {:type => "Negative", :global_node_to_id => node.global_node.id}
+  %ul.negative
+    -froms_negative.each do |from|
+      =render :partial => "arguments/sub_point", :locals => {:from => from, :previous => previous, :original => original, :path_method => path_method, :sign => "minus"}
+      %div{:id => "#{previous}minus#{from.id}", :style => "display:none;"}

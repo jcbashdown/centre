@@ -1,7 +1,13 @@
 .tabbable
   .row-fluid
-    .span9
+    .span6
       %h2= @node_question ? @node_question.name : "All"
+    .span3
+      -if current_user
+        %a.show-new-conclusion
+          Add Conclusion
+        %a.hide-new-conclusion.hidden
+          Close conclusion form
     .span3
       %ul.nav.nav-pills.right
         - if @argument_question
@@ -20,11 +26,17 @@
                 - User.all.each do |user|
                   %li.arg-option
                     %a{"data-toggle" => "tab", "data-target" => "#other_user_topic", :href => user_arguments_path(:user_id => user.id, :path => "other_user_topic"), "data-remote" => true}= user.name 
-  .tab-content
-    -if current_user
-      #my_topic.tab-pane
-        Loading...
-    #other_user_topic.tab-pane
-      Loading...
-    #everyones_topic.tab-pane.active
-      = render(:partial => 'question_arguments/index', :locals => {:previous => "everyones_topic", :question => @argument_question})
+  - if current_user
+    .row-fluid
+      .span12
+        =render :partial => "nodes/new_conclusion_form"
+  .row-fluid
+    .span12
+      .argument.tab-content
+        -if current_user
+          #my_topic.tab-pane
+            Loading...
+        #other_user_topic.tab-pane
+          Loading...
+        #everyones_topic.tab-pane.active
+          = render(:partial => 'question_arguments/index', :locals => {:previous => "everyones_topic", :argument_question => @argument_question, :argument_user => @argument_user})

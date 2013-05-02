@@ -49,6 +49,9 @@ header nav ul li {
 .width_80{
   width:80;
 }
+.argument.tab-content{
+  overflow:visible;
+}
 .margin_100{
   margin-left: 100px;
 }
@@ -61,7 +64,12 @@ header nav ul li {
 .accordion-heading-override{
     padding: 8px 15px;
 }
-ul.positive {
+ul.positive{
+    list-style-type: none;
+    padding: 0px;
+    margin-left: 1em;
+}
+ul.negative{
     list-style-type: none;
     padding: 0px;
     margin-left: 1em;

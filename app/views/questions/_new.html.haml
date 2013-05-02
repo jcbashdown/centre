@@ -8,6 +8,9 @@
             Select question
           %ul.dropdown-menu{"aria-labelledby" => "dLabel", :role => "menu"}
             - @questions.each do |question|
-              %li
+              %li{:id => "question#{question.id}"}
                 %a{:href => question_path(:id => (question.id ? question.id : 0)), :tabindex => "-1"}
                   = question.name
+                - if current_user
+                  %a.delete-question{:href => question_path(question), :rel => "nofollow", "data-confirm" => "Are you sure?"}
+                    %i.icon-remove

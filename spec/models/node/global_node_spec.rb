@@ -1,0 +1,131 @@
+require 'spec_helper'
+require 'models/node_spec_helper'
+
+describe Node::GlobalNode do
+
+  describe "#find_view_links_by_context" do
+    
+  end
+
+  describe "" do
+
+  end
+
+  describe 'finding links' do
+    before do
+      @user0 = FactoryGirl.create(:user)
+      @question0 = FactoryGirl.create(:question)
+      context_node = Node::UserNode.create!(:user=>@user0, :question=>@question0, :title => "First Node")
+      @node = context_node.global_node
+      @params = {}
+      @nodes = []
+    end
+    describe 'find_view_links_by_context' do
+      before do
+        @users = []
+        @users << @user0
+        @users << @user1 = FactoryGirl.create(:user, :email=>"another@test.com")
+        @questions = []
+        @questions << @question0
+        @questions << @question1 = FactoryGirl.create(:question, :name => 'Aaa')
+        @queries = []
+        @queries << @query0 = "Part of a node title"
+        @queries << @query1 = "Title"
+        @context_nodes = []
+        @context_nodes << @context_node0 = Node::UserNode.create(:user=>@user0, :question=>@question0, :title => "Part of a node title, here it is!")
+        @context_nodes << @context_node1 = Node::UserNode.create(:user=>@user1, :question=>@question1, :title => 'Title')
+        @context_nodes << @context_node2 = Node::UserNode.create(:user=>@user1, :question=>@question0, :title => "And another! Part of a node title")
+        @context_nodes << @context_node3 = Node::UserNode.create(:user=>@user0, :question=>@question1, :title => 'A Title')
+        ContextNode.reindex
+      end
+      context 'when the direction is to' do
+        it_should_behave_like 'a node finding directed links', "to"
+      end
+      context 'when the direction is from' do
+        it_should_behave_like 'a node finding directed links', "from"
+      end
+    end
+  end
+  describe 'search' do
+    before do
+      @user = FactoryGirl.create(:user)
+      @user2 = FactoryGirl.create(:user, :email=>"another@test.com")
+      @question = FactoryGirl.create(:question)
+      @question2 = FactoryGirl.create(:question, :name => 'Aaa')
+      @query = "Part of a node title"
+      @context_node1 = Node::UserNode.create(:user=>@user, :question=>@question, :title => "Part of a node title, here it is!")
+      @context_node2 = Node::UserNode.create(:user=>@user2, :question=>@question2, :title => 'Title')
+      @context_node3 = Node::UserNode.create(:user=>@user2, :question=>@question, :title => "And another! Part of a node title")
+      @context_node4 = Node::UserNode.create(:user=>@user, :question=>@question2, :title => 'Title')
+      ContextNode.reindex
+    end
+    context 'when the question is set' do
+      before do
+        @existing_view_configuration = {
+                                         :question_id => @question.id,
+                                         :user_id => nil,
+                                         :query => nil 
+                                       }
+      end
+      it 'should return the correct question nodes' do
+        Node::GlobalNode.find_by_context(@existing_view_configuration).should == [@context_node1.global_node, @context_node3.global_node]
+      end
+      context 'when the user is set' do
+        before do
+          @existing_view_configuration.merge!(:user_id => @user.id)
+        end
+        it 'should return the correct context nodes' do
+          Node::GlobalNode.find_by_context(@existing_view_configuration).should == [@context_node1.global_node]
+        end
+        context 'when the query is set' do
+          before do
+            @existing_view_configuration.merge!(:query => @query)
+          end
+          it 'should return the correct context nodes' do
+            Node::GlobalNode.find_by_context(@existing_view_configuration).should == [@context_node1.global_node]
+          end
+        end
+      end
+      context 'when the query is set' do
+        before do
+          @existing_view_configuration.merge!(:query => @query)
+        end
+        it 'should return the correct question nodes' do
+          Node::GlobalNode.find_by_context(@existing_view_configuration).should == [@context_node1.global_node, @context_node3.global_node]
+        end
+      end
+    end
+    context 'when the user is set' do
+      before do
+        @existing_view_configuration = {
+                                         :user_id => @user.id,
+                                         :question_id => nil,
+                                         :query => nil
+                                       }
+      end
+      it 'should return the correct user nodes' do
+        Node::GlobalNode.find_by_context(@existing_view_configuration).should == [@context_node1.global_node, @context_node4.global_node]
+      end
+      context 'when the query is set' do
+        before do
+          @existing_view_configuration.merge!(:query => @query)
+        end
+        it 'should return the correct user nodes' do
+          Node::GlobalNode.find_by_context(@existing_view_configuration).should == [@context_node1.global_node]
+        end
+      end
+    end
+    context 'when the query is set' do
+      before do
+        @existing_view_configuration = {
+					 :query => @query,
+                                         :question_id => nil,
+                                         :user_id => nil
+                                       }
+      end
+      it 'should return the correct global nodes' do
+        Node::GlobalNode.find_by_context(@existing_view_configuration).should == [@context_node1.global_node, @context_node3.global_node]
+      end
+    end
+  end
+end
