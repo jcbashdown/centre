@@ -1,0 +1,15 @@
+%h5
+  Argument Against
+  %a.show-node-through-link{"data-global-node-to-id" => "9", "data-type" => "Negative"}
+    %i.icon-minus{:alt => "Show create opposing point form"}
+  %a.hide-node-through-link.hidden{"data-global-node-to-id" => "9", "data-type" => "Negative"}
+    %i.icon-minus{:alt => "Hide create opposing point form"}
+.hidden.node-through-link.Negative.9
+  %form.form-inline.remote-submit-and-refresh{"accept-charset" => "UTF-8", :action => "/links", :method => "post"}
+    %div{:style => "margin:0;padding:0;display:inline"}
+      %input{:name => "utf8", :type => "hidden", :value => "✓"}/
+      %input{:name => "authenticity_token", :type => "hidden", :value => "33LpvMhlYQSdNES/vx3KlSe4iJ/Mx/7K1o1+KAU73Q8="}/
+    %input#type{:name => "type", :type => "hidden", :value => "Negative"}/
+    %input#global_link_global_node_to_id{:name => "global_link[global_node_to_id]", :type => "hidden", :value => "9"}/
+    %input#global_link_context_node_from_title.typeahead.span9{:autocomplete => "off", :name => "global_link[context_node_from_title]", :placeholder => "Point", :size => "30", :type => "text", :value => "conclusion7"}/
+    %input.btn.span3{:name => "commit", :type => "submit", :value => "Add/View"}/

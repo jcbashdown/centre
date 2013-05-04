@@ -5,6 +5,7 @@
 // the compiled file.
 //
 //= require angular
+//= require angular/controllers/questions_controller.js.coffee
 //= require jquery
 //= require jquery.ajaxLoader
 //= require jquery_ujs
