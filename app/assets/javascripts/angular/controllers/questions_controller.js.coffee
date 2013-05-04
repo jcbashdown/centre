@@ -3,7 +3,7 @@
     {
       title: "Larry",
       for: [{title: "Go Larry!"}],
-      against: [{"title: "Booo Larry!"}]
+      against: [{title: "Booo Larry!"}]
     }
     {
       title: "Curly",
