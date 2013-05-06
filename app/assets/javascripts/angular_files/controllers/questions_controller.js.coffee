@@ -2,7 +2,7 @@
   $scope.question = [
     {
       title: "Larry",
-      for: [{title: "Go Larry!"}],
+      for: [{title: "Go Larry!", for:[{title:"Nooo"}]}],
       against: [{title: "Booo Larry!"}]
     }
     {

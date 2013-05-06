@@ -4,13 +4,8 @@
 // It's not advisable to add code directly here, but if you do, it'll appear at the bottom of the
 // the compiled file.
 //
+//= require_tree .
 //= require angular
-//= require angular/controllers/questions_controller.js.coffee
 //= require jquery
-//= require jquery.ajaxLoader
 //= require jquery_ujs
-//= require links
-//= require nodes 
-//= require questions
-//= require centre
 //= require bootstrap
