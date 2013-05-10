@@ -4,9 +4,9 @@
     = render :partial => 'delete'
     = render :partial => 'for_form'
     %ul.positive
-      %li{"ng:repeat" => "point in conclusion.for"}
+      %li{"ng:repeat" => "for in conclusion.for"}
         = render :partial => 'for_point'
     = render :partial => 'against_form'
     %ul.negative
-      %li{"ng:repeat" => "point in conclusion.against"}
+      %li{"ng:repeat" => "against in conclusion.against"}
         = render :partial => 'against_point'

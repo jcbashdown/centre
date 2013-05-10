@@ -1,6 +1,6 @@
 %i.icon-plus
 %a{:href => "/nodes/5"}
-  {{point.title}}
+  {{for.title}}
 %a{:href => "#"}
   %i.icon-minus-sign.everyones_topicplus5{:style => "display:none;"}
 %a{"data-remote" => "", :href => "/question_arguments/5?original=9&path=everyones_topicplus"}
@@ -31,11 +31,9 @@
     %input#global_link_global_node_to_id{:name => "global_link[global_node_to_id]", :type => "hidden", :value => "5"}/
     %input#global_link_context_node_from_title.typeahead.span9{:autocomplete => "off", :name => "global_link[context_node_from_title]", :placeholder => "Point", :size => "30", :type => "text", :value => "conclusion7"}/
     %input.btn.span3{:name => "commit", :type => "submit", :value => "Add/View"}/
-%script{:id => "partial1.html", :type => "text/ng-template"}
-  <p>ARGH</p>
 %ul.positive
   %li{"ng:repeat" => "point in for.for"}
-    %div{'ng:include'=>"partial1.html"}
+    %div{'ng:include'=> "", :src => "'/assets/angular_files/templates/for_point.html'"}
 %ul.negative
   %li{"ng:repeat" => "point in for.against"}
-    %div{'ng:include'=>"partial1.html"}
+    %div{'ng:include'=> "", :src => "'/assets/angular_files/templates/against_point.html'"}

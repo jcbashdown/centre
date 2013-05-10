@@ -7,12 +7,12 @@
     }
     {
       title: "Curly",
-      for: [{title: "Go!"}],
+      for: [{title: "Go!", for:[{title:"Nooo"}]}],
       against: [{title: "Booo!"}]
     }
     {
       title: "Moe",
-      for: [{title: "Yaaay!"}],
+      for: [{title: "Yaay!", for:[{title:"Nooo"}]}],
       against: [{title: "Nooo!"}]
     }
   ]
