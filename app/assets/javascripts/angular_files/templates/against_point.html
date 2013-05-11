@@ -1,6 +1,6 @@
-<i class="icon-plus"></i>
+<i class="icon-minus"></i>
 <a href="/nodes/5" class="ng-binding">
-  Go Larry!
+  {{point.title}} 
 </a>
 <a href="#">
   <i class="icon-minus-sign everyones_topicplus5" style="display:none;"></i>
@@ -21,12 +21,12 @@
   <i alt="Hide create supporting point form" class="icon-plus"></i>
 </a>
 <ul class="positive">
-  <li ng:repeat="point in for.for" class="ng-scope">
+  <li ng:repeat="point in point.for" class="ng-scope">
     <div ng:include="" src="'/assets/angular_files/templates/for_point.html'"></div>
   </li>
 </ul>
 <ul class="negative">
-  <li ng:repeat="point in for.against" class="ng-scope">
+  <li ng:repeat="point in point.against" class="ng-scope">
     <div ng:include="" src="'/assets/angular_files/templates/against_point.html'"></div>
   </li>
 </ul>
