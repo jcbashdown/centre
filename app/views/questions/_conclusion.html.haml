@@ -1,12 +1,13 @@
-#everyones_topic9{"ng:repeat" => "conclusion in question"}
+%div{"ng:repeat" => "conclusion in question"}
   %h3
     %a{:href => "/nodes/9"} {{conclusion.title}}
     = render :partial => 'delete'
+  %div
     = render :partial => 'for_form'
     %ul.positive
-      %li{"ng:repeat" => "for in conclusion.for"}
+      %div{"ng:repeat" => "for in conclusion.for"}
         = render :partial => 'for_point'
     = render :partial => 'against_form'
     %ul.negative
-      %li{"ng:repeat" => "against in conclusion.against"}
+      %div{"ng:repeat" => "against in conclusion.against"}
         = render :partial => 'against_point'
