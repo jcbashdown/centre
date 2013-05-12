@@ -32,6 +32,13 @@ class QuestionsController < ApplicationController
   end
 
   def show
+    respond_to do |format|
+      if params[:user] && (user_id = params[:user_id])
+        format.json {@question.argument(user:User.find(user_id)).to_json}
+      else
+        format.json {@question.argument.to_json}
+      end
+    end
   end
   
   def update_view_configuration

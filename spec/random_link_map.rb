@@ -1,6 +1,6 @@
 class RandomLinkMap
 
-  attr_accessor :questions, :users, :groups, :nodes, :links, :report
+  attr_accessor :questions, :users, :groups, :nodes, :links, :report, :concluding_nodes
 
   def initialize counts_hash={}, link_count_only_subject_node_last_user = false, report = false
     @report = report
@@ -13,7 +13,7 @@ class RandomLinkMap
     end
   end
 
-  [:questions, :users, :groups, :nodes, :links].each do |accessor|
+  [:questions, :users, :groups, :nodes, :links, :concluding_nodes].each do |accessor|
     define_method accessor do
       if instance_variable_get(:"@#{accessor}")
         instance_variable_get(:"@#{accessor}")
@@ -80,6 +80,7 @@ class RandomLinkMap
           node = nil
         end
       end
+      concluding_nodes << new_node if new_node.is_conclusion
       nodes << new_node.id
       p "NODES" if report
       p nodes if report

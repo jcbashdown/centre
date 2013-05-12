@@ -1,4 +1,6 @@
+require 'argument_builder'
 class Node::GlobalNode < Node
+  include ArgumentBuilder
   has_many :group_question_conclusions
   has_many :user_question_conclusions, :foreign_key => :global_node_id
   has_many :question_conclusions, :foreign_key => :global_node_id

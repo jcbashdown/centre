@@ -4,9 +4,11 @@ class Question < ActiveRecord::Base
 
   has_many :question_conclusions
   has_many :concluding_nodes, :through => :question_conclusions, :source => :conclusion
-  #def concluding_nodes
-  #  Node::QuestionNode.where(:question_id => self.id, :is_conclusion => true)#.collect(&:global_node_id)
-    #Node::GlobalNode.where('id IN (?)', gn_ids)
-  #end
-#whooops! goood! even...
+
+  def argument(context = {})
+    context[:question] = self
+    concluding_nodes.map do |node|
+      node.argument_attributes(context)
+    end
+  end
 end
