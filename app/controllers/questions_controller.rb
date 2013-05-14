@@ -22,11 +22,14 @@ class QuestionsController < ApplicationController
       if current_user.may_destroy(@question) && @question.destroy
         if @question.id == session[:nodes_question].to_i
           format.json { render json: "/".to_json }
+          format.html
         else
           format.json { render json: params[:id].to_json }
+          format.html
         end
       else
         format.json { render json: false.to_json }
+        format.html
       end
     end
   end
