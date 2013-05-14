@@ -34,10 +34,10 @@ class QuestionsController < ApplicationController
   def show
     respond_to do |format|
       if params[:user] && (user_id = params[:user_id])
-        format.json {@question.argument(user:User.find(user_id)).to_json}
+        format.json {render json: @question.argument(user:User.find(user_id)).to_json}
         format.html
       else
-        format.json {@question.argument.to_json}
+        format.json {render json: @question.argument.to_json}
         format.html
       end
     end
