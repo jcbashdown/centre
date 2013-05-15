@@ -1,0 +1,87 @@
+#everyones_topic.tab-pane.active{'ng-controller' => "QuestionsCtrl"}
+  %div{"ng:repeat" => "conclusion in question"}
+    %h3
+      %a{:href => "/nodes/9"} {{conclusion.title}}
+      %a.accordion-toggle-override.delete-node{"data-confirm" => "Are you sure?", :href => "/nodes/9", :rel => "nofollow"}
+        %i.icon-remove
+    %div
+      %h5
+        Argument For
+        %a.show-node-through-link{"data-global-node-to-id" => "9", "data-type" => "Positive"}
+          %i.icon-plus{:alt => "Show create supporting point form"}
+        %a.hide-node-through-link.hidden{"data-global-node-to-id" => "9", "data-type" => "Positive"}
+          %i.icon-plus{:alt => "Hide create supporting point form"}
+      .hidden.node-through-link.Positive.9
+        %form.form-inline.remote-submit-and-refresh{"accept-charset" => "UTF-8", :action => "/links", :method => "post"}
+          %div{:style => "margin:0;padding:0;display:inline"}
+            %input{:name => "utf8", :type => "hidden", :value => "✓"}/
+            %input{:name => "authenticity_token", :type => "hidden", :value => "33LpvMhlYQSdNES/vx3KlSe4iJ/Mx/7K1o1+KAU73Q8="}/
+          %input#type{:name => "type", :type => "hidden", :value => "Positive"}/
+          %input#global_link_global_node_to_id{:name => "global_link[global_node_to_id]", :type => "hidden", :value => "9"}/
+          %input#global_link_context_node_from_title.typeahead.span9{:autocomplete => "off", :name => "global_link[context_node_from_title]", :placeholder => "Point", :size => "30", :type => "text", :value => "conclusion7"}/
+          %input.btn.span3{:name => "commit", :type => "submit", :value => "Add/View"}/
+      %ul.positive
+        %div{"ng:repeat" => "for in conclusion.for"}
+          %li
+            %i.icon-plus
+            %a{:href => "/nodes/5"}
+              {{for.title}}
+            %a{:href => "#"}
+              %i.icon-minus-sign.everyones_topicplus5{:style => "display:none;"}
+            %a{"data-remote" => "", :href => "/question_arguments/5?original=9&path=everyones_topicplus"}
+              %i.icon-plus-sign.everyones_topicplus5
+            %a.show-node-through-link{"data-global-node-to-id" => "5", "data-type" => "Negative"}
+              %i.icon-minus{:alt => "Show create opposing point form"}
+            %a.hide-node-through-link.hidden{"data-global-node-to-id" => "5", "data-type" => "Negative"}
+              %i.icon-minus{:alt => "Hide create opposing point form"}
+            %a.show-node-through-link{"data-global-node-to-id" => "5", "data-type" => "Positive"}
+              %i.icon-plus{:alt => "Show create supporting point form"}
+            %a.hide-node-through-link.hidden{"data-global-node-to-id" => "5", "data-type" => "Positive"}
+              %i.icon-plus{:alt => "Hide create supporting point form"}
+          %div
+            %ul.positive
+              %div{"ng:repeat" => "point in for.for"}
+                %div{'ng:include'=> "", :src => "'/assets/angular_files/templates/for_point.html'"}
+            %ul.negative
+              %div{"ng:repeat" => "point in for.against"}
+                %div{'ng:include'=> "", :src => "'/assets/angular_files/templates/against_point.html'"}
+      %h5
+        Argument Against
+        %a.show-node-through-link{"data-global-node-to-id" => "9", "data-type" => "Negative"}
+          %i.icon-minus{:alt => "Show create opposing point form"}
+        %a.hide-node-through-link.hidden{"data-global-node-to-id" => "9", "data-type" => "Negative"}
+          %i.icon-minus{:alt => "Hide create opposing point form"}
+      .hidden.node-through-link.Negative.9
+        %form.form-inline.remote-submit-and-refresh{"accept-charset" => "UTF-8", :action => "/links", :method => "post"}
+          %div{:style => "margin:0;padding:0;display:inline"}
+            %input{:name => "utf8", :type => "hidden", :value => "✓"}/
+            %input{:name => "authenticity_token", :type => "hidden", :value => "33LpvMhlYQSdNES/vx3KlSe4iJ/Mx/7K1o1+KAU73Q8="}/
+          %input#type{:name => "type", :type => "hidden", :value => "Negative"}/
+          %input#global_link_global_node_to_id{:name => "global_link[global_node_to_id]", :type => "hidden", :value => "9"}/
+          %input#global_link_context_node_from_title.typeahead.span9{:autocomplete => "off", :name => "global_link[context_node_from_title]", :placeholder => "Point", :size => "30", :type => "text", :value => "conclusion7"}/
+          %input.btn.span3{:name => "commit", :type => "submit", :value => "Add/View"}/
+      %ul.negative
+        %div{"ng:repeat" => "against in conclusion.against"}
+          %li
+            %i.icon-minus
+            %a{:href => "/nodes/7"}
+              {{against.title}}
+            %a{:href => "#"}
+              %i.icon-minus-sign.everyones_topicminus7{:style => "display:none;"}
+            %a{"data-remote" => "", :href => "/question_arguments/7?original=9&path=everyones_topicminus"}
+              %i.icon-plus-sign.everyones_topicminus7
+            %a.show-node-through-link{"data-global-node-to-id" => "7", "data-type" => "Negative"}
+              %i.icon-minus{:alt => "Show create opposing point form"}
+            %a.hide-node-through-link.hidden{"data-global-node-to-id" => "7", "data-type" => "Negative"}
+              %i.icon-minus{:alt => "Hide create opposing point form"}
+            %a.show-node-through-link{"data-global-node-to-id" => "7", "data-type" => "Positive"}
+              %i.icon-plus{:alt => "Show create supporting point form"}
+            %a.hide-node-through-link.hidden{"data-global-node-to-id" => "7", "data-type" => "Positive"}
+              %i.icon-plus{:alt => "Hide create supporting point form"}
+          %div
+            %ul.positive
+              %div{"ng:repeat" => "point in for.for"}
+                %div{'ng:include'=>'', :src => "'/assets/angular_files/templates/for_point.html'"}
+            %ul.negative
+              %div{"ng:repeat" => "point in for.against"}
+                %div{'ng:include'=>'', :src => "'/assets/angular_files/templates/against_point.html'"}

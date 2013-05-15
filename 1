@@ -1,3 +1,0 @@
-@QuestionsCtrl = ($scope, $routeParams, $http) ->
-  $http.get('/questions/'+ $routeParams.questionId + '.json').success (data) ->
-    $scope.question = data
