@@ -5,7 +5,8 @@
 // the compiled file.
 //
 //= require angular
-//= require_tree .
+//= require angular-resource
 //= require jquery
+//= require_tree .
 //= require jquery_ujs
 //= require bootstrap
