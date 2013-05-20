@@ -25,7 +25,7 @@ class NodesController < ApplicationController
       @gnu = ContextNode.where(:user_node_id=>@user_node.id, :question_id=>@node_question.try(:id))[0]
     end
     respond_to do |format|
-      format.json {render json: @node.argument_attributes({}).to_json}
+      format.json {render json: @node.argument_attributes({}, params[:parent]).to_json}
       format.html {}
     end
   end

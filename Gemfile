@@ -14,6 +14,7 @@ gem 'libv8', '~> 3.11.8'
 if HOST_OS =~ /linux/i
   gem 'therubyracer'
 end
+gem "simple_uuid"
 gem "haml", ">= 3.1.2"
 gem "haml-rails", ">= 0.3.4", :group => :development
 gem "rspec-rails", ">= 2.6.1", :group => [:development, :test]

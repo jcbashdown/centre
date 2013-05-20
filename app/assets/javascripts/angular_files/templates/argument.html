@@ -27,46 +27,47 @@
             <div ng:include='' src="'/assets/angular_files/templates/point_for_form.html'"></div>
             <ul class='positive'>
               <div ng:repeat='point in conclusion.for'>
-                <li>
-                  <i class='icon-plus'></i>
-                  <a href='/nodes/{{point.id}}'>
-                    {{point.title}}
-                  </a>
-                  <a class='accordion-toggle-override delete-node' data-confirm='Are you sure?' href='/nodes/{{point.id}}' rel='nofollow'>
-                    <i class='icon-remove'></i>
-                  </a>
-                  <a href='#'>
-                    <i class='icon-minus-sign everyones_topicplus5' style='display:none;'></i>
-                  </a>
-                  <a ng-click="point = subPoint(point.id)" ng-init = "point1 = 'test'">
-                    <i class='icon-plus-sign everyones_topicplus5'></i>
-                  </a>
-                  <a class='show-node-through-link' data-global-node-to-id='5' data-type='Negative'>
-                    <i alt='Show create opposing point form' class='icon-minus'></i>
-                  </a>
-                  <a class='hide-node-through-link hidden' data-global-node-to-id='5' data-type='Negative'>
-                    <i alt='Hide create opposing point form' class='icon-minus'></i>
-                  </a>
-                  <a class='show-node-through-link' data-global-node-to-id='5' data-type='Positive'>
-                    <i alt='Show create supporting point form' class='icon-plus'></i>
-                  </a>
-                  <a class='hide-node-through-link hidden' data-global-node-to-id='5' data-type='Positive'>
-                    <i alt='Hide create supporting point form' class='icon-plus'></i>
-                  </a>
-                  {{point1}}
-                  {{point.for}}
-                </li>
-                <div>
-                  <ul class='positive'>
-                    <div ng:repeat='point in point.for'>
-                      <div ng:include='' src="'/assets/angular_files/templates/for_point.html'"></div>
-                    </div>
-                  </ul>
-                  <ul class='negative'>
-                    <div ng:repeat='point in point.against'>
-                      <div ng:include='' src="'/assets/angular_files/templates/against_point.html'"></div>
-                    </div>
-                  </ul>
+                <div id='{{point.guid}}'>
+                  {{point.id}}
+                  <li>
+                    <i class='icon-plus'></i>
+                    <a href='/nodes/{{point.id}}'>
+                      {{point.title}}
+                    </a>
+                    <a class='accordion-toggle-override delete-node' data-confirm='Are you sure?' href='/nodes/{{point.id}}' rel='nofollow'>
+                      <i class='icon-remove'></i>
+                    </a>
+                    <a href='#'>
+                      <i class='icon-minus-sign everyones_topicplus5' style='display:none;'></i>
+                    </a>
+                    <a ng-click="subPoint(point.id, point.guid, point.parent, 'for_point.html')">
+                      <i class='icon-plus-sign'></i>
+                    </a>
+                    <a class='show-node-through-link' data-global-node-to-id='5' data-type='Negative'>
+                      <i alt='Show create opposing point form' class='icon-minus'></i>
+                    </a>
+                    <a class='hide-node-through-link hidden' data-global-node-to-id='5' data-type='Negative'>
+                      <i alt='Hide create opposing point form' class='icon-minus'></i>
+                    </a>
+                    <a class='show-node-through-link' data-global-node-to-id='5' data-type='Positive'>
+                      <i alt='Show create supporting point form' class='icon-plus'></i>
+                    </a>
+                    <a class='hide-node-through-link hidden' data-global-node-to-id='5' data-type='Positive'>
+                      <i alt='Hide create supporting point form' class='icon-plus'></i>
+                    </a>
+                  </li>
+                  <div>
+                    <ul class='positive'>
+                      <div ng:repeat='point in point.for'>
+                        <div ng:include='' src="'/assets/angular_files/templates/for_point.html'"></div>
+                      </div>
+                    </ul>
+                    <ul class='negative'>
+                      <div ng:repeat='point in point.against'>
+                        <div ng:include='' src="'/assets/angular_files/templates/against_point.html'"></div>
+                      </div>
+                    </ul>
+                  </div>
                 </div>
               </div>
             </ul>
@@ -82,46 +83,48 @@
             <div ng:include='' src="'/assets/angular_files/templates/point_against_form.html'"></div>
             <ul class='negative'>
               <div ng:repeat='point in conclusion.against'>
-                <li>
-                  <i class='icon-minus'></i>
-                  <a href='/nodes/{{point.id}}'>
-                    {{against.title}}
-                  </a>
-                  <a class='accordion-toggle-override delete-node' data-confirm='Are you sure?' href='/nodes/{{point.id}}' rel='nofollow'>
-                    <i class='icon-remove'></i>
-                  </a>
-                  <a href='#'>
-                    <i class='icon-minus-sign everyones_topicminus7' style='display:none;'></i>
-                  </a>
-                  <a data-remote='' href='/question_arguments/7?original=9&amp;path=everyones_topicminus'>
-                    <i class='icon-plus-sign everyones_topicminus7'></i>
-                  </a>
-                  <a class='show-node-through-link' data-global-node-to-id='7' data-type='Negative'>
-                    <i alt='Show create opposing point form' class='icon-minus'></i>
-                  </a>
-                  <a class='hide-node-through-link hidden' data-global-node-to-id='7' data-type='Negative'>
-                    <i alt='Hide create opposing point form' class='icon-minus'></i>
-                  </a>
-                  <a class='show-node-through-link' data-global-node-to-id='7' data-type='Positive'>
-                    <i alt='Show create supporting point form' class='icon-plus'></i>
-                  </a>
-                  <a class='hide-node-through-link hidden' data-global-node-to-id='7' data-type='Positive'>
-                    <i alt='Hide create supporting point form' class='icon-plus'></i>
-                  </a>
-                </li>
-                <div>
-                  <ul class='positive'>
-                    <div ng:include='' src="'/assets/angular_files/templates/point_for_form.html'"></div>
-                    <div ng:repeat='point in point.for'>
-                      <div ng:include='' src="'/assets/angular_files/templates/for_point.html'"></div>
-                    </div>
-                  </ul>
-                  <ul class='negative'>
-                    <div ng:include='' src="'/assets/angular_files/templates/point_against_form.html'"></div>
-                    <div ng:repeat='point in point.against'>
-                      <div ng:include='' src="'/assets/angular_files/templates/against_point.html'"></div>
-                    </div>
-                  </ul>
+                <div id='{{point.guid}}'>
+                  <li>
+                    <i class='icon-minus'></i>
+                    <a href='/nodes/{{point.id}}'>
+                      {{against.title}}
+                    </a>
+                    <a class='accordion-toggle-override delete-node' data-confirm='Are you sure?' href='/nodes/{{point.id}}' rel='nofollow'>
+                      <i class='icon-remove'></i>
+                    </a>
+                    <a href='#'>
+                      <i class='icon-minus-sign everyones_topicminus7' style='display:none;'></i>
+                    </a>
+                    <a ng-click="subPoint(point.id, point.guid, point.parent, 'against_point.html')">
+                      <i class='icon-plus-sign'></i>
+                    </a>
+                    <a class='show-node-through-link' data-global-node-to-id='7' data-type='Negative'>
+                      <i alt='Show create opposing point form' class='icon-minus'></i>
+                    </a>
+                    <a class='hide-node-through-link hidden' data-global-node-to-id='7' data-type='Negative'>
+                      <i alt='Hide create opposing point form' class='icon-minus'></i>
+                    </a>
+                    <a class='show-node-through-link' data-global-node-to-id='7' data-type='Positive'>
+                      <i alt='Show create supporting point form' class='icon-plus'></i>
+                    </a>
+                    <a class='hide-node-through-link hidden' data-global-node-to-id='7' data-type='Positive'>
+                      <i alt='Hide create supporting point form' class='icon-plus'></i>
+                    </a>
+                  </li>
+                  <div>
+                    <ul class='positive'>
+                      <div ng:include='' src="'/assets/angular_files/templates/point_for_form.html'"></div>
+                      <div ng:repeat='point in point.for'>
+                        <div ng:include='' src="'/assets/angular_files/templates/for_point.html'"></div>
+                      </div>
+                    </ul>
+                    <ul class='negative'>
+                      <div ng:include='' src="'/assets/angular_files/templates/point_against_form.html'"></div>
+                      <div ng:repeat='point in point.against'>
+                        <div ng:include='' src="'/assets/angular_files/templates/against_point.html'"></div>
+                      </div>
+                    </ul>
+                  </div>
                 </div>
               </div>
             </ul>

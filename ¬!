@@ -1,0 +1,21 @@
+'use strict';
+
+function QuestionsCtrl($scope, $routeParams, $http, $compile) {
+  $http.get('/questions/'+$routeParams.questionId+'.json').success(function(data) {
+    $scope.question = data;
+  });
+  $scope.subPoint = function(node_id, guid, template) {
+    $http.get('/nodes/'+node_id+'.json').success(function(data) {
+      $http.get('/assets/angular_files/templates/'+template).success(function(data1) {
+        html = $compile(data1)(data);
+        $('#'+guid).html(html);
+      });
+      //http://www.cheatography.com/proloser/cheat-sheets/angularjs/
+      //get partial
+      //partial has controller declaration
+      //controller has nodes show
+      //nodes show called for node and partial scope done...
+      //return data; 
+    });
+  };
+};

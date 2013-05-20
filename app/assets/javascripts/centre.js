@@ -1,5 +1,10 @@
 var centre = centre || {};
 
+centre.guid = function() {
+  return s4() + s4() + '-' + s4() + '-' + s4() + '-' +
+         s4() + '-' + s4() + s4() + s4();
+}
+
 centre.deleteNode = function(context) {
   $.ajax({
     url: $(context).attr("href"),
