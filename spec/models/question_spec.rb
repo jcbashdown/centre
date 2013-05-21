@@ -11,11 +11,11 @@ describe Question do
       let(:context_node4) {Node::UserNode.create(:user=>user, :question=>question, :title => 'Title4', :is_conclusion => false)}
       let(:guids) {(1..4).map {|item| SimpleUUID::UUID.new}}
       before do
+        guids
         @link1 = Link::UserLink::PositiveUserLink.create(:user=>user, :question => question, :global_node_to_id => context_node.global_node_id, :global_node_from_id => context_node2.global_node_id)
         @link2 = Link::UserLink::PositiveUserLink.create(:user=>user, :question => question, :global_node_to_id => context_node.global_node_id, :global_node_from_id => context_node3.global_node_id)
         @link3 = Link::UserLink::PositiveUserLink.create(:user=>user, :question => question, :global_node_to_id => context_node3.global_node_id, :global_node_from_id => context_node4.global_node_id)
         ContextNode.reindex
-        guids
         SimpleUUID::UUID.stub(:new).and_return(guids[0], guids[1], guids[2], guids[3])
       end
       context "when set up" do
