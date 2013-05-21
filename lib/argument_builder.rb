@@ -14,8 +14,8 @@ module ArgumentBuilder
     {
       guid: guid,
       parent: parent,
-      for: (depth[:limit] < depth[:current] ? [] : support.map {|for_node| for_node.argument_attributes(context, guid, depth)}),
-      against:  (depth[:limit] < depth[:current] ? [] : oppose.map {|against_node| against_node.argument_attributes(context, guid, depth)}),
+      for: (depth[:limit] < depth[:current] ? [] : support.map {|for_node| for_node.argument_attributes(context, parent.to_s+guid.to_s, depth)}),
+      against:  (depth[:limit] < depth[:current] ? [] : oppose.map {|against_node| against_node.argument_attributes(context, parent.to_s+guid.to_s, depth)}),
     }.merge(self.attributes)
   end
 
