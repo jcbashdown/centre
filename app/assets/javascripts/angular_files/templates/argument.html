@@ -28,7 +28,6 @@
             <ul class='positive'>
               <div ng:repeat='point in conclusion.for'>
                 <div id='{{point.guid}}'>
-                  {{point.id}}
                   <li>
                     <i class='icon-plus'></i>
                     <a href='/nodes/{{point.id}}'>
@@ -58,11 +57,13 @@
                   </li>
                   <div>
                     <ul class='positive'>
+                      <div ng:include='' src="'/assets/angular_files/templates/point_for_form.html'"></div>
                       <div ng:repeat='point in point.for'>
                         <div ng:include='' src="'/assets/angular_files/templates/for_point.html'"></div>
                       </div>
                     </ul>
                     <ul class='negative'>
+                      <div ng:include='' src="'/assets/angular_files/templates/point_against_form.html'"></div>
                       <div ng:repeat='point in point.against'>
                         <div ng:include='' src="'/assets/angular_files/templates/against_point.html'"></div>
                       </div>
@@ -87,7 +88,7 @@
                   <li>
                     <i class='icon-minus'></i>
                     <a href='/nodes/{{point.id}}'>
-                      {{against.title}}
+                      {{point.title}}
                     </a>
                     <a class='accordion-toggle-override delete-node' data-confirm='Are you sure?' href='/nodes/{{point.id}}' rel='nofollow'>
                       <i class='icon-remove'></i>

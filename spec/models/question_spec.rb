@@ -23,17 +23,19 @@ describe Question do
           [
             {
               guid: guids[0].to_guid,
-              parent: nil,
+              parent: [context_node.id.to_s],
               for: [
                 {
                   guid: guids[1].to_guid,
-                  parent: guids[0].to_guid,
+                  parent: [context_node.id.to_s,
+                           context_node2.id.to_s],
                   for: [],
                   against: []
                 }.merge(context_node2.global_node.reload.attributes),
                 {
                   guid: guids[2].to_guid,
-                  parent: guids[0].to_guid,
+                  parent: [context_node.id.to_s,
+                           context_node3.id.to_s],
                   for: [],
                   against: []
                 }.merge(context_node3.global_node.reload.attributes),
@@ -42,7 +44,7 @@ describe Question do
             }.merge(context_node.global_node.reload.attributes),
             {
               guid: guids[3].to_guid,
-              parent: nil,
+              parent: [context_node2.id.to_s],
               for: [],
               against: []
             }.merge(context_node2.global_node.reload.attributes)
@@ -51,11 +53,12 @@ describe Question do
         let(:sub_argument) {
           {
             guid: guids[0].to_guid,
-            parent: nil,
+            parent:[context_node3.id.to_s],
             for: [
               {
                 guid: guids[1].to_guid,
-                parent: guids[0].to_guid,
+                parent: [context_node3.id.to_s,
+                         context_node4.id.to_s],
                 for: [],
                 against: []
               }.merge(context_node4.global_node.reload.attributes)
@@ -66,21 +69,25 @@ describe Question do
         let(:sub_argument2) {
           {
             guid: guids[0].to_guid,
-            parent: nil,
+            parent: [context_node.id.to_s],
             for: [
               {
                 guid: guids[1].to_guid,
-                parent: guids[0].to_guid,
+                parent: [context_node.id.to_s,
+                         context_node2.id.to_s],
                 for: [],
                 against: []
               }.merge(context_node2.global_node.reload.attributes),
               {
                 guid: guids[2].to_guid,
-                parent: guids[0].to_guid,
+                parent: [context_node.id.to_s,
+                         context_node3.id.to_s],
                 for: [
                   {
                     guid: guids[3].to_guid,
-                    parent: guids[0].to_guid.to_s+guids[2].to_guid.to_s,
+                    parent: [context_node.id.to_s,
+                             context_node3.id.to_s,
+                             context_node4.id.to_s],
                     for: [],
                     against: []
                   }.merge(context_node4.global_node.reload.attributes)
@@ -97,7 +104,7 @@ describe Question do
         end
 
         it "returns the correct argument at depth" do
-          context_node.global_node.reload.argument_attributes({question:question}, nil, {limit:2,current:0}).should == sub_argument2
+          context_node.global_node.reload.argument_attributes({question:question}, [], {limit:2,current:0}).should == sub_argument2
         end
 
         it "returns the correct sub argument when required" do
