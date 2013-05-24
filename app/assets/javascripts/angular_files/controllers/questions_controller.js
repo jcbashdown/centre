@@ -8,12 +8,8 @@ function QuestionsCtrl($scope, $routeParams, $http, $compile, $rootScope) {
   $scope.checkForMatch = function(point, depth, limit, data){
     if(point.id == data.parent[depth]){
       if(depth == limit){
-        alert(point);
-        alert($scope.question);
         point.for = data.for;
         point.against = data.against;
-        alert($scope.question);
-        alert(point);
         return point;
       }
       else{
@@ -25,7 +21,31 @@ function QuestionsCtrl($scope, $routeParams, $http, $compile, $rootScope) {
     };
   };
 
-  $scope.subPoint = function(node_id, guid, the_parent, template) {
+  $scope.conclusionForm = function(point) {
+    $scope.closeForms();
+    $scope.loadForm(point, 'conclusion')
+  };
+
+  $scope.forForm = function(point) {
+    $scope.closeForms();
+    $scope.loadForm(point, 'point_for')
+  };
+
+  $scope.againstForm = function(point) {
+    $scope.closeForms();
+    $scope.loadForm(point, 'point_against')
+  };
+
+  $scope.closeFroms = function() {
+    $('.new-conclusion').remove();
+    $('.node-through-link').remove();
+  };
+
+  $scope.loadForm = function(point, type) {
+//<div ng:include='' src="'/assets/angular_files/templates/point_for_form.html'"></div>
+  }
+
+  $scope.subPoint = function(node_id, the_parent) {
     $http.get('/nodes/'+node_id+'.json?parent='+the_parent).success(function(data) {
       var depth = 0;
       var limit = data.parent.length-1;
