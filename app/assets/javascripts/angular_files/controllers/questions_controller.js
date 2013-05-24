@@ -23,16 +23,14 @@ function QuestionsCtrl($scope, $routeParams, $http, $compile, $rootScope) {
 
   $scope.conclusionForm = function(point) {
     $scope.closeForms();
-    $scope.loadForm(point, 'conclusion')
+    $scope.loadConclusionForm();//this is a static template so can be whatever
   };
 
   $scope.forForm = function(point) {
-    $scope.closeForms();
     $scope.loadForm(point, 'point_for')
   };
 
   $scope.againstForm = function(point) {
-    $scope.closeForms();
     $scope.loadForm(point, 'point_against')
   };
 
@@ -42,7 +40,13 @@ function QuestionsCtrl($scope, $routeParams, $http, $compile, $rootScope) {
   };
 
   $scope.loadForm = function(point, type) {
-//<div ng:include='' src="'/assets/angular_files/templates/point_for_form.html'"></div>
+    $scope.closeForms();
+    var html;
+    $scope.formPoint = point;
+    $http.get('/assets/angular_files/templates/'+type+'_form.html').success(function(data) {
+      html = $compile(data)($scope);
+      $('#'+type+point.parent.join()).html(html);
+    });
   }
 
   $scope.subPoint = function(node_id, the_parent) {
